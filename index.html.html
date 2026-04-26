@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Escáner QR Pro</title>
+    <style>
+        /* Tu diseño original se mantiene intacto aquí */
+        body { font-family: sans-serif; text-align: center; padding: 20px; }
+        #video-container { width: 100%; max-width: 400px; margin: 0 auto; background: #eee; border-radius: 12px; overflow: hidden; }
+        video { width: 100%; display: block; }
+        button { padding: 15px 30px; font-size: 16px; cursor: pointer; background: #007bff; color: white; border: none; border-radius: 8px; margin-top: 20px; }
+    </style>
+</head>
+<body>
+
+    <h1>Escáner QR Pro</h1>
+    
+    <div id="video-container">
+        <video id="escanner" playsinline></video>
+    </div>
+
+    <button id="btn-iniciar">Iniciar Escáner</button>
+
+    <script>
+        const video = document.getElementById('escanner');
+        const btn = document.getElementById('btn-iniciar');
+
+        btn.addEventListener('click', async () => {
+            try {
+                // Forzamos la cámara trasera y alta resolución
+                const stream = await navigator.mediaDevices.getUserMedia({
+                    video: { facingMode: { exact: "environment" } }
+                });
+                video.srcObject = stream;
+                video.play();
+                btn.style.display = 'none'; // Ocultamos el botón al iniciar
+            } catch (err) {
+                console.error("Error al acceder a la cámara:", err);
+                alert("No se pudo acceder a la cámara. Por favor, da permiso en el navegador.");
+            }
+        });
+    </script>
+</body>
+</html>s
