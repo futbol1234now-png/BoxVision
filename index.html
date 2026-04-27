@@ -28,9 +28,9 @@ input,button,textarea,select{font-family:inherit}
 .topbar-actions{display:flex;gap:6px}
 .tbtn{background:var(--input);border:none;border-radius:10px;width:34px;height:34px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:15px;color:var(--text)}
 .tbtn-accent{background:var(--accent);color:#fff;font-size:22px;font-weight:300}
-#splash{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;padding:40px 24px;text-align:center;transition:background 1s}
+#splash{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;padding:40px 24px;text-align:center;transition:background 1s;background:linear-gradient(160deg,#0051D4 0%,#007AFF 60%,#5856D6 100%)}
 .sp-icon{font-size:72px;margin-bottom:16px}
-.sp-title{font-size:32px;font-weight:800;letter-spacing:-.8px;margin-bottom:4px;color:#fff;text-shadow:0 2px 10px rgba(0,0,0,.2)}
+.sp-title{font-size:32px;font-weight:800;letter-spacing:-.8px;margin-bottom:4px;color:#fff;text-shadow:0 2px 12px rgba(0,0,0,.4)}
 .sp-brand{font-size:15px;color:rgba(255,255,255,.85);font-weight:600;margin-bottom:8px}
 .sp-sub{font-size:15px;color:rgba(255,255,255,.75);margin-bottom:32px;line-height:1.5}
 .sp-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;width:100%;max-width:360px;margin-bottom:24px}
@@ -43,7 +43,7 @@ input,button,textarea,select{font-family:inherit}
 .sp-last-icon{font-size:26px}
 .sp-last-name{font-size:15px;font-weight:700;color:#fff}
 .sp-last-sub{font-size:12px;color:rgba(255,255,255,.7);margin-top:2px}
-.sp-btn{background:var(--accent);color:#fff;border:none;border-radius:14px;padding:15px;font-size:16px;font-weight:700;cursor:pointer;width:100%;max-width:360px;margin-bottom:10px}
+.sp-btn{background:#fff;color:#007AFF;border:none;border-radius:14px;padding:15px;font-size:16px;font-weight:700;cursor:pointer;width:100%;max-width:360px;margin-bottom:10px}
 .sp-btn2{background:rgba(255,255,255,.18);color:#fff;border:0.5px solid rgba(255,255,255,.3);backdrop-filter:blur(10px);border-radius:14px;padding:13px;font-size:14px;font-weight:600;cursor:pointer;width:100%;max-width:360px;margin-bottom:10px}
 .sp-row{display:flex;gap:10px;width:100%;max-width:360px;margin-bottom:0}
 .sp-row .sp-btn2{margin-bottom:0;flex:1}
@@ -568,9 +568,9 @@ function showScreen(id){
 function applySplashGradient(){
   const h=new Date(new Date().toLocaleString('en-US',{timeZone:'America/Lima'})).getHours();
   let grad;
-  if(h>=5&&h<9)       grad='linear-gradient(160deg,#FF6B35 0%,#FFB347 40%,#87CEEB 100%)';
-  else if(h>=9&&h<13) grad='linear-gradient(160deg,#007AFF 0%,#5AC8FA 60%,#E0F4FF 100%)';
-  else if(h>=13&&h<17)grad='linear-gradient(160deg,#5856D6 0%,#007AFF 50%,#5AC8FA 100%)';
+  if(h>=5&&h<9)       grad='linear-gradient(160deg,#C0392B 0%,#FF6B35 40%,#007AFF 100%)';
+  else if(h>=9&&h<13) grad='linear-gradient(160deg,#0051D4 0%,#007AFF 60%,#5856D6 100%)';
+  else if(h>=13&&h<17)grad='linear-gradient(160deg,#4B0082 0%,#5856D6 50%,#007AFF 100%)';
   else if(h>=17&&h<20)grad='linear-gradient(160deg,#FF6B35 0%,#FF3B30 40%,#5856D6 100%)';
   else                grad='linear-gradient(160deg,#1C1C2E 0%,#16213E 50%,#0F3460 100%)';
   const sp=document.getElementById('splash');
@@ -912,6 +912,7 @@ function showViewer(box){
   window._viewerColor="#007AFF";
   const vsi=document.getElementById("vSearchInput");if(vsi) vsi.value="";
   const vsw=document.getElementById("vSearchWrap");if(vsw) vsw.classList.add("hidden");
+  // vsw reused below - no redeclaration needed
   if(!box){document.getElementById("vName").textContent="Caja no encontrada";return;}
   // Check if this box exists locally (more up-to-date version)
   try{
@@ -958,7 +959,7 @@ function showViewer(box){
   vi.innerHTML=!total?'<div class="vh-empty">Esta caja está vacía 😅</div>'
     :items.map((it,i)=>`<div class="vh-item" style="animation-delay:${i*0.05}s"><div class="vh-nbadge" style="background:${col}">${i+1}</div><div class="vh-itext${it.done?" done":""}">${esc(it.text)}</div></div>`).join("");
   // Show search bar only if more than 8 items
-  const vsw=document.getElementById("vSearchWrap");
+  // reuse vsw declared above
   if(vsw) vsw.classList.toggle("hidden", total<=8);
   if(box.related){
     document.getElementById("vRelated").classList.remove("hidden");
