@@ -417,9 +417,7 @@ button{-webkit-tap-highlight-color:transparent;outline:none}
   to{transform:translateX(-50%) translateY(0) scale(1);opacity:1}
 }
 
-/* Topbar blur */
-.topbar{backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);background:rgba(255,255,255,.85)}
-[data-dark] .topbar{background:rgba(28,28,30,.85)}
+/* Topbar blur already in main CSS */
 
 /* Detail hero parallax feel */
 .detail-hero{transition:background var(--dur-slow) var(--ease-ios)}
@@ -670,10 +668,11 @@ function saveSettings(){localStorage.setItem("cb-settings",JSON.stringify(settin
 function applyDark(){document.body.setAttribute("data-dark",dark?"1":"");const db=document.getElementById("darkToggleBtn");if(db)db.textContent=dark?"ON":"OFF";const dkb=document.getElementById("darkBtn");if(dkb)dkb.textContent=dark?"☀️":"🌙";}
 
 function toggleSortMenu(){
-  const m=document.getElementById("sortMenu");
+  const m=document.getElementById("sortMenu"); if(!m) return;
   m.classList.toggle("hidden");
-  document.getElementById("sortBtn").style.background=m.classList.contains("hidden")?"var(--input)":"var(--accent)";
-  document.getElementById("sortBtn").style.color=m.classList.contains("hidden")?"var(--text)":"#fff";
+  const isOpen=!m.classList.contains("hidden");
+  const btn=document.getElementById("sortBtn");
+  if(btn){btn.style.background=isOpen?"var(--accent)":"var(--input)";btn.style.color=isOpen?"#fff":"var(--text)";}
 }
 
 function setSort(s){
@@ -725,7 +724,7 @@ const SUGGESTIONS_MAP = {
 function showSuggestions(val){
   const wrap=document.getElementById("suggestionsWrap"); if(!wrap) return;
   const box=boxes.find(b=>b.id===currentBoxId);
-  if(!val||!val.trim()||(box&&box.sealed)){wrap.classList.remove("show");return;}
+  if(!val||!val.trim()||(box&&box.sealed)||!currentBoxId){wrap.classList.remove("show");return;}
   const q=val.toLowerCase().trim();
   // Find matching suggestions
   let sugs=[];
@@ -956,7 +955,9 @@ function addItem(){
   const box=boxes.find(b=>b.id===currentBoxId);if(!box) return;
   if(box.sealed){showToast("🔒 Esta caja está sellada","#FF9500");return;}
   box.items.push({text:val,done:false});addHistory(box,"Agregado: "+val);
-  inp.value="";saveData();renderItems();renderProgress();renderHistory();generateQR(currentBoxId);
+  inp.value="";
+  const sw=document.getElementById("suggestionsWrap");if(sw) sw.classList.remove("show");
+  saveData();renderItems();renderProgress();renderHistory();generateQR(currentBoxId);
 }
 function delItem(idx){
   const box=boxes.find(b=>b.id===currentBoxId);if(!box) return;
@@ -1584,17 +1585,17 @@ function initCubeDrag(){
   };
   scene.ontouchend=e=>{
     cubeDragging=false;
-    // momentum
-    let friction=0.92;
-    function momentum(){
-      if(Math.abs(velX)<0.1&&Math.abs(velY)<0.1) return;
-      cubeRotY+=velX; cubeRotX-=velY;
-      cubeRotX=Math.max(-65,Math.min(65,cubeRotX));
-      velX*=friction; velY*=friction;
-      applyRot();
-      requestAnimationFrame(momentum);
+    if(!cubeSpinning){
+      let friction=0.92;
+      const runMomentum=()=>{
+        if(Math.abs(velX)<0.1&&Math.abs(velY)<0.1) return;
+        cubeRotY+=velX; cubeRotX-=velY;
+        cubeRotX=Math.max(-65,Math.min(65,cubeRotX));
+        velX*=friction; velY*=friction;
+        applyRot(); requestAnimationFrame(runMomentum);
+      };
+      runMomentum();
     }
-    if(!cubeSpinning) momentum();
   };
 
   // Mouse with momentum
@@ -1616,15 +1617,17 @@ function initCubeDrag(){
   };
   window.onmouseup=()=>{
     if(!cubeDragging) return; cubeDragging=false;
-    let friction=0.92;
-    function momentum(){
-      if(Math.abs(velX)<0.1&&Math.abs(velY)<0.1) return;
-      cubeRotY+=velX; cubeRotX-=velY;
-      cubeRotX=Math.max(-65,Math.min(65,cubeRotX));
-      velX*=friction; velY*=friction;
-      applyRot(); requestAnimationFrame(momentum);
+    if(!cubeSpinning){
+      let friction=0.92;
+      const runMomentumM=()=>{
+        if(Math.abs(velX)<0.1&&Math.abs(velY)<0.1) return;
+        cubeRotY+=velX; cubeRotX-=velY;
+        cubeRotX=Math.max(-65,Math.min(65,cubeRotX));
+        velX*=friction; velY*=friction;
+        applyRot(); requestAnimationFrame(runMomentumM);
+      };
+      runMomentumM();
     }
-    if(!cubeSpinning) momentum();
   };
 
   // Tap to toggle spin
