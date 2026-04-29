@@ -666,7 +666,8 @@ button{-webkit-tap-highlight-color:transparent;outline:none}
     <div class="dsec" id="progSec"><div class="dsec-title">PROGRESO DE DESEMPAQUE</div><div class="prog-wrap"><div class="prog-bar"><div class="prog-fill" id="progFill"></div></div><div class="prog-lbl"><span id="progLbl"></span><span id="progPct"></span></div></div></div>
     <div class="dsec"><div class="dsec-title">FOTO</div><div id="photoArea" onclick="triggerPhoto()"></div></div>
     <div class="dsec"><div class="dsec-title">NOTAS</div><textarea class="note-area" id="noteArea" placeholder="Agrega una nota… (frágil, abrir primero…)" oninput="saveNote()"></textarea></div>
-    <div class="dsec"><div class="dsec-title" id="itemsTitle">CONTENIDO</div><div id="itemsList"></div><div class="add-row" id="addRow"><input id="addItemInput" type="text" placeholder="Agregar objeto..." onkeydown="if(event.key==='Enter')addItem()" oninput="showSuggestions(this.value)"/><button class="add-btn2" id="micBtn" onclick="startVoice()" title="Agregar por voz" style="background:#5856D6;margin-right:4px">🎤</button><button class="add-btn2" onclick="addItem()">+</button></div>
+    <div class="dsec"><div class="dsec-title" id="itemsTitle">CONTENIDO</div><div id="itemsList"></div><div class="add-row" id="addRow"><input id="addItemInput" type="text" placeholder="Agregar objeto..." onkeydown="if(event.key==='Enter')addItem()" oninput="showSuggestions(this.value)"/><button class="add-btn2" id="micBtn" onclick="startVoice()" title="Agregar por voz" style="background:#5856D6;margin-right:4px">🎤</button><button class="add-btn2" onclick="triggerScanObj()" title="Escanear objeto con cámara" style="background:#FF9500;margin-right:4px" id="scanBtn">📷</button><button class="add-btn2" onclick="addItem()">+</button></div>
+    <input type="file" id="scanObjInput" accept="image/*" capture="environment" style="display:none" onchange="handleScanObj(event)"/>
 <div id="sealedMsg" class="hidden" style="padding:10px 16px;font-size:13px;color:var(--muted);text-align:center;border-top:0.5px solid var(--border)">🔒 Caja sellada — puedes marcar objetos pero no agregar ni borrar</div>
 <div class="suggestions-wrap" id="suggestionsWrap"><span class="sug-label">💡</span></div></div>
     <div class="dsec" id="relatedSec"><div class="dsec-title">CAJA RELACIONADA</div><div id="relatedList"></div></div>
@@ -1114,7 +1115,7 @@ function renderItems(){
   if(sealMsg) sealMsg.classList.toggle("hidden",!box.sealed);
   document.getElementById("itemsList").innerHTML=box.items.length===0
     ?funnyEmpty()
-    :box.items.map((it,i)=>`<div class="item-row"><div class="i-chk${it.done?" done":""}" style="${it.done?"background:"+col:""}" onclick="toggleItem(${i})">${it.done?"✓":""}</div><div class="i-txt${it.done?" done":""}">${esc(it.text)}</div><button class="i-del" onclick="delItem(${i})">✕</button></div>`).join("");
+    :box.items.map((it,i)=>`<div class="item-row">${it.thumb?`<img src="${it.thumb}" style="width:36px;height:36px;border-radius:8px;object-fit:cover;flex-shrink:0;margin-right:2px;opacity:${it.done?0.4:1}">`:""}<div class="i-chk${it.done?" done":""}" style="${it.done?"background:"+col:""}" onclick="toggleItem(${i})">${it.done?"✓":""}</div><div class="i-txt${it.done?" done":""}">${esc(it.text)}</div><button class="i-del" onclick="delItem(${i})">✕</button></div>`).join("");
 }
 
 function toggleItem(idx){
@@ -1140,6 +1141,132 @@ function delItem(idx){
   addHistory(box,"Eliminado: "+box.items[idx].text);
   box.items.splice(idx,1);saveData();renderItems();renderProgress();renderHistory();generateQR(currentBoxId);
 }
+function triggerScanObj(){
+  const box=boxes.find(b=>b.id===currentBoxId);
+  if(box&&box.sealed){showToast("🔒 Caja sellada","#FF9500");return;}
+  if(!localStorage.getItem("boxia_key")){showToast("⚠️ Conecta Box IA primero","#FF9500");return;}
+  document.getElementById("scanObjInput").click();
+}
+
+async function handleScanObj(e){
+  const file=e.target.files[0]; e.target.value=""; if(!file) return;
+  const box=boxes.find(b=>b.id===currentBoxId); if(!box) return;
+  const btn=document.getElementById("scanBtn");
+  btn.textContent="⏳"; btn.disabled=true;
+  showToast("📷 Procesando imagen...","#FF9500");
+
+  // 1. Generar thumb PRIMERO (antes de cualquier fallo)
+  let thumb=null, b64=null;
+  try{
+    const enc=await resizeAndEncode(file);
+    thumb=enc.thumb; b64=enc.b64;
+  }catch(encErr){
+    showToast("❌ No se pudo leer la imagen","#FF3B30");
+    btn.textContent="📷"; btn.disabled=false; return;
+  }
+
+  // 2. Intentar identificar con Groq Vision
+  const apiKey=localStorage.getItem("boxia_key");
+  let nombreIA=null;
+  if(apiKey){
+    try{
+      showToast("🤖 Identificando objeto...","#5856D6");
+      const res=await fetch("https://api.groq.com/openai/v1/chat/completions",{
+        method:"POST",
+        headers:{"Content-Type":"application/json","Authorization":"Bearer "+apiKey},
+        body:JSON.stringify({
+          model:"llama-3.2-11b-vision-preview",
+          max_tokens:40,
+          messages:[{role:"user",content:[
+            {type:"image_url",image_url:{url:"data:image/jpeg;base64,"+b64}},
+            {type:"text",text:"What object is in this image? Reply ONLY with the object name in Spanish, max 3 words, no punctuation."}
+          ]}]
+        })
+      });
+      const data=await res.json();
+      if(res.ok && data.choices?.[0]?.message?.content){
+        nombreIA=data.choices[0].message.content.trim().replace(/[.!?¿¡*"]/g,"").slice(0,40);
+      } else {
+        console.warn("Groq vision error:",JSON.stringify(data?.error||data));
+      }
+    }catch(apiErr){
+      console.warn("Groq fetch error:",apiErr);
+    }
+  }
+
+  btn.textContent="📷"; btn.disabled=false;
+
+  // 3. Si IA identificó → agregar directo; si no → pedir nombre con modal bonito
+  if(nombreIA){
+    box.items.push({text:nombreIA,done:false,thumb});
+    addHistory(box,"📷 Escaneado: "+nombreIA);
+    saveData();renderItems();renderProgress();renderHistory();generateQR(currentBoxId);
+    showToast("✅ "+nombreIA+" agregado","#34C759");
+  } else {
+    // Modal para escribir nombre manualmente conservando la foto
+    showScanNameModal(thumb, box);
+  }
+}
+
+function showScanNameModal(thumb, box){
+  // Quitar modal anterior si existe
+  document.getElementById("scanNameModal")?.remove();
+  const m=document.createElement("div");
+  m.id="scanNameModal";
+  m.style.cssText="position:fixed;inset:0;background:rgba(0,0,0,.65);z-index:10001;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(8px)";
+  m.innerHTML=`
+    <div style="background:var(--card,#1C1C1E);border-radius:20px;padding:24px 20px;width:min(310px,88vw);box-shadow:0 20px 60px rgba(0,0,0,.5);animation:toastSpring .35s cubic-bezier(.175,.885,.32,1.275) both">
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px">
+        <img src="${thumb}" style="width:56px;height:56px;border-radius:10px;object-fit:cover;flex-shrink:0"/>
+        <div>
+          <div style="font-size:16px;font-weight:700;color:var(--text,#fff)">¿Cómo se llama?</div>
+          <div style="font-size:12px;color:var(--muted,#8E8E93)">No pude identificarlo automáticamente</div>
+        </div>
+      </div>
+      <input id="scanNameInput" type="text" placeholder="Ej: Cubo de Rubik" autofocus
+        style="width:100%;box-sizing:border-box;padding:12px 14px;border-radius:12px;border:1.5px solid var(--border,rgba(255,255,255,.12));background:var(--bg,#000);color:var(--text,#fff);font-size:16px;outline:none;margin-bottom:12px"
+        onkeydown="if(event.key==='Enter')confirmScanName()"/>
+      <div style="display:flex;gap:10px">
+        <button onclick="document.getElementById('scanNameModal').remove()" style="flex:1;padding:12px;border-radius:12px;border:none;background:var(--input,rgba(255,255,255,.1));color:var(--text,#fff);font-size:15px;font-weight:600;cursor:pointer">Cancelar</button>
+        <button onclick="confirmScanName()" style="flex:1;padding:12px;border-radius:12px;border:none;background:#FF9500;color:#fff;font-size:15px;font-weight:600;cursor:pointer">Guardar 📷</button>
+      </div>
+    </div>`;
+  document.body.appendChild(m);
+  // Guardar thumb en el modal para usarlo al confirmar
+  m._thumb=thumb; m._box=box;
+  setTimeout(()=>document.getElementById("scanNameInput")?.focus(),200);
+}
+
+function confirmScanName(){
+  const m=document.getElementById("scanNameModal"); if(!m) return;
+  const nombre=document.getElementById("scanNameInput")?.value.trim();
+  if(!nombre){showToast("✏️ Escribe un nombre","#FF9500");return;}
+  const box=m._box, thumb=m._thumb;
+  box.items.push({text:nombre,done:false,thumb});
+  addHistory(box,"📷 Foto: "+nombre);
+  saveData();renderItems();renderProgress();renderHistory();generateQR(currentBoxId);
+  m.remove();
+  showToast("✅ "+nombre+" agregado con foto","#34C759");
+}
+
+function resizeAndEncode(file){
+  return new Promise((res,rej)=>{
+    const img=new Image(),reader=new FileReader();
+    reader.onload=ev=>{
+      img.onload=()=>{
+        let w=img.width,h=img.height,max=512;
+        if(w>max||h>max){const r=Math.min(max/w,max/h);w=Math.round(w*r);h=Math.round(h*r);}
+        const c=document.createElement("canvas");c.width=w;c.height=h;
+        c.getContext("2d").drawImage(img,0,0,w,h);
+        const tc=document.createElement("canvas");tc.width=64;tc.height=64;
+        const s=Math.min(img.width,img.height),ox=(img.width-s)/2,oy=(img.height-s)/2;
+        tc.getContext("2d").drawImage(img,ox,oy,s,s,0,0,64,64);
+        res({b64:c.toDataURL("image/jpeg",0.8).split(",")[1],thumb:tc.toDataURL("image/jpeg",0.75)});
+      };img.onerror=rej;img.src=ev.target.result;
+    };reader.onerror=rej;reader.readAsDataURL(file);
+  });
+}
+
 let _noteTimer=null;
 function saveNote(){
   clearTimeout(_noteTimer);
@@ -1838,14 +1965,54 @@ function toggleAI(){
   if(aiOpen){
     panel.classList.add("open");
     fab.style.display = "none";
-    if(!document.getElementById("aiMessages").children.length){
-      aiAddMsg("bot", AI_INTRO);
+    const key = localStorage.getItem("boxia_key");
+    const skipped = localStorage.getItem("boxia_skip");
+    if(!key && !skipped){
+      document.getElementById("aiKeyScreen").style.display = "flex";
+      document.getElementById("aiChatArea").style.display = "none";
+    } else {
+      showAIChat();
     }
-    setTimeout(()=>document.getElementById("aiInput").focus(), 300);
   } else {
     panel.classList.remove("open");
     fab.style.display = "flex";
   }
+}
+
+function showAIChat(){
+  document.getElementById("aiKeyScreen").style.display = "none";
+  document.getElementById("aiChatArea").style.display = "flex";
+  const key = localStorage.getItem("boxia_key");
+  const statusEl = document.getElementById("aiStatus");
+  if(statusEl) statusEl.textContent = key ? "Conectada ✦ Anthropic" : "Modo básico";
+  if(!document.getElementById("aiMessages").children.length){
+    aiAddMsg("bot", AI_INTRO);
+  }
+  setTimeout(()=>document.getElementById("aiInput").focus(), 300);
+}
+
+function saveApiKey(){
+  const key = document.getElementById("aiKeyInput").value.trim();
+  if(!key.startsWith("gsk_")){ showToast("❌ Key inválida — debe empezar con gsk_","#FF3B30"); return; }
+  localStorage.setItem("boxia_key", key);
+  localStorage.removeItem("boxia_skip");
+  showToast("✅ Box IA conectada","#34C759");
+  showAIChat();
+}
+
+function skipApiKey(){
+  localStorage.setItem("boxia_skip","1");
+  showAIChat();
+}
+
+function clearApiKey(){
+  localStorage.removeItem("boxia_key");
+  localStorage.removeItem("boxia_skip");
+  document.getElementById("aiKeyInput") && (document.getElementById("aiKeyInput").value="");
+  document.getElementById("aiMessages").innerHTML="";
+  aiHistory=[];
+  document.getElementById("aiKeyScreen").style.display = "flex";
+  document.getElementById("aiChatArea").style.display = "none";
 }
 
 function aiAddMsg(role, html, animate=false){
@@ -1934,28 +2101,44 @@ async function aiAsk(q){
   const inp = document.getElementById("aiInput");
   inp.disabled = true;
   aiShowTyping();
+
+  const apiKey = localStorage.getItem("boxia_key");
+
   try {
-    const res = await fetch("https://api.anthropic.com/v1/messages",{
+    if(!apiKey) throw new Error("no_key");
+    const res = await fetch("https://api.groq.com/openai/v1/chat/completions",{
       method:"POST",
-      headers:{"Content-Type":"application/json"},
+      headers:{
+        "Content-Type":"application/json",
+        "Authorization": "Bearer " + apiKey
+      },
       body:JSON.stringify({
-        model:"claude-sonnet-4-20250514",
+        model:"llama-3.3-70b-versatile",
         max_tokens:1000,
-        system:`Eres Box IA, asistente experto en mudanzas y organización de cajas. Responde siempre en español (Perú). Usa HTML básico para formato: <b>, <br>. Sin markdown con asteriscos. Sé conciso, útil y empático. Cuando busques objetos revisa todas las cajas. Puedes dar consejos de organización y anticipar necesidades del usuario.\n\n${buildContextSnapshot()}`,
-        messages:aiHistory.map(m=>({role:m.role,content:m.content}))
+        messages:[
+          {role:"system", content:`Eres Box IA, asistente experto en mudanzas y organización de cajas. Responde siempre en español (Perú). Usa HTML básico para formato: <b>, <br>. Sin markdown con asteriscos. Sé conciso, útil y empático. Cuando busques objetos revisa todas las cajas. Puedes dar consejos de organización y anticipar necesidades del usuario.\n\n${buildContextSnapshot()}`},
+          ...aiHistory.map(m=>({role:m.role, content:m.content}))
+        ]
       })
     });
-    if(!res.ok) throw new Error(res.status);
+    if(!res.ok){
+      const err = await res.json().catch(()=>({}));
+      throw new Error(err?.error?.message || res.status);
+    }
     const data = await res.json();
-    const reply = data.content?.[0]?.text || "Sin respuesta.";
+    const reply = data.choices?.[0]?.message?.content || "Sin respuesta.";
     aiHistory.push({role:"assistant", content:reply});
     aiHideTyping();
     aiAddMsg("bot", reply, true);
   } catch(e){
     aiHideTyping();
-    const fallback = aiRespondLocal(q);
-    aiHistory.push({role:"assistant", content:fallback});
-    aiAddMsg("bot", fallback, true);
+    if(e.message === "no_key" || String(e).includes("401")){
+      aiAddMsg("bot","🔑 <b>API key inválida o expirada.</b><br>Toca <i>⚙️ Cambiar API key</i> para actualizarla.");
+    } else {
+      const fallback = aiRespondLocal(q);
+      aiHistory.push({role:"assistant", content:fallback});
+      aiAddMsg("bot", fallback, true);
+    }
   } finally {
     aiStreaming = false;
     inp.disabled = false;
@@ -2171,22 +2354,39 @@ self.addEventListener('fetch',e=>{
     <div class="ai-avatar">🤖</div>
     <div class="ai-header-info">
       <div class="ai-header-name">Box IA</div>
-      <div class="ai-header-status">Asistente inteligente</div>
+      <div class="ai-header-status" id="aiStatus">Asistente inteligente</div>
     </div>
     <button class="ai-close" onclick="toggleAI()">✕</button>
   </div>
-  <div class="ai-messages" id="aiMessages"></div>
-  <div class="ai-quick" id="aiQuick">
-    <button class="ai-quick-btn" onclick="aiAsk('¿Dónde están mis zapatos?')">🔍 Buscar objeto</button>
-    <button class="ai-quick-btn" onclick="aiAsk('¿Cuánto llevo de la mudanza y qué me falta?')">📊 Mi progreso</button>
-    <button class="ai-quick-btn" onclick="aiAsk('¿Qué cajas son urgentes y qué tienen?')">🔴 Urgentes</button>
-    <button class="ai-quick-btn" onclick="aiAsk('Dame consejos para organizar mejor mi mudanza')">💡 Consejos</button>
-    <button class="ai-quick-btn" onclick="aiAsk('¿Qué cajas están en el cuarto principal?')">🛏 Por habitación</button>
-    <button class="ai-quick-btn" onclick="aiAsk('¿Cuáles son las cajas más pesadas o con más objetos?')">⚖️ Análisis de cajas</button>
+
+  <!-- Pantalla configuración API key -->
+  <div id="aiKeyScreen" style="display:none;flex:1;padding:24px 20px;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:16px">
+    <div style="font-size:48px">🔑</div>
+    <div style="font-size:17px;font-weight:700;color:var(--text)">Conecta Box IA</div>
+    <div style="font-size:13px;color:var(--muted);line-height:1.5">Usa <b>Groq</b> — IA gratuita y ultrarrápida. Obtén tu API key gratis sin tarjeta de crédito.</div>
+    <a href="https://console.groq.com/keys" target="_blank" style="font-size:13px;color:#0A84FF;text-decoration:none">→ Obtener API key gratis en console.groq.com</a>
+    <input id="aiKeyInput" type="password" placeholder="gsk_..." style="width:100%;box-sizing:border-box;padding:13px 14px;border-radius:12px;border:1.5px solid var(--border);background:var(--input);color:var(--text);font-size:14px;font-family:monospace;outline:none"/>
+    <button onclick="saveApiKey()" style="width:100%;padding:14px;border-radius:14px;border:none;background:linear-gradient(135deg,#0A84FF,#5856D6);color:#fff;font-size:16px;font-weight:700;cursor:pointer">Conectar Box IA</button>
+    <button onclick="skipApiKey()" style="background:none;border:none;color:var(--muted);font-size:13px;cursor:pointer;padding:4px">Usar modo básico (sin IA real)</button>
   </div>
-  <div class="ai-input-row">
-    <input class="ai-input" id="aiInput" type="text" placeholder="Pregúntale a Box IA…" onkeydown="if(event.key==='Enter')aiSend()"/>
-    <button class="ai-send" onclick="aiSend()">↑</button>
+
+  <div id="aiChatArea" style="display:none;flex:1;flex-direction:column;overflow:hidden">
+    <div class="ai-messages" id="aiMessages"></div>
+    <div class="ai-quick" id="aiQuick">
+      <button class="ai-quick-btn" onclick="aiAsk('¿Dónde están mis zapatos?')">🔍 Buscar objeto</button>
+      <button class="ai-quick-btn" onclick="aiAsk('¿Cuánto llevo de la mudanza y qué me falta?')">📊 Mi progreso</button>
+      <button class="ai-quick-btn" onclick="aiAsk('¿Qué cajas son urgentes y qué tienen?')">🔴 Urgentes</button>
+      <button class="ai-quick-btn" onclick="aiAsk('Dame consejos para organizar mejor mi mudanza')">💡 Consejos</button>
+      <button class="ai-quick-btn" onclick="aiAsk('¿Qué cajas están en el cuarto principal?')">🛏 Por habitación</button>
+      <button class="ai-quick-btn" onclick="aiAsk('¿Cuáles son las cajas más pesadas o con más objetos?')">⚖️ Análisis</button>
+    </div>
+    <div style="display:flex;align-items:center;justify-content:flex-end;padding:2px 14px 0">
+      <button onclick="clearApiKey()" style="background:none;border:none;color:var(--muted);font-size:11px;cursor:pointer;padding:4px">⚙️ Cambiar API key</button>
+    </div>
+    <div class="ai-input-row">
+      <input class="ai-input" id="aiInput" type="text" placeholder="Pregúntale a Box IA…" onkeydown="if(event.key==='Enter')aiSend()"/>
+      <button class="ai-send" onclick="aiSend()">↑</button>
+    </div>
   </div>
 </div>
 
