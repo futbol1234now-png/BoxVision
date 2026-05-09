@@ -751,7 +751,7 @@ body{
 <div id="sealedMsg" class="hidden" style="padding:10px 16px;font-size:13px;color:var(--muted);text-align:center;border-top:0.5px solid var(--border)">🔒 Caja sellada — puedes marcar objetos pero no agregar ni borrar</div>
 <div class="suggestions-wrap" id="suggestionsWrap"><span class="sug-label">💡</span></div></div>
     <div class="dsec" id="relatedSec"><div class="dsec-title">CAJA RELACIONADA</div><div id="relatedList"></div></div>
-    <div class="dsec" id="historySec"><div class="dsec-title">HISTORIAL</div><div id="historyList"></div></div>
+    <div class="dsec" id="historySec"><div class="dsec-title" style="display:flex;align-items:center;justify-content:space-between">HISTORIAL<button onclick="toggleHistory()" id="histToggleBtn" style="background:none;border:none;color:var(--muted);font-size:12px;cursor:pointer;padding:2px 6px;border-radius:6px">Ocultar</button></div><div id="historyList"></div></div>
     <div class="dsec"><div class="qr-sec"><div style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:12px">CÓDIGO QR</div><div class="qr-box" id="detailQR"></div><div class="qr-hint">Escanea con la cámara del celular</div><div style="font-size:11px;color:var(--muted);margin-top:4px" id="detailDate"></div></div></div>
     <button onclick="openCube(currentBoxId)" style="width:100%;margin-top:12px;padding:16px;background:linear-gradient(135deg,#5856D6,#AF52DE);color:#fff;border:none;border-radius:16px;font-size:16px;font-weight:800;cursor:pointer;font-family:inherit;letter-spacing:-.3px">📦 Ver en 3D</button>
 <div class="det-btns" style="flex-wrap:wrap;margin-top:8px">
@@ -1037,9 +1037,22 @@ function getIcon(n){
 function addHistory(box,text){if(!box.history)box.history=[];box.history.unshift({text,date:new Date().toLocaleDateString("es-PE",{day:"2-digit",month:"short"})});if(box.history.length>20)box.history.pop();}
 
 function setupPWA(){
-  // manifest.json y sw.js son archivos reales en el repo
-  window.addEventListener("beforeinstallprompt",e=>{e.preventDefault();deferredInstall=e;document.getElementById("installBanner").classList.remove("hidden");});
-  document.getElementById("installBtn").onclick=()=>{if(deferredInstall){deferredInstall.prompt();deferredInstall.userChoice.then(()=>{deferredInstall=null;document.getElementById("installBanner").classList.add("hidden");});}};
+  window.addEventListener("beforeinstallprompt",e=>{
+    e.preventDefault();deferredInstall=e;
+    const b=document.getElementById("installBanner");
+    if(b) b.classList.remove("hidden");
+  });
+  const installBtn=document.getElementById("installBtn");
+  if(installBtn) installBtn.onclick=()=>{
+    if(deferredInstall){
+      deferredInstall.prompt();
+      deferredInstall.userChoice.then(()=>{
+        deferredInstall=null;
+        const b=document.getElementById("installBanner");
+        if(b) b.classList.add("hidden");
+      });
+    }
+  };
 }
 
 function route(){
@@ -1272,10 +1285,10 @@ async function handleScanObj(e){
     const itemsExistentes=box.items.map(i=>i.text).slice(0,15).join(", ")||"ninguno";
     const contexto=`Caja: "${box.name}"${box.number?" #"+box.number:""}. Ubicación: ${box.location||"sin asignar"}. Prioridad: ${box.priority==="red"?"urgente":box.priority==="green"?"baja":"normal"}. ${box.items.length>0?`Ya contiene ${box.items.length} objetos: ${itemsExistentes}.`:"Caja vacía."}`;
 
-    const systemPrompt=`Eres un experto en inventario y organización de mudanzas. Analiza la imagen con máximo detalle y responde SOLO con un objeto JSON válido, sin markdown, sin explicaciones.
-El JSON debe tener exactamente estos campos:
-{"nombre":"nombre específico del objeto en español (ej: Termo Stanley 1L)","categoria":"una de: Electrónica|Ropa|Cocina|Libros|Herramientas|Decoración|Documentos|Juguetes|Deportes|Muebles|Higiene|Alimentos|Otro","cantidad":1,"fragil":false,"descripcion":"descripción breve: color, estado, característica notable","tags":["etiqueta1","etiqueta2"],"prioridad_sugerida":"red|yellow|green","nota":"consejo de embalaje o null"}
-Contexto: ${contexto}`;
+    const systemPrompt=`You are an expert inventory assistant for moving/packing. Analyze the image carefully.
+Rules: respond ONLY with valid JSON, no markdown, no explanation. Use Spanish for all text. Be SPECIFIC: include color, size, brand if visible. Identify the most prominent object.
+JSON: {"nombre":"specific name in Spanish (color/brand/size if visible)","categoria":"Electrónica|Ropa|Cocina|Libros|Herramientas|Decoración|Documentos|Juguetes|Deportes|Muebles|Higiene|Alimentos|Otro","cantidad":1,"fragil":false,"descripcion":"one line description","tags":["tag1","tag2"],"prioridad_sugerida":"red|yellow|green","nota":"packing tip or null"}
+Context: ${contexto}`;
 
     const modelos=["llama-3.2-90b-vision-preview","llama-3.2-11b-vision-preview"];
     for(const modelo of modelos){
@@ -1283,31 +1296,43 @@ Contexto: ${contexto}`;
         const res=await fetch("https://broken-flower-327b.theincognit40.workers.dev/chat",{
           method:"POST",
           headers:{"Content-Type":"application/json"},
-          body:JSON.stringify({model:modelo,max_tokens:300,temperature:0.1,
+          body:JSON.stringify({model:modelo,max_tokens:400,temperature:0.05,
             messages:[
               {role:"system",content:systemPrompt},
               {role:"user",content:[
-                {type:"image_url",image_url:{url:"data:image/jpeg;base64,"+b64}},
-                {type:"text",text:"Analiza este objeto y responde con el JSON."}
+                {type:"image_url",image_url:{url:"data:image/jpeg;base64,"+b64,detail:"high"}},
+                {type:"text",text:"Identify this object precisely. Respond with JSON only."}
               ]}
             ]})
         });
         const data=await res.json();
         if(res.ok && data.choices?.[0]?.message?.content){
-          const raw=data.choices[0].message.content.trim().replace(/```json|```/g,"").trim();
+          let raw=data.choices[0].message.content.trim();
+          const jsonMatch=raw.match(/\{[\s\S]*\}/);
+          if(jsonMatch) raw=jsonMatch[0];
+          raw=raw.replace(/```json|```/g,"").trim();
           try{
             const p=JSON.parse(raw);
             if(p.nombre){
-              analisis={nombre:(p.nombre||"Objeto").slice(0,60),categoria:p.categoria||"Otro",
-                cantidad:parseInt(p.cantidad)||1,fragil:!!p.fragil,descripcion:p.descripcion||"",
-                tags:Array.isArray(p.tags)?p.tags.slice(0,3):[],prioridad:p.prioridad_sugerida||null,nota:p.nota||null};
+              analisis={
+                nombre:(p.nombre||"Objeto").replace(/[*"]/g,"").slice(0,60),
+                categoria:p.categoria||"Otro",
+                cantidad:parseInt(p.cantidad)||1,
+                fragil:p.fragil===true||String(p.fragil).toLowerCase()==="true",
+                descripcion:p.descripcion||"",
+                tags:Array.isArray(p.tags)?p.tags.filter(Boolean).slice(0,3):[],
+                prioridad:["red","yellow","green"].includes(p.prioridad_sugerida)?p.prioridad_sugerida:null,
+                nota:p.nota&&p.nota!=="null"?p.nota:null
+              };
               break;
             }
           }catch{
-            const linea=raw.split("\n")[0].replace(/[{}"\[\]]/g,"").replace(/nombre:/i,"").trim();
-            if(linea.length>1&&linea.length<60){analisis={nombre:linea.slice(0,50),categoria:"Otro",cantidad:1,fragil:false,descripcion:"",tags:[],prioridad:null,nota:null};break;}
+            const m=raw.match(/"nombre"\s*:\s*"([^"]+)"/);
+            if(m){analisis={nombre:m[1].slice(0,50),categoria:"Otro",cantidad:1,fragil:false,descripcion:"",tags:[],prioridad:null,nota:null};break;}
           }
         }
+        if(analisis) break;
+        console.warn("Modelo",modelo,"sin resultado:",data?.error?.message||"vacío");
       }catch(err){console.warn("Error",modelo,":",err.message);}
     }
     document.getElementById("scanLoadingModal")?.remove();
@@ -1367,7 +1392,7 @@ function confirmScanName(){
   showToast("✅ "+nombre+" guardado","#34C759");
 }
 
-function resizeAndEncode(file,maxPx=900,thumbPx=96){
+function resizeAndEncode(file,maxPx=1024,thumbPx=96){
   return new Promise((res,rej)=>{
     const img=new Image(),reader=new FileReader();
     reader.onload=ev=>{
@@ -1379,7 +1404,7 @@ function resizeAndEncode(file,maxPx=900,thumbPx=96){
         const tc=document.createElement("canvas");tc.width=thumbPx;tc.height=thumbPx;
         const s=Math.min(img.width,img.height),ox=(img.width-s)/2,oy=(img.height-s)/2;
         tc.getContext("2d").drawImage(img,ox,oy,s,s,0,0,thumbPx,thumbPx);
-        res({b64:c.toDataURL("image/jpeg",0.88).split(",")[1],thumb:tc.toDataURL("image/jpeg",0.82)});
+        res({b64:c.toDataURL("image/jpeg",0.95).split(",")[1],thumb:tc.toDataURL("image/jpeg",0.85)});
       };img.onerror=rej;img.src=ev.target.result;
     };reader.onerror=rej;reader.readAsDataURL(file);
   });
@@ -1402,6 +1427,14 @@ function renderRelated(){
   const rel=boxes.find(b=>b.id===box.related);if(!rel){sec.style.display="none";return;}
   sec.style.display="block";
   document.getElementById("relatedList").innerHTML=`<div class="rel-item" onclick="openDetail('${rel.id}')"><span style="font-size:20px">${getIcon(rel.name)}</span><span class="rel-name">${esc(rel.name)}</span><span class="rel-sub">${rel.items.length} objetos ›</span></div>`;
+}
+
+function toggleHistory(){
+  const list=document.getElementById("historyList");
+  const btn=document.getElementById("histToggleBtn");
+  const hidden=list.style.display==="none";
+  list.style.display=hidden?"":"none";
+  if(btn) btn.textContent=hidden?"Ocultar":"Mostrar";
 }
 
 function renderHistory(){
@@ -2248,7 +2281,7 @@ async function aiAsk(q){
       method:"POST",
       headers:{"Content-Type":"application/json"},
       body:JSON.stringify({
-        model:"llama3-70b-8192",
+        model:"llama-3.3-70b-versatile",
         max_tokens:1000,
         messages:[
           {role:"system", content:`Eres Box IA, asistente experto en mudanzas y organización de cajas. Responde siempre en español (Perú). Usa HTML básico para formato: <b>, <br>. Sin markdown con asteriscos. Sé conciso, útil y empático. Cuando busques objetos revisa todas las cajas. Puedes dar consejos de organización y anticipar necesidades del usuario.\n\n${buildContextSnapshot()}`},
