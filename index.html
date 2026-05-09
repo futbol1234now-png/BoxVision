@@ -2449,6 +2449,75 @@ if('serviceWorker' in navigator){
   var blob=new Blob([swCode],{type:'text/javascript'});
   navigator.serviceWorker.register(URL.createObjectURL(blob)).catch(function(e){console.warn('SW:',e);});
 }
+// --- SISTEMA DE AUTENTICACIÓN FIREBASE ---
+let esRegistro = false;
+
+// Cambia la pantalla entre Iniciar Sesión y Registrarse
+function cambiarModo() {
+  const titulo = document.getElementById('login-title');
+  const subtitulo = document.getElementById('login-subtitle');
+  const btnAccion = document.getElementById('btn-action');
+  const btnToggle = document.getElementById('btn-toggle');
+  
+  esRegistro = !esRegistro;
+
+  if (esRegistro) {
+    titulo.textContent = "Regístrate en BoxVision";
+    subtitulo.textContent = "Crea una cuenta para empezar a guardar tus cajas";
+    btnAccion.textContent = "Crear Cuenta";
+    btnToggle.textContent = "¿Ya tienes cuenta? Inicia Sesión";
+  } else {
+    titulo.textContent = "Inicia Sesión en BoxVision";
+    subtitulo.textContent = "Introduce tus datos para acceder a tus cajas";
+    btnAccion.textContent = "Iniciar Sesión";
+    btnToggle.textContent = "¿No tienes cuenta? Regístrate";
+  }
+}
+
+// Maneja el clic en el botón principal (Login o Registro)
+function manejarAuth() {
+  const email = document.getElementById('login-email').value.trim();
+  const password = document.getElementById('login-password').value;
+
+  if (!email || !password) {
+    alert("Por favor, completa todos los campos.");
+    return;
+  }
+
+  if (esRegistro) {
+    // Registrar nuevo usuario
+    auth.createUserWithEmailAndPassword(email, password)
+      .then((userCredential) => {
+        alert("¡Cuenta creada con éxito!");
+      })
+      .catch((error) => {
+        alert("Error al registrarse: " + error.message);
+      });
+  } else {
+    // Iniciar sesión
+    auth.signInWithEmailAndPassword(email, password)
+      .catch((error) => {
+        alert("Error al iniciar sesión: " + error.message);
+      });
+  }
+}
+
+// Escucha en tiempo real si el usuario está conectado o no
+auth.onAuthStateChanged((user) => {
+  const loginScreen = document.getElementById('login-screen');
+  const appContent = document.getElementById('app-content');
+
+  if (user) {
+    // Si está conectado: ocultamos el login y mostramos tu app
+    loginScreen.style.display = 'none';
+    appContent.style.display = 'block';
+    console.log("Usuario conectado:", user.email);
+  } else {
+    // Si no está conectado: mostramos el login y ocultamos tu app
+    loginScreen.style.display = 'flex';
+    appContent.style.display = 'none';
+  }
+});  
 </script>
 
 <!-- ═══ TUTORIAL ═══ -->
