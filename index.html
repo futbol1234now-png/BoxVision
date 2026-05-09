@@ -15,9 +15,9 @@
   <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
 
- <script>
-  // Tus claves de Firebase reales y corregidas
-  const firebaseConfig = {
+<script>
+  // Configuración de Firebase de BoxVision
+  var firebaseConfig = {
     apiKey: "AIzaSyAssJJ4BIQzsscuPOnI_vz22vcvxsjBNWE",
     authDomain: "boxvision-d6a38.firebaseapp.com",
     projectId: "boxvision-d6a38",
@@ -27,10 +27,12 @@
     measurementId: "G-51E2GFD2KE"
   };
 
-  // Inicializar base de datos y login
-  const app = firebase.initializeApp(firebaseConfig);
-  const auth = firebase.auth();
-  const db = firebase.firestore();
+  // Inicializar de forma global para que todo el archivo lo lea
+  if (!firebase.apps.length) {
+    firebase.initializeApp(firebaseConfig);
+  }
+  var auth = firebase.auth();
+  var db = firebase.firestore();
 </script>
   <style>
     /* Estilos para tu pantalla de Login */
