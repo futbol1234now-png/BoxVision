@@ -2480,6 +2480,17 @@ function cambiarModo() {
 
 // Maneja el clic en el botón principal (Login o Registro)
 function manejarAuth() {
+  // Iniciar sesión con Google
+function loginConGoogle() {
+  const provider = new firebase.auth.GoogleAuthProvider();
+  auth.signInWithPopup(provider)
+    .then((result) => {
+      alert("¡Sesión iniciada con Google!");
+    })
+    .catch((error) => {
+      alert("Error al conectar con Google: " + error.message);
+    });
+}
   const email = document.getElementById('login-email').value.trim();
   const password = document.getElementById('login-password').value;
 
