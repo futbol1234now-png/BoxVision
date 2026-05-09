@@ -1,15 +1,106 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="Mis Cajas">
-<meta name="theme-color" content="#007AFF">
-<link id="pwaManifest" rel="manifest" href="./manifest.json">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="BoxVision">
+  <meta name="theme-color" content="#007AFF">
+  
+  <link id="pwaManifest" rel="manifest" href="./manifest.json">
+  <title>BoxVision</title>
+
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+
+  <script>
+    // Tus claves de Firebase de la captura 135
+    const firebaseConfig = {
+      apiKey: "AIzaSyAssJJ40IQzssduPQnI_vz22vcvxsJBNME",
+      authDomain: "boxvision-d6a38.firebaseapp.com",
+      projectId: "boxvision-d6a38",
+      storageBucket: "boxvision-d6a38.firebasestorage.app",
+      messagingSenderId: "123605553140",
+      appId: "1:123605553140:web:48cb7be998797f1fdf97fe"
+    };
+
+    // Inicializar base de datos y login
+    const app = firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+    const db = firebase.firestore();
+  </script>
+
+  <style>
+    /* Estilos para tu pantalla de Login */
+    #login-screen {
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background: #000000;
+      color: #ffffff;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+      font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+      padding: 20px;
+      box-sizing: border-box;
+    }
+    .login-container {
+      width: 100%;
+      max-width: 360px;
+      text-align: center;
+    }
+    .login-container h1 {
+      font-size: 26px;
+      margin-bottom: 8px;
+      color: #0A84FF;
+    }
+    .login-container p {
+      color: #8E8E93;
+      margin-bottom: 24px;
+      font-size: 14px;
+    }
+    .login-input {
+      width: 100%;
+      padding: 14px;
+      margin-bottom: 12px;
+      border: 1px solid #38383A;
+      background: #1C1C1E;
+      color: #ffffff;
+      border-radius: 10px;
+      font-size: 16px;
+      box-sizing: border-box;
+    }
+    .login-btn {
+      width: 100%;
+      padding: 14px;
+      background: #0A84FF;
+      color: #ffffff;
+      border: none;
+      border-radius: 10px;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+    .login-btn-secondary {
+      background: transparent;
+      color: #0A84FF;
+      margin-top: 15px;
+      font-size: 14px;
+      cursor: pointer;
+      border: none;
+    }
+    /* Ocultar tu app actual hasta que inicien sesión */
+    #app-content {
+      display: none;
+    }
+  </style>
+</head>
 </script>
-<title>Mis Cajas</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 :root{--bg:#F2F2F7;--card:#fff;--card2:#F9F9FB;--text:#1C1C1E;--muted:#8E8E93;--border:#E5E5EA;--accent:#007AFF;--red:#FF3B30;--green:#34C759;--orange:#FF9500;--topbar:#fff;--topbarborder:#E5E5EA;--input:#F2F2F7;--pill:#E5E5EA;--pilltext:#3C3C43}
