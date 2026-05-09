@@ -732,7 +732,21 @@ body{
 </style>
 </head>
 <body>
+<div id="login-screen">
+    <div class="login-container">
+      <img src="icon-192.png" alt="Logo BoxVision" style="width: 80px; height: 80px; margin-bottom: 15px; border-radius: 20px; object-fit: cover;">
+      <h1 id="login-title">Inicia Sesión en BoxVision</h1>
+      <p id="login-subtitle">Introduce tus datos para acceder a tus cajas</p>
+      
+      <input type="email" id="login-email" class="login-input" placeholder="Correo electrónico">
+      <input type="password" id="login-password" class="login-input" placeholder="Contraseña">
+      
+      <button id="btn-action" class="login-btn" onclick="manejarAuth()">Iniciar Sesión</button>
+      <button id="btn-toggle" class="login-btn-secondary" onclick="cambiarModo()">¿No tienes cuenta? Regístrate</button>
+    </div>
+  </div>
 
+  <div id="app-content">
 <div class="install-banner hidden" id="installBanner">
   <span>📲</span><span style="flex:1">Instala la app en tu celular para acceso rápido</span>
   <button id="installBtn">Instalar</button>
