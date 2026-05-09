@@ -7,7 +7,31 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Mis Cajas">
 <meta name="theme-color" content="#007AFF">
-<link id="pwaManifest" rel="manifest" href="./manifest.json">
+<link id="pwaManifest" rel="manifest">
+<script>
+(function(){
+  var i192="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAADACAYAAABS3GwHAAADGUlEQVR42u3cy1ErMRCGUanLKxMB0RGIvYRAiM4R2FuzpXgU+DmW/nMS4CL1Nz1Tt4reFrZ+PR4bsQ7b3pf8+d3AkxxEN/Qkx9ANPskhdINPcgjd4JMcQjf4JIdQhp9RXWP2yvCTHEE3+CS/EpXhJ3kblOEnOYIy/CRHUIaf5AjKUZGsrlUSjLgFyvCTHEEZfpIj8A2AbwBPf1K3gA2ADeDpT+oWsAGwATz9Sd0CNgA2gKc/qVvABsAGgOgAvP6Q+hpkA2ADgAAgUPf+jw0AAgABgABAACAAEABMazXKP3S/Gfugn97a+xm/88vgv7MAkoc+3ef7e9QYyvCTfJ/lsEi+13JIJN9vORyS77kcCsn3XQ6D5Hv3H2FEEwAC8PpD6v3bANgAIAAQAAgABAACAAGAAEAAIAAQAAgAhrdyBPcx+t/4sQFAACCAqxrhz+cx7/3bANgAIIBl7VxFpJ0ARGD4BSACwx8awH7z7TBEEDT8P9y/j2ARePKnByACw38Xq4EO7dkMGfq0AGwEYl+BQAAgABAACAAEAAIAAYAAQAAgABAACAAEAAIAAYAAQAAgABAACAABgABAACAAEAAIAAQAAgABgABAACAAEAAIAAQAAgABgABAACAAEAAIAAQAAgABgABAACAAEAAIAAQAAgABgABAACAAEAAIAAQAAgABgABAACAAEAAIAAQADxnA01t7dg25lr5/GwAbAATgNYjAey+HQfJ9l0Mh+Z7L4ZB8v+WQSL7Xclgk32dfvx6PIxzgftN2xsjQxwYAUa9AIAAQANwwgMO2d8dAosO2dxsAr0AgAEgNwHcAie//NgA2gCNAAF6DCHz9sQGwAX4rA2Z/+tsA2AB/FQKzPv1tAGyA/5YCsz39bQBsgFOLgVme/n9uABEw8/D/6xVIBMw6/L4B8A1wrZJgtKf/SRtABMw2/Ce/AomAmYb/rG8AETDL8LfW2kXD7M8qMurgn70BbANmGf6LAxABIw//xa9AXokYdfBvEoAQGGXwbxqAEHj0wb9LAELg0b8v7/4BKwaWHvpFAxAESw78Vx+IJvYSrYXIsQAAAABJRU5ErkJggg==";
+  var i512="data:image/png;base64,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";
+  var m={
+    name:"BoxVision",
+    short_name:"BoxVision",
+    description:"Gestor de cajas para mudanzas con QR e IA",
+    start_url:"./",
+    scope:"./",
+    display:"standalone",
+    orientation:"portrait",
+    background_color:"#000000",
+    theme_color:"#0A84FF",
+    lang:"es",
+    icons:[
+      {src:i192,sizes:"192x192",type:"image/png",purpose:"any maskable"},
+      {src:i512,sizes:"512x512",type:"image/png",purpose:"any maskable"}
+    ]
+  };
+  var blob=new Blob([JSON.stringify(m)],{type:"application/manifest+json"});
+  document.getElementById("pwaManifest").href=URL.createObjectURL(blob);
+})();
+</script>
 <title>Mis Cajas</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
@@ -1222,7 +1246,6 @@ function delItem(idx){
 function triggerScanObj(){
   const box=boxes.find(b=>b.id===currentBoxId);
   if(box&&box.sealed){showToast("🔒 Caja sellada","#FF9500");return;}
-  if(!localStorage.getItem("boxia_key")){showToast("⚠️ Conecta Box IA primero","#FF9500");return;}
   document.getElementById("scanObjInput").click();
 }
 
@@ -1231,115 +1254,132 @@ async function handleScanObj(e){
   const box=boxes.find(b=>b.id===currentBoxId); if(!box) return;
   const btn=document.getElementById("scanBtn");
   btn.textContent="⏳"; btn.disabled=true;
-  showToast("📷 Procesando imagen...","#FF9500");
 
-  // 1. Generar thumb PRIMERO (antes de cualquier fallo)
   let thumb=null, b64=null;
   try{
-    const enc=await resizeAndEncode(file);
+    const enc=await resizeAndEncode(file,900,96);
     thumb=enc.thumb; b64=enc.b64;
-  }catch(encErr){
+  }catch(err){
     showToast("❌ No se pudo leer la imagen","#FF3B30");
     btn.textContent="📷"; btn.disabled=false; return;
   }
 
-  // 2. Intentar identificar con Groq Vision
   const apiKey=localStorage.getItem("boxia_key");
-  let nombreIA=null;
+  let analisis=null;
+
   if(apiKey){
-    try{
-      showToast("🤖 Identificando objeto...","#5856D6");
-      const res=await fetch("https://api.groq.com/openai/v1/chat/completions",{
-        method:"POST",
-        headers:{"Content-Type":"application/json","Authorization":"Bearer "+apiKey},
-        body:JSON.stringify({
-          model:"llama-3.2-11b-vision-preview",
-          max_tokens:40,
-          messages:[{role:"user",content:[
-            {type:"image_url",image_url:{url:"data:image/jpeg;base64,"+b64}},
-            {type:"text",text:"What object is in this image? Reply ONLY with the object name in Spanish, max 3 words, no punctuation."}
-          ]}]
-        })
-      });
-      const data=await res.json();
-      if(res.ok && data.choices?.[0]?.message?.content){
-        nombreIA=data.choices[0].message.content.trim().replace(/[.!?¿¡*"]/g,"").slice(0,40);
-      } else {
-        console.warn("Groq vision error:",JSON.stringify(data?.error||data));
-      }
-    }catch(apiErr){
-      console.warn("Groq fetch error:",apiErr);
+    showScanLoadingModal(thumb);
+    const itemsExistentes=box.items.map(i=>i.text).slice(0,15).join(", ")||"ninguno";
+    const contexto=`Caja: "${box.name}"${box.number?" #"+box.number:""}. Ubicación: ${box.location||"sin asignar"}. Prioridad: ${box.priority==="red"?"urgente":box.priority==="green"?"baja":"normal"}. ${box.items.length>0?`Ya contiene ${box.items.length} objetos: ${itemsExistentes}.`:"Caja vacía."}`;
+
+    const systemPrompt=`Eres un experto en inventario y organización de mudanzas. Analiza la imagen con máximo detalle y responde SOLO con un objeto JSON válido, sin markdown, sin explicaciones.
+El JSON debe tener exactamente estos campos:
+{"nombre":"nombre específico del objeto en español (ej: Termo Stanley 1L)","categoria":"una de: Electrónica|Ropa|Cocina|Libros|Herramientas|Decoración|Documentos|Juguetes|Deportes|Muebles|Higiene|Alimentos|Otro","cantidad":1,"fragil":false,"descripcion":"descripción breve: color, estado, característica notable","tags":["etiqueta1","etiqueta2"],"prioridad_sugerida":"red|yellow|green","nota":"consejo de embalaje o null"}
+Contexto: ${contexto}`;
+
+    const modelos=["llama-3.2-90b-vision-preview","llama-3.2-11b-vision-preview"];
+    for(const modelo of modelos){
+      try{
+        const res=await fetch("https://api.groq.com/openai/v1/chat/completions",{
+          method:"POST",
+          headers:{"Content-Type":"application/json","Authorization":"Bearer "+apiKey},
+          body:JSON.stringify({model:modelo,max_tokens:300,temperature:0.1,
+            messages:[
+              {role:"system",content:systemPrompt},
+              {role:"user",content:[
+                {type:"image_url",image_url:{url:"data:image/jpeg;base64,"+b64}},
+                {type:"text",text:"Analiza este objeto y responde con el JSON."}
+              ]}
+            ]})
+        });
+        const data=await res.json();
+        if(res.ok && data.choices?.[0]?.message?.content){
+          const raw=data.choices[0].message.content.trim().replace(/```json|```/g,"").trim();
+          try{
+            const p=JSON.parse(raw);
+            if(p.nombre){
+              analisis={nombre:(p.nombre||"Objeto").slice(0,60),categoria:p.categoria||"Otro",
+                cantidad:parseInt(p.cantidad)||1,fragil:!!p.fragil,descripcion:p.descripcion||"",
+                tags:Array.isArray(p.tags)?p.tags.slice(0,3):[],prioridad:p.prioridad_sugerida||null,nota:p.nota||null};
+              break;
+            }
+          }catch{
+            const linea=raw.split("\n")[0].replace(/[{}"\[\]]/g,"").replace(/nombre:/i,"").trim();
+            if(linea.length>1&&linea.length<60){analisis={nombre:linea.slice(0,50),categoria:"Otro",cantidad:1,fragil:false,descripcion:"",tags:[],prioridad:null,nota:null};break;}
+          }
+        }
+      }catch(err){console.warn("Error",modelo,":",err.message);}
     }
+    document.getElementById("scanLoadingModal")?.remove();
   }
 
   btn.textContent="📷"; btn.disabled=false;
-
-  // 3. Si IA identificó → agregar directo; si no → pedir nombre con modal bonito
-  if(nombreIA){
-    box.items.push({text:nombreIA,done:false,thumb});
-    addHistory(box,"📷 Escaneado: "+nombreIA);
-    saveData();renderItems();renderProgress();renderHistory();generateQR(currentBoxId);
-    showToast("✅ "+nombreIA+" agregado","#34C759");
-  } else {
-    // Modal para escribir nombre manualmente conservando la foto
-    showScanNameModal(thumb, box);
-  }
+  showScanResultModal(thumb, box, analisis);
 }
 
-function showScanNameModal(thumb, box){
-  // Quitar modal anterior si existe
+function showScanLoadingModal(thumb){
+  document.getElementById("scanLoadingModal")?.remove();
+  const m=document.createElement("div");
+  m.id="scanLoadingModal";
+  m.style.cssText="position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:10002;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(12px)";
+  m.innerHTML=`<div style="background:var(--card,#1C1C1E);border-radius:22px;padding:28px 24px;width:min(300px,88vw);text-align:center;box-shadow:0 24px 80px rgba(0,0,0,.6)"><img src="${thumb}" style="width:100px;height:100px;border-radius:16px;object-fit:cover;margin-bottom:16px;box-shadow:0 8px 24px rgba(0,0,0,.4)"/><div style="font-size:17px;font-weight:700;color:var(--text,#fff);margin-bottom:8px">Analizando objeto...</div><div style="font-size:13px;color:var(--muted,#8E8E93);margin-bottom:20px">Box IA identifica nombre, categoría<br>y características del objeto</div><div style="display:flex;justify-content:center;gap:6px"><span style="width:8px;height:8px;border-radius:50%;background:#0A84FF;animation:pulse 1.2s 0s infinite"></span><span style="width:8px;height:8px;border-radius:50%;background:#5856D6;animation:pulse 1.2s .2s infinite"></span><span style="width:8px;height:8px;border-radius:50%;background:#FF9500;animation:pulse 1.2s .4s infinite"></span></div></div>`;
+  document.body.appendChild(m);
+}
+
+function showScanResultModal(thumb, box, a){
   document.getElementById("scanNameModal")?.remove();
   const m=document.createElement("div");
   m.id="scanNameModal";
-  m.style.cssText="position:fixed;inset:0;background:rgba(0,0,0,.65);z-index:10001;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(8px)";
-  m.innerHTML=`
-    <div style="background:var(--card,#1C1C1E);border-radius:20px;padding:24px 20px;width:min(310px,88vw);box-shadow:0 20px 60px rgba(0,0,0,.5);animation:toastSpring .35s cubic-bezier(.175,.885,.32,1.275) both">
-      <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px">
-        <img src="${thumb}" style="width:56px;height:56px;border-radius:10px;object-fit:cover;flex-shrink:0"/>
-        <div>
-          <div style="font-size:16px;font-weight:700;color:var(--text,#fff)">¿Cómo se llama?</div>
-          <div style="font-size:12px;color:var(--muted,#8E8E93)">No pude identificarlo automáticamente</div>
-        </div>
-      </div>
-      <input id="scanNameInput" type="text" placeholder="Ej: Cubo de Rubik" autofocus
-        style="width:100%;box-sizing:border-box;padding:12px 14px;border-radius:12px;border:1.5px solid var(--border,rgba(255,255,255,.12));background:var(--bg,#000);color:var(--text,#fff);font-size:16px;outline:none;margin-bottom:12px"
-        onkeydown="if(event.key==='Enter')confirmScanName()"/>
-      <div style="display:flex;gap:10px">
-        <button onclick="document.getElementById('scanNameModal').remove()" style="flex:1;padding:12px;border-radius:12px;border:none;background:var(--input,rgba(255,255,255,.1));color:var(--text,#fff);font-size:15px;font-weight:600;cursor:pointer">Cancelar</button>
-        <button onclick="confirmScanName()" style="flex:1;padding:12px;border-radius:12px;border:none;background:#FF9500;color:#fff;font-size:15px;font-weight:600;cursor:pointer">Guardar 📷</button>
-      </div>
-    </div>`;
+  m.style.cssText="position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:10001;display:flex;align-items:flex-end;justify-content:center;backdrop-filter:blur(12px)";
+  const cc={"Electrónica":"#0A84FF","Ropa":"#FF2D55","Cocina":"#FF9500","Libros":"#34C759","Herramientas":"#FF6B00","Decoración":"#AF52DE","Documentos":"#FFD60A","Juguetes":"#FF375F","Deportes":"#30D158","Muebles":"#636366","Higiene":"#5AC8FA","Alimentos":"#FFD60A"};
+  const catColor=cc[a?.categoria]||"#8E8E93";
+  const fragilBadge=a?.fragil?`<span style="background:rgba(255,59,48,.15);color:#FF3B30;border-radius:8px;padding:3px 8px;font-size:11px;font-weight:700">🫧 FRÁGIL</span>`:"";
+  const cantBadge=a?.cantidad>1?`<span style="background:rgba(10,132,255,.15);color:#0A84FF;border-radius:8px;padding:3px 8px;font-size:11px;font-weight:700">${a.cantidad}x</span>`:"";
+  const catBadge=a?.categoria?`<span style="background:${catColor}22;color:${catColor};border-radius:8px;padding:3px 10px;font-size:11px;font-weight:700">${a.categoria}</span>`:"";
+  const tags=a?.tags?.length?`<div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:10px">${a.tags.map(t=>`<span style="background:rgba(255,255,255,.08);color:var(--muted,#8E8E93);border-radius:7px;padding:3px 9px;font-size:12px">#${esc(t)}</span>`).join("")}</div>`:"";
+  const nota=a?.nota?`<div style="background:rgba(255,149,0,.1);border:1px solid rgba(255,149,0,.2);border-radius:10px;padding:10px 12px;margin-top:10px;font-size:12px;color:#FF9500">💡 ${esc(a.nota)}</div>`:"";
+  const desc=a?.descripcion?`<div style="font-size:12px;color:var(--muted,#8E8E93);margin-top:4px">${esc(a.descripcion)}</div>`:"";
+  const noIA=!a?`<div style="font-size:12px;color:#FF9500;margin-bottom:8px">📷 Foto guardada — escribe el nombre del objeto</div>`
+    :(a.nombre?`<div style="font-size:12px;color:#34C759;margin-bottom:4px">✦ Box IA identificó el objeto</div>`:"");  const fragilBtn=a?.fragil&&box.priority!=="red"?`<button onclick="sugerirPrioridadFragil()" style="width:100%;margin-top:8px;padding:11px;border-radius:13px;border:1px solid rgba(255,59,48,.3);background:rgba(255,59,48,.08);color:#FF3B30;font-size:13px;font-weight:600;cursor:pointer">🫧 Marcar caja como urgente (objeto frágil)</button>`:"";
+  m.innerHTML=`<div style="background:var(--card,#1C1C1E);border-radius:24px 24px 0 0;padding:20px 20px calc(20px + env(safe-area-inset-bottom));width:100%;max-width:480px;box-shadow:0 -8px 40px rgba(0,0,0,.5);animation:slideUp .3s cubic-bezier(.16,1,.3,1) both;max-height:90vh;overflow-y:auto"><div style="width:36px;height:4px;background:rgba(255,255,255,.2);border-radius:2px;margin:0 auto 16px"></div><div style="display:flex;gap:14px;margin-bottom:14px"><img src="${thumb}" style="width:80px;height:80px;border-radius:14px;object-fit:cover;flex-shrink:0;box-shadow:0 4px 16px rgba(0,0,0,.4)"/><div style="flex:1;min-width:0"><div style="display:flex;flex-wrap:wrap;gap:5px;margin-bottom:6px">${catBadge}${fragilBadge}${cantBadge}</div>${desc}${noIA}</div></div>${tags}${nota}<div style="margin-top:14px"><div style="font-size:12px;color:var(--muted,#8E8E93);margin-bottom:6px;font-weight:600">NOMBRE DEL OBJETO</div><input id="scanNameInput" type="text" value="${esc(a?.nombre||"")}" placeholder="Ej: Cubo de Rubik" style="width:100%;box-sizing:border-box;padding:13px 14px;border-radius:13px;border:1.5px solid ${a?.nombre?"#34C759":"rgba(255,255,255,.15)"};background:rgba(255,255,255,.05);color:var(--text,#fff);font-size:16px;outline:none;font-family:inherit" onkeydown="if(event.key==='Enter')confirmScanName()" oninput="this.style.borderColor=this.value?'#34C759':'rgba(255,255,255,.15)'"/>${a?.cantidad>1?`<div style="font-size:12px;color:var(--muted,#8E8E93);margin-top:6px">💡 Se detectaron ${a.cantidad} objetos — se guarda uno a la vez.</div>`:""}</div><div style="display:flex;gap:10px;margin-top:14px"><button onclick="document.getElementById('scanNameModal').remove()" style="flex:1;padding:14px;border-radius:14px;border:none;background:rgba(255,255,255,.08);color:var(--text,#fff);font-size:15px;font-weight:600;cursor:pointer">Cancelar</button><button onclick="confirmScanName()" style="flex:2;padding:14px;border-radius:14px;border:none;background:linear-gradient(135deg,#FF9500,#FF6B00);color:#fff;font-size:15px;font-weight:700;cursor:pointer">📷 Guardar en caja</button></div>${fragilBtn}</div>`;
   document.body.appendChild(m);
-  // Guardar thumb en el modal para usarlo al confirmar
-  m._thumb=thumb; m._box=box;
-  setTimeout(()=>document.getElementById("scanNameInput")?.focus(),200);
+  m._thumb=thumb; m._box=box; m._analisis=a;
+  m.onclick=ev=>{if(ev.target===m)m.remove();};
+  setTimeout(()=>{const inp=document.getElementById("scanNameInput");if(inp){inp.focus();if(a?.nombre)inp.select();}},300);
+}
+
+function sugerirPrioridadFragil(){
+  const m=document.getElementById("scanNameModal");if(!m)return;
+  m._box.priority="red";saveData();
+  showToast("🔴 Caja marcada como urgente","#FF3B30");
+  const btn=m.querySelector("button[onclick*='sugerirPrioridadFragil']");if(btn)btn.remove();
 }
 
 function confirmScanName(){
-  const m=document.getElementById("scanNameModal"); if(!m) return;
+  const m=document.getElementById("scanNameModal");if(!m)return;
   const nombre=document.getElementById("scanNameInput")?.value.trim();
   if(!nombre){showToast("✏️ Escribe un nombre","#FF9500");return;}
-  const box=m._box, thumb=m._thumb;
+  const box=m._box,thumb=m._thumb;
   box.items.push({text:nombre,done:false,thumb});
-  addHistory(box,"📷 Foto: "+nombre);
+  addHistory(box,"📷 Escaneado: "+nombre);
   saveData();renderItems();renderProgress();renderHistory();generateQR(currentBoxId);
   m.remove();
-  showToast("✅ "+nombre+" agregado con foto","#34C759");
+  showToast("✅ "+nombre+" guardado","#34C759");
 }
 
-function resizeAndEncode(file){
+function resizeAndEncode(file,maxPx=900,thumbPx=96){
   return new Promise((res,rej)=>{
     const img=new Image(),reader=new FileReader();
     reader.onload=ev=>{
       img.onload=()=>{
-        let w=img.width,h=img.height,max=512;
-        if(w>max||h>max){const r=Math.min(max/w,max/h);w=Math.round(w*r);h=Math.round(h*r);}
+        let w=img.width,h=img.height;
+        if(w>maxPx||h>maxPx){const r=Math.min(maxPx/w,maxPx/h);w=Math.round(w*r);h=Math.round(h*r);}
         const c=document.createElement("canvas");c.width=w;c.height=h;
         c.getContext("2d").drawImage(img,0,0,w,h);
-        const tc=document.createElement("canvas");tc.width=64;tc.height=64;
+        const tc=document.createElement("canvas");tc.width=thumbPx;tc.height=thumbPx;
         const s=Math.min(img.width,img.height),ox=(img.width-s)/2,oy=(img.height-s)/2;
-        tc.getContext("2d").drawImage(img,ox,oy,s,s,0,0,64,64);
-        res({b64:c.toDataURL("image/jpeg",0.8).split(",")[1],thumb:tc.toDataURL("image/jpeg",0.75)});
+        tc.getContext("2d").drawImage(img,ox,oy,s,s,0,0,thumbPx,thumbPx);
+        res({b64:c.toDataURL("image/jpeg",0.88).split(",")[1],thumb:tc.toDataURL("image/jpeg",0.82)});
       };img.onerror=rej;img.src=ev.target.result;
     };reader.onerror=rej;reader.readAsDataURL(file);
   });
@@ -2069,6 +2109,31 @@ function showAIChat(){
   setTimeout(()=>document.getElementById("aiInput").focus(), 300);
 }
 
+async function testGroqConnection(){
+  const apiKey=localStorage.getItem("boxia_key");
+  if(!apiKey){showToast("⚠️ Primero conecta Box IA con tu key","#FF9500");return;}
+  showToast("🔌 Probando conexión...","#5856D6");
+  try{
+    const res=await fetch("https://api.groq.com/openai/v1/models",{
+      headers:{"Authorization":"Bearer "+apiKey}
+    });
+    const data=await res.json();
+    if(res.ok){
+      const modelos=data.data?.map(m=>m.id).slice(0,3).join(", ")||"OK";
+      showToast("✅ Conexión exitosa — Groq responde","#34C759");
+      aiAddMsg("bot",`✅ <b>Conexión OK</b><br>Groq responde correctamente. Modelos disponibles: ${data.data?.length||0}.`);
+    } else {
+      const msg=data?.error?.message||res.status;
+      showToast("❌ Error: "+String(msg).slice(0,50),"#FF3B30");
+      aiAddMsg("bot",`❌ <b>Error de autenticación:</b> ${msg}<br><br>Tu key puede estar expirada. Toca ⚙️ Cambiar API key y genera una nueva en <b>console.groq.com</b>`);
+    }
+  }catch(err){
+    const msg=String(err.message||err);
+    showToast("❌ "+msg.slice(0,50),"#FF3B30");
+    aiAddMsg("bot",`🌐 <b>Error de red:</b> ${msg}<br><br>Posibles causas:<br>• Sin internet<br>• Tu red bloquea api.groq.com<br>• Intenta desde otra red o datos móviles`);
+  }
+}
+
 function saveApiKey(){
   const key = document.getElementById("aiKeyInput").value.trim();
   if(!key.startsWith("gsk_")){ showToast("❌ Key inválida — debe empezar con gsk_","#FF3B30"); return; }
@@ -2191,7 +2256,7 @@ async function aiAsk(q){
         "Authorization": "Bearer " + apiKey
       },
       body:JSON.stringify({
-        model:"llama-3.3-70b-versatile",
+        model:"llama3-70b-8192",
         max_tokens:1000,
         messages:[
           {role:"system", content:`Eres Box IA, asistente experto en mudanzas y organización de cajas. Responde siempre en español (Perú). Usa HTML básico para formato: <b>, <br>. Sin markdown con asteriscos. Sé conciso, útil y empático. Cuando busques objetos revisa todas las cajas. Puedes dar consejos de organización y anticipar necesidades del usuario.\n\n${buildContextSnapshot()}`},
@@ -2210,12 +2275,18 @@ async function aiAsk(q){
     aiAddMsg("bot", reply, true);
   } catch(e){
     aiHideTyping();
-    if(e.message === "no_key" || String(e).includes("401")){
+    const errMsg = String(e?.message||e);
+    console.error("Box IA error:", errMsg);
+    if(e.message === "no_key"){
+      aiAddMsg("bot","🔑 <b>Falta la API key.</b><br>Toca ⚙️ Cambiar API key.");
+    } else if(errMsg.includes("401")||errMsg.includes("invalid_api_key")||errMsg.includes("Unauthorized")){
       aiAddMsg("bot","🔑 <b>API key inválida o expirada.</b><br>Toca <i>⚙️ Cambiar API key</i> para actualizarla.");
+    } else if(errMsg.includes("Failed to fetch")||errMsg.includes("NetworkError")||errMsg.includes("CORS")){
+      aiAddMsg("bot","🌐 <b>Error de red.</b><br>Verifica tu conexión a internet e intenta de nuevo.");
+    } else if(errMsg.includes("429")||errMsg.includes("rate_limit")){
+      aiAddMsg("bot","⏳ <b>Demasiadas consultas.</b><br>Espera unos segundos e intenta de nuevo.");
     } else {
-      const fallback = aiRespondLocal(q);
-      aiHistory.push({role:"assistant", content:fallback});
-      aiAddMsg("bot", fallback, true);
+      aiAddMsg("bot",`⚠️ <b>Error:</b> ${errMsg.slice(0,120)}<br><br>Intenta de nuevo o verifica tu key en ⚙️`);
     }
   } finally {
     aiStreaming = false;
@@ -2260,8 +2331,18 @@ route();
 </script>
 
 <!-- SERVICE WORKER REGISTRATION -->
-
-
+<script>
+if('serviceWorker' in navigator){
+  var swCode=[
+    "const CACHE='bv-v2';",
+    "self.addEventListener('install',e=>{e.waitUntil(caches.open(CACHE).then(c=>c.add('/')).then(()=>self.skipWaiting()));});",
+    "self.addEventListener('activate',e=>{e.waitUntil(caches.keys().then(ks=>Promise.all(ks.filter(k=>k!==CACHE).map(k=>caches.delete(k)))).then(()=>self.clients.claim()));});",
+    "self.addEventListener('fetch',e=>{if(e.request.method!=='GET')return;e.respondWith(caches.match(e.request).then(c=>{return c||fetch(e.request).then(r=>{if(r&&r.status===200){var cl=r.clone();caches.open(CACHE).then(ca=>ca.put(e.request,cl));}return r;}).catch(()=>c);}));});"
+  ].join('\n');
+  var blob=new Blob([swCode],{type:'text/javascript'});
+  navigator.serviceWorker.register(URL.createObjectURL(blob)).catch(function(e){console.warn('SW:',e);});
+}
+</script>
 
 <!-- ═══ TUTORIAL ═══ -->
 <div id="tutorial">
@@ -2412,7 +2493,8 @@ route();
       <button class="ai-quick-btn" onclick="aiAsk('¿Qué cajas están en el cuarto principal?')">🛏 Por habitación</button>
       <button class="ai-quick-btn" onclick="aiAsk('¿Cuáles son las cajas más pesadas o con más objetos?')">⚖️ Análisis</button>
     </div>
-    <div style="display:flex;align-items:center;justify-content:flex-end;padding:2px 14px 0">
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:2px 14px 0">
+      <button onclick="testGroqConnection()" style="background:none;border:none;color:#0A84FF;font-size:11px;cursor:pointer;padding:4px">🔌 Probar conexión</button>
       <button onclick="clearApiKey()" style="background:none;border:none;color:var(--muted);font-size:11px;cursor:pointer;padding:4px">⚙️ Cambiar API key</button>
     </div>
     <div class="ai-input-row">
@@ -2421,14 +2503,6 @@ route();
     </div>
   </div>
 </div>
-<script>
-  if ('serviceWorker' in navigator) {
-    window.addEventListener('load', () => {
-      navigator.serviceWorker.register('./sw.js')
-        .then(reg => console.log('Service Worker registrado', reg))
-        .catch(err => console.error('Error al registrar', err));
-    });
-  }
-</script>
+
 </body>
 </html>
