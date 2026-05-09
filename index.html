@@ -1264,10 +1264,10 @@ async function handleScanObj(e){
     btn.textContent="📷"; btn.disabled=false; return;
   }
 
-  const apiKey=localStorage.getItem("boxia_key");
+  const connected=localStorage.getItem("boxia_connected");
   let analisis=null;
 
-  if(apiKey){
+  if(connected){
     showScanLoadingModal(thumb);
     const itemsExistentes=box.items.map(i=>i.text).slice(0,15).join(", ")||"ninguno";
     const contexto=`Caja: "${box.name}"${box.number?" #"+box.number:""}. Ubicación: ${box.location||"sin asignar"}. Prioridad: ${box.priority==="red"?"urgente":box.priority==="green"?"baja":"normal"}. ${box.items.length>0?`Ya contiene ${box.items.length} objetos: ${itemsExistentes}.`:"Caja vacía."}`;
@@ -1280,9 +1280,9 @@ Contexto: ${contexto}`;
     const modelos=["llama-3.2-90b-vision-preview","llama-3.2-11b-vision-preview"];
     for(const modelo of modelos){
       try{
-        const res=await fetch("https://api.groq.com/openai/v1/chat/completions",{
+        const res=await fetch("https://broken-flower-327b.theincognit40.workers.dev/chat",{
           method:"POST",
-          headers:{"Content-Type":"application/json","Authorization":"Bearer "+apiKey},
+          headers:{"Content-Type":"application/json"},
           body:JSON.stringify({model:modelo,max_tokens:300,temperature:0.1,
             messages:[
               {role:"system",content:systemPrompt},
@@ -2083,9 +2083,9 @@ function toggleAI(){
   if(aiOpen){
     panel.classList.add("open");
     fab.style.display = "none";
-    const key = localStorage.getItem("boxia_key");
+    const connected = localStorage.getItem("boxia_connected");
     const skipped = localStorage.getItem("boxia_skip");
-    if(!key && !skipped){
+    if(!connected && !skipped){
       document.getElementById("aiKeyScreen").style.display = "flex";
       document.getElementById("aiChatArea").style.display = "none";
     } else {
@@ -2100,9 +2100,9 @@ function toggleAI(){
 function showAIChat(){
   document.getElementById("aiKeyScreen").style.display = "none";
   document.getElementById("aiChatArea").style.display = "flex";
-  const key = localStorage.getItem("boxia_key");
+  const connected = localStorage.getItem("boxia_connected");
   const statusEl = document.getElementById("aiStatus");
-  if(statusEl) statusEl.textContent = key ? "Conectada ✦ Anthropic" : "Modo básico";
+  if(statusEl) statusEl.textContent = connected ? "Conectada ✦ Groq" : "Modo básico";
   if(!document.getElementById("aiMessages").children.length){
     aiAddMsg("bot", AI_INTRO);
   }
@@ -2114,9 +2114,7 @@ async function testGroqConnection(){
   if(!apiKey){showToast("⚠️ Primero conecta Box IA con tu key","#FF9500");return;}
   showToast("🔌 Probando conexión...","#5856D6");
   try{
-    const res=await fetch("https://api.groq.com/openai/v1/models",{
-      headers:{"Authorization":"Bearer "+apiKey}
-    });
+    const res=await fetch("https://broken-flower-327b.theincognit40.workers.dev/models");
     const data=await res.json();
     if(res.ok){
       const modelos=data.data?.map(m=>m.id).slice(0,3).join(", ")||"OK";
@@ -2135,9 +2133,9 @@ async function testGroqConnection(){
 }
 
 function saveApiKey(){
-  const key = document.getElementById("aiKeyInput").value.trim();
-  if(!key.startsWith("gsk_")){ showToast("❌ Key inválida — debe empezar con gsk_","#FF3B30"); return; }
-  localStorage.setItem("boxia_key", key);
+  // Con el Worker, no se necesita key en el browser
+  // Solo marcamos como conectado
+  localStorage.setItem("boxia_connected","1");
   localStorage.removeItem("boxia_skip");
   showToast("✅ Box IA conectada","#34C759");
   showAIChat();
@@ -2149,7 +2147,7 @@ function skipApiKey(){
 }
 
 function clearApiKey(){
-  localStorage.removeItem("boxia_key");
+  localStorage.removeItem("boxia_connected");
   localStorage.removeItem("boxia_skip");
   document.getElementById("aiKeyInput") && (document.getElementById("aiKeyInput").value="");
   document.getElementById("aiMessages").innerHTML="";
@@ -2245,16 +2243,10 @@ async function aiAsk(q){
   inp.disabled = true;
   aiShowTyping();
 
-  const apiKey = localStorage.getItem("boxia_key");
-
   try {
-    if(!apiKey) throw new Error("no_key");
-    const res = await fetch("https://api.groq.com/openai/v1/chat/completions",{
+    const res = await fetch("https://broken-flower-327b.theincognit40.workers.dev/chat",{
       method:"POST",
-      headers:{
-        "Content-Type":"application/json",
-        "Authorization": "Bearer " + apiKey
-      },
+      headers:{"Content-Type":"application/json"},
       body:JSON.stringify({
         model:"llama3-70b-8192",
         max_tokens:1000,
@@ -2278,7 +2270,7 @@ async function aiAsk(q){
     const errMsg = String(e?.message||e);
     console.error("Box IA error:", errMsg);
     if(e.message === "no_key"){
-      aiAddMsg("bot","🔑 <b>Falta la API key.</b><br>Toca ⚙️ Cambiar API key.");
+      aiAddMsg("bot","⚙️ <b>Worker no configurado.</b><br>Revisa la URL del Worker en la app.");
     } else if(errMsg.includes("401")||errMsg.includes("invalid_api_key")||errMsg.includes("Unauthorized")){
       aiAddMsg("bot","🔑 <b>API key inválida o expirada.</b><br>Toca <i>⚙️ Cambiar API key</i> para actualizarla.");
     } else if(errMsg.includes("Failed to fetch")||errMsg.includes("NetworkError")||errMsg.includes("CORS")){
@@ -2476,11 +2468,14 @@ if('serviceWorker' in navigator){
   <div id="aiKeyScreen" style="display:none;flex:1;padding:24px 20px;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:16px">
     <div style="font-size:48px">🔑</div>
     <div style="font-size:17px;font-weight:700;color:var(--text)">Conecta Box IA</div>
-    <div style="font-size:13px;color:var(--muted);line-height:1.5">Usa <b>Groq</b> — IA gratuita y ultrarrápida. Obtén tu API key gratis sin tarjeta de crédito.</div>
-    <a href="https://console.groq.com/keys" target="_blank" style="font-size:13px;color:#0A84FF;text-decoration:none">→ Obtener API key gratis en console.groq.com</a>
-    <input id="aiKeyInput" type="password" placeholder="gsk_..." style="width:100%;box-sizing:border-box;padding:13px 14px;border-radius:12px;border:1.5px solid var(--border);background:var(--input);color:var(--text);font-size:14px;font-family:monospace;outline:none"/>
-    <button onclick="saveApiKey()" style="width:100%;padding:14px;border-radius:14px;border:none;background:linear-gradient(135deg,#0A84FF,#5856D6);color:#fff;font-size:16px;font-weight:700;cursor:pointer">Conectar Box IA</button>
-    <button onclick="skipApiKey()" style="background:none;border:none;color:var(--muted);font-size:13px;cursor:pointer;padding:4px">Usar modo básico (sin IA real)</button>
+    <div style="font-size:13px;color:var(--muted);line-height:1.6">Powered by <b>Groq</b> vía Cloudflare Workers.<br>Gratis, rápido, sin exponer tu key.</div>
+    <div style="background:rgba(10,132,255,.1);border:1px solid rgba(10,132,255,.2);border-radius:12px;padding:12px 14px;font-size:12px;color:#0A84FF;line-height:1.6;text-align:left;width:100%;box-sizing:border-box">
+      ✅ Tu key de Groq está guardada en el Worker<br>
+      ✅ Esta app no necesita la key directamente<br>
+      ✅ Funciona en cualquier red
+    </div>
+    <button onclick="saveApiKey()" style="width:100%;padding:14px;border-radius:14px;border:none;background:linear-gradient(135deg,#0A84FF,#5856D6);color:#fff;font-size:16px;font-weight:700;cursor:pointer">🚀 Iniciar Box IA</button>
+    <button onclick="skipApiKey()" style="background:none;border:none;color:var(--muted);font-size:13px;cursor:pointer;padding:4px">Usar modo básico</button>
   </div>
 
   <div id="aiChatArea" style="display:none;flex:1;flex-direction:column;overflow:hidden">
