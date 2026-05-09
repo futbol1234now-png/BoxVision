@@ -2437,23 +2437,24 @@ function updateFABVisibility(){
 
 window.addEventListener("hashchange",()=>{route();updateFABVisibility();});
 // Apply gradient immediately so it shows on first load
-document.addEventListener("DOMContentLoaded",applySplashGradient);
-route();
+document.addEventListener("DOMContentLoaded", applySplashGradient);
+
 </script>
 
-<!-- SERVICE WORKER REGISTRATION -->
 <script>
-if('serviceWorker' in navigator){
+if ('serviceWorker' in navigator) {
   var swCode=[
     "const CACHE='bv-v2';",
     "self.addEventListener('install',e=>{e.waitUntil(caches.open(CACHE).then(c=>c.add('/')).then(()=>self.skipWaiting()));});",
-    "self.addEventListener('activate',e=>{e.waitUntil(caches.keys().then(ks=>Promise.all(ks.filter(k=>k!==CACHE).map(k=>caches.delete(k)))).then(()=>self.clients.claim()));});",
-    "self.addEventListener('fetch',e=>{if(e.request.method!=='GET')return;e.respondWith(caches.match(e.request).then(c=>{return c||fetch(e.request).then(r=>{if(r&&r.status===200){var cl=r.clone();caches.open(CACHE).then(ca=>ca.put(e.request,cl));}return r;}).catch(()=>c);}));});"
+    "self.addEventListener('activate',e=>{e.waitUntil(caches.keys().then(ks=>Promise.all(ks.filter(k=>k!==CACHE).map(k=>caches.delete(k)))));});",
+    "self.addEventListener('fetch',e=>{if(e.request.method!=='GET')return;e.respondWith(caches.match(e.request).then(c=>{return c||fetch(e.request);}));});"
   ].join('\n');
   var blob=new Blob([swCode],{type:'text/javascript'});
   navigator.serviceWorker.register(URL.createObjectURL(blob)).catch(function(e){console.warn('SW:',e);});
 }
-// --- SISTEMA DE AUTENTICACIÓN FIREBASE ---
+</script>
+
+<script>
 let esRegistro = false;
 
 // Cambia la pantalla entre Iniciar Sesión y Registrarse
@@ -2478,9 +2479,7 @@ function cambiarModo() {
   }
 }
 
-// Maneja el clic en el botón principal (Login o Registro)
-function manejarAuth() {
-  // Iniciar sesión con Google
+// Iniciar sesión con Google
 function loginConGoogle() {
   const provider = new firebase.auth.GoogleAuthProvider();
   auth.signInWithPopup(provider)
@@ -2491,6 +2490,9 @@ function loginConGoogle() {
       alert("Error al conectar con Google: " + error.message);
     });
 }
+
+// Maneja el clic en el botón principal (Login o Registro manual)
+function manejarAuth() {
   const email = document.getElementById('login-email').value.trim();
   const password = document.getElementById('login-password').value;
 
@@ -2500,7 +2502,6 @@ function loginConGoogle() {
   }
 
   if (esRegistro) {
-    // Registrar nuevo usuario
     auth.createUserWithEmailAndPassword(email, password)
       .then((userCredential) => {
         alert("¡Cuenta creada con éxito!");
@@ -2509,7 +2510,6 @@ function loginConGoogle() {
         alert("Error al registrarse: " + error.message);
       });
   } else {
-    // Iniciar sesión
     auth.signInWithEmailAndPassword(email, password)
       .catch((error) => {
         alert("Error al iniciar sesión: " + error.message);
@@ -2523,16 +2523,14 @@ auth.onAuthStateChanged((user) => {
   const appContent = document.getElementById('app-content');
 
   if (user) {
-    // Si está conectado: ocultamos el login y mostramos tu app
     loginScreen.style.display = 'none';
     appContent.style.display = 'block';
     console.log("Usuario conectado:", user.email);
   } else {
-    // Si no está conectado: mostramos el login y ocultamos tu app
     loginScreen.style.display = 'flex';
     appContent.style.display = 'none';
   }
-});  
+});
 </script>
 
 <!-- ═══ TUTORIAL ═══ -->
