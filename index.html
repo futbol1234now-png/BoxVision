@@ -814,8 +814,8 @@ let currentUser=null;
       <div class="settings-row"><div class="settings-label">Total objetos</div><span id="setTotalObj" style="color:var(--muted)">0</span></div>
     </div>
     <div class="settings-sec">
-  <div class="settings-row" style="cursor:pointer" onclick="localStorage.removeItem('cb-tutorial-done');document.getElementById('tutorial').classList.add('active');tutStep=0;goTut(0);setTimeout(initTutSwipe,100);">
-    <div><div class="settings-label">Ver tutorial de nuevo</div><div class="settings-sub">Las 4 pantallas de introducción</div></div>
+  <div class="settings-row" style="cursor:pointer" onclick="const uid=currentUser?.uid||'guest';localStorage.removeItem('cb-tutorial-done-'+uid);localStorage.removeItem('cb-tutorial-done');document.getElementById('tutorial').classList.add('active');tutStep=0;goTut(0);setTimeout(initTutSwipe,100);">
+    <div><div class="settings-label">Ver tutorial de nuevo</div><div class="settings-sub">Las 5 pantallas de introducción</div></div>
     <span style="color:var(--accent)">›</span>
   </div>
 </div>
@@ -1778,12 +1778,13 @@ function speakItems(){
 
 // ═══ TUTORIAL ═══
 let tutStep=0;
-const TUT_TOTAL=4;
+const TUT_TOTAL=5;
 
 function initTutorial(){
-  const seen=localStorage.getItem('cb-tutorial-done');
+  const uid=currentUser?.uid||"guest";
+  const seen=localStorage.getItem("cb-tutorial-done-"+uid)||localStorage.getItem("cb-tutorial-done");
   if(!seen){
-    document.getElementById('tutorial').classList.add('active');
+    document.getElementById("tutorial").classList.add("active");
     tutStep=0;
     setTimeout(initTutSwipe,100);
   }
@@ -1812,6 +1813,10 @@ function goTut(step){
     else if(i===step) s.classList.add('active');
     else s.classList.add('next');
   });
+  // Actualizar dots
+  document.querySelectorAll('.tut-dot').forEach((d,i)=>{
+    d.classList.toggle('active', i%TUT_TOTAL===step);
+  });
   tutStep=step;
 }
 
@@ -1821,11 +1826,12 @@ function nextTut(){
 }
 
 function finishTut(){
-  localStorage.setItem('cb-tutorial-done','1');
-  const tut=document.getElementById('tutorial');
-  tut.style.opacity='0';
-  tut.style.transition='opacity .3s';
-  setTimeout(()=>{tut.classList.remove('active');tut.style.opacity='';tut.style.transition='';},300);
+  const uid=currentUser?.uid||"guest";
+  localStorage.setItem("cb-tutorial-done-"+uid,"1");
+  const tut=document.getElementById("tutorial");
+  tut.style.opacity="0";
+  tut.style.transition="opacity .3s";
+  setTimeout(()=>{tut.classList.remove("active");tut.style.opacity="";tut.style.transition="";},300);
 }
 
 
@@ -2410,85 +2416,107 @@ if('serviceWorker' in navigator){
 <div id="tutorial">
   <div class="tut-slides" id="tutSlides">
 
-    <!-- Slide 0 -->
+    <!-- Slide 0: Bienvenida -->
     <div class="tut-slide active" id="ts0">
-      <div class="tut-bg" style="background:linear-gradient(135deg,#007AFF 0%,#5856D6 100%)"></div>
+      <div class="tut-bg" style="background:linear-gradient(160deg,#0A0A0F 0%,#0D1B3E 50%,#1a0533 100%)"></div>
       <div class="tut-content">
         <span class="tut-emoji">📦</span>
-        <div class="tut-title">Bienvenido a<br>Mis Cajas</div>
-        <div class="tut-desc">La app para saber exactamente qué hay en cada caja, escaneando un código QR.</div>
+        <div class="tut-title">Bienvenido a<br><span style="background:linear-gradient(135deg,#0A84FF,#5856D6);-webkit-background-clip:text;-webkit-text-fill-color:transparent">BoxVision</span></div>
+        <div class="tut-desc">Tu asistente inteligente para organizar mudanzas. Con IA, QR y mucho más.</div>
         <div class="tut-demo">
-          <div class="tut-demo-row"><span class="tut-demo-icon">📦</span><div><div class="tut-demo-text">Crea una caja</div><div class="tut-demo-sub">Dale nombre, color y ubicación</div></div></div>
-          <div class="tut-demo-row"><span class="tut-demo-icon">✍️</span><div><div class="tut-demo-text">Agrega los objetos</div><div class="tut-demo-sub">Escribe o dicta lo que hay adentro</div></div></div>
-          <div class="tut-demo-row"><span class="tut-demo-icon">📲</span><div><div class="tut-demo-text">Escanea el QR</div><div class="tut-demo-sub">Ver el contenido desde cualquier celular</div></div></div>
+          <div class="tut-demo-row"><span class="tut-demo-icon">📦</span><div><div class="tut-demo-text">Crea cajas con QR</div><div class="tut-demo-sub">Escanea y ve el contenido al instante</div></div></div>
+          <div class="tut-demo-row"><span class="tut-demo-icon">📷</span><div><div class="tut-demo-text">Fotografía tus objetos</div><div class="tut-demo-sub">La IA los identifica automáticamente</div></div></div>
+          <div class="tut-demo-row"><span class="tut-demo-icon">🤖</span><div><div class="tut-demo-text">Box IA te ayuda</div><div class="tut-demo-sub">Busca objetos, da consejos, analiza todo</div></div></div>
+          <div class="tut-demo-row"><span class="tut-demo-icon">☁️</span><div><div class="tut-demo-text">Todo en tu cuenta</div><div class="tut-demo-sub">Accede desde cualquier dispositivo</div></div></div>
         </div>
       </div>
       <div class="tut-bottom">
-        <div class="tut-dots"><div class="tut-dot active" onclick="goTut(0)"></div><div class="tut-dot" onclick="goTut(1)"></div><div class="tut-dot" onclick="goTut(2)"></div><div class="tut-dot" onclick="goTut(3)"></div></div>
+        <div class="tut-dots"><div class="tut-dot active" onclick="goTut(0)"></div><div class="tut-dot" onclick="goTut(1)"></div><div class="tut-dot" onclick="goTut(2)"></div><div class="tut-dot" onclick="goTut(3)"></div><div class="tut-dot" onclick="goTut(4)"></div></div>
         <button class="tut-btn" onclick="nextTut()">Empezar →</button>
         <button class="tut-skip" onclick="finishTut()">Saltar tutorial</button>
       </div>
     </div>
 
-    <!-- Slide 1 -->
+    <!-- Slide 1: Crear cajas -->
     <div class="tut-slide next" id="ts1">
-      <div class="tut-bg" style="background:linear-gradient(135deg,#FF9500 0%,#FF3B30 100%)"></div>
+      <div class="tut-bg" style="background:linear-gradient(135deg,#FF9500 0%,#FF6B00 100%)"></div>
       <div class="tut-content">
         <span class="tut-emoji">➕</span>
         <div class="tut-title">Crea tu<br>primera caja</div>
-        <div class="tut-desc">Toca el botón <strong style="color:#fff">+ Nueva caja</strong> y ponle un nombre claro para identificarla fácil.</div>
+        <div class="tut-desc">Toca el botón <strong style="color:#fff">+</strong> arriba a la derecha para crear una nueva caja.</div>
         <div class="tut-demo">
-          <div class="tut-demo-row"><span class="tut-demo-icon">🎨</span><div><div class="tut-demo-text">Elige un color</div><div class="tut-demo-sub">Cada color es un tipo de caja diferente</div></div></div>
-          <div class="tut-demo-row"><span class="tut-demo-icon">🔢</span><div><div class="tut-demo-text">Ponle un número</div><div class="tut-demo-sub">Ej: "1", "A3" para identificarla físicamente</div></div></div>
-          <div class="tut-demo-row"><span class="tut-demo-icon">📍</span><div><div class="tut-demo-text">Agrega la ubicación</div><div class="tut-demo-sub">Cuarto, garaje, depósito...</div></div></div>
-          <div class="tut-demo-row"><span class="tut-demo-icon">🔴</span><div><div class="tut-demo-text">Marca la prioridad</div><div class="tut-demo-sub">Urgente, normal o cuando pueda</div></div></div>
+          <div class="tut-demo-row"><span class="tut-demo-icon">🎨</span><div><div class="tut-demo-text">Elige un color</div><div class="tut-demo-sub">Para identificarla visualmente</div></div></div>
+          <div class="tut-demo-row"><span class="tut-demo-icon">📍</span><div><div class="tut-demo-text">Agrega ubicación</div><div class="tut-demo-sub">Cuarto, garaje, depósito...</div></div></div>
+          <div class="tut-demo-row"><span class="tut-demo-icon">🔴</span><div><div class="tut-demo-text">Prioridad</div><div class="tut-demo-sub">Urgente, normal o cuando pueda</div></div></div>
+          <div class="tut-demo-row"><span class="tut-demo-icon">🔐</span><div><div class="tut-demo-text">Contraseña opcional</div><div class="tut-demo-sub">Protege cajas con contenido privado</div></div></div>
         </div>
       </div>
       <div class="tut-bottom">
-        <div class="tut-dots"><div class="tut-dot" onclick="goTut(0)"></div><div class="tut-dot active" onclick="goTut(1)"></div><div class="tut-dot" onclick="goTut(2)"></div><div class="tut-dot" onclick="goTut(3)"></div></div>
+        <div class="tut-dots"><div class="tut-dot" onclick="goTut(0)"></div><div class="tut-dot active" onclick="goTut(1)"></div><div class="tut-dot" onclick="goTut(2)"></div><div class="tut-dot" onclick="goTut(3)"></div><div class="tut-dot" onclick="goTut(4)"></div></div>
         <button class="tut-btn" onclick="nextTut()">Siguiente →</button>
         <button class="tut-skip" onclick="finishTut()">Saltar</button>
       </div>
     </div>
 
-    <!-- Slide 2 -->
+    <!-- Slide 2: Agregar objetos con IA -->
     <div class="tut-slide next" id="ts2">
-      <div class="tut-bg" style="background:linear-gradient(135deg,#34C759 0%,#00C7BE 100%)"></div>
-      <div class="tut-content">
-        <span class="tut-emoji">✍️</span>
-        <div class="tut-title">Agrega lo que<br>hay adentro</div>
-        <div class="tut-desc">Escribe cada objeto en la caja. También puedes <strong style="color:#fff">dictar por voz</strong> si tienes las manos ocupadas.</div>
-        <div class="tut-demo">
-          <div class="tut-demo-row"><span class="tut-demo-icon">✅</span><div><div class="tut-demo-text">Marca lo que sacas</div><div class="tut-demo-sub">Toca el círculo para tachar un objeto</div></div></div>
-          <div class="tut-demo-row"><span class="tut-demo-icon">📊</span><div><div class="tut-demo-text">Ve el progreso</div><div class="tut-demo-sub">La barra muestra cuánto queda por sacar</div></div></div>
-          <div class="tut-demo-row"><span class="tut-demo-icon">📝</span><div><div class="tut-demo-text">Agrega notas</div><div class="tut-demo-sub">"Frágil", "abrir primero", lo que quieras</div></div></div>
-          <div class="tut-demo-row"><span class="tut-demo-icon">📸</span><div><div class="tut-demo-text">Sácale una foto</div><div class="tut-demo-sub">Se ve al escanear el QR</div></div></div>
-        </div>
-      </div>
-      <div class="tut-bottom">
-        <div class="tut-dots"><div class="tut-dot" onclick="goTut(0)"></div><div class="tut-dot" onclick="goTut(1)"></div><div class="tut-dot active" onclick="goTut(2)"></div><div class="tut-dot" onclick="goTut(3)"></div></div>
-        <button class="tut-btn" onclick="nextTut()">Siguiente →</button>
-        <button class="tut-skip" onclick="finishTut()">Saltar</button>
-      </div>
-    </div>
-
-    <!-- Slide 3 -->
-    <div class="tut-slide next" id="ts3">
       <div class="tut-bg" style="background:linear-gradient(135deg,#5856D6 0%,#AF52DE 100%)"></div>
       <div class="tut-content">
-        <span class="tut-emoji">📲</span>
-        <div class="tut-title">Escanea y<br>listo</div>
-        <div class="tut-desc">Imprime o muestra el QR en la caja física. Cualquier celular lo escanea y ve el contenido al instante.</div>
+        <span class="tut-emoji">📷</span>
+        <div class="tut-title">Agrega objetos<br>con IA</div>
+        <div class="tut-desc">Toca <strong style="color:#fff">📷</strong> para fotografiar un objeto — Box IA lo identifica automáticamente.</div>
         <div class="tut-demo">
-          <div class="tut-demo-row"><span class="tut-demo-icon">🖨️</span><div><div class="tut-demo-text">Imprime el QR</div><div class="tut-demo-sub">Captura de pantalla o Ctrl+P y pégalo en la caja</div></div></div>
-          <div class="tut-demo-row"><span class="tut-demo-icon">📡</span><div><div class="tut-demo-text">Funciona sin internet</div><div class="tut-demo-sub">Instala la app y úsala sin conexión</div></div></div>
-          <div class="tut-demo-row"><span class="tut-demo-icon">🔦</span><div><div class="tut-demo-text">Linterna integrada</div><div class="tut-demo-sub">Al escanear puedes encender la linterna</div></div></div>
-          <div class="tut-demo-row"><span class="tut-demo-icon">🔊</span><div><div class="tut-demo-text">Lectura en voz alta</div><div class="tut-demo-sub">Te lee el contenido de la caja hablando</div></div></div>
+          <div class="tut-demo-row"><span class="tut-demo-icon">🎯</span><div><div class="tut-demo-text">Nombre automático</div><div class="tut-demo-sub">La IA detecta qué objeto es</div></div></div>
+          <div class="tut-demo-row"><span class="tut-demo-icon">🫧</span><div><div class="tut-demo-text">Detecta si es frágil</div><div class="tut-demo-sub">Te avisa para protegerlo bien</div></div></div>
+          <div class="tut-demo-row"><span class="tut-demo-icon">🎤</span><div><div class="tut-demo-text">O dicta por voz</div><div class="tut-demo-sub">Toca 🎤 y habla</div></div></div>
+          <div class="tut-demo-row"><span class="tut-demo-icon">✍️</span><div><div class="tut-demo-text">O escribe normal</div><div class="tut-demo-sub">Como siempre, también funciona</div></div></div>
         </div>
       </div>
       <div class="tut-bottom">
-        <div class="tut-dots"><div class="tut-dot" onclick="goTut(0)"></div><div class="tut-dot" onclick="goTut(1)"></div><div class="tut-dot" onclick="goTut(2)"></div><div class="tut-dot active" onclick="goTut(3)"></div></div>
-        <button class="tut-btn" onclick="finishTut()">¡Comenzar ahora! 🚀</button>
+        <div class="tut-dots"><div class="tut-dot" onclick="goTut(0)"></div><div class="tut-dot" onclick="goTut(1)"></div><div class="tut-dot active" onclick="goTut(2)"></div><div class="tut-dot" onclick="goTut(3)"></div><div class="tut-dot" onclick="goTut(4)"></div></div>
+        <button class="tut-btn" onclick="nextTut()">Siguiente →</button>
+        <button class="tut-skip" onclick="finishTut()">Saltar</button>
+      </div>
+    </div>
+
+    <!-- Slide 3: QR y escaneo -->
+    <div class="tut-slide next" id="ts3">
+      <div class="tut-bg" style="background:linear-gradient(135deg,#34C759 0%,#00C7BE 100%)"></div>
+      <div class="tut-content">
+        <span class="tut-emoji">📲</span>
+        <div class="tut-title">Escanea el QR<br>en la caja</div>
+        <div class="tut-desc">Imprime o muestra el QR en tu celular para ver el contenido de cualquier caja al instante.</div>
+        <div class="tut-demo">
+          <div class="tut-demo-row"><span class="tut-demo-icon">🔦</span><div><div class="tut-demo-text">Linterna incluida</div><div class="tut-demo-sub">Para escanear en lugares oscuros</div></div></div>
+          <div class="tut-demo-row"><span class="tut-demo-icon">🔊</span><div><div class="tut-demo-text">Lectura en voz alta</div><div class="tut-demo-sub">Escucha el contenido sin mirar</div></div></div>
+          <div class="tut-demo-row"><span class="tut-demo-icon">🔒</span><div><div class="tut-demo-text">Cajas selladas</div><div class="tut-demo-sub">Sella cuando termines de empacar</div></div></div>
+          <div class="tut-demo-row"><span class="tut-demo-icon">💬</span><div><div class="tut-demo-text">Comparte por WhatsApp</div><div class="tut-demo-sub">Envía el contenido a quien necesites</div></div></div>
+        </div>
+      </div>
+      <div class="tut-bottom">
+        <div class="tut-dots"><div class="tut-dot" onclick="goTut(0)"></div><div class="tut-dot" onclick="goTut(1)"></div><div class="tut-dot" onclick="goTut(2)"></div><div class="tut-dot active" onclick="goTut(3)"></div><div class="tut-dot" onclick="goTut(4)"></div></div>
+        <button class="tut-btn" onclick="nextTut()">Siguiente →</button>
+        <button class="tut-skip" onclick="finishTut()">Saltar</button>
+      </div>
+    </div>
+
+    <!-- Slide 4: Box IA -->
+    <div class="tut-slide next" id="ts4">
+      <div class="tut-bg" style="background:linear-gradient(135deg,#0A84FF 0%,#5856D6 100%)"></div>
+      <div class="tut-content">
+        <span class="tut-emoji">🤖</span>
+        <div class="tut-title">Box IA:<br>tu asistente</div>
+        <div class="tut-desc">Toca el botón <strong style="color:#fff">🤖</strong> para hablar con Box IA — te ayuda con todo.</div>
+        <div class="tut-demo">
+          <div class="tut-demo-row"><span class="tut-demo-icon">🔍</span><div><div class="tut-demo-text">Busca cualquier objeto</div><div class="tut-demo-sub">"¿Dónde están mis zapatos?"</div></div></div>
+          <div class="tut-demo-row"><span class="tut-demo-icon">📊</span><div><div class="tut-demo-text">Analiza tu progreso</div><div class="tut-demo-sub">"¿Cuánto me falta por desempacar?"</div></div></div>
+          <div class="tut-demo-row"><span class="tut-demo-icon">💡</span><div><div class="tut-demo-text">Da consejos</div><div class="tut-demo-sub">Organización, prioridades, embalaje</div></div></div>
+          <div class="tut-demo-row"><span class="tut-demo-icon">☁️</span><div><div class="tut-demo-text">Todo sincronizado</div><div class="tut-demo-sub">Tus cajas guardadas en tu cuenta Google</div></div></div>
+        </div>
+      </div>
+      <div class="tut-bottom">
+        <div class="tut-dots"><div class="tut-dot" onclick="goTut(0)"></div><div class="tut-dot" onclick="goTut(1)"></div><div class="tut-dot" onclick="goTut(2)"></div><div class="tut-dot" onclick="goTut(3)"></div><div class="tut-dot active" onclick="goTut(4)"></div></div>
+        <button class="tut-btn" onclick="finishTut()">¡Empezar ahora! 🚀</button>
       </div>
     </div>
 
