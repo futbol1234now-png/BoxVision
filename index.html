@@ -65,9 +65,9 @@ input,button,textarea,select{font-family:inherit}
 @keyframes popIn{from{transform:scale(0) rotate(-10deg);opacity:0}to{transform:scale(1);opacity:1}}
 @keyframes slideUp{from{transform:translateY(10px);opacity:0}to{transform:translateY(0);opacity:1}}
 .topbar{background:var(--topbar);border-bottom:0.5px solid var(--topbarborder);padding:12px 16px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:200;gap:8px;backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px)}
-.topbar-title{font-size:17px;font-weight:700;letter-spacing:-.4px}
+.topbar-title{font-size:20px;font-weight:800;letter-spacing:-.5px}
 .topbar-sub{font-size:12px;color:var(--muted);margin-top:1px}
-.topbar-actions{display:flex;gap:6px}
+.topbar-actions{display:flex;gap:6px;align-items:center}
 .tbtn{background:var(--input);border:none;border-radius:10px;width:34px;height:34px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:15px;color:var(--text)}
 .tbtn-accent{background:var(--accent);color:#fff;font-size:22px;font-weight:300}
 #splash{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;padding:40px 24px;text-align:center;transition:background 1s;background:linear-gradient(160deg,#17171f 0%,#1a1a2e 60%,#17171f 100%)}
@@ -708,7 +708,7 @@ const db=firebase.firestore();
 let currentUser=null;
 </script>
 </head>
-<body>
+<body data-dark="1">
 
 <!-- ═══ LOGIN SCREEN ═══ -->
 <div id="loginScreen" style="position:fixed;inset:0;background:linear-gradient(160deg,#17171f 0%,#1a1a2a 50%,#17171f 100%);z-index:99999;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:32px 24px;text-align:center">
@@ -756,13 +756,18 @@ let currentUser=null;
 
 <div id="mainScreen" class="hidden">
   <div class="topbar">
-    <div><div class="topbar-title">📦 BoxVision</div><div class="topbar-sub" id="mainSub"></div></div>
+    <div style="display:flex;align-items:center;gap:10px">
+      <div>
+        <div class="topbar-title" style="font-size:20px;font-weight:800;letter-spacing:-.5px">BoxVision</div>
+        <div class="topbar-sub" id="mainSub"></div>
+      </div>
+    </div>
     <div class="topbar-actions">
-      <button class="tbtn" onclick="toggleDark()" id="darkBtn">🌙</button>
+      <button class="tbtn" onclick="toggleDark()" id="darkBtn" title="Modo oscuro">🌙</button>
       <button class="tbtn" onclick="toggleSortMenu()" id="sortBtn" title="Ordenar">↕️</button>
-      <button class="tbtn" onclick="goSplash()">🏠</button>
-      <button class="tbtn tbtn-accent" onclick="openForm()">+</button>
-      <img id="userAvatar" src="" onclick="showUserMenu()" style="width:32px;height:32px;border-radius:50%;object-fit:cover;cursor:pointer;display:none;border:2px solid rgba(255,255,255,.3)"/>
+      <button class="tbtn" onclick="goSettings()" title="Ajustes">⚙️</button>
+      <button class="tbtn tbtn-accent" onclick="openForm()" title="Nueva caja" style="font-size:24px;font-weight:200;width:38px;height:38px">+</button>
+      <img id="userAvatar" src="" onclick="showUserMenu()" style="width:36px;height:36px;border-radius:50%;object-fit:cover;cursor:pointer;display:none;border:2px solid rgba(255,255,255,.2)"/>
     </div>
   </div>
   <div id="sortMenu" class="hidden" style="position:sticky;top:57px;z-index:150;background:var(--card);border-bottom:0.5px solid var(--border);padding:10px 14px;display:flex;gap:7px;overflow-x:auto;scrollbar-width:none">
@@ -783,9 +788,7 @@ let currentUser=null;
   </div>
   <div class="filter-row" id="filterRow"></div>
   <div class="main-scroll" id="mainScroll"></div>
-</div>
-
-<div id="detailScreen" class="hidden">
+</div> class="hidden">
   <div class="detail-hero" id="dHero">
     <button class="dh-back" onclick="goMain()">‹</button>
     <div class="dh-acts">
@@ -1013,7 +1016,9 @@ function loadAll(){
   }catch(e){boxes=[];}
   try{rooms=JSON.parse(localStorage.getItem("cb-rooms")||"[]");}catch(e){rooms=[];}
   try{settings=JSON.parse(localStorage.getItem("cb-settings")||'{"brand":""}');}catch(e){settings={brand:""};}
-  dark=localStorage.getItem("cb-dark")==="0"?0:1;applyDark();
+  dark=localStorage.getItem("cb-dark")==="0"?0:1;
+  document.body.setAttribute("data-dark",dark?"1":"");
+  applyDark();
 }
 function saveData(){
   try{
@@ -1267,7 +1272,14 @@ function renderGrid(){
   let html="";
   if(favs.length) html+=`<div class="sec-hdr">⭐ Favoritas</div><div class="boxes-grid">${favs.map(boxCard).join("")}</div>`;
   if(rest.length){if(favs.length)html+=`<div class="sec-hdr">Todas</div>`;html+=`<div class="boxes-grid">${rest.map(boxCard).join("")}</div>`;}
-  if(!filtered.length) html=`<div style="text-align:center;padding:60px 20px;color:var(--muted);font-size:15px"><div style="font-size:48px;margin-bottom:12px">📦</div>${activeFilter==="todo"?"No tienes cajas. ¡Crea la primera!":"No hay cajas aquí"}</div>`;
+  if(!filtered.length) html=boxes.length===0
+    ?`<div style="text-align:center;padding:80px 24px">
+        <div style="font-size:56px;margin-bottom:16px">📦</div>
+        <div style="font-size:20px;font-weight:700;color:var(--text);margin-bottom:8px">No tienes cajas aún</div>
+        <div style="font-size:14px;color:var(--muted);margin-bottom:28px;line-height:1.6">Toca el botón <strong style="color:var(--accent)">+</strong> arriba para crear tu primera caja</div>
+        <button onclick="openForm()" style="background:linear-gradient(135deg,var(--accent),#5856D6);color:#fff;border:none;border-radius:14px;padding:14px 28px;font-size:16px;font-weight:700;cursor:pointer;font-family:inherit;box-shadow:0 4px 20px rgba(10,132,255,0.3)">+ Crear primera caja</button>
+      </div>`
+    :`<div style="text-align:center;padding:60px 20px"><div style="font-size:40px;margin-bottom:12px">🔍</div><div style="font-size:16px;font-weight:600;color:var(--text);margin-bottom:4px">Sin resultados</div><div style="font-size:13px;color:var(--muted)">No hay cajas con este filtro</div></div>`;
   document.getElementById("mainScroll").innerHTML=html;
 }
 function boxCard(b){
