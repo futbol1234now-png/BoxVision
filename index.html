@@ -1,108 +1,38 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="apple-mobile-web-app-title" content="BoxVision">
-  <meta name="theme-color" content="#007AFF">
-  
-  <link id="pwaManifest" rel="manifest" href="./manifest.json">
-  <title>BoxVision</title>
-
-  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
-
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Mis Cajas">
+<meta name="theme-color" content="#007AFF">
+<link id="pwaManifest" rel="manifest">
 <script>
-  // Configuración de Firebase de BoxVision
-  var firebaseConfig = {
-    apiKey: "AIzaSyAssJJ4BIQzsscuPOnI_vz22vcvxsjBNWE",
-    authDomain: "boxvision-d6a38.firebaseapp.com",
-    projectId: "boxvision-d6a38",
-    storageBucket: "boxvision-d6a38.firebasestorage.app",
-    messagingSenderId: "73827774697",
-    appId: "1:73827774697:web:11bcc85cb7616b7a4559f8",
-    measurementId: "G-51E2GFD2KE"
+(function(){
+  var i192="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAADACAYAAABS3GwHAAADGUlEQVR42u3cy1ErMRCGUanLKxMB0RGIvYRAiM4R2FuzpXgU+DmW/nMS4CL1Nz1Tt4reFrZ+PR4bsQ7b3pf8+d3AkxxEN/Qkx9ANPskhdINPcgjd4JMcQjf4JIdQhp9RXWP2yvCTHEE3+CS/EpXhJ3kblOEnOYIy/CRHUIaf5AjKUZGsrlUSjLgFyvCTHEEZfpIj8A2AbwBPf1K3gA2ADeDpT+oWsAGwATz9Sd0CNgA2gKc/qVvABsAGgOgAvP6Q+hpkA2ADgAAgUPf+jw0AAgABgABAACAAEABMazXKP3S/Gfugn97a+xm/88vgv7MAkoc+3ef7e9QYyvCTfJ/lsEi+13JIJN9vORyS77kcCsn3XQ6D5Hv3H2FEEwAC8PpD6v3bANgAIAAQAAgABAACAAGAAEAAIAAQAAgAhrdyBPcx+t/4sQFAACCAqxrhz+cx7/3bANgAIIBl7VxFpJ0ARGD4BSACwx8awH7z7TBEEDT8P9y/j2ARePKnByACw38Xq4EO7dkMGfq0AGwEYl+BQAAgABAACAAEAAIAAYAAQAAgABAACAAEAAIAAYAAQAAgABAACAABgABAACAAEAAIAAQAAgABgABAACAAEAAIAAQAAgABgABAACAAEAAIAAQAAgABgABAACAAEAAIAAQAAgABgABAACAAEAAIAAQAAgABgABAACAAEAAIAAQADxnA01t7dg25lr5/GwAbAATgNYjAey+HQfJ9l0Mh+Z7L4ZB8v+WQSL7Xclgk32dfvx6PIxzgftN2xsjQxwYAUa9AIAAQANwwgMO2d8dAosO2dxsAr0AgAEgNwHcAie//NgA2gCNAAF6DCHz9sQGwAX4rA2Z/+tsA2AB/FQKzPv1tAGyA/5YCsz39bQBsgFOLgVme/n9uABEw8/D/6xVIBMw6/L4B8A1wrZJgtKf/SRtABMw2/Ce/AomAmYb/rG8AETDL8LfW2kXD7M8qMurgn70BbANmGf6LAxABIw//xa9AXokYdfBvEoAQGGXwbxqAEHj0wb9LAELg0b8v7/4BKwaWHvpFAxAESw78Vx+IJvYSrYXIsQAAAABJRU5ErkJggg==";
+  var i512="data:image/png;base64,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";
+  var m={
+    name:"BoxVision",
+    short_name:"BoxVision",
+    description:"Gestor de cajas para mudanzas con QR e IA",
+    start_url:"./",
+    scope:"./",
+    display:"standalone",
+    orientation:"portrait",
+    background_color:"#000000",
+    theme_color:"#0A84FF",
+    lang:"es",
+    icons:[
+      {src:i192,sizes:"192x192",type:"image/png",purpose:"any maskable"},
+      {src:i512,sizes:"512x512",type:"image/png",purpose:"any maskable"}
+    ]
   };
-
-  // Inicializar de forma global para que todo el archivo lo lea
-  if (!firebase.apps.length) {
-    firebase.initializeApp(firebaseConfig);
-  }
-  var auth = firebase.auth();
-  var db = firebase.firestore();
+  var blob=new Blob([JSON.stringify(m)],{type:"application/manifest+json"});
+  document.getElementById("pwaManifest").href=URL.createObjectURL(blob);
+})();
 </script>
-  <style>
-    /* Estilos para tu pantalla de Login */
-    #login-screen {
-      position: fixed;
-      top: 0; left: 0; width: 100%; height: 100%;
-      background: #000000;
-      color: #ffffff;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      z-index: 9999;
-      font-family: -apple-system, BlinkMacSystemFont, sans-serif;
-      padding: 20px;
-      box-sizing: border-box;
-    }
-    .login-container {
-      width: 100%;
-      max-width: 360px;
-      text-align: center;
-    }
-    .login-container h1 {
-      font-size: 26px;
-      margin-bottom: 8px;
-      color: #0A84FF;
-    }
-    .login-container p {
-      color: #8E8E93;
-      margin-bottom: 24px;
-      font-size: 14px;
-    }
-    .login-input {
-      width: 100%;
-      padding: 14px;
-      margin-bottom: 12px;
-      border: 1px solid #38383A;
-      background: #1C1C1E;
-      color: #ffffff;
-      border-radius: 10px;
-      font-size: 16px;
-      box-sizing: border-box;
-    }
-    .login-btn {
-      width: 100%;
-      padding: 14px;
-      background: #0A84FF;
-      color: #ffffff;
-      border: none;
-      border-radius: 10px;
-      font-size: 16px;
-      font-weight: bold;
-      cursor: pointer;
-      margin-top: 10px;
-    }
-    .login-btn-secondary {
-      background: transparent;
-      color: #0A84FF;
-      margin-top: 15px;
-      font-size: 14px;
-      cursor: pointer;
-      border: none;
-    }
-    /* Ocultar tu app actual hasta que inicien sesión */
-    #app-content {
-      display: none;
-    }
-  </style>
-</head>
-</script>
+<title>Mis Cajas</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 :root{--bg:#F2F2F7;--card:#fff;--card2:#F9F9FB;--text:#1C1C1E;--muted:#8E8E93;--border:#E5E5EA;--accent:#007AFF;--red:#FF3B30;--green:#34C759;--orange:#FF9500;--topbar:#fff;--topbarborder:#E5E5EA;--input:#F2F2F7;--pill:#E5E5EA;--pilltext:#3C3C43}
@@ -732,27 +662,39 @@ body{
 /* Input type file para cámara — asegurar capture trasera */
 #scanObjInput{display:none!important}
 </style>
+<!-- Firebase -->
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+<script>
+firebase.initializeApp({
+  apiKey:"AIzaSyASsJJ40IQzssduPQnI_vz22vcvxsjBNME",
+  authDomain:"boxvision-d6a38.firebaseapp.com",
+  projectId:"boxvision-d6a38",
+  storageBucket:"boxvision-d6a38.firebasestorage.app",
+  messagingSenderId:"738277774697",
+  appId:"1:738277774697:web:11bcc85cbf616b7a4559f8"
+});
+const auth=firebase.auth();
+const db=firebase.firestore();
+let currentUser=null;
+</script>
 </head>
 <body>
-<div id="login-screen">
-    <div class="login-container">
-      <img src="icon-192.png" alt="Logo BoxVision" style="width: 80px; height: 80px; margin-bottom: 15px; border-radius: 20px; object-fit: cover;">
-      <h1 id="login-title">Inicia Sesión en BoxVision</h1>
-      <p id="login-subtitle">Introduce tus datos para acceder a tus cajas</p>
-      
-      <input type="email" id="login-email" class="login-input" placeholder="Correo electrónico">
-      <input type="password" id="login-password" class="login-input" placeholder="Contraseña">
-      
-      <button id="btn-action" class="login-btn" onclick="manejarAuth()">Iniciar Sesión</button>
-    <button id="btn-google" class="login-btn" style="background: #ffffff; color: #000000; display: flex; align-items: center; justify-content: center; gap: 10px; margin-top: 10px;" onclick="loginConGoogle()">
-        <img src="https://fonts.gstatic.com/s/i/productlogos/googleg/v6/web-24dp/logo_googleg_color_24dp.png" alt="Google Logo" style="width: 20px; height: 20px; border-radius: 0;">
-        Iniciar con Google
-      </button>
-      <button id="btn-toggle" class="login-btn-secondary" onclick="cambiarModo()">¿No tienes cuenta? Regístrate</button>
-    </div>
-  </div>
 
-  <div id="app-content">
+<!-- ═══ LOGIN SCREEN ═══ -->
+<div id="loginScreen" style="position:fixed;inset:0;background:linear-gradient(160deg,#0A0A0F 0%,#0D1B3E 50%,#0A0A0F 100%);z-index:99999;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:32px 24px;text-align:center">
+  <div style="font-size:64px;margin-bottom:8px">📦</div>
+  <div style="font-size:30px;font-weight:800;color:#fff;letter-spacing:-1px;margin-bottom:6px">BoxVision</div>
+  <div style="font-size:15px;color:rgba(255,255,255,.5);margin-bottom:48px">Gestor inteligente de mudanzas</div>
+  <button onclick="signInGoogle()" style="display:flex;align-items:center;gap:12px;background:#fff;color:#1a1a1a;border:none;border-radius:14px;padding:16px 28px;font-size:16px;font-weight:700;cursor:pointer;box-shadow:0 8px 32px rgba(0,0,0,.3);transition:transform .15s,box-shadow .15s;width:100%;max-width:300px;justify-content:center" onmousedown="this.style.transform='scale(.97)'" onmouseup="this.style.transform=''" ontouchstart="this.style.transform='scale(.97)'" ontouchend="this.style.transform=''">
+    <svg width="20" height="20" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.18 1.48-4.97 2.34-8.16 2.34-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>
+    Continuar con Google
+  </button>
+  <div id="loginError" style="margin-top:16px;font-size:13px;color:#FF3B30;display:none"></div>
+  <div style="position:absolute;bottom:32px;font-size:11px;color:rgba(255,255,255,.25)">Tus cajas se guardan en tu cuenta</div>
+</div>
+
 <div class="install-banner hidden" id="installBanner">
   <span>📲</span><span style="flex:1">Instala la app en tu celular para acceso rápido</span>
   <button id="installBtn">Instalar</button>
@@ -786,12 +728,13 @@ body{
 
 <div id="mainScreen" class="hidden">
   <div class="topbar">
-    <div><div class="topbar-title">📦 Mis Cajas</div><div class="topbar-sub" id="mainSub"></div></div>
+    <div><div class="topbar-title">📦 BoxVision</div><div class="topbar-sub" id="mainSub"></div></div>
     <div class="topbar-actions">
       <button class="tbtn" onclick="toggleDark()" id="darkBtn">🌙</button>
       <button class="tbtn" onclick="toggleSortMenu()" id="sortBtn" title="Ordenar">↕️</button>
       <button class="tbtn" onclick="goSplash()">🏠</button>
       <button class="tbtn tbtn-accent" onclick="openForm()">+</button>
+      <img id="userAvatar" src="" onclick="showUserMenu()" style="width:32px;height:32px;border-radius:50%;object-fit:cover;cursor:pointer;display:none;border:2px solid rgba(255,255,255,.3)"/>
     </div>
   </div>
   <div id="sortMenu" class="hidden" style="position:sticky;top:57px;z-index:150;background:var(--card);border-bottom:0.5px solid var(--border);padding:10px 14px;display:flex;gap:7px;overflow-x:auto;scrollbar-width:none">
@@ -959,8 +902,10 @@ let torchStream=null,torchOn=false,speaking=false,deferredInstall=null;
 
 function loadAll(){
   try{
-    boxes=JSON.parse(localStorage.getItem("cb-boxes")||"[]");
-    // Restaurar thumbs guardados por separado
+    const uid=currentUser?.uid;
+    const key=uid?"cb-boxes-"+uid:"cb-boxes";
+    boxes=JSON.parse(localStorage.getItem(key)||"[]");
+    // Restaurar thumbs
     boxes.forEach(b=>{
       b.items.forEach(it=>{
         if(!it.thumb){
@@ -982,7 +927,10 @@ function saveData(){
       bc.items = b.items.map(it=>({text:it.text, done:it.done}));
       return bc;
     });
-    localStorage.setItem("cb-boxes", JSON.stringify(boxesLean));
+    // Cache local
+    if(currentUser) localStorage.setItem("cb-boxes-"+currentUser.uid, JSON.stringify(boxesLean));
+    else localStorage.setItem("cb-boxes", JSON.stringify(boxesLean));
+    // Guardar thumbs aparte
     boxes.forEach(b=>{
       b.items.forEach(it=>{
         if(it.thumb){
@@ -991,6 +939,8 @@ function saveData(){
         }
       });
     });
+    // Sync a Firestore (con debounce)
+    if(typeof scheduleSave==="function") scheduleSave();
     let used=0;
     for(let k in localStorage) if(localStorage.hasOwnProperty(k)) used+=localStorage[k].length*2;
     if(used>4*1024*1024 && !window._storageWarnShown){
@@ -2438,101 +2388,22 @@ function updateFABVisibility(){
 }
 
 window.addEventListener("hashchange",()=>{route();updateFABVisibility();});
-// Apply gradient immediately so it shows on first load
-document.addEventListener("DOMContentLoaded", applySplashGradient);
-
+document.addEventListener("DOMContentLoaded",applySplashGradient);
+// route() se llama desde onAuthStateChanged tras el login
 </script>
 
+<!-- SERVICE WORKER REGISTRATION -->
 <script>
-if ('serviceWorker' in navigator) {
+if('serviceWorker' in navigator){
   var swCode=[
     "const CACHE='bv-v2';",
     "self.addEventListener('install',e=>{e.waitUntil(caches.open(CACHE).then(c=>c.add('/')).then(()=>self.skipWaiting()));});",
-    "self.addEventListener('activate',e=>{e.waitUntil(caches.keys().then(ks=>Promise.all(ks.filter(k=>k!==CACHE).map(k=>caches.delete(k)))));});",
-    "self.addEventListener('fetch',e=>{if(e.request.method!=='GET')return;e.respondWith(caches.match(e.request).then(c=>{return c||fetch(e.request);}));});"
+    "self.addEventListener('activate',e=>{e.waitUntil(caches.keys().then(ks=>Promise.all(ks.filter(k=>k!==CACHE).map(k=>caches.delete(k)))).then(()=>self.clients.claim()));});",
+    "self.addEventListener('fetch',e=>{if(e.request.method!=='GET')return;e.respondWith(caches.match(e.request).then(c=>{return c||fetch(e.request).then(r=>{if(r&&r.status===200){var cl=r.clone();caches.open(CACHE).then(ca=>ca.put(e.request,cl));}return r;}).catch(()=>c);}));});"
   ].join('\n');
   var blob=new Blob([swCode],{type:'text/javascript'});
   navigator.serviceWorker.register(URL.createObjectURL(blob)).catch(function(e){console.warn('SW:',e);});
 }
-</script>
-
-<script>
-let esRegistro = false;
-
-// Cambia la pantalla entre Iniciar Sesión y Registrarse
-function cambiarModo() {
-  const titulo = document.getElementById('login-title');
-  const subtitulo = document.getElementById('login-subtitle');
-  const btnAccion = document.getElementById('btn-action');
-  const btnToggle = document.getElementById('btn-toggle');
-  
-  esRegistro = !esRegistro;
-
-  if (esRegistro) {
-    titulo.textContent = "Regístrate en BoxVision";
-    subtitulo.textContent = "Crea una cuenta para empezar a guardar tus cajas";
-    btnAccion.textContent = "Crear Cuenta";
-    btnToggle.textContent = "¿Ya tienes cuenta? Inicia Sesión";
-  } else {
-    titulo.textContent = "Inicia Sesión en BoxVision";
-    subtitulo.textContent = "Introduce tus datos para acceder a tus cajas";
-    btnAccion.textContent = "Iniciar Sesión";
-    btnToggle.textContent = "¿No tienes cuenta? Regístrate";
-  }
-}
-
-// Iniciar sesión con Google
-function loginConGoogle() {
-  const provider = new firebase.auth.GoogleAuthProvider();
-  auth.signInWithPopup(provider)
-    .then((result) => {
-      alert("¡Sesión iniciada con Google!");
-    })
-    .catch((error) => {
-      alert("Error al conectar con Google: " + error.message);
-    });
-}
-
-// Maneja el clic en el botón principal (Login o Registro manual)
-function manejarAuth() {
-  const email = document.getElementById('login-email').value.trim();
-  const password = document.getElementById('login-password').value;
-
-  if (!email || !password) {
-    alert("Por favor, completa todos los campos.");
-    return;
-  }
-
-  if (esRegistro) {
-    auth.createUserWithEmailAndPassword(email, password)
-      .then((userCredential) => {
-        alert("¡Cuenta creada con éxito!");
-      })
-      .catch((error) => {
-        alert("Error al registrarse: " + error.message);
-      });
-  } else {
-    auth.signInWithEmailAndPassword(email, password)
-      .catch((error) => {
-        alert("Error al iniciar sesión: " + error.message);
-      });
-  }
-}
-
-// Escucha en tiempo real si el usuario está conectado o no
-auth.onAuthStateChanged((user) => {
-  const loginScreen = document.getElementById('login-screen');
-  const appContent = document.getElementById('app-content');
-
-  if (user) {
-    loginScreen.style.display = 'none';
-    appContent.style.display = 'block';
-    console.log("Usuario conectado:", user.email);
-  } else {
-    loginScreen.style.display = 'flex';
-    appContent.style.display = 'none';
-  }
-});
 </script>
 
 <!-- ═══ TUTORIAL ═══ -->
@@ -2697,6 +2568,134 @@ auth.onAuthStateChanged((user) => {
     </div>
   </div>
 </div>
-</div>
+
+<!-- ═══ FIREBASE AUTH + FIRESTORE LOGIC ═══ -->
+<script>
+// ── Auth ──────────────────────────────────────────
+function signInGoogle(){
+  const provider=new firebase.auth.GoogleAuthProvider();
+  auth.signInWithPopup(provider).catch(err=>{
+    const el=document.getElementById("loginError");
+    el.textContent="Error: "+err.message; el.style.display="block";
+  });
+}
+
+function showUserMenu(){
+  if(!currentUser) return;
+  const existing=document.getElementById("userMenuPopup");
+  if(existing){existing.remove();return;}
+  const m=document.createElement("div");
+  m.id="userMenuPopup";
+  m.style.cssText="position:fixed;top:60px;right:16px;background:var(--card,#1C1C1E);border-radius:16px;padding:16px;z-index:5000;box-shadow:0 8px 32px rgba(0,0,0,.4);min-width:220px;animation:fadeIn .2s ease";
+  m.innerHTML=`
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px;padding-bottom:14px;border-bottom:1px solid rgba(255,255,255,.1)">
+      <img src="${currentUser.photoURL}" style="width:40px;height:40px;border-radius:50%;object-fit:cover"/>
+      <div>
+        <div style="font-size:14px;font-weight:700;color:var(--text,#fff)">${currentUser.displayName}</div>
+        <div style="font-size:11px;color:var(--muted,#8E8E93)">${currentUser.email}</div>
+      </div>
+    </div>
+    <button onclick="signOutUser()" style="width:100%;padding:11px;border-radius:10px;border:none;background:rgba(255,59,48,.15);color:#FF3B30;font-size:14px;font-weight:600;cursor:pointer">Cerrar sesión</button>`;
+  document.body.appendChild(m);
+  setTimeout(()=>document.addEventListener("click",()=>m.remove(),{once:true}),100);
+}
+
+function signOutUser(){
+  auth.signOut().then(()=>{
+    currentUser=null; boxes=[]; rooms=[];
+    document.getElementById("userMenuPopup")?.remove();
+  });
+}
+
+// ── Firestore sync ─────────────────────────────────
+async function loadFromFirestore(){
+  if(!currentUser) return;
+  try{
+    const doc=await db.collection("users").doc(currentUser.uid).get();
+    if(doc.exists){
+      const data=doc.data();
+      boxes=data.boxes||[];
+      rooms=data.rooms||[];
+      // Restaurar thumbs del localStorage como cache
+      boxes.forEach(b=>{
+        b.items.forEach(it=>{
+          if(!it.thumb){
+            const k="cb-thumb-"+b.id+"-"+encodeURIComponent(it.text.slice(0,20));
+            const t=localStorage.getItem(k);
+            if(t) it.thumb=t;
+          }
+        });
+      });
+    }
+  }catch(e){
+    console.warn("Firestore load error:",e);
+    // Fallback a localStorage
+    try{boxes=JSON.parse(localStorage.getItem("cb-boxes-"+currentUser.uid)||"[]");}catch{boxes=[];}
+  }
+}
+
+let _saveTimer=null;
+function scheduleSave(){
+  clearTimeout(_saveTimer);
+  _saveTimer=setTimeout(saveToFirestore,1200);
+}
+
+async function saveToFirestore(){
+  if(!currentUser) return;
+  try{
+    const boxesLean=boxes.map(b=>{
+      const bc=JSON.parse(JSON.stringify(b));
+      bc.items=b.items.map(it=>({text:it.text,done:it.done}));
+      return bc;
+    });
+    await db.collection("users").doc(currentUser.uid).set({
+      boxes:boxesLean, rooms:rooms,
+      updatedAt:firebase.firestore.FieldValue.serverTimestamp()
+    },{merge:true});
+    // Cache local por usuario
+    localStorage.setItem("cb-boxes-"+currentUser.uid, JSON.stringify(boxesLean));
+    // Guardar thumbs aparte
+    boxes.forEach(b=>{
+      b.items.forEach(it=>{
+        if(it.thumb){
+          const k="cb-thumb-"+b.id+"-"+encodeURIComponent(it.text.slice(0,20));
+          try{localStorage.setItem(k,it.thumb);}catch(e){}
+        }
+      });
+    });
+  }catch(e){
+    console.warn("Firestore save error:",e);
+    showToast("⚠️ Error guardando en la nube","#FF9500");
+  }
+}
+
+// ── Auth state listener ────────────────────────────
+auth.onAuthStateChanged(async user=>{
+  const loginScreen=document.getElementById("loginScreen");
+  if(user){
+    currentUser=user;
+    // Mostrar app
+    loginScreen.style.opacity="0";
+    loginScreen.style.transition="opacity .3s";
+    setTimeout(()=>loginScreen.style.display="none",300);
+    // Foto de usuario en header
+    const avatar=document.getElementById("userAvatar");
+    if(avatar&&user.photoURL){avatar.src=user.photoURL;avatar.style.display="block";}
+    // Cargar datos
+    await loadFromFirestore();
+    // Iniciar app
+    if(typeof initTutorial==="function") initTutorial();
+    if(typeof showSplash==="function") showSplash();
+  } else {
+    // Mostrar login
+    boxes=[]; rooms=[];
+    loginScreen.style.opacity="1";
+    loginScreen.style.display="flex";
+    const avatar=document.getElementById("userAvatar");
+    if(avatar) avatar.style.display="none";
+  }
+});
+</script>
+
 </body>
 </html>
