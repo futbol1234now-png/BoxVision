@@ -92,7 +92,8 @@ input,button,textarea,select{font-family:inherit}
 .sp-row .sp-btn2{margin-bottom:0;flex:1}
 .install-banner{background:var(--accent);color:#fff;padding:10px 16px;display:flex;align-items:center;gap:10px;font-size:13px}
 .install-banner button{background:rgba(255,255,255,.25);color:#fff;border:none;border-radius:8px;padding:6px 12px;font-size:12px;font-weight:700;cursor:pointer}
-.main-scroll{padding:0 14px 100px;max-width:680px;margin:0 auto}
+.main-scroll{padding:0 14px 120px;max-width:680px;margin:0 auto}
+.boxes-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;padding:4px 0}
 .search-wrap{padding:10px 14px;position:sticky;top:57px;z-index:100;background:var(--bg)}
 .search-inner{display:flex;align-items:center;gap:8px;background:var(--card);border:0.5px solid var(--border);border-radius:13px;padding:9px 13px}
 .search-inner input{flex:1;border:none;outline:none;font-size:15px;color:var(--text);background:transparent}
@@ -108,20 +109,62 @@ input,button,textarea,select{font-family:inherit}
 .pill.active{background:var(--accent);color:#fff}
 .sec-hdr{font-size:12px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;padding:14px 0 8px}
 .boxes-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:4px}
-.box-card{border-radius:20px;overflow:hidden;position:relative;cursor:pointer;transition:transform .18s cubic-bezier(.4,0,.2,1),box-shadow .18s;border:0.5px solid rgba(255,255,255,.25);box-shadow:0 4px 24px rgba(0,0,0,.13)}
-.box-card:hover{transform:translateY(-2px) scale(1.01);box-shadow:0 8px 32px rgba(0,0,0,.18)}
-.box-card:active{transform:scale(.96)}
-.bc-inner{padding:16px 14px 14px;backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);background:rgba(255,255,255,.08);position:relative}
-.bc-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px}
-.bc-fav{background:none;border:none;cursor:pointer;font-size:18px;filter:drop-shadow(0 1px 3px rgba(0,0,0,.2))}
-.bc-icon{font-size:42px;display:block;margin-bottom:8px;text-shadow:0 2px 6px rgba(0,0,0,.15)}
-.bc-name{font-size:14px;font-weight:700;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-shadow:0 1px 4px rgba(0,0,0,.2)}
-.bc-sub{font-size:11px;color:rgba(255,255,255,.75);margin-top:3px}
-.bc-progress{margin-top:8px;background:rgba(255,255,255,.25);border-radius:99px;height:4px;overflow:hidden}
-.bc-progress-fill{height:100%;background:#fff;border-radius:99px;transition:width .3s}
-.bc-tags{display:flex;flex-wrap:wrap;gap:3px;margin-top:7px}
-.bc-tag{font-size:10px;background:rgba(255,255,255,.2);color:#fff;padding:2px 6px;border-radius:99px}
-.bc-num{background:rgba(0,0,0,.2);color:#fff;font-size:10px;font-weight:800;padding:2px 7px;border-radius:99px}
+.box-card{
+  border-radius:22px;overflow:hidden;position:relative;
+  cursor:pointer;
+  transition:transform .2s cubic-bezier(.4,0,.2,1),box-shadow .2s;
+  border:1px solid rgba(255,255,255,.12);
+  box-shadow:0 4px 20px rgba(0,0,0,.3);
+  min-height:160px;
+  display:flex;flex-direction:column;
+}
+.box-card:hover{transform:translateY(-3px);box-shadow:0 12px 40px rgba(0,0,0,.4)}
+.box-card:active{transform:scale(.97);transition-duration:80ms}
+.bc-inner{
+  padding:16px;flex:1;display:flex;flex-direction:column;
+  background:linear-gradient(160deg,rgba(0,0,0,.15),rgba(0,0,0,.35));
+  backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
+}
+.bc-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:auto}
+.bc-fav{background:none;border:none;cursor:pointer;font-size:16px;opacity:.9;padding:0;line-height:1}
+.bc-badges{display:flex;gap:4px;align-items:center;flex-wrap:wrap}
+.bc-num{
+  background:rgba(0,0,0,.3);color:#fff;
+  font-size:10px;font-weight:800;
+  padding:2px 8px;border-radius:99px;
+  letter-spacing:.3px;
+}
+.bc-icon{font-size:36px;display:block;margin:10px 0 6px;line-height:1;filter:drop-shadow(0 2px 4px rgba(0,0,0,.3))}
+.bc-name{
+  font-size:15px;font-weight:800;color:#fff;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+  letter-spacing:-.3px;line-height:1.2;
+  text-shadow:0 1px 6px rgba(0,0,0,.4);
+}
+.bc-sub{
+  font-size:11px;color:rgba(255,255,255,.65);
+  margin-top:4px;font-weight:500;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+.bc-progress{
+  margin-top:10px;background:rgba(255,255,255,.2);
+  border-radius:99px;height:3px;overflow:hidden;flex-shrink:0;
+}
+.bc-progress-fill{height:100%;background:#fff;border-radius:99px;transition:width .4s}
+.bc-tags{display:flex;flex-wrap:wrap;gap:3px;margin-top:6px}
+.bc-tag{
+  font-size:10px;background:rgba(255,255,255,.18);
+  color:rgba(255,255,255,.9);padding:2px 7px;border-radius:99px;
+  font-weight:500;
+}
+.cube-open-btn{
+  position:absolute;bottom:12px;right:12px;
+  background:rgba(255,255,255,.15);border:none;
+  color:#fff;font-size:11px;font-weight:600;
+  padding:4px 10px;border-radius:99px;cursor:pointer;
+  backdrop-filter:blur(6px);letter-spacing:.2px;
+}
+.cube-open-btn:active{background:rgba(255,255,255,.25)}
 .detail-hero{position:relative;overflow:hidden;min-height:200px;display:flex;flex-direction:column;justify-content:flex-end;padding:20px 18px 18px}
 .dh-img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
 .dh-overlay{position:absolute;inset:0;background:linear-gradient(to bottom,rgba(0,0,0,.08),rgba(0,0,0,.6))}
@@ -789,7 +832,9 @@ let currentUser=null;
   </div>
   <div class="filter-row" id="filterRow"></div>
   <div class="main-scroll" id="mainScroll"></div>
-</div> class="hidden">
+</div>
+
+<div id="detailScreen" class="hidden">
   <div class="detail-hero" id="dHero">
     <button class="dh-back" onclick="goMain()">‹</button>
     <div class="dh-acts">
@@ -1291,18 +1336,20 @@ function boxCard(b){
     : `linear-gradient(135deg,${col},${rgba(col,.65)})`;
   const hasPhoto = !!b.photo;
   return `<div class="box-card" style="background:${cardBg}" onclick="openDetail('${b.id}')">
-    ${hasPhoto ? `<div style="position:absolute;inset:0;background:linear-gradient(135deg,${rgba(col,.7)},${rgba(col,.5)});z-index:0"></div>` : ''}
-    <div class="bc-inner" style="${hasPhoto?'position:relative;z-index:1':''}">
+    ${hasPhoto?`<div style="position:absolute;inset:0;background:linear-gradient(160deg,${rgba(col,.8)},${rgba(col,.5)});z-index:0"></div>`:''}
+    <div class="bc-inner">
       <div class="bc-top">
         <button class="bc-fav" onclick="event.stopPropagation();toggleFavId('${b.id}')">${b.fav?"⭐":"☆"}</button>
-        <div style="display:flex;gap:4px;align-items:center">
-          ${b.priority&&b.priority!=="yellow"?`<span style="font-size:12px">${PRI[b.priority]||""}</span>`:""}
+        <div class="bc-badges">
+          ${b.priority==="red"?'<span style="font-size:11px">🔴</span>':""}
+          ${b.sealed?'<span style="font-size:11px">🔒</span>':""}
+          ${b.password?'<span style="font-size:11px">🔐</span>':""}
           ${b.number?`<span class="bc-num">#${esc(b.number)}</span>`:""}
         </div>
       </div>
       <span class="bc-icon">${getIcon(b.name)}</span>
-      <div class="bc-name">${b.sealed?"🔒 ":""}${b.password?"🔐 ":""}${esc(b.name)}</div>
-      <div class="bc-sub">${total} obj${done?" · "+done+" sacado"+(done!==1?"s":""):""}${b.weight?" · "+b.weight+"kg":""}</div>
+      <div class="bc-name">${esc(b.name)}</div>
+      <div class="bc-sub">${total} objeto${total!==1?"s":""}${done?" · "+done+" sacado"+(done!==1?"s":""):""}${b.location?" · 📍"+esc(b.location):""}</div>
       ${total>0?`<div class="bc-progress"><div class="bc-progress-fill" style="width:${pct}%"></div></div>`:""}
       ${tags?`<div class="bc-tags">${tags}</div>`:""}
       <button class="cube-open-btn" onclick="event.stopPropagation();openCube('${b.id}')">📦 3D</button>
@@ -1627,11 +1674,15 @@ function generateQR(id){
   const url=location.href.split("#")[0]+"#view/"+data;
   try{
     const qr=qrcode(0,"L");qr.addData(url);qr.make();
-    const mod=qr.getModuleCount(),cell=Math.floor(160/mod),size=cell*mod;
-    const cv=document.createElement("canvas");cv.width=cv.height=size;
-    const ctx=cv.getContext("2d");ctx.fillStyle="#fff";ctx.fillRect(0,0,size,size);
-    ctx.fillStyle=box.color||"#007AFF";
-    for(let r=0;r<mod;r++) for(let c=0;c<mod;c++) if(qr.isDark(r,c)) ctx.fillRect(c*cell,r*cell,cell,cell);
+    const mod=qr.getModuleCount();
+    const cv=document.createElement("canvas");
+    const size=220;cv.width=cv.height=size;cv.style.width=size+"px";cv.style.height=size+"px";
+    const ctx=cv.getContext("2d");
+    ctx.fillStyle="#ffffff";ctx.fillRect(0,0,size,size);
+    const cell=Math.floor((size-20)/mod);
+    const offset=Math.round((size-cell*mod)/2);
+    ctx.fillStyle="#000000";
+    for(let r=0;r<mod;r++) for(let c=0;c<mod;c++) if(qr.isDark(r,c)) ctx.fillRect(offset+c*cell,offset+r*cell,cell,cell);
     el.appendChild(cv);
   }catch(e){el.textContent="Error QR";}
   }); // end requestAnimationFrame
@@ -2895,5 +2946,6 @@ auth.onAuthStateChanged(async user=>{
 });
 </script>
 
+</div><!-- fix unclosed div -->
 </body>
 </html>
