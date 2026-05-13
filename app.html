@@ -736,8 +736,19 @@ body{
 
 /* Input type file para cámara — asegurar capture trasera */
 #scanObjInput{display:none!important}
-
-</style>
+.settings-box, [class*="card"], [class*="profile"], [id*="user"] {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    gap: 12px !important;
+    word-break: break-all !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+}
+.settings-box div {
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+}
+</style> 
 <!-- Firebase -->
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
