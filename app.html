@@ -2912,7 +2912,6 @@ async function loadFromFirestore(){
       const data=doc.data();
       boxes=data.boxes||[];
       rooms=data.rooms||[];
-      // Restaurar thumbs del localStorage como cache
       boxes.forEach(b=>{
         b.items.forEach(it=>{
           if(!it.thumb){
@@ -2925,7 +2924,6 @@ async function loadFromFirestore(){
     }
   }catch(e){
     console.warn("Firestore load error:",e);
-    // Fallback a localStorage
     try{boxes=JSON.parse(localStorage.getItem("cb-boxes-"+currentUser.uid)||"[]");}catch{boxes=[];}
   }
 }
@@ -2948,9 +2946,7 @@ async function saveToFirestore(){
       boxes:boxesLean, rooms:rooms,
       updatedAt:firebase.firestore.FieldValue.serverTimestamp()
     },{merge:true});
-    // Cache local por usuario
     localStorage.setItem("cb-boxes-"+currentUser.uid, JSON.stringify(boxesLean));
-    // Guardar thumbs aparte
     boxes.forEach(b=>{
       b.items.forEach(it=>{
         if(it.thumb){
@@ -2969,7 +2965,25 @@ async function saveToFirestore(){
 auth.onAuthStateChanged(async user=>{
   const loginScreen=document.getElementById("loginScreen");
   if(user){
-;
+    currentUser=user;
+    loginScreen.style.opacity="0";
+    loginScreen.style.transition="opacity .3s";
+    setTimeout(()=>loginScreen.style.display="none",300);
+    const avatar=document.getElementById("userAvatar");
+    if(avatar&&user.photoURL){avatar.src=user.photoURL;avatar.style.display="block";}
+    await loadFromFirestore();
+    loadAll();
+    if(typeof setupPWA==="function") setupPWA();
+    if(typeof initTutorial==="function") initTutorial();
+    if(typeof showSplash==="function") showSplash();
+  } else {
+    boxes=[]; rooms=[];
+    loginScreen.style.opacity="1";
+    loginScreen.style.display="flex";
+    const avatar=document.getElementById("userAvatar");
+    if(avatar) avatar.style.display="none";
+  }
+});
 </script>
 
 
