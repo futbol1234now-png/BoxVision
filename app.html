@@ -775,6 +775,26 @@ firebase.initializeApp({
   messagingSenderId:"738277774697",
   appId:"1:738277774697:web:11bcc85cbf616b7a4559f8"
 });
+
+let auth, db, currentUser=null;
+try{
+  auth = firebase.auth();
+  db = firebase.firestore();
+
+  // ✅ PASO 1: Activar persistencia local (carga instantánea)
+  db.enablePersistence({ synchronizeTabs: true })
+    .catch(err => {
+      if(err.code === 'failed-precondition'){
+        console.warn('Persistencia: múltiples pestañas abiertas');
+      } else if(err.code === 'unimplemented'){
+        console.warn('Persistencia no soportada en este navegador');
+      }
+    });
+
+}catch(e){
+  console.warn("Firebase no disponible:", e.message);
+}
+});
 let auth,db,currentUser=null;
 try{
   auth=firebase.auth();
