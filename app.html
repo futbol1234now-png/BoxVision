@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Mis Cajas">
@@ -17,8 +18,8 @@
     name:"BoxVision",
     short_name:"BoxVision",
     description:"Gestor de cajas para mudanzas con QR e IA",
-    start_url:"./",
-    scope:"./",
+    start_url:"./app.html",
+    scope:"https://futbol1234now-png.github.io/BoxVision/",
     display:"standalone",
     orientation:"portrait",
     background_color:"#000000",
@@ -750,9 +751,20 @@ firebase.initializeApp({
   messagingSenderId:"738277774697",
   appId:"1:738277774697:web:11bcc85cbf616b7a4559f8"
 });
-const auth=firebase.auth();
-const db=firebase.firestore();
-let currentUser=null;
+let auth,db,currentUser=null;
+try{
+  auth=firebase.auth();
+  db=firebase.firestore();
+}catch(e){
+  console.warn("Firebase no disponible:",e.message);
+  // App funciona en modo local sin auth
+  document.addEventListener("DOMContentLoaded",function(){
+    var ls=document.getElementById("loginScreen");
+    if(ls) ls.style.display="none";
+    if(typeof loadAll==="function") loadAll();
+    if(typeof showSplash==="function") showSplash();
+  });
+}
 </script>
 </head>
 <body data-dark="1">
@@ -2598,8 +2610,7 @@ if('serviceWorker' in navigator){
     "self.addEventListener('activate',e=>{e.waitUntil(caches.keys().then(ks=>Promise.all(ks.filter(k=>k!==CACHE).map(k=>caches.delete(k)))).then(()=>self.clients.claim()));});",
     "self.addEventListener('fetch',e=>{if(e.request.method!=='GET')return;e.respondWith(caches.match(e.request).then(c=>{return c||fetch(e.request).then(r=>{if(r&&r.status===200){var cl=r.clone();caches.open(CACHE).then(ca=>ca.put(e.request,cl));}return r;}).catch(()=>c);}));});"
   ].join('\n');
-  var blob=new Blob([swCode],{type:'text/javascript'});
-  navigator.serviceWorker.register(URL.createObjectURL(blob)).catch(function(e){console.warn('SW:',e);});
+  navigator.serviceWorker.register('./sw.js').catch(function(e){console.warn('SW:',e);});
 }
 </script>
 
