@@ -751,18 +751,16 @@ body{
     font-size: 11px !important;     /* Achica un pelín la letra para que quepa perfecta */
     margin-top: 6px !important;     /* Separa el texto del número 0 */
 }
-/* Arreglo para los títulos de las secciones (Cuenta, Personalización, Resumen, Ayuda) */
-.settings-container h3, 
-.ajustes-screen h3,
-h3 {
-    font-size: 12px !important;       /* Tamaño ideal para títulos secundarios */
-    color: #8a99ad !important;        /* Un gris claro muy elegante */
-    letter-spacing: 1.5px !important; /* Espaciado entre letras para que se lea premium */
-    margin-top: 25px !important;      /* Separa el título de la tarjeta de ARRIBA */
-    margin-bottom: 10px !important;   /* Separa el título de la tarjeta de ABAJO */
-    text-transform: uppercase !important; /* Asegura que queden en mayúsculas */
-    padding-left: 5px !important;     /* Los alinea un poquito a la derecha con la tarjeta */
-}  
+/* Corrección definitiva para los títulos de Ajustes */
+h3, .section-title, [class*="title"] {
+    font-size: 11px !important;
+    color: rgba(255, 255, 255, 0.6) !important; /* Gris claro semitransparente */
+    letter-spacing: 2px !important;            /* Separa las letras para que respiren */
+    margin-top: 30px !important;               /* Separa el título del bloque anterior */
+    margin-bottom: 12px !important;            /* Separa el título de las tarjetas */
+    display: block !important;
+    font-weight: 600 !important;
+}
 </style> 
 <!-- Firebase -->
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
