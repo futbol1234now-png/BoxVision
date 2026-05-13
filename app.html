@@ -2959,6 +2959,29 @@ async function saveToFirestore(){
 auth.onAuthStateChanged(async user=>{
   const loginScreen=document.getElementById("loginScreen");
   if(user){
+firebase.auth().onAuthStateChanged((user) => {
+  if (user) {
+    // ¡El usuario ya tiene cuenta y está adentro!
+    
+    // 1. Guardamos la marca en la memoria para que la app sepa que ya se registró
+    localStorage.setItem("usuarioRegistrado", "true");
+    localStorage.setItem("tutorialVisto", "true");
+
+    // 2. Ocultamos el landing y el tutorial con CSS (cambia estos IDs por los tuyos)
+    document.getElementById("landingPage").style.display = "none";
+    document.getElementById("tutorialContainer").style.display = "none";
+    
+    // 3. Mostramos la app real
+    document.getElementById("appContainer").style.display = "block";
+
+    // ... aquí sigue tu código normal que carga Firestore ...
+  } else {
+    // Si no hay usuario y NO ha visto el tutorial, entonces sí mostramos el landing
+    if (localStorage.getItem("usuarioRegistrado") !== "true") {
+        document.getElementById("landingPage").style.style.display = "block";
+    }
+  }
+});    
     currentUser=user;
     // Mostrar app
     loginScreen.style.opacity="0";
