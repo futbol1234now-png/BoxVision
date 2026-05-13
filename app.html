@@ -2969,53 +2969,7 @@ async function saveToFirestore(){
 auth.onAuthStateChanged(async user=>{
   const loginScreen=document.getElementById("loginScreen");
   if(user){
-firebase.auth().onAuthStateChanged((user) => {
-  if (user) {
-    // ¡El usuario ya tiene cuenta y está adentro!
-    
-    // 1. Guardamos la marca en la memoria para que la app sepa que ya se registró
-    localStorage.setItem("usuarioRegistrado", "true");
-    localStorage.setItem("tutorialVisto", "true");
-
-    // 2. Ocultamos el landing y el tutorial con CSS (cambia estos IDs por los tuyos)
-    document.getElementById("landingPage").style.display = "none";
-    document.getElementById("tutorialContainer").style.display = "none";
-    
-    // 3. Mostramos la app real
-    document.getElementById("appContainer").style.display = "block";
-
-    // ... aquí sigue tu código normal que carga Firestore ...
-  } else {
-    // Si no hay usuario y NO ha visto el tutorial, entonces sí mostramos el landing
-    if (localStorage.getItem("usuarioRegistrado") !== "true") {
-        document.getElementById("landingPage").style.style.display = "block";
-    }
-  }
-});    
-    currentUser=user;
-    // Mostrar app
-    loginScreen.style.opacity="0";
-    loginScreen.style.transition="opacity .3s";
-    setTimeout(()=>loginScreen.style.display="none",300);
-    // Foto de usuario en header
-    const avatar=document.getElementById("userAvatar");
-    if(avatar&&user.photoURL){avatar.src=user.photoURL;avatar.style.display="block";}
-    // Cargar datos
-    await loadFromFirestore();
-    // Iniciar app
-    loadAll();
-    if(typeof setupPWA==="function") setupPWA();
-    if(typeof initTutorial==="function") initTutorial();
-    if(typeof showSplash==="function") showSplash();
-  } else {
-    // Mostrar login
-    boxes=[]; rooms=[];
-    loginScreen.style.opacity="1";
-    loginScreen.style.display="flex";
-    const avatar=document.getElementById("userAvatar");
-    if(avatar) avatar.style.display="none";
-  }
-});
+;
 </script>
 
 
