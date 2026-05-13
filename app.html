@@ -2982,27 +2982,43 @@ async function saveToFirestore(){
 }
 
 // ── Auth state listener ────────────────────────────
-auth.onAuthStateChanged(async user=>{
-  const loginScreen=document.getElementById("loginScreen");
+auth.onAuthStateChanged(async user => {
+  const loginScreen = document.getElementById("loginScreen");
   if(user){
-    currentUser=user;
-    loginScreen.style.opacity="0";
-    loginScreen.style.transition="opacity .3s";
-    setTimeout(()=>loginScreen.style.display="none",300);
-    const avatar=document.getElementById("userAvatar");
-    if(avatar&&user.photoURL){avatar.src=user.photoURL;avatar.style.display="block";}
+    currentUser = user;
+
+    // ✅ Mostrar datos locales INMEDIATAMENTE mientras carga la nube
+    loadAll(); // carga desde localStorage al instante
+    if(typeof showSplash === "function") showSplash();
+
+    // Ocultar login
+    loginScreen.style.opacity = "0";
+    loginScreen.style.transition = "opacity .3s";
+    setTimeout(() => loginScreen.style.display = "none", 300);
+
+    // Avatar
+    const avatar = document.getElementById("userAvatar");
+    if(avatar && user.photoURL){
+      avatar.src = user.photoURL;
+      avatar.style.display = "block";
+    }
+
+    // ✅ Luego sincronizar con Firestore en segundo plano
     await loadFromFirestore();
-    loadAll();
-    if(typeof setupPWA==="function") setupPWA();
-    if(typeof initTutorial==="function") initTutorial();
-    if(typeof showSplash==="function") showSplash();
+    loadAll(); // recargar con datos frescos de la nube
+    if(typeof showSplash === "function") showSplash();
+
+    if(typeof setupPWA === "function") setupPWA();
+    if(typeof initTutorial === "function") initTutorial();
+
   } else {
-    boxes=[]; rooms=[];
-    loginScreen.style.opacity="1";
-    loginScreen.style.display="flex";
-    const avatar=document.getElementById("userAvatar");
-    if(avatar) avatar.style.display="none";
+    boxes = []; rooms = [];
+    loginScreen.style.opacity = "1";
+    loginScreen.style.display = "flex";
+    const avatar = document.getElementById("userAvatar");
+    if(avatar) avatar.style.display = "none";
   }
+});
 });
 </script>
 
