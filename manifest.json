@@ -2,7 +2,7 @@
   "name": "BoxVision — Gestor de Cajas",
   "short_name": "BoxVision",
   "description": "Gestor inteligente de cajas para mudanzas con QR, IA y escáner de objetos",
-  "start_url": "./index.html",
+  "start_url": "/BoxVision/",,
   "scope": "./",
   "display": "standalone",
   "orientation": "portrait",
