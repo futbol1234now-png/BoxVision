@@ -736,17 +736,20 @@ body{
 
 /* Input type file para cámara — asegurar capture trasera */
 #scanObjInput{display:none!important}
-.settings-box, [class*="card"], [class*="profile"], [id*="user"] {
+/* Arreglo total para las cuadrículas del Resumen */
+.summary-box, [class*="resumen"], .stat-card {
     display: flex !important;
-    flex-wrap: wrap !important;
-    gap: 12px !important;
-    word-break: break-all !important;
-    max-width: 100% !important;
-    box-sizing: border-box !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    padding: 12px 4px !important; 
 }
-.settings-box div {
-    max-width: 100% !important;
-    box-sizing: border-box !important;
+
+/* Forzar a que las palabras entren completas en una sola línea */
+.summary-box p, .summary-box span, [class*="resumen"] p, [class*="stat"] p {
+    white-space: nowrap !important; /* Evita que las letras se bajen */
+    font-size: 11px !important;     /* Achica un pelín la letra para que quepa perfecta */
+    margin-top: 6px !important;     /* Separa el texto del número 0 */
 }
 </style> 
 <!-- Firebase -->
