@@ -2926,7 +2926,10 @@ function signOutUser(){
 
 // ── Firestore sync ─────────────────────────────────
 async function loadFromFirestore(){
-  if(!currentUser) return;
+if(!currentUser || !db){
+  console.log("⚠️ Firestore no disponible, usando localStorage");
+  return;
+}
   try{
     const doc=await db.collection("users").doc(currentUser.uid).get();
     if(doc.exists){
