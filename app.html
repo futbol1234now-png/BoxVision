@@ -761,26 +761,267 @@ body{
     display: block !important;
     font-weight: 600 !important;
 }
+
+/* ══════════════════════════════════════════════
+   BOXVISION — REDESIGN: Rounded Floating Icons
+   Squircle cards, deep shadows, glassmorphism
+══════════════════════════════════════════════ */
+
+/* ── Box cards: más redondeadas, más flotantes ── */
+.boxes-grid{gap:14px}
+.box-card{
+  border-radius:28px !important;
+  box-shadow:
+    0 8px 32px rgba(0,0,0,.38),
+    0 2px 8px rgba(0,0,0,.22),
+    0 0 0 1px rgba(255,255,255,.10) inset !important;
+  border:none !important;
+  transform:translateY(0);
+  transition:transform .25s cubic-bezier(.34,1.56,.64,1), box-shadow .25s ease !important;
+}
+.box-card:hover{
+  transform:translateY(-6px) scale(1.02) !important;
+  box-shadow:
+    0 20px 60px rgba(0,0,0,.45),
+    0 4px 16px rgba(0,0,0,.25),
+    0 0 0 1px rgba(255,255,255,.14) inset !important;
+}
+.box-card:active{
+  transform:scale(.95) !important;
+  box-shadow:0 4px 16px rgba(0,0,0,.3) !important;
+}
+
+/* ── Icono de caja: squircle con fondo glass ── */
+.bc-icon{
+  font-size:38px !important;
+  display:inline-flex !important;
+  align-items:center;
+  justify-content:center;
+  width:60px;height:60px;
+  background:rgba(255,255,255,.18);
+  backdrop-filter:blur(12px);
+  -webkit-backdrop-filter:blur(12px);
+  border-radius:18px !important;
+  margin:10px 0 8px !important;
+  box-shadow:
+    0 4px 16px rgba(0,0,0,.25),
+    0 1px 0 rgba(255,255,255,.3) inset;
+  border:1px solid rgba(255,255,255,.2);
+  filter:none !important;
+}
+
+/* ── Botones topbar: squircle con sombra ── */
+.tbtn{
+  border-radius:14px !important;
+  width:38px !important; height:38px !important;
+  box-shadow:
+    0 4px 14px rgba(0,0,0,.22),
+    0 1px 0 rgba(255,255,255,.08) inset !important;
+  border:1px solid rgba(255,255,255,.07) !important;
+  transition:transform .18s cubic-bezier(.34,1.56,.64,1), box-shadow .18s !important;
+}
+.tbtn:active{
+  transform:scale(.84) !important;
+  box-shadow:0 2px 6px rgba(0,0,0,.2) !important;
+}
+.tbtn-accent{
+  border-radius:14px !important;
+  box-shadow:
+    0 6px 20px rgba(10,132,255,.45),
+    0 2px 8px rgba(0,0,0,.2),
+    0 1px 0 rgba(255,255,255,.2) inset !important;
+}
+
+/* ── FAB de IA: más grande, más premium ── */
+.ai-fab{
+  width:62px !important; height:62px !important;
+  border-radius:22px !important;
+  font-size:26px !important;
+  box-shadow:
+    0 8px 32px rgba(88,86,214,.55),
+    0 2px 8px rgba(0,0,0,.3),
+    0 1px 0 rgba(255,255,255,.2) inset !important;
+}
+.ai-fab:hover{
+  transform:scale(1.1) translateY(-2px) !important;
+  border-radius:24px !important;
+}
+.ai-fab:active{
+  transform:scale(.9) !important;
+  border-radius:18px !important;
+}
+
+/* ── Botones de detalle (back, actions) ── */
+.dh-back{
+  border-radius:14px !important;
+  width:38px !important; height:38px !important;
+  box-shadow:0 4px 16px rgba(0,0,0,.3) !important;
+}
+.dh-act{
+  border-radius:14px !important;
+  width:38px !important; height:38px !important;
+  box-shadow:0 4px 16px rgba(0,0,0,.3) !important;
+}
+
+/* ── Pills/filtros ── */
+.pill{
+  box-shadow:0 2px 8px rgba(0,0,0,.15);
+  border:1px solid rgba(255,255,255,.07);
+}
+.pill.active{
+  box-shadow:0 4px 14px rgba(10,132,255,.35);
+}
+
+/* ── Secciones de detalle ── */
+.dsec{
+  border-radius:22px !important;
+  box-shadow:0 4px 20px rgba(0,0,0,.12) !important;
+}
+
+/* ── Settings cards ── */
+.settings-card{
+  border-radius:22px !important;
+  box-shadow:0 4px 20px rgba(0,0,0,.12) !important;
+}
+
+/* ── Badges de número en card ── */
+.bc-num{
+  background:rgba(0,0,0,.4) !important;
+  backdrop-filter:blur(8px);
+  border:1px solid rgba(255,255,255,.15);
+  box-shadow:0 2px 8px rgba(0,0,0,.2);
+}
+
+/* ── bc-tag chips ── */
+.bc-tag{
+  backdrop-filter:blur(6px);
+  border:1px solid rgba(255,255,255,.15);
+  box-shadow:0 2px 6px rgba(0,0,0,.15);
+}
+
+/* ── Barra de búsqueda ── */
+.search-inner{
+  border-radius:18px !important;
+  box-shadow:0 4px 16px rgba(0,0,0,.12) !important;
+  border:1px solid rgba(255,255,255,.07) !important;
+}
+
+/* ── Modal inferior ── */
+.modal{
+  border-radius:32px 32px 0 0 !important;
+  box-shadow:0 -8px 48px rgba(0,0,0,.3) !important;
+}
+
+/* ── Botón primario modal ── */
+.m-primary{
+  border-radius:16px !important;
+  box-shadow:0 6px 20px rgba(10,132,255,.35) !important;
+}
+.m-ghost{
+  border-radius:16px !important;
+}
+
+/* ── Cube open button ── */
+.cube-open-btn{
+  border-radius:12px !important;
+  box-shadow:0 4px 12px rgba(0,0,0,.3) !important;
+  border:1px solid rgba(255,255,255,.2) !important;
+}
+
+/* ── Splash stats ── */
+.sp-stat{
+  border-radius:22px !important;
+  box-shadow:0 6px 24px rgba(0,0,0,.2) !important;
+}
+.sp-btn{
+  border-radius:18px !important;
+  box-shadow:0 6px 24px rgba(255,255,255,.2) !important;
+}
+.sp-btn2{
+  border-radius:18px !important;
+}
+
+/* ── Viewer items ── */
+.vh-item{
+  border-radius:20px !important;
+  box-shadow:0 4px 16px rgba(0,0,0,.1) !important;
+}
+
+/* ── Room chips ── */
+.room-box-chip{
+  border-radius:14px !important;
+  box-shadow:0 2px 10px rgba(0,0,0,.15) !important;
+}
+.room-cell{
+  border-radius:22px !important;
+}
+
+/* ── Topbar más definida ── */
+.topbar{
+  box-shadow:0 2px 20px rgba(0,0,0,.15) !important;
+}
+
+/* ── Animación de entrada de cards con stagger ── */
+@keyframes cardFloat{
+  from{opacity:0;transform:translateY(20px) scale(.96)}
+  to{opacity:1;transform:translateY(0) scale(1)}
+}
+.box-card{animation:cardFloat .35s cubic-bezier(.34,1.2,.64,1) both}
+.box-card:nth-child(1){animation-delay:.03s}
+.box-card:nth-child(2){animation-delay:.07s}
+.box-card:nth-child(3){animation-delay:.11s}
+.box-card:nth-child(4){animation-delay:.15s}
+.box-card:nth-child(5){animation-delay:.19s}
+.box-card:nth-child(6){animation-delay:.23s}
+.box-card:nth-child(7){animation-delay:.27s}
+.box-card:nth-child(8){animation-delay:.31s}
+
+/* ── Modo claro: sombras más suaves ── */
+[data-dark=""] .box-card{
+  box-shadow:
+    0 8px 32px rgba(0,0,0,.12),
+    0 2px 8px rgba(0,0,0,.08),
+    0 0 0 1px rgba(0,0,0,.05) !important;
+}
+[data-dark=""] .tbtn{
+  box-shadow:0 2px 10px rgba(0,0,0,.1) !important;
+}
+[data-dark=""] .dsec,
+[data-dark=""] .settings-card{
+  box-shadow:0 4px 20px rgba(0,0,0,.08) !important;
+}
 </style> 
 <!-- Firebase -->
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
 <script>
-firebase.initializeApp({
-  apiKey:"AIzaSyASsJJ40IQzssduPQnI_vz22vcvxsjBNME",
-  authDomain:"boxvision-d6a38.firebaseapp.com",
-  projectId:"boxvision-d6a38",
-  storageBucket:"boxvision-d6a38.firebasestorage.app",
-  messagingSenderId:"738277774697",
-  appId:"1:738277774697:web:11bcc85cbf616b7a4559f8"
-});
+// Inicializar Firebase solo si el SDK cargó correctamente
+if(typeof firebase !== 'undefined'){
+  try{
+    // Evitar re-inicializar si ya existe una app
+    if(!firebase.apps || !firebase.apps.length){
+      firebase.initializeApp({
+        apiKey:"AIzaSyASsJJ40IQzssduPQnI_vz22vcvxsjBNME",
+        authDomain:"boxvision-d6a38.firebaseapp.com",
+        projectId:"boxvision-d6a38",
+        storageBucket:"boxvision-d6a38.firebasestorage.app",
+        messagingSenderId:"738277774697",
+        appId:"1:738277774697:web:11bcc85cbf616b7a4559f8"
+      });
+    }
+  }catch(e){ console.warn("[BoxVision] firebase.initializeApp error:", e.message); }
+}
 
 let auth = null;
 let db = null;
 let currentUser = null;
 
+// Guard: si Firebase no cargó (sin internet la primera vez, o script bloqueado),
+// auth y db quedan null y la app usa modo local con localStorage
 try {
+  if(typeof firebase === 'undefined') throw new Error('Firebase SDK no cargado (¿sin internet?)');
+  firebase.initializeApp && firebase.app(); // reusar app si ya existe
   auth = firebase.auth();
   db = firebase.firestore();
   db.enablePersistence({ synchronizeTabs: true })
@@ -793,7 +1034,7 @@ try {
     });
   console.log("✅ Firebase inicializado correctamente");
 } catch(e) {
-  console.warn("Firebase no disponible:", e.message);
+  console.warn("[BoxVision] Firebase no disponible — modo local:", e.message);
   auth = null;
   db = null;
 }
@@ -2680,94 +2921,7 @@ document.addEventListener("DOMContentLoaded",applySplashGradient);
 
 </script>
 
-<!-- SERVICE WORKER REGISTRATION -->
-<script>
-(function(){
-  if(!('serviceWorker' in navigator)) return;
-
-  // ── SW embebido como blob con scope correcto ──────────────────────────────
-  // Se usa importScripts desde el blob para cachear el HTML principal.
-  // La clave es pasar {scope:'/'} para que el SW cubra toda la app.
-  var CACHE_NAME = 'bv-v3';
-  var APP_URL = location.origin + location.pathname; // URL exacta de este .html
-
-  var swCode = [
-    "var CACHE='" + CACHE_NAME + "';",
-    "var APP='" + APP_URL + "';",
-    // install: cachear el HTML de la app inmediatamente
-    "self.addEventListener('install',function(e){",
-    "  e.waitUntil(",
-    "    caches.open(CACHE).then(function(c){",
-    "      return c.add(APP);",
-    "    }).then(function(){ return self.skipWaiting(); })",
-    "  );",
-    "});",
-    // activate: limpiar caches viejos
-    "self.addEventListener('activate',function(e){",
-    "  e.waitUntil(",
-    "    caches.keys().then(function(keys){",
-    "      return Promise.all(keys.filter(function(k){return k!==CACHE;}).map(function(k){return caches.delete(k);}));",
-    "    }).then(function(){ return self.clients.claim(); })",
-    "  );",
-    "});",
-    // fetch: cache-first para el HTML, network-first para todo lo demás
-    "self.addEventListener('fetch',function(e){",
-    "  if(e.request.method!=='GET') return;",
-    "  var url=e.request.url;",
-    // Para Firebase/Groq/API externos: solo red, sin cache
-    "  if(url.indexOf('firestore')>-1||url.indexOf('googleapis')>-1||url.indexOf('groq')>-1||url.indexOf('workers.dev')>-1) return;",
-    "  e.respondWith(",
-    "    caches.match(e.request).then(function(cached){",
-    "      var networkFetch=fetch(e.request).then(function(r){",
-    "        if(r&&r.status===200&&r.type!=='opaque'){",
-    "          var clone=r.clone();",
-    "          caches.open(CACHE).then(function(c){ c.put(e.request,clone); });",
-    "        }",
-    "        return r;",
-    "      }).catch(function(){ return cached; });",
-    // Si hay cache, devolver cache mientras actualiza en segundo plano (stale-while-revalidate)
-    "      return cached||networkFetch;",
-    "    })",
-    "  );",
-    "});"
-  ].join('\n');
-
-  try{
-    var blob = new Blob([swCode], {type:'application/javascript'});
-    var swUrl = URL.createObjectURL(blob);
-    navigator.serviceWorker.register(swUrl, {scope: '/'})
-      .then(function(reg){
-        console.log('[BoxVision] SW registrado, scope:', reg.scope);
-      })
-      .catch(function(err){
-        // Si falla con scope '/', intentar sin scope (toma el del blob)
-        console.warn('[BoxVision] SW scope / falló, reintentando sin scope:', err.message);
-        navigator.serviceWorker.register(swUrl).catch(function(e){
-          console.warn('[BoxVision] SW no disponible:', e.message);
-        });
-      });
-  }catch(e){
-    console.warn('[BoxVision] SW error:', e);
-  }
-
-  // ── Detector de conexión: toast cuando vuelve el internet ─────────────────
-  var _wasOffline = !navigator.onLine;
-  window.addEventListener('online', function(){
-    if(_wasOffline){
-      _wasOffline = false;
-      if(typeof showToast === 'function') showToast('🌐 Conexión restaurada — sincronizando...', '#34C759');
-      // Intentar subir cambios pendientes a Firestore
-      if(typeof saveToFirestore === 'function' && typeof currentUser !== 'undefined' && currentUser){
-        setTimeout(saveToFirestore, 1000);
-      }
-    }
-  });
-  window.addEventListener('offline', function(){
-    _wasOffline = true;
-    if(typeof showToast === 'function') showToast('📵 Sin internet — funcionando offline', '#FF9500');
-  });
-})();
-</script>
+<!-- SW moved to end of body -->
 
 <!-- ═══ TUTORIAL ═══ -->
 <div id="tutorial">
@@ -3103,7 +3257,9 @@ async function saveToFirestore(){
     await db.collection("users").doc(currentUser.uid).set({
       boxes: lean,
       rooms: rooms,
-      updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+      updatedAt: (typeof firebase !== 'undefined' && firebase.firestore)
+        ? firebase.firestore.FieldValue.serverTimestamp()
+        : null
     },{merge:true});
     // actualizar caché local con lo que se subió
     localStorage.setItem("cb-boxes-"+currentUser.uid, JSON.stringify(lean));
@@ -3349,5 +3505,78 @@ if(auth){
 </script>
 
 
+
+<!-- SERVICE WORKER + OFFLINE DETECTOR -->
+<!-- Se coloca al final del body para que todas las variables estén definidas -->
+<script>
+(function(){
+  // ── Service Worker como blob (sin depender de sw.js externo) ──────────────
+  if('serviceWorker' in navigator){
+    var CACHE_NAME = 'bv-v4';
+    var APP_URL = location.origin + location.pathname;
+    var swLines = [
+      "var CACHE='" + CACHE_NAME + "';",
+      "var APP='" + APP_URL + "';",
+      "self.addEventListener('install',function(e){",
+      "  e.waitUntil(caches.open(CACHE).then(function(c){return c.add(APP);}).then(function(){return self.skipWaiting();}));",
+      "});",
+      "self.addEventListener('activate',function(e){",
+      "  e.waitUntil(caches.keys().then(function(ks){return Promise.all(ks.filter(function(k){return k!==CACHE;}).map(function(k){return caches.delete(k);}));}).then(function(){return self.clients.claim();}));",
+      "});",
+      "self.addEventListener('fetch',function(e){",
+      "  if(e.request.method!=='GET') return;",
+      "  var u=e.request.url;",
+      "  if(u.indexOf('firestore')>-1||u.indexOf('googleapis')>-1||u.indexOf('groq')>-1||u.indexOf('workers.dev')>-1||u.indexOf('gstatic')>-1) return;",
+      "  e.respondWith(caches.match(e.request).then(function(cached){",
+      "    var net=fetch(e.request).then(function(r){",
+      "      if(r&&r.status===200&&r.type!=='opaque'){var cl=r.clone();caches.open(CACHE).then(function(c){c.put(e.request,cl);});}",
+      "      return r;",
+      "    }).catch(function(){return cached;});",
+      "    return cached||net;",
+      "  }));",
+      "});"
+    ];
+    try{
+      var blob = new Blob([swLines.join('\n')], {type:'application/javascript'});
+      var swUrl = URL.createObjectURL(blob);
+      // Nota: blob SW solo funciona con scope del blob, no de la página.
+      // Esto es una limitación del navegador — para scope completo necesitas sw.js real.
+      // Aun así cachea el HTML cuando lo sirves desde un servidor que soporte SW.
+      navigator.serviceWorker.register(swUrl)
+        .then(function(reg){ console.log('[BoxVision] SW OK, scope:', reg.scope); })
+        .catch(function(e){ console.info('[BoxVision] SW no disponible (normal en file://):', e.message); });
+    }catch(e){
+      console.info('[BoxVision] SW no soportado:', e.message);
+    }
+  }
+
+  // ── Detector online/offline ───────────────────────────────────────────────
+  // Se define aquí (al final del body) para que showToast, saveToFirestore
+  // y currentUser ya estén disponibles cuando se disparen los eventos.
+  var _wasOffline = !navigator.onLine;
+
+  window.addEventListener('online', function(){
+    if(!_wasOffline) return;
+    _wasOffline = false;
+    // showToast está definida más arriba en el mismo body
+    if(typeof showToast === 'function'){
+      showToast('🌐 Conexión restaurada — sincronizando...', '#34C759');
+    }
+    // Subir cambios pendientes a Firestore
+    setTimeout(function(){
+      if(typeof saveToFirestore === 'function' && typeof currentUser !== 'undefined' && currentUser){
+        saveToFirestore();
+      }
+    }, 1200);
+  });
+
+  window.addEventListener('offline', function(){
+    _wasOffline = true;
+    if(typeof showToast === 'function'){
+      showToast('📵 Sin internet — funcionando offline', '#FF9500');
+    }
+  });
+})();
+</script>
 </body>
 </html>
