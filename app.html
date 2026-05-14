@@ -1323,6 +1323,27 @@ function applySplashGradient(){
   if(sp) sp.style.setProperty('background',grad,'important');
 }
 
+// Actualiza solo los contadores del splash sin redibujar toda la pantalla
+function updateSplashCounters(){
+  const spc = document.getElementById("sp-c");
+  const spo = document.getElementById("sp-o");
+  const spf = document.getElementById("sp-f");
+  if(!spc) return; // no estamos en splash
+  const total = boxes.reduce((s,b)=>s+b.items.length,0);
+  spc.textContent = boxes.length;
+  spo.textContent = total;
+  spf.textContent = boxes.filter(b=>b.fav).length;
+  // también actualizar "última caja"
+  const last = boxes.slice().sort((a,b)=>(b.lastUsed||0)-(a.lastUsed||0))[0];
+  const spLast = document.getElementById("spLast");
+  if(last && spLast){
+    spLast.style.display="block";
+    document.getElementById("spLastIcon").textContent=getIcon(last.name);
+    document.getElementById("spLastName").textContent=last.name;
+    document.getElementById("spLastSub").textContent=last.items.length+" objeto"+(last.items.length!==1?"s":"")+(last.location?" · "+last.location:"");
+  }
+}
+
 function showSplash(){
   showScreen("splash");
   applySplashGradient();
@@ -1819,6 +1840,8 @@ function saveForm(){
   }
   const _mode=formMode, _id=editingBoxId;
   saveData();closeForm();
+  // Actualizar contadores del splash al instante (ya están en boxes[])
+  updateSplashCounters && updateSplashCounters();
   setTimeout(()=>{
     if(_mode==="new"){showToast("✅ Caja guardada","#34C759");goMain();}
     else{showToast("✏️ Cambios guardados","#34C759");openDetail(_id);}
@@ -3055,6 +3078,8 @@ async function loadFromFirestore(){
     console.warn("Firestore load error:", e);
     // boxes ya tiene el fallback de localStorage de arriba
   }
+  // Actualizar caché local con lo que llegó de Firestore
+  saveToLocalStorage();
 }
 
 function restoreThumbs(){
@@ -3077,21 +3102,36 @@ if(auth){
   async function launchApp(user){
     currentUser = user;
 
-    // Ocultar login
+    // Ocultar login inmediatamente
     const loginScreen = document.getElementById("loginScreen");
     if(loginScreen){ loginScreen.style.opacity="0"; loginScreen.style.transition="opacity .3s"; setTimeout(()=>loginScreen.style.display="none",300); }
     const avatar = document.getElementById("userAvatar");
     if(avatar && user.photoURL){ avatar.src=user.photoURL; avatar.style.display="block"; }
 
-    // Cargar datos (Firestore + fallback localStorage)
-    await loadFromFirestore();
-
-    // Cargar settings y dark mode (loadAll solo lee settings/dark, NO toca boxes/rooms)
+    // Cargar settings y dark mode
     loadSettingsOnly();
+
+    // PASO 1: mostrar splash con datos de localStorage AHORA (0ms de espera)
+    // para que el contador aparezca al instante aunque Firestore tarde
+    try{
+      const localLean = JSON.parse(localStorage.getItem("cb-boxes-"+user.uid)||"[]");
+      const localRooms = JSON.parse(localStorage.getItem("cb-rooms-"+user.uid)||"[]");
+      if(localLean.length > 0){
+        boxes = localLean;
+        rooms = localRooms;
+        restoreThumbs();
+      }
+    }catch(e){}
 
     setupPWA();
     initTutorial();
-    showSplash();
+    showSplash(); // ← muestra contadores al instante con datos locales
+
+    // PASO 2: sincronizar con Firestore en segundo plano
+    // cuando termina, refrescar contadores si cambiaron
+    loadFromFirestore().then(()=>{
+      updateSplashCounters(); // actualizar si Firestore trajo datos distintos
+    });
   }
 
   function showLogin(){
