@@ -816,10 +816,15 @@ if(!auth){
   <img src="./icons/logo.png" style="width:96px;height:96px;object-fit:contain;margin-bottom:8px;"/>
   <div style="font-size:30px;font-weight:800;color:#fff;letter-spacing:-1px;margin-bottom:6px">BoxVision</div>
   <div style="font-size:15px;color:rgba(255,255,255,.5);margin-bottom:48px">Gestor inteligente de mudanzas</div>
-  <button onclick="signInGoogle()" style="display:flex;align-items:center;gap:12px;background:#fff;color:#1a1a1a;border:none;border-radius:14px;padding:16px 28px;font-size:16px;font-weight:700;cursor:pointer;box-shadow:0 8px 32px rgba(0,0,0,.3);transition:transform .15s,box-shadow .15s;width:100%;max-width:300px;justify-content:center" onmousedown="this.style.transform='scale(.97)'" onmouseup="this.style.transform=''" ontouchstart="this.style.transform='scale(.97)'" ontouchend="this.style.transform=''">
+  <button id="loginBtn" onclick="signInGoogle()" style="display:flex;align-items:center;gap:12px;background:#fff;color:#1a1a1a;border:none;border-radius:14px;padding:16px 28px;font-size:16px;font-weight:700;cursor:pointer;box-shadow:0 8px 32px rgba(0,0,0,.3);transition:transform .15s,box-shadow .15s;width:100%;max-width:300px;justify-content:center" onmousedown="this.style.transform='scale(.97)'" onmouseup="this.style.transform=''" ontouchstart="this.style.transform='scale(.97)'" ontouchend="this.style.transform=''">
     <svg width="20" height="20" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.18 1.48-4.97 2.34-8.16 2.34-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>
     Continuar con Google
   </button>
+  <div id="loginLoading" style="margin-top:20px;display:none;flex-direction:column;align-items:center;gap:10px">
+    <div style="width:28px;height:28px;border:3px solid rgba(255,255,255,.2);border-top-color:#fff;border-radius:50%;animation:spin .8s linear infinite"></div>
+    <div style="font-size:13px;color:rgba(255,255,255,.6)">Iniciando sesión…</div>
+  </div>
+  <style>@keyframes spin{to{transform:rotate(360deg)}}</style>
   <div id="loginError" style="margin-top:16px;font-size:13px;color:#FF3B30;display:none"></div>
   <div style="position:absolute;bottom:32px;font-size:11px;color:rgba(255,255,255,.25)">Tus cajas se guardan en tu cuenta</div>
 </div>
@@ -1106,8 +1111,11 @@ function loadAll(){
   try{
     const uid=currentUser?.uid;
     const key=uid?"cb-boxes-"+uid:"cb-boxes";
-    boxes=JSON.parse(localStorage.getItem(key)||"[]");
-    // Restaurar thumbs
+    // Solo cargar cajas desde localStorage si NO fueron ya cargadas desde Firestore
+    if(!boxes||boxes.length===0){
+      boxes=JSON.parse(localStorage.getItem(key)||"[]");
+    }
+    // Restaurar thumbs siempre (están guardados aparte en localStorage)
     boxes.forEach(b=>{
       b.items.forEach(it=>{
         if(!it.thumb){
@@ -1118,7 +1126,12 @@ function loadAll(){
       });
     });
   }catch(e){boxes=[];}
-  try{const rk=currentUser?"cb-rooms-"+currentUser.uid:"cb-rooms";rooms=JSON.parse(localStorage.getItem(rk)||"[]");}catch(e){rooms=[];}
+  try{
+    const rk=currentUser?"cb-rooms-"+currentUser.uid:"cb-rooms";
+    if(!rooms||rooms.length===0){
+      rooms=JSON.parse(localStorage.getItem(rk)||"[]");
+    }
+  }catch(e){rooms=[];}
   try{settings=JSON.parse(localStorage.getItem("cb-settings")||'{"brand":""}');}catch(e){settings={brand:""};}
   dark=localStorage.getItem("cb-dark")==="0"?0:1;
   document.body.setAttribute("data-dark",dark?"1":"");
@@ -2891,16 +2904,19 @@ function signInGoogle(){
     alert("⚠️ Firebase no está disponible. Usa la app en modo local.");
     return;
   }
-  
+  // Mostrar spinner y ocultar botón antes del redirect
+  const btn = document.getElementById("loginBtn");
+  const loading = document.getElementById("loginLoading");
+  if(btn) btn.style.display = "none";
+  if(loading) loading.style.display = "flex";
+
   const provider = new firebase.auth.GoogleAuthProvider();
   provider.setCustomParameters({prompt: 'select_account'});
   
-  // Usar popup en vez de redirect — más fiable en apps de una sola página
-  auth.signInWithPopup(provider).then(result=>{
-    // onAuthStateChanged se encarga del resto
-  }).catch(err=>{
-    if(err.code === "auth/popup-closed-by-user") return; // usuario cerró el popup
+  auth.signInWithRedirect(provider).catch(err=>{
     console.error("Login error:", err);
+    if(btn) btn.style.display = "flex";
+    if(loading) loading.style.display = "none";
     const el = document.getElementById("loginError");
     if(el){
       el.textContent = "Error: " + (err.message || err);
@@ -2937,103 +2953,202 @@ function signOutUser(){
 }
 
 // ── Firestore sync ─────────────────────────────────
-async function loadFromFirestore(){
-if(!currentUser || !db){
-  console.log("⚠️ Firestore no disponible, usando localStorage");
-  return;
-}
-  try{
-    const doc=await db.collection("users").doc(currentUser.uid).get();
-    if(doc.exists){
-      const data=doc.data();
-      boxes=data.boxes||[];
-      rooms=data.rooms||[];
-      boxes.forEach(b=>{
-        b.items.forEach(it=>{
-          if(!it.thumb){
-            const k="cb-thumb-"+b.id+"-"+encodeURIComponent(it.text.slice(0,20));
-            const t=localStorage.getItem(k);
-            if(t) it.thumb=t;
-          }
-        });
-      });
+
+// Fusiona cajas de Firestore con cajas locales sin perder ninguna.
+// La caja con mayor cantidad de ítems o más reciente gana en caso de conflicto.
+function mergeBoxes(remote, local){
+  const map = new Map();
+  // Primero poner las remotas (fuente de verdad principal)
+  (remote||[]).forEach(b => map.set(b.id, b));
+  // Luego fusionar las locales: si hay una local con el mismo id
+  // y tiene MÁS ítems que la remota, conservamos la local (el usuario
+  // hizo cambios offline que aún no se subieron).
+  (local||[]).forEach(b => {
+    if(!map.has(b.id)){
+      // Caja nueva que aún no está en Firestore → agregarla
+      map.set(b.id, b);
+    } else {
+      const rem = map.get(b.id);
+      // Si la versión local tiene más ítems, es más nueva → usarla
+      if((b.items||[]).length > (rem.items||[]).length){
+        map.set(b.id, b);
+      }
     }
+  });
+  return Array.from(map.values());
+}
+
+async function loadFromFirestore(){
+  if(!currentUser || !db){
+    console.log("⚠️ Firestore no disponible, usando localStorage");
+    // Fallback: cargar solo desde localStorage
+    try{ boxes=JSON.parse(localStorage.getItem("cb-boxes-"+currentUser?.uid||"cb-boxes")||"[]"); }catch{ boxes=[]; }
+    return;
+  }
+  try{
+    const doc = await db.collection("users").doc(currentUser.uid).get();
+    // Leer cajas locales como respaldo de cambios offline
+    let localBoxes = [];
+    try{ localBoxes = JSON.parse(localStorage.getItem("cb-boxes-"+currentUser.uid)||"[]"); }catch{}
+    let localRooms = [];
+    try{ localRooms = JSON.parse(localStorage.getItem("cb-rooms-"+currentUser.uid)||"[]"); }catch{}
+
+    if(doc.exists){
+      const data = doc.data();
+      // Fusionar remoto + local para no perder nada
+      boxes = mergeBoxes(data.boxes||[], localBoxes);
+      // Para rooms: remoto gana, pero si no hay remotos usar locales
+      rooms = (data.rooms && data.rooms.length > 0) ? data.rooms : localRooms;
+    } else {
+      // El documento no existe aún en Firestore → usar los locales
+      boxes = localBoxes;
+      rooms = localRooms;
+    }
+
+    // Restaurar thumbs desde localStorage (se guardan aparte por límite de tamaño)
+    boxes.forEach(b=>{
+      b.items.forEach(it=>{
+        if(!it.thumb){
+          const k = "cb-thumb-"+b.id+"-"+encodeURIComponent(it.text.slice(0,20));
+          const t = localStorage.getItem(k);
+          if(t) it.thumb = t;
+        }
+      });
+    });
+
+    // Si había cajas locales que no estaban en Firestore, subirlas inmediatamente
+    if(doc.exists){
+      const remoteIds = new Set((doc.data().boxes||[]).map(b=>b.id));
+      const hasNewLocal = localBoxes.some(b => !remoteIds.has(b.id));
+      if(hasNewLocal){
+        console.log("📤 Subiendo cajas locales nuevas a Firestore...");
+        await saveToFirestore();
+      }
+    } else if(localBoxes.length > 0){
+      // Primera vez con cuenta — subir todo lo local
+      console.log("📤 Primera carga: subiendo cajas locales a Firestore...");
+      await saveToFirestore();
+    }
+
   }catch(e){
-    console.warn("Firestore load error:",e);
-    try{boxes=JSON.parse(localStorage.getItem("cb-boxes-"+currentUser.uid)||"[]");}catch{boxes=[];}
+    console.warn("Firestore load error:", e);
+    // Fallback a localStorage si Firestore falla
+    try{ boxes=JSON.parse(localStorage.getItem("cb-boxes-"+currentUser.uid)||"[]"); }catch{ boxes=[]; }
+    try{ rooms=JSON.parse(localStorage.getItem("cb-rooms-"+currentUser.uid)||"[]"); }catch{ rooms=[]; }
   }
 }
 
 let _saveTimer=null;
 function scheduleSave(){
   clearTimeout(_saveTimer);
-  _saveTimer=setTimeout(saveToFirestore,1200);
+  _saveTimer = setTimeout(saveToFirestore, 800); // más rápido: 0.8s
 }
 
 async function saveToFirestore(){
-  if(!currentUser) return;
+  if(!currentUser || !db) return;
   try{
-    const boxesLean=boxes.map(b=>{
-      const bc=JSON.parse(JSON.stringify(b));
-      bc.items=b.items.map(it=>({text:it.text,done:it.done}));
+    const boxesLean = boxes.map(b=>{
+      const bc = JSON.parse(JSON.stringify(b));
+      // Guardar ítems sin thumbs en Firestore (el thumb va aparte en localStorage)
+      bc.items = b.items.map(it=>({text:it.text, done:it.done}));
       return bc;
     });
+    // Guardar en Firestore
     await db.collection("users").doc(currentUser.uid).set({
-      boxes:boxesLean, rooms:rooms,
-      updatedAt:firebase.firestore.FieldValue.serverTimestamp()
-    },{merge:true});
-    localStorage.setItem("cb-boxes-"+currentUser.uid, JSON.stringify(boxesLean));
+      boxes: boxesLean,
+      rooms: rooms,
+      updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+    }, {merge:true});
+    // Guardar copia local como caché offline
+    try{ localStorage.setItem("cb-boxes-"+currentUser.uid, JSON.stringify(boxesLean)); }catch(e){}
+    try{ localStorage.setItem("cb-rooms-"+currentUser.uid, JSON.stringify(rooms)); }catch(e){}
+    // Guardar thumbs aparte en localStorage
     boxes.forEach(b=>{
       b.items.forEach(it=>{
         if(it.thumb){
-          const k="cb-thumb-"+b.id+"-"+encodeURIComponent(it.text.slice(0,20));
-          try{localStorage.setItem(k,it.thumb);}catch(e){}
+          const k = "cb-thumb-"+b.id+"-"+encodeURIComponent(it.text.slice(0,20));
+          try{ localStorage.setItem(k, it.thumb); }catch(e){}
         }
       });
     });
   }catch(e){
-    console.warn("Firestore save error:",e);
-    showToast("⚠️ Error guardando en la nube","#FF9500");
+    console.warn("Firestore save error:", e);
+    // Guardar solo en localStorage si Firestore falla
+    try{
+      const boxesLean = boxes.map(b=>({...b, items: b.items.map(it=>({text:it.text,done:it.done}))}));
+      localStorage.setItem("cb-boxes-"+currentUser.uid, JSON.stringify(boxesLean));
+    }catch(le){}
+    showToast("⚠️ Sin conexión — guardado localmente","#FF9500");
   }
 }
 
 // ── Auth state listener ────────────────────────────
 if(auth){
-  // Procesar resultado de redirect ANTES que onAuthStateChanged
-  auth.getRedirectResult().catch(err=>{
-    if(err && err.code !== "auth/no-current-user"){
-      console.warn("Redirect result error:", err.message);
-      const el = document.getElementById("loginError");
-      if(el){ el.textContent = "Error al iniciar sesión: " + err.message; el.style.display = "block"; }
+  let appLaunched = false; // evitar doble arranque
+
+  async function launchApp(user){
+    if(appLaunched) return; // protección anti-doble llamada
+    appLaunched = true;
+    currentUser = user;
+
+    const loginScreen = document.getElementById("loginScreen");
+    loginScreen.style.opacity = "0";
+    loginScreen.style.transition = "opacity .3s";
+    setTimeout(()=> loginScreen.style.display = "none", 300);
+
+    const avatar = document.getElementById("userAvatar");
+    if(avatar && user.photoURL){
+      avatar.src = user.photoURL;
+      avatar.style.display = "block";
+    }
+
+    // Firestore es la fuente de verdad — cargar PRIMERO, luego loadAll solo carga settings/dark
+    await loadFromFirestore();
+    loadAll(); // solo aplica settings, dark mode y thumbs — NO sobreescribe boxes/rooms si ya están cargados
+    if(typeof setupPWA === "function") setupPWA();
+    if(typeof initTutorial === "function") initTutorial();
+    if(typeof showSplash === "function") showSplash();
+  }
+
+  function showLogin(){
+    boxes = []; rooms = [];
+    appLaunched = false;
+    const loginScreen = document.getElementById("loginScreen");
+    loginScreen.style.opacity = "1";
+    loginScreen.style.display = "flex";
+    const avatar = document.getElementById("userAvatar");
+    if(avatar) avatar.style.display = "none";
+  }
+
+  const _loginBtn = document.getElementById("loginBtn");
+  const _loginLoading = document.getElementById("loginLoading");
+  if(_loginBtn) _loginBtn.style.display = "none";
+  if(_loginLoading) _loginLoading.style.display = "flex";
+
+  auth.getRedirectResult().then(async result=>{
+    if(result && result.user){
+      await launchApp(result.user);
+    } else {
+      if(_loginBtn) _loginBtn.style.display = "flex";
+      if(_loginLoading) _loginLoading.style.display = "none";
+    }
+  }).catch(err=>{
+    if(_loginBtn) _loginBtn.style.display = "flex";
+    if(_loginLoading) _loginLoading.style.display = "none";
+    console.warn("getRedirectResult error:", err.message);
+    const el = document.getElementById("loginError");
+    if(el){ el.textContent = "Error al iniciar sesión: " + err.message; el.style.display = "block"; }
+  });
+
+  // onAuthStateChanged como respaldo (sesión ya activa o tras logout)
+  auth.onAuthStateChanged(async user=>{
+    if(user){
+      if(!appLaunched) await launchApp(user);
+    } else {
+      showLogin();
     }
   });
 
-  auth.onAuthStateChanged(async user=>{
-    const loginScreen = document.getElementById("loginScreen");
-    if(user){
-      currentUser = user;
-      loginScreen.style.opacity = "0";
-      loginScreen.style.transition = "opacity .3s";
-      setTimeout(()=> loginScreen.style.display = "none", 300);
-      const avatar = document.getElementById("userAvatar");
-      if(avatar && user.photoURL){
-        avatar.src = user.photoURL;
-        avatar.style.display = "block";
-      }
-      await loadFromFirestore();
-      loadAll();
-      if(typeof setupPWA === "function") setupPWA();
-      if(typeof initTutorial === "function") initTutorial();
-      if(typeof showSplash === "function") showSplash();
-    }else{
-      boxes = [];
-      rooms = [];
-      loginScreen.style.opacity = "1";
-      loginScreen.style.display = "flex";
-      const avatar = document.getElementById("userAvatar");
-      if(avatar) avatar.style.display = "none";
-    }
-  });
 } else {
   console.warn("Auth no disponible, iniciando en modo local");
   document.addEventListener("DOMContentLoaded", function(){
