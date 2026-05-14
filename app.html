@@ -2895,7 +2895,11 @@ function signInGoogle(){
   const provider = new firebase.auth.GoogleAuthProvider();
   provider.setCustomParameters({prompt: 'select_account'});
   
-  auth.signInWithRedirect(provider).catch(err=>{
+  // Usar popup en vez de redirect — más fiable en apps de una sola página
+  auth.signInWithPopup(provider).then(result=>{
+    // onAuthStateChanged se encarga del resto
+  }).catch(err=>{
+    if(err.code === "auth/popup-closed-by-user") return; // usuario cerró el popup
     console.error("Login error:", err);
     const el = document.getElementById("loginError");
     if(el){
@@ -2994,8 +2998,16 @@ async function saveToFirestore(){
 }
 
 // ── Auth state listener ────────────────────────────
-// ── Auth state listener ────────────────────────────
 if(auth){
+  // Procesar resultado de redirect ANTES que onAuthStateChanged
+  auth.getRedirectResult().catch(err=>{
+    if(err && err.code !== "auth/no-current-user"){
+      console.warn("Redirect result error:", err.message);
+      const el = document.getElementById("loginError");
+      if(el){ el.textContent = "Error al iniciar sesión: " + err.message; el.style.display = "block"; }
+    }
+  });
+
   auth.onAuthStateChanged(async user=>{
     const loginScreen = document.getElementById("loginScreen");
     if(user){
