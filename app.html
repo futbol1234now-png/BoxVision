@@ -1138,37 +1138,17 @@ function loadAll(){
   applyDark();
 }
 function saveData(){
+  // scheduleSave hace: 1) localStorage síncrono inmediato, 2) Firestore con debounce
+  scheduleSave();
+  // Verificar uso de localStorage
   try{
-    const boxesLean = boxes.map(b=>{
-      const bc = JSON.parse(JSON.stringify(b));
-      bc.items = b.items.map(it=>({text:it.text, done:it.done}));
-      return bc;
-    });
-    // Cache local
-    if(currentUser) localStorage.setItem("cb-boxes-"+currentUser.uid, JSON.stringify(boxesLean));
-    else localStorage.setItem("cb-boxes", JSON.stringify(boxesLean));
-    // Guardar thumbs aparte
-    boxes.forEach(b=>{
-      b.items.forEach(it=>{
-        if(it.thumb){
-          const k="cb-thumb-"+b.id+"-"+encodeURIComponent(it.text.slice(0,20));
-          try{localStorage.setItem(k,it.thumb);}catch(e){}
-        }
-      });
-    });
-    // Sync a Firestore (con debounce)
-    if(typeof scheduleSave==="function") scheduleSave();
     let used=0;
     for(let k in localStorage) if(localStorage.hasOwnProperty(k)) used+=localStorage[k].length*2;
     if(used>4*1024*1024 && !window._storageWarnShown){
       window._storageWarnShown=true;
       setTimeout(()=>showToast("⚠️ Casi sin espacio — considera eliminar fotos","#FF9500"),300);
     }
-  }catch(e){
-    if(e.name==="QuotaExceededError"){
-      showToast("❌ Sin espacio disponible — elimina fotos para poder guardar","#FF3B30");
-    }
-  }
+  }catch(e){}
 }
 function saveRooms(){const key=currentUser?"cb-rooms-"+currentUser.uid:"cb-rooms";localStorage.setItem(key,JSON.stringify(rooms));}
 function saveSettings(){localStorage.setItem("cb-settings",JSON.stringify(settings));}
@@ -3038,49 +3018,70 @@ async function loadFromFirestore(){
   }
 }
 
-let _saveTimer=null;
-function scheduleSave(){
-  clearTimeout(_saveTimer);
-  _saveTimer = setTimeout(saveToFirestore, 800); // más rápido: 0.8s
-}
-
-async function saveToFirestore(){
-  if(!currentUser || !db) return;
+// Guarda en localStorage de forma SÍNCRONA (instantáneo, no se pierde aunque cierren la app)
+function saveToLocalStorage(){
   try{
     const boxesLean = boxes.map(b=>{
       const bc = JSON.parse(JSON.stringify(b));
-      // Guardar ítems sin thumbs en Firestore (el thumb va aparte en localStorage)
       bc.items = b.items.map(it=>({text:it.text, done:it.done}));
       return bc;
     });
-    // Guardar en Firestore
+    const key = currentUser ? "cb-boxes-"+currentUser.uid : "cb-boxes";
+    localStorage.setItem(key, JSON.stringify(boxesLean));
+    boxes.forEach(b=>{
+      b.items.forEach(it=>{
+        if(it.thumb){
+          const k="cb-thumb-"+b.id+"-"+encodeURIComponent(it.text.slice(0,20));
+          try{ localStorage.setItem(k, it.thumb); }catch(e){}
+        }
+      });
+    });
+  }catch(e){ console.warn("localStorage save error:", e); }
+}
+
+let _saveTimer=null;
+function scheduleSave(){
+  // 1. Guardar en localStorage AHORA (síncrono) — si cierran la app en el próximo segundo, no se pierde
+  saveToLocalStorage();
+  // 2. Subir a Firestore con debounce corto para no saturar con escrituras rápidas
+  clearTimeout(_saveTimer);
+  _saveTimer = setTimeout(saveToFirestore, 400);
+}
+
+async function saveToFirestore(){
+  if(!currentUser || !db){
+    saveToLocalStorage();
+    return;
+  }
+  try{
+    const boxesLean = boxes.map(b=>{
+      const bc = JSON.parse(JSON.stringify(b));
+      bc.items = b.items.map(it=>({text:it.text, done:it.done}));
+      return bc;
+    });
     await db.collection("users").doc(currentUser.uid).set({
       boxes: boxesLean,
       rooms: rooms,
       updatedAt: firebase.firestore.FieldValue.serverTimestamp()
     }, {merge:true});
-    // Guardar copia local como caché offline
+    // Actualizar caché local
     try{ localStorage.setItem("cb-boxes-"+currentUser.uid, JSON.stringify(boxesLean)); }catch(e){}
     try{ localStorage.setItem("cb-rooms-"+currentUser.uid, JSON.stringify(rooms)); }catch(e){}
-    // Guardar thumbs aparte en localStorage
-    boxes.forEach(b=>{
-      b.items.forEach(it=>{
-        if(it.thumb){
-          const k = "cb-thumb-"+b.id+"-"+encodeURIComponent(it.text.slice(0,20));
-          try{ localStorage.setItem(k, it.thumb); }catch(e){}
-        }
-      });
-    });
   }catch(e){
     console.warn("Firestore save error:", e);
-    // Guardar solo en localStorage si Firestore falla
-    try{
-      const boxesLean = boxes.map(b=>({...b, items: b.items.map(it=>({text:it.text,done:it.done}))}));
-      localStorage.setItem("cb-boxes-"+currentUser.uid, JSON.stringify(boxesLean));
-    }catch(le){}
     showToast("⚠️ Sin conexión — guardado localmente","#FF9500");
   }
 }
+
+// Safety net: cuando el usuario cambia de pestaña o cierra la app,
+// forzar guardado local inmediato y reintentar Firestore
+window.addEventListener("visibilitychange", ()=>{
+  if(document.visibilityState === "hidden"){
+    clearTimeout(_saveTimer);
+    saveToLocalStorage();
+    if(currentUser && db) saveToFirestore();
+  }
+});
 
 // ── Auth state listener ────────────────────────────
 if(auth){
