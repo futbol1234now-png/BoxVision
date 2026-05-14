@@ -767,6 +767,7 @@ body{
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
 <script>
+<script>
 firebase.initializeApp({
   apiKey:"AIzaSyASsJJ40IQzssduPQnI_vz22vcvxsjBNME",
   authDomain:"boxvision-d6a38.firebaseapp.com",
@@ -776,12 +777,13 @@ firebase.initializeApp({
   appId:"1:738277774697:web:11bcc85cbf616b7a4559f8"
 });
 
-var auth, db, currentUser=null;
-try{
+let auth = null;
+let db = null;
+let currentUser = null;
+
+try {
   auth = firebase.auth();
   db = firebase.firestore();
-
-  // ✅ PASO 1: Activar persistencia local (carga instantánea)
   db.enablePersistence({ synchronizeTabs: true })
     .catch(err => {
       if(err.code === 'failed-precondition'){
@@ -790,14 +792,10 @@ try{
         console.warn('Persistencia no soportada en este navegador');
       }
     });
-
-}catch(e){
+} catch(e) {
   console.warn("Firebase no disponible:", e.message);
 }
-});
-let auth = null;
-let db = null;
-let currentUser = null;
+</script>
 
 // Inicializar Firebase después de que esté cargado
 if(firebase){
