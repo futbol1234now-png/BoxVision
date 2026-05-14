@@ -804,7 +804,13 @@ if(!auth){
     const ls = document.getElementById("loginScreen");
     if(ls) ls.style.display = "none";
     if(typeof loadAll === "function") loadAll();
-    if(typeof showSplash === "function") showSplash();
+    // FIX: si hay cajas guardadas ir directo a main, no al landing
+    if(typeof boxes !== "undefined" && boxes && boxes.length > 0){
+      history.replaceState(null, "", location.pathname + location.search);
+      if(typeof goMain === "function") goMain();
+    } else {
+      if(typeof showSplash === "function") showSplash();
+    }
   });
 }
 </script>
@@ -1291,6 +1297,12 @@ function setupPWA(){
 function route(){
   const hash=location.hash;
   if(hash.startsWith("#view/")){try{showViewer(JSON.parse(decodeURIComponent(atob(hash.slice(6)))));}catch(e){showViewer(null);}return;}
+  // FIX: si ya hay sesion activa (Firebase o local), ir directo a main, no al landing
+  if(currentUser || !window._authEnabled){
+    // limpiar hash para que el boton atras no pueda volver
+    history.replaceState(null, "", location.pathname + location.search);
+    goMain(); return;
+  }
   loadAll();setupPWA();initTutorial();showSplash();
 }
 
@@ -1400,11 +1412,11 @@ function boxCard(b){
   const done=b.items.filter(i=>i.done).length,total=b.items.length,pct=total?Math.round(done/total*100):0;
   const tags=(b.tags||[]).slice(0,2).map(t=>`<span class="bc-tag">${esc(t)}</span>`).join("");
   const cardBg = b.photo
-    ? `url(${b.photo}) center/cover, linear-gradient(135deg,${col},${rgba(col,.65)})`
-    : `linear-gradient(135deg,${col},${rgba(col,.65)})`;
+    ? `url(${b.photo}) center/cover, linear-gradient(135deg,${col},${hexToRgba(col,.65)})`
+    : `linear-gradient(135deg,${col},${hexToRgba(col,.65)})`;
   const hasPhoto = !!b.photo;
   return `<div class="box-card" style="background:${cardBg}" onclick="openDetail('${b.id}')">
-    ${hasPhoto?`<div style="position:absolute;inset:0;background:linear-gradient(160deg,${rgba(col,.8)},${rgba(col,.5)});z-index:0"></div>`:''}
+    ${hasPhoto?`<div style="position:absolute;inset:0;background:linear-gradient(160deg,${hexToRgba(col,.8)},${hexToRgba(col,.5)});z-index:0"></div>`:''}
     <div class="bc-inner">
       <div class="bc-top">
         <button class="bc-fav" onclick="event.stopPropagation();toggleFavId('${b.id}')">${b.fav?"⭐":"☆"}</button>
@@ -1458,7 +1470,7 @@ function _doOpenDetail(id){
   showScreen("detailScreen");
   document.getElementById("detailScreen").style.animation="slideUpScreen var(--dur-slow,420ms) var(--ease-out-expo,cubic-bezier(0.16,1,0.3,1)) both";
   const col=box.color||"#007AFF";
-  document.getElementById("dHero").style.background=`linear-gradient(135deg,${col},${rgba(col,.6)})`;
+  document.getElementById("dHero").style.background=`linear-gradient(135deg,${col},${hexToRgba(col,.6)})`;
   const hi=document.getElementById("dHeroImg");
   if(box.photo){hi.src=box.photo;hi.classList.remove("hidden");}else hi.classList.add("hidden");
   document.getElementById("dIcon").textContent=getIcon(box.name);
@@ -1943,7 +1955,7 @@ function showViewer(box){
   }catch(e){}
   const col=box.color||"#007AFF";
   window._viewerColor=col; // save for filterViewerItems
-  document.getElementById("vBg").style.background=`linear-gradient(135deg,${col},${rgba(col,.6)})`;
+  document.getElementById("vBg").style.background=`linear-gradient(135deg,${col},${hexToRgba(col,.6)})`;
   if(box.photo){const vp=document.getElementById("vPhoto");vp.src=box.photo;vp.classList.remove("hidden");}
   // Normalize compressed QR keys
   if(box.n&&!box.name){box.name=box.n;box.number=box.num;box.location=box.loc;box.color=box.col;box.priority=box.pri;box.weight=box.w;if(box.rel)box.related=box.rel;box.items=(box.items||[]).map(i=>typeof i==="object"&&i.t?{text:i.t,done:!!i.d}:i);}
@@ -2213,13 +2225,23 @@ function filterViewerItems(q){
 }
 
 
+// BUG FIX #2: helper para convertir hex a rgba (rgba() no existe nativamente en JS)
+function hexToRgba(hex, alpha){
+  if(!hex||!hex.startsWith('#')) return hex||'#007AFF';
+  const h=hex.replace('#','');
+  const r=parseInt(h.length===3?h[0]+h[0]:h.slice(0,2),16);
+  const g=parseInt(h.length===3?h[1]+h[1]:h.slice(2,4),16);
+  const b=parseInt(h.length===3?h[2]+h[2]:h.slice(4,6),16);
+  return `rgba(${r},${g},${b},${alpha})`;
+}
+
 // ═══ 3D CUBE ═══
 let cubeRotX=-18, cubeRotY=0, cubeDragging=false, cubeLastX=0, cubeLastY=0, cubeSpinning=true;
 
 function openCube(boxId){
   const box=boxes.find(b=>b.id===boxId); if(!box) return;
   const col=box.color||"#007AFF";
-  const col2=box.color?rgba(col,.7):"#5856D6";
+  const col2=box.color?hexToRgba(col,.7):"#5856D6"; // BUG FIX #2: rgba() → hexToRgba()
 
   // Title
   document.getElementById("cubeTitle").textContent=getIcon(box.name)+" "+box.name;
@@ -2234,7 +2256,7 @@ function openCube(boxId){
     front:"cfFront", back:"cfBack", right:"cfRight",
     left:"cfLeft",  top:"cfTop",   bottom:"cfBottom"
   };
-  const faceColors=[col,rgba(col,.75),rgba(col,.6),rgba(col,.85),rgba(col,.5),rgba(col,.7)];
+  const faceColors=[col,hexToRgba(col,.75),hexToRgba(col,.6),hexToRgba(col,.85),hexToRgba(col,.5),hexToRgba(col,.7)]; // BUG FIX #2
   const faceContents=[
     // front: photo or icon
     box.photo
@@ -2363,7 +2385,9 @@ function initCubeDrag(){
     cubeLastX=e.clientX; cubeLastY=e.clientY;
     velX=0; velY=0; lastMoveTime=Date.now();
   };
-  window.onmousemove=e=>{
+  // BUG FIX #5: usar addEventListener en lugar de asignación directa (window.onX)
+  // para no pisar otros listeners y evitar duplicados si initCubeDrag se llama más de una vez
+  function _onMouseMove(e){
     if(!cubeDragging) return;
     const now=Date.now();
     const dx=e.clientX-cubeLastX; const dy=e.clientY-cubeLastY;
@@ -2373,8 +2397,8 @@ function initCubeDrag(){
     cubeRotX=Math.max(-65,Math.min(65,cubeRotX));
     cubeLastX=e.clientX; cubeLastY=e.clientY;
     lastMoveTime=now; applyRot();
-  };
-  window.onmouseup=()=>{
+  }
+  function _onMouseUp(){
     if(!cubeDragging) return; cubeDragging=false;
     if(!cubeSpinning){
       let friction=0.92;
@@ -2387,7 +2411,11 @@ function initCubeDrag(){
       };
       runMomentumM();
     }
-  };
+    window.removeEventListener('mousemove',_onMouseMove);
+    window.removeEventListener('mouseup',_onMouseUp);
+  }
+  window.addEventListener('mousemove',_onMouseMove);
+  window.addEventListener('mouseup',_onMouseUp);
 
   // Tap to toggle spin
   scene.onclick=e=>{
@@ -2551,7 +2579,7 @@ function buildContextSnapshot(){
   const doneItems = boxes.reduce((s,b)=>s+b.items.filter(i=>i.done).length,0);
   const pct = totalItems ? Math.round(doneItems/totalItems*100) : 0;
   const urgent = boxes.filter(b=>b.priority==="red").length;
-  const rooms = [...new Set(boxes.map(b=>b.location).filter(Boolean))];
+  const locationList = [...new Set(boxes.map(b=>b.location).filter(Boolean))]; // BUG FIX #3: renombrado para no pisar la variable global 'rooms'
   const boxList = boxes.map(b=>({
     nombre:b.name, numero:b.number||null, ubicacion:b.location||null,
     prioridad:b.priority==="red"?"urgente":b.priority==="green"?"baja":"normal",
@@ -2560,7 +2588,7 @@ function buildContextSnapshot(){
   }));
   return `CONTEXTO DE MUDANZA (${new Date().toLocaleDateString("es-PE",{weekday:"long",day:"numeric",month:"long"})}):
 - Cajas: ${boxes.length} | Objetos: ${totalItems} | Sacados: ${doneItems} | Progreso: ${pct}%
-- Urgentes: ${urgent} | Habitaciones: ${rooms.join(", ")||"sin asignar"}
+- Urgentes: ${urgent} | Habitaciones: ${locationList.join(", ")||"sin asignar"}
 CAJAS: ${JSON.stringify(boxList)}`;
 }
 
@@ -2654,15 +2682,91 @@ document.addEventListener("DOMContentLoaded",applySplashGradient);
 
 <!-- SERVICE WORKER REGISTRATION -->
 <script>
-if('serviceWorker' in navigator){
-  var swCode=[
-    "const CACHE='bv-v2';",
-    "self.addEventListener('install',e=>{e.waitUntil(caches.open(CACHE).then(c=>c.add('/')).then(()=>self.skipWaiting()));});",
-    "self.addEventListener('activate',e=>{e.waitUntil(caches.keys().then(ks=>Promise.all(ks.filter(k=>k!==CACHE).map(k=>caches.delete(k)))).then(()=>self.clients.claim()));});",
-    "self.addEventListener('fetch',e=>{if(e.request.method!=='GET')return;e.respondWith(caches.match(e.request).then(c=>{return c||fetch(e.request).then(r=>{if(r&&r.status===200){var cl=r.clone();caches.open(CACHE).then(ca=>ca.put(e.request,cl));}return r;}).catch(()=>c);}));});"
+(function(){
+  if(!('serviceWorker' in navigator)) return;
+
+  // ── SW embebido como blob con scope correcto ──────────────────────────────
+  // Se usa importScripts desde el blob para cachear el HTML principal.
+  // La clave es pasar {scope:'/'} para que el SW cubra toda la app.
+  var CACHE_NAME = 'bv-v3';
+  var APP_URL = location.origin + location.pathname; // URL exacta de este .html
+
+  var swCode = [
+    "var CACHE='" + CACHE_NAME + "';",
+    "var APP='" + APP_URL + "';",
+    // install: cachear el HTML de la app inmediatamente
+    "self.addEventListener('install',function(e){",
+    "  e.waitUntil(",
+    "    caches.open(CACHE).then(function(c){",
+    "      return c.add(APP);",
+    "    }).then(function(){ return self.skipWaiting(); })",
+    "  );",
+    "});",
+    // activate: limpiar caches viejos
+    "self.addEventListener('activate',function(e){",
+    "  e.waitUntil(",
+    "    caches.keys().then(function(keys){",
+    "      return Promise.all(keys.filter(function(k){return k!==CACHE;}).map(function(k){return caches.delete(k);}));",
+    "    }).then(function(){ return self.clients.claim(); })",
+    "  );",
+    "});",
+    // fetch: cache-first para el HTML, network-first para todo lo demás
+    "self.addEventListener('fetch',function(e){",
+    "  if(e.request.method!=='GET') return;",
+    "  var url=e.request.url;",
+    // Para Firebase/Groq/API externos: solo red, sin cache
+    "  if(url.indexOf('firestore')>-1||url.indexOf('googleapis')>-1||url.indexOf('groq')>-1||url.indexOf('workers.dev')>-1) return;",
+    "  e.respondWith(",
+    "    caches.match(e.request).then(function(cached){",
+    "      var networkFetch=fetch(e.request).then(function(r){",
+    "        if(r&&r.status===200&&r.type!=='opaque'){",
+    "          var clone=r.clone();",
+    "          caches.open(CACHE).then(function(c){ c.put(e.request,clone); });",
+    "        }",
+    "        return r;",
+    "      }).catch(function(){ return cached; });",
+    // Si hay cache, devolver cache mientras actualiza en segundo plano (stale-while-revalidate)
+    "      return cached||networkFetch;",
+    "    })",
+    "  );",
+    "});"
   ].join('\n');
-  navigator.serviceWorker.register('./sw.js').catch(function(e){console.warn('SW:',e);});
-}
+
+  try{
+    var blob = new Blob([swCode], {type:'application/javascript'});
+    var swUrl = URL.createObjectURL(blob);
+    navigator.serviceWorker.register(swUrl, {scope: '/'})
+      .then(function(reg){
+        console.log('[BoxVision] SW registrado, scope:', reg.scope);
+      })
+      .catch(function(err){
+        // Si falla con scope '/', intentar sin scope (toma el del blob)
+        console.warn('[BoxVision] SW scope / falló, reintentando sin scope:', err.message);
+        navigator.serviceWorker.register(swUrl).catch(function(e){
+          console.warn('[BoxVision] SW no disponible:', e.message);
+        });
+      });
+  }catch(e){
+    console.warn('[BoxVision] SW error:', e);
+  }
+
+  // ── Detector de conexión: toast cuando vuelve el internet ─────────────────
+  var _wasOffline = !navigator.onLine;
+  window.addEventListener('online', function(){
+    if(_wasOffline){
+      _wasOffline = false;
+      if(typeof showToast === 'function') showToast('🌐 Conexión restaurada — sincronizando...', '#34C759');
+      // Intentar subir cambios pendientes a Firestore
+      if(typeof saveToFirestore === 'function' && typeof currentUser !== 'undefined' && currentUser){
+        setTimeout(saveToFirestore, 1000);
+      }
+    }
+  });
+  window.addEventListener('offline', function(){
+    _wasOffline = true;
+    if(typeof showToast === 'function') showToast('📵 Sin internet — funcionando offline', '#FF9500');
+  });
+})();
 </script>
 
 <!-- ═══ TUTORIAL ═══ -->
@@ -2928,12 +3032,16 @@ function showUserMenu(){
   const m=document.createElement("div");
   m.id="userMenuPopup";
   m.style.cssText="position:fixed;top:60px;right:16px;background:var(--card,#1C1C1E);border-radius:16px;padding:16px;z-index:5000;box-shadow:0 8px 32px rgba(0,0,0,.4);min-width:220px;animation:fadeIn .2s ease";
+  // BUG FIX #4: fallback cuando photoURL es null (evita imagen rota)
+  const avatarHtml = currentUser.photoURL
+    ? `<img src="${currentUser.photoURL}" style="width:40px;height:40px;border-radius:50%;object-fit:cover"/>`
+    : `<div style="width:40px;height:40px;border-radius:50%;background:var(--accent);display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:800;color:#fff">${(currentUser.displayName||currentUser.email||"?")[0].toUpperCase()}</div>`;
   m.innerHTML=`
     <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px;padding-bottom:14px;border-bottom:1px solid rgba(255,255,255,.1)">
-      <img src="${currentUser.photoURL}" style="width:40px;height:40px;border-radius:50%;object-fit:cover"/>
+      ${avatarHtml}
       <div>
-        <div style="font-size:14px;font-weight:700;color:var(--text,#fff)">${currentUser.displayName}</div>
-        <div style="font-size:11px;color:var(--muted,#8E8E93)">${currentUser.email}</div>
+        <div style="font-size:14px;font-weight:700;color:var(--text,#fff)">${currentUser.displayName||currentUser.email||"Usuario"}</div>
+        <div style="font-size:11px;color:var(--muted,#8E8E93)">${currentUser.email||""}</div>
       </div>
     </div>
     <button onclick="signOutUser()" style="width:100%;padding:11px;border-radius:10px;border:none;background:rgba(255,59,48,.15);color:#FF3B30;font-size:14px;font-weight:600;cursor:pointer">Cerrar sesión</button>`;
@@ -2953,7 +3061,8 @@ function signOutUser(){
     if(ls){ls.style.opacity="1";ls.style.display="flex";}
     const av=document.getElementById("userAvatar");
     if(av) av.style.display="none";
-    // Redirigir a splash/login
+    // FIX: al cerrar sesión limpiar historial para que atras no vuelva a la app
+    history.replaceState(null, "", location.pathname + location.search);
     showScreen("splash");
   });
 }
@@ -3003,7 +3112,10 @@ async function saveToFirestore(){
     console.log("✅ Guardado en Firestore:", lean.length, "cajas");
   }catch(e){
     console.warn("Firestore save error:", e);
-    showToast("⚠️ Sin conexión — datos guardados localmente","#FF9500");
+    // Solo mostrar toast si estamos online (si estamos offline ya lo sabe el usuario)
+    if(navigator.onLine){
+      showToast("⚠️ Error al sincronizar — datos guardados localmente","#FF9500");
+    }
   }
 }
 
@@ -3076,7 +3188,8 @@ async function loadFromFirestore(){
     }
   }catch(e){
     console.warn("Firestore load error:", e);
-    // boxes ya tiene el fallback de localStorage de arriba
+    // Offline o error de red: boxes ya tiene el fallback de localStorage de arriba
+    // No mostramos toast aquí porque el detector online/offline ya lo maneja
   }
   // Actualizar caché local con lo que llegó de Firestore
   saveToLocalStorage();
@@ -3098,6 +3211,7 @@ function restoreThumbs(){
 // AUTH — arranque de la app
 // ════════════════════════════════════════════════════
 if(auth){
+  window._authEnabled = true;
 
   async function launchApp(user){
     currentUser = user;
@@ -3125,12 +3239,17 @@ if(auth){
 
     setupPWA();
     initTutorial();
-    showSplash(); // ← muestra contadores al instante con datos locales
+
+    // FIX: ir directo a mainScreen, nunca al landing/splash
+    // replaceState limpia el historial para que "atras" en el navegador
+    // no pueda volver al landing cuando ya hay sesion activa
+    history.replaceState(null, "", location.pathname + location.search);
+
+    goMain(); // directo a la app
 
     // PASO 2: sincronizar con Firestore en segundo plano
-    // cuando termina, refrescar contadores si cambiaron
     loadFromFirestore().then(()=>{
-      updateSplashCounters(); // actualizar si Firestore trajo datos distintos
+      renderMain(); // refrescar grid si Firestore trajo datos distintos
     });
   }
 
@@ -3150,7 +3269,43 @@ if(auth){
   // onAuthStateChanged — único listener de arranque
   // _launching evita que se llame doble cuando la sesión ya estaba activa
   let _launching = false;
+  let _authResolved = false;
+
+  // OFFLINE FIX: si Firebase no responde en 4s (sin internet),
+  // intentar arrancar con los datos de localStorage directamente
+  var _offlineTimer = setTimeout(function(){
+    if(_authResolved) return; // ya resolvió, no hacer nada
+    console.warn('[BoxVision] Firebase no respondió en 4s — modo offline');
+    // Buscar sesión cacheada por Firebase en localStorage/IndexedDB
+    // Firebase guarda la sesión bajo una clave que empieza con "firebase:authUser"
+    var cachedUserKey = Object.keys(localStorage).find(k => k.startsWith('firebase:authUser'));
+    if(cachedUserKey){
+      try{
+        var cachedUser = JSON.parse(localStorage.getItem(cachedUserKey));
+        if(cachedUser && cachedUser.uid){
+          console.log('[BoxVision] Sesión offline encontrada:', cachedUser.email);
+          // Usar uid cacheado para cargar datos locales
+          var fakeUser = { uid: cachedUser.uid, displayName: cachedUser.displayName||'Usuario', email: cachedUser.email||'', photoURL: cachedUser.photoURL||null };
+          if(!_authResolved && !_launching){
+            _authResolved = true;
+            _launching = true;
+            launchApp(fakeUser).then(function(){ _launching = false; });
+            return;
+          }
+        }
+      }catch(e){ console.warn('Offline session parse error:', e); }
+    }
+    // Sin sesión cacheada: mostrar login
+    if(!_authResolved){
+      _authResolved = true;
+      if(_loginBtn) _loginBtn.style.display = "flex";
+      if(_loginLoading) _loginLoading.style.display = "none";
+    }
+  }, 4000);
+
   auth.onAuthStateChanged(async user=>{
+    clearTimeout(_offlineTimer);
+    _authResolved = true;
     if(user){
       if(_launching) return;   // ya en proceso, ignorar
       if(currentUser && currentUser.uid === user.uid) return; // misma sesión, no recargar
@@ -3177,11 +3332,18 @@ if(auth){
 } else {
   // Sin Firebase — modo local puro
   console.warn("Firebase no disponible — modo local");
+  window._authEnabled = false;
   document.addEventListener("DOMContentLoaded", ()=>{
     loadAll();
     setupPWA();
     initTutorial();
-    showSplash();
+    // FIX: en modo local, si hay cajas guardadas ir directo a main
+    if(boxes && boxes.length > 0){
+      history.replaceState(null, "", location.pathname + location.search);
+      goMain();
+    } else {
+      showSplash(); // primera vez sin cajas: mostrar landing
+    }
   });
 }
 </script>
