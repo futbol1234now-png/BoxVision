@@ -1029,7 +1029,6 @@ let currentUser = null;
 // auth y db quedan null y la app usa modo local con localStorage
 try {
   if(typeof firebase === 'undefined') throw new Error('Firebase SDK no cargado (¿sin internet?)');
-  firebase.initializeApp && firebase.app(); // reusar app si ya existe
   auth = firebase.auth();
   db = firebase.firestore();
   db.enablePersistence({ synchronizeTabs: true })
@@ -3176,16 +3175,27 @@ function signInGoogle(){
   const provider = new firebase.auth.GoogleAuthProvider();
   provider.setCustomParameters({prompt: 'select_account'});
 
-  // Popup es más confiable que redirect en apps de archivo único
   auth.signInWithPopup(provider).catch(err=>{
-    console.error("Login error:", err);
+    // Si el popup fue bloqueado por el navegador/móvil, intentar redirect
+    if(err.code === 'auth/popup-blocked' || err.code === 'auth/popup-cancelled'){
+      console.info("[BoxVision] Popup bloqueado — usando redirect");
+      auth.signInWithRedirect(provider);
+      return;
+    }
+    // Usuario cerró el popup: restaurar botón sin mensaje de error
     if(btn) btn.style.display = "flex";
     if(loading) loading.style.display = "none";
-    if(errEl && err.code !== 'auth/popup-closed-by-user'){
-      errEl.textContent = "Error: " + (err.message || err);
-      errEl.style.display = "block";
+    if(err.code !== 'auth/popup-closed-by-user' && err.code !== 'auth/cancelled-popup-request'){
+      console.error("Login error:", err);
+      if(errEl){ errEl.textContent = "Error al iniciar sesión. Intenta de nuevo."; errEl.style.display = "block"; }
     }
   });
+  // Capturar resultado del redirect si viene de uno previo
+  auth.getRedirectResult().then(result=>{
+    if(result && result.user){
+      // onAuthStateChanged lo manejará — no hacer nada extra
+    }
+  }).catch(()=>{});
 }
 
 function showUserMenu(){
@@ -3213,27 +3223,23 @@ function showUserMenu(){
 }
 
 function signOutUser(){
-  // Guardar cualquier cambio pendiente antes de cerrar sesión
-  clearTimeout(_saveTimer);
-  saveToLocalStorage();
-  auth.signOut().then(()=>{
+  // Guardar antes de salir
+  if(typeof _saveTimer !== "undefined") clearTimeout(_saveTimer);
+  if(currentUser) saveToLocalStorage();
+  document.getElementById("userMenuPopup")?.remove();
+  history.replaceState(null, "", location.pathname + location.search);
+  if(auth){
+    auth.signOut().catch(e=>console.warn("signOut error:", e));
+    // onAuthStateChanged emitirá user=null → _showLoginScreen automáticamente
+  } else {
     currentUser=null; boxes=[]; rooms=[];
-    document.getElementById("userMenuPopup")?.remove();
-    // Limpiar historial
-    history.replaceState(null, "", location.pathname + location.search);
-    // Mostrar pantalla de login y asegurarse de que el botón esté visible
     const ls=document.getElementById("loginScreen");
-    if(ls){ls.style.opacity="1";ls.style.display="flex";}
-    const av=document.getElementById("userAvatar");
-    if(av) av.style.display="none";
+    if(ls){ls.style.display="flex";ls.style.opacity="1";}
     const lb=document.getElementById("loginBtn");
     if(lb) lb.style.display="flex";
     const ll=document.getElementById("loginLoading");
     if(ll) ll.style.display="none";
-    const le=document.getElementById("loginError");
-    if(le){ le.textContent=""; le.style.display="none"; }
-    // NO llamar showScreen("splash") — el loginScreen ya cubre todo con z-index:99999
-  });
+  }
 }
 
 // ════════════════════════════════════════════════════
@@ -3301,16 +3307,18 @@ function scheduleSave(){
 
 // Cuando el usuario sale/minimiza, cancelar timer y guardar todo de inmediato
 window.addEventListener("visibilitychange", ()=>{
-  if(document.visibilityState === "hidden"){
+  if(document.visibilityState === "hidden" && currentUser){
     clearTimeout(_saveTimer);
     saveToLocalStorage();
-    if(currentUser && db) saveToFirestore();
+    if(db) saveToFirestore().catch(()=>{});
   }
 });
 window.addEventListener("pagehide", ()=>{
-  clearTimeout(_saveTimer);
-  saveToLocalStorage();
-  if(currentUser && db) saveToFirestore();
+  if(currentUser){
+    clearTimeout(_saveTimer);
+    saveToLocalStorage();
+    if(db) saveToFirestore().catch(()=>{});
+  }
 });
 
 // Carga cajas desde Firestore. Si falla, usa localStorage como fallback.
@@ -3379,119 +3387,114 @@ function restoreThumbs(){
 }
 
 // ════════════════════════════════════════════════════
-// AUTH — arranque de la app
+// ════════════════════════════════════════════════════
+// AUTH — sistema definitivo para producción
 // ════════════════════════════════════════════════════
 if(auth){
   window._authEnabled = true;
 
+  // ── UI helpers ───────────────────────────────────
+  function _showLoginScreen(){
+    currentUser = null; boxes = []; rooms = [];
+    const ls = document.getElementById("loginScreen");
+    const lb = document.getElementById("loginBtn");
+    const ll = document.getElementById("loginLoading");
+    const le = document.getElementById("loginError");
+    const av = document.getElementById("userAvatar");
+    if(ls){ ls.style.transition="none"; ls.style.display="flex"; ls.style.opacity="1"; }
+    if(lb){ lb.style.display="flex"; }
+    if(ll){ ll.style.display="none"; }
+    if(le){ le.style.display="none"; le.textContent=""; }
+    if(av){ av.style.display="none"; }
+  }
+
+  function _hideLoginScreen(){
+    const ls = document.getElementById("loginScreen");
+    if(!ls || ls.style.display==="none") return;
+    ls.style.transition="opacity .25s";
+    ls.style.opacity="0";
+    setTimeout(()=>{ ls.style.display="none"; }, 280);
+  }
+
+  // ── Lanzar app ───────────────────────────────────
+  // Se puede llamar múltiples veces con el mismo usuario sin problema
+  let _lastLaunchedUid = null;
   async function launchApp(user){
+    // Si ya está corriendo con este usuario, solo refrescar datos silenciosamente
+    if(_lastLaunchedUid === user.uid && document.getElementById("mainScreen") &&
+       !document.getElementById("mainScreen").classList.contains("hidden")){
+      loadFromFirestore().then(()=>renderMain()).catch(()=>{});
+      return;
+    }
+    _lastLaunchedUid = user.uid;
     currentUser = user;
 
-    // Ocultar login inmediatamente
-    const loginScreen = document.getElementById("loginScreen");
-    if(loginScreen){ loginScreen.style.opacity="0"; loginScreen.style.transition="opacity .3s"; setTimeout(()=>loginScreen.style.display="none",300); }
+    // Avatar
     const avatar = document.getElementById("userAvatar");
-    if(avatar && user.photoURL){ avatar.src=user.photoURL; avatar.style.display="block"; }
+    if(avatar){ if(user.photoURL){ avatar.src=user.photoURL; avatar.style.display="block"; } else { avatar.style.display="none"; } }
 
-    // Cargar settings y dark mode
+    // Settings y tema
     loadSettingsOnly();
 
-    // PASO 1: mostrar splash con datos de localStorage AHORA (0ms de espera)
-    // para que el contador aparezca al instante aunque Firestore tarde
+    // Datos locales primero (respuesta inmediata)
     try{
-      const localLean = JSON.parse(localStorage.getItem("cb-boxes-"+user.uid)||"[]");
-      const localRooms = JSON.parse(localStorage.getItem("cb-rooms-"+user.uid)||"[]");
-      if(localLean.length > 0){
-        boxes = localLean;
-        rooms = localRooms;
-        restoreThumbs();
-      }
+      const lb = JSON.parse(localStorage.getItem("cb-boxes-"+user.uid)||"[]");
+      const lr = JSON.parse(localStorage.getItem("cb-rooms-"+user.uid)||"[]");
+      if(lb.length > 0){ boxes=lb; rooms=lr; restoreThumbs(); }
     }catch(e){}
 
     setupPWA();
     initTutorial();
-
-    // FIX: ir directo a mainScreen, nunca al landing/splash
-    // replaceState limpia el historial para que "atras" en el navegador
-    // no pueda volver al landing cuando ya hay sesion activa
     history.replaceState(null, "", location.pathname + location.search);
 
-    goMain(); // directo a la app
+    // Ocultar login e ir a la app
+    _hideLoginScreen();
+    goMain();
 
-    // PASO 2: sincronizar con Firestore en segundo plano
-    loadFromFirestore().then(()=>{
-      renderMain(); // refrescar grid si Firestore trajo datos distintos
-    });
+    // Sincronizar Firestore en segundo plano
+    loadFromFirestore().then(()=>renderMain()).catch(()=>{});
   }
 
-  function showLogin(){
-    boxes=[]; rooms=[];
-    const loginScreen = document.getElementById("loginScreen");
-    if(loginScreen){ loginScreen.style.opacity="1"; loginScreen.style.display="flex"; }
-    const avatar = document.getElementById("userAvatar");
-    if(avatar) avatar.style.display="none";
-  }
+  // ── Spinner inicial mientras Firebase verifica sesión ──
+  const _lb0 = document.getElementById("loginBtn");
+  const _ll0 = document.getElementById("loginLoading");
+  if(_lb0) _lb0.style.display = "none";
+  if(_ll0) _ll0.style.display = "flex";
 
-  const _loginBtn = document.getElementById("loginBtn");
-  const _loginLoading = document.getElementById("loginLoading");
-  if(_loginBtn) _loginBtn.style.display = "none";
-  if(_loginLoading) _loginLoading.style.display = "flex";
-
-  // onAuthStateChanged — único listener de arranque
-  // _launching evita que se llame doble cuando la sesión ya estaba activa
-  let _launching = false;
-  let _authResolved = false;
-
-  // OFFLINE FIX: si Firebase no responde en 4s (sin internet),
-  // intentar arrancar con los datos de localStorage directamente
-  var _offlineTimer = setTimeout(function(){
-    if(_authResolved) return; // ya resolvió, no hacer nada
-    console.warn('[BoxVision] Firebase no respondió en 4s — modo offline');
-    // Buscar sesión cacheada por Firebase en localStorage/IndexedDB
-    // Firebase guarda la sesión bajo una clave que empieza con "firebase:authUser"
-    var cachedUserKey = Object.keys(localStorage).find(k => k.startsWith('firebase:authUser'));
-    if(cachedUserKey){
+  // ── Timeout offline: 5s sin respuesta de Firebase → mostrar login ──
+  let _authReady = false;
+  const _offlineTimer = setTimeout(()=>{
+    if(_authReady) return;
+    _authReady = true;
+    console.warn("[BoxVision] Firebase sin respuesta — intentando sesión cacheada");
+    const key = Object.keys(localStorage).find(k=>k.startsWith("firebase:authUser"));
+    if(key){
       try{
-        var cachedUser = JSON.parse(localStorage.getItem(cachedUserKey));
-        if(cachedUser && cachedUser.uid){
-          console.log('[BoxVision] Sesión offline encontrada:', cachedUser.email);
-          // Usar uid cacheado para cargar datos locales
-          var fakeUser = { uid: cachedUser.uid, displayName: cachedUser.displayName||'Usuario', email: cachedUser.email||'', photoURL: cachedUser.photoURL||null };
-          if(!_authResolved && !_launching){
-            _authResolved = true;
-            _launching = true;
-            launchApp(fakeUser).then(function(){ _launching = false; });
-            return;
-          }
+        const cu = JSON.parse(localStorage.getItem(key)||"null");
+        if(cu && cu.uid){
+          launchApp({uid:cu.uid, displayName:cu.displayName||"Usuario", email:cu.email||"", photoURL:cu.photoURL||null});
+          return;
         }
-      }catch(e){ console.warn('Offline session parse error:', e); }
+      }catch(e){}
     }
-    // Sin sesión cacheada: mostrar login
-    if(!_authResolved){
-      _authResolved = true;
-      if(_loginBtn) _loginBtn.style.display = "flex";
-      if(_loginLoading) _loginLoading.style.display = "none";
-    }
-  }, 4000);
+    _showLoginScreen();
+  }, 5000);
 
-  auth.onAuthStateChanged(async user=>{
+  // ── Listener principal — único punto de verdad ───
+  auth.onAuthStateChanged(user=>{
     clearTimeout(_offlineTimer);
-    _authResolved = true;
+    _authReady = true;
     if(user){
-      if(_launching) return;   // ya en proceso, ignorar
-      if(currentUser && currentUser.uid === user.uid) return; // misma sesión, no recargar
-      _launching = true;
-      await launchApp(user);
-      _launching = false;
+      launchApp(user).catch(e=>{
+        console.error("[BoxVision] launchApp falló:", e);
+        _lastLaunchedUid = null;
+        _showLoginScreen();
+      });
     } else {
-      _launching = false;
-      if(_loginBtn) _loginBtn.style.display = "flex";
-      if(_loginLoading) _loginLoading.style.display = "none";
-      showLogin();
+      _lastLaunchedUid = null;
+      _showLoginScreen();
     }
   });
-
-  // signInWithPopup no necesita getRedirectResult
 
 } else {
   // Sin Firebase — modo local puro
