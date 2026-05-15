@@ -26,8 +26,8 @@
     name:"BoxVision",
     short_name:"BoxVision",
     description:"Gestor de cajas para mudanzas con QR e IA",
-    start_url:location.pathname+location.search,
-    scope:location.pathname,
+    start_url:(location.protocol==='blob:'?'/':location.pathname+location.search),
+    scope:(location.protocol==='blob:'?'/':location.pathname),
     display:"standalone",
     orientation:"portrait",
     background_color:"#000000",
@@ -1054,12 +1054,17 @@ try {
   if(typeof firebase === 'undefined') throw new Error('Firebase SDK no cargado (¿sin internet?)');
   auth = firebase.auth();
   db = firebase.firestore();
+  // Persistencia offline multi-pestaña
+  // enableMultiTabIndexedDbPersistence está deprecado en Firebase 10+
+  // Usamos enablePersistence con synchronizeTabs como fallback universal
   db.enablePersistence({ synchronizeTabs: true })
     .catch(err => {
       if(err.code === 'failed-precondition'){
-        console.warn('Persistencia: múltiples pestañas abiertas');
+        console.info('[BoxVision] Persistencia: otra pestaña activa, continuando sin multi-tab cache');
       } else if(err.code === 'unimplemented'){
-        console.warn('Persistencia no soportada en este navegador');
+        console.info('[BoxVision] Persistencia no soportada en este navegador');
+      } else {
+        console.info('[BoxVision] Persistencia offline no disponible:', err.code);
       }
     });
   console.log("✅ Firebase inicializado correctamente");
@@ -3413,12 +3418,12 @@ async function loadFromFirestore(){
       const remoteTs = data.updatedAt ? data.updatedAt.toMillis() : 0;
       const localTs  = parseInt(localStorage.getItem("cb-updated-"+currentUser.uid)||"0");
 
-      if(remoteTs >= localTs){
-        // Firestore es más reciente (o igual) → confiar en Firestore
+      if(remoteTs >= localTs || boxes.length === 0){
+        // Firestore es más reciente (o igual), o local está vacío → confiar en Firestore
         boxes = remote;
         rooms = remoteRooms.length > 0 ? remoteRooms : rooms;
       } else {
-        // Local es más reciente (cambios offline no subidos) → subir a Firestore
+        // Local es más reciente Y tiene datos → subir a Firestore
         console.log("📤 Local más reciente que Firestore — subiendo...");
         await saveToFirestore();
       }
@@ -3512,12 +3517,20 @@ if(auth){
     initTutorial();
     history.replaceState(null, "", location.pathname + location.search);
 
-    // Ocultar login e ir a la app
+    // Ocultar login
     _hideLoginScreen();
-    goMain();
 
-    // Sincronizar Firestore en segundo plano
-    loadFromFirestore().then(()=>renderMain()).catch(()=>{});
+    // Si no hay datos locales, esperar a Firestore antes de mostrar la app
+    if(boxes.length === 0){
+      // Mostrar spinner breve mientras carga Firestore
+      try{ await loadFromFirestore(); }catch(e){}
+      goMain();
+      renderMain();
+    } else {
+      // Hay datos locales → ir inmediato y sincronizar en segundo plano
+      goMain();
+      loadFromFirestore().then(()=>renderMain()).catch(()=>{});
+    }
   }
 
   // ── Spinner inicial mientras Firebase verifica sesión ──
