@@ -3337,11 +3337,14 @@ function saveToLocalStorage(){
 }
 
 // Sube a Firestore. No usa timer, se llama directo.
+// Las fotos (base64 grandes) se guardan solo en localStorage para no superar el límite de Firestore.
 async function saveToFirestore(){
   if(!currentUser || !db) return;
   try{
     const lean = boxes.map(b=>{
       const c = JSON.parse(JSON.stringify(b));
+      // Excluir foto de portada (base64 puede superar el límite de 1MB de Firestore)
+      delete c.photo;
       c.items = b.items.map(i=>({text:i.text,done:i.done}));
       return c;
     });
@@ -3352,9 +3355,8 @@ async function saveToFirestore(){
         ? firebase.firestore.FieldValue.serverTimestamp()
         : null
     },{merge:true});
-    // actualizar caché local con lo que se subió
-    localStorage.setItem("cb-boxes-"+currentUser.uid, JSON.stringify(lean));
-    localStorage.setItem("cb-rooms-"+currentUser.uid, JSON.stringify(rooms));
+    // actualizar caché local con los datos COMPLETOS (con fotos)
+    saveToLocalStorage();
     localStorage.setItem("cb-updated-"+currentUser.uid, Date.now().toString());
     console.log("✅ Guardado en Firestore:", lean.length, "cajas");
   }catch(e){
@@ -3396,11 +3398,13 @@ async function loadFromFirestore(){
   if(!currentUser || !db) return;
 
   // Leer caché local primero (para mostrar algo rápido si Firestore tarda)
+  let localBoxes = [];
+  let localRooms = [];
   try{
-    const localLean = JSON.parse(localStorage.getItem("cb-boxes-"+currentUser.uid)||"[]");
-    const localRooms = JSON.parse(localStorage.getItem("cb-rooms-"+currentUser.uid)||"[]");
-    if(localLean.length > 0){
-      boxes = localLean;
+    localBoxes = JSON.parse(localStorage.getItem("cb-boxes-"+currentUser.uid)||"[]");
+    localRooms = JSON.parse(localStorage.getItem("cb-rooms-"+currentUser.uid)||"[]");
+    if(localBoxes.length > 0){
+      boxes = localBoxes;
       rooms = localRooms;
       restoreThumbs();
     }
@@ -3418,9 +3422,18 @@ async function loadFromFirestore(){
       const remoteTs = data.updatedAt ? data.updatedAt.toMillis() : 0;
       const localTs  = parseInt(localStorage.getItem("cb-updated-"+currentUser.uid)||"0");
 
-      if(remoteTs >= localTs || boxes.length === 0){
+      if(remote.length === 0 && localBoxes.length > 0){
+        // Firestore está vacío pero local tiene datos → subir local a Firestore
+        console.log("📤 Firestore vacío pero hay datos locales — subiendo...");
+        await saveToFirestore();
+      } else if(remoteTs >= localTs || localBoxes.length === 0){
         // Firestore es más reciente (o igual), o local está vacío → confiar en Firestore
-        boxes = remote;
+        // Restaurar fotos locales sobre los datos de Firestore
+        boxes = remote.map(remoteBox => {
+          const localBox = localBoxes.find(lb => lb.id === remoteBox.id);
+          if(localBox && localBox.photo) remoteBox.photo = localBox.photo;
+          return remoteBox;
+        });
         rooms = remoteRooms.length > 0 ? remoteRooms : rooms;
       } else {
         // Local es más reciente Y tiene datos → subir a Firestore
