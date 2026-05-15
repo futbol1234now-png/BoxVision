@@ -26,8 +26,8 @@
     name:"BoxVision",
     short_name:"BoxVision",
     description:"Gestor de cajas para mudanzas con QR e IA",
-    start_url:(location.protocol==='blob:'?'/':location.pathname+location.search),
-    scope:(location.protocol==='blob:'?'/':location.pathname),
+    start_url:location.pathname+location.search,
+    scope:location.pathname,
     display:"standalone",
     orientation:"portrait",
     background_color:"#000000",
@@ -992,20 +992,12 @@ body{
   box-shadow:0 2px 20px rgba(0,0,0,.15) !important;
 }
 
-/* ── Animación de entrada de cards con stagger ── */
+/* ── Animación de entrada de cards (stagger dinámico vía JS) ── */
 @keyframes cardFloat{
   from{opacity:0;transform:translateY(20px) scale(.96)}
   to{opacity:1;transform:translateY(0) scale(1)}
 }
 .box-card{animation:cardFloat .35s cubic-bezier(.34,1.2,.64,1) both}
-.box-card:nth-child(1){animation-delay:.03s}
-.box-card:nth-child(2){animation-delay:.07s}
-.box-card:nth-child(3){animation-delay:.11s}
-.box-card:nth-child(4){animation-delay:.15s}
-.box-card:nth-child(5){animation-delay:.19s}
-.box-card:nth-child(6){animation-delay:.23s}
-.box-card:nth-child(7){animation-delay:.27s}
-.box-card:nth-child(8){animation-delay:.31s}
 
 /* ── Modo claro: sombras más suaves ── */
 [data-dark=""] .box-card{
@@ -1054,17 +1046,12 @@ try {
   if(typeof firebase === 'undefined') throw new Error('Firebase SDK no cargado (¿sin internet?)');
   auth = firebase.auth();
   db = firebase.firestore();
-  // Persistencia offline multi-pestaña
-  // enableMultiTabIndexedDbPersistence está deprecado en Firebase 10+
-  // Usamos enablePersistence con synchronizeTabs como fallback universal
   db.enablePersistence({ synchronizeTabs: true })
     .catch(err => {
       if(err.code === 'failed-precondition'){
-        console.info('[BoxVision] Persistencia: otra pestaña activa, continuando sin multi-tab cache');
+        console.warn('Persistencia: múltiples pestañas abiertas');
       } else if(err.code === 'unimplemented'){
-        console.info('[BoxVision] Persistencia no soportada en este navegador');
-      } else {
-        console.info('[BoxVision] Persistencia offline no disponible:', err.code);
+        console.warn('Persistencia no soportada en este navegador');
       }
     });
   console.log("✅ Firebase inicializado correctamente");
@@ -1448,8 +1435,8 @@ function saveData(){
 function saveRooms(){
   const key=currentUser?"cb-rooms-"+currentUser.uid:"cb-rooms";
   localStorage.setItem(key,JSON.stringify(rooms));
-  // También subir rooms a Firestore
-  if(currentUser && db){
+  // Solo subir a Firestore si no estamos en plena carga inicial
+  if(currentUser && db && !(typeof _firestoreLoading!=="undefined" && _firestoreLoading)){
     db.collection("users").doc(currentUser.uid).set({rooms:rooms},{merge:true})
       .catch(e=>console.warn("saveRooms Firestore error:",e));
   }
@@ -1692,25 +1679,122 @@ function renderFilters(){
     [...tags].map(t=>`<button class="pill${activeFilter===t?" active":""}" onclick="setFilter('${esc(t)}')">${esc(t)}</button>`).join("");
 }
 function setFilter(f){activeFilter=f;renderMain();}
+// ── Virtual grid — soporta cajas ilimitadas ──────────────────────────────────
+const PAGE_SIZE = 40; // cuántas tarjetas renderizar por página
+let _gridFiltered = [];   // lista filtrada/ordenada actual
+let _gridPage = 0;        // cuántas páginas ya cargadas
+let _gridObserver = null; // IntersectionObserver para carga automática
+
 function renderGrid(){
   let filtered=boxes;
   if(activeFilter==="fav") filtered=boxes.filter(b=>b.fav);
   else if(activeFilter==="red") filtered=boxes.filter(b=>b.priority==="red");
   else if(activeFilter!=="todo") filtered=boxes.filter(b=>(b.tags||[]).includes(activeFilter));
   filtered=sortBoxes(filtered);
-  const favs=filtered.filter(b=>b.fav),rest=filtered.filter(b=>!b.fav);
-  let html="";
-  if(favs.length) html+=`<div class="sec-hdr">⭐ Favoritas</div><div class="boxes-grid">${favs.map(boxCard).join("")}</div>`;
-  if(rest.length){if(favs.length)html+=`<div class="sec-hdr">Todas</div>`;html+=`<div class="boxes-grid">${rest.map(boxCard).join("")}</div>`;}
-  if(!filtered.length) html=boxes.length===0
-    ?`<div style="text-align:center;padding:80px 24px">
-        <div style="font-size:56px;margin-bottom:16px">📦</div>
-        <div style="font-size:20px;font-weight:700;color:var(--text);margin-bottom:8px">No tienes cajas aún</div>
-        <div style="font-size:14px;color:var(--muted);margin-bottom:28px;line-height:1.6">Toca el botón <strong style="color:var(--accent)">+</strong> arriba para crear tu primera caja</div>
-        <button onclick="openForm()" style="background:linear-gradient(135deg,var(--accent),#5856D6);color:#fff;border:none;border-radius:14px;padding:14px 28px;font-size:16px;font-weight:700;cursor:pointer;font-family:inherit;box-shadow:0 4px 20px rgba(10,132,255,0.3)">+ Crear primera caja</button>
-      </div>`
-    :`<div style="text-align:center;padding:60px 20px"><div style="font-size:40px;margin-bottom:12px">🔍</div><div style="font-size:16px;font-weight:600;color:var(--text);margin-bottom:4px">Sin resultados</div><div style="font-size:13px;color:var(--muted)">No hay cajas con este filtro</div></div>`;
-  document.getElementById("mainScroll").innerHTML=html;
+  _gridFiltered=filtered;
+  _gridPage=0;
+
+  const scroll=document.getElementById("mainScroll");
+
+  if(!filtered.length){
+    scroll.innerHTML=boxes.length===0
+      ?`<div style="text-align:center;padding:80px 24px">
+          <div style="font-size:56px;margin-bottom:16px">📦</div>
+          <div style="font-size:20px;font-weight:700;color:var(--text);margin-bottom:8px">No tienes cajas aún</div>
+          <div style="font-size:14px;color:var(--muted);margin-bottom:28px;line-height:1.6">Toca el botón <strong style="color:var(--accent)">+</strong> arriba para crear tu primera caja</div>
+          <button onclick="openForm()" style="background:linear-gradient(135deg,var(--accent),#5856D6);color:#fff;border:none;border-radius:14px;padding:14px 28px;font-size:16px;font-weight:700;cursor:pointer;font-family:inherit;box-shadow:0 4px 20px rgba(10,132,255,0.3)">+ Crear primera caja</button>
+        </div>`
+      :`<div style="text-align:center;padding:60px 20px"><div style="font-size:40px;margin-bottom:12px">🔍</div><div style="font-size:16px;font-weight:600;color:var(--text);margin-bottom:4px">Sin resultados</div><div style="font-size:13px;color:var(--muted)">No hay cajas con este filtro</div></div>`;
+    _teardownGridObserver();
+    return;
+  }
+
+  // Renderizar primera página
+  scroll.innerHTML="";
+  _renderGridPage(scroll);
+
+  // Si hay más páginas, activar carga automática al hacer scroll
+  if(_gridFiltered.length > PAGE_SIZE){
+    _setupGridObserver(scroll);
+  }
+}
+
+function _getGridPageItems(){
+  const start=_gridPage*PAGE_SIZE;
+  const end=Math.min(start+PAGE_SIZE, _gridFiltered.length);
+  return _gridFiltered.slice(start,end);
+}
+
+function _renderGridPage(scroll){
+  if(!scroll) scroll=document.getElementById("mainScroll");
+  const items=_getGridPageItems();
+  if(!items.length) return;
+
+  const favs=_gridPage===0?items.filter(b=>b.fav):[];
+  const rest=_gridPage===0?items.filter(b=>!b.fav):items;
+  const hasFavsSection=_gridPage===0&&favs.length>0;
+
+  // Crear fragmento para inserción eficiente
+  const frag=document.createDocumentFragment();
+
+  if(hasFavsSection){
+    const hdr=document.createElement("div");
+    hdr.className="sec-hdr";hdr.textContent="⭐ Favoritas";
+    frag.appendChild(hdr);
+    const grid=document.createElement("div");
+    grid.className="boxes-grid";
+    grid.innerHTML=favs.map(boxCard).join("");
+    frag.appendChild(grid);
+  }
+
+  if(rest.length){
+    if(hasFavsSection){
+      const hdr=document.createElement("div");
+      hdr.className="sec-hdr";hdr.textContent="Todas";
+      frag.appendChild(hdr);
+    }
+    const grid=document.createElement("div");
+    grid.className="boxes-grid";
+    grid.innerHTML=rest.map(boxCard).join("");
+    frag.appendChild(grid);
+  }
+
+  // Quitar sentinel anterior si existe
+  const old=scroll.querySelector("#gridSentinel");if(old) old.remove();
+
+  scroll.appendChild(frag);
+
+  // Aplicar stagger dinámico a las nuevas tarjetas
+  const cards=Array.from(scroll.querySelectorAll(".box-card:not([data-anim])"));
+  cards.forEach((c,i)=>{c.style.animationDelay=(i*0.04)+"s";c.dataset.anim="1";});
+
+  _gridPage++;
+
+  // Agregar sentinel para la próxima página si quedan más
+  if(_gridPage*PAGE_SIZE < _gridFiltered.length){
+    const sentinel=document.createElement("div");
+    sentinel.id="gridSentinel";
+    sentinel.style.cssText="height:60px;display:flex;align-items:center;justify-content:center;color:var(--muted);font-size:13px";
+    sentinel.innerHTML='<span style="opacity:.5">Cargando más...</span>';
+    scroll.appendChild(sentinel);
+    if(_gridObserver) _gridObserver.observe(sentinel);
+  }
+}
+
+function _setupGridObserver(scroll){
+  _teardownGridObserver();
+  _gridObserver=new IntersectionObserver(entries=>{
+    entries.forEach(e=>{
+      if(e.isIntersecting){
+        e.target.remove();
+        _renderGridPage(scroll);
+      }
+    });
+  },{rootMargin:"200px"});
+}
+
+function _teardownGridObserver(){
+  if(_gridObserver){_gridObserver.disconnect();_gridObserver=null;}
 }
 function boxCard(b){
   const col=b.color||"#007AFF";
@@ -2165,13 +2249,44 @@ function saveForm(){
   },50);
 }
 
+// ── Búsqueda con debounce — eficiente con miles de cajas ─────────────────────
+let _searchTimer=null;
 function doSearch(q){
-  const wrap=document.getElementById("srWrap");document.getElementById("searchClear").classList.toggle("hidden",!q);
-  if(!q.trim()){wrap.classList.remove("open");return;}
-  const ql=q.toLowerCase(),hits=[];
-  boxes.forEach(box=>box.items.forEach(it=>{if(it.text.toLowerCase().includes(ql)) hits.push({box,item:it.text});}));
+  document.getElementById("searchClear").classList.toggle("hidden",!q);
+  clearTimeout(_searchTimer);
+  if(!q.trim()){document.getElementById("srWrap").classList.remove("open");return;}
+  // Debounce: esperar 180ms antes de buscar (evita buscar en cada tecla)
+  _searchTimer=setTimeout(()=>_runSearch(q),180);
+}
+function _runSearch(q){
+  const wrap=document.getElementById("srWrap");
+  const ql=q.toLowerCase();
+  const hits=[];
+  // Búsqueda eficiente: parar al llegar a 12 resultados
+  outer: for(let i=0;i<boxes.length;i++){
+    const box=boxes[i];
+    // Buscar también en nombre y ubicación de la caja
+    if(box.name.toLowerCase().includes(ql)||
+       (box.location||"").toLowerCase().includes(ql)||
+       (box.number||"").toLowerCase().includes(ql)){
+      hits.push({box,item:box.name,type:"box"});
+      if(hits.length>=12) break outer;
+    }
+    for(let j=0;j<box.items.length;j++){
+      if(box.items[j].text.toLowerCase().includes(ql)){
+        hits.push({box,item:box.items[j].text,type:"item"});
+        if(hits.length>=12) break outer;
+      }
+    }
+  }
   wrap.innerHTML=hits.length
-    ?hits.slice(0,8).map(h=>`<div class="sr-item" onclick="openDetail('${h.box.id}')"><span style="font-size:20px">${getIcon(h.box.name)}</span><div><b>${esc(h.box.name)}</b> → ${esc(h.item)}</div></div>`).join("")
+    ?hits.map(h=>`<div class="sr-item" onclick="openDetail('${h.box.id}')">
+        <span style="font-size:20px">${getIcon(h.box.name)}</span>
+        <div>
+          <b>${esc(h.box.name)}</b>
+          ${h.type==="item"?` → ${esc(h.item)}`:'<span style="font-size:11px;color:var(--muted)"> · caja</span>'}
+        </div>
+      </div>`).join("")
     :`<div class="sr-none">No se encontró "${esc(q)}"</div>`;
   wrap.classList.add("open");
 }
@@ -3247,12 +3362,7 @@ function signInGoogle(){
       if(errEl){ errEl.textContent = "Error al iniciar sesión. Intenta de nuevo."; errEl.style.display = "block"; }
     }
   });
-  // Capturar resultado del redirect si viene de uno previo
-  auth.getRedirectResult().then(result=>{
-    if(result && result.user){
-      // onAuthStateChanged lo manejará — no hacer nada extra
-    }
-  }).catch(()=>{});
+  // NOTA: getRedirectResult se maneja una sola vez al cargar la página (ver abajo)
 }
 
 function showUserMenu(){
@@ -3282,25 +3392,44 @@ function showUserMenu(){
 function confirmDeleteAll(){
   if(!confirm('¿Borrar todas las cajas? Esto no se puede deshacer.')) return;
   boxes=[]; rooms=[];
-  saveData(); saveRooms();
+  // Limpiar fotos y thumbs del localStorage
+  Object.keys(localStorage).forEach(k=>{
+    if(k.startsWith("cb-photo-")||k.startsWith("cb-thumb-")) localStorage.removeItem(k);
+  });
+  // Guardar localmente
+  if(currentUser){
+    localStorage.setItem("cb-boxes-"+currentUser.uid, "[]");
+    localStorage.setItem("cb-rooms-"+currentUser.uid, "[]");
+    localStorage.setItem("cb-updated-"+currentUser.uid, Date.now().toString());
+    localStorage.setItem("cb-chunkCount-"+currentUser.uid, "0");
+  }
+  // Borrar en Firestore explícitamente (bypasando el guard de boxes vacío)
   if(currentUser && db){
-    db.collection('users').doc(currentUser.uid).set(
-      {boxes:[], rooms:[], updatedAt:firebase.firestore.FieldValue.serverTimestamp()},
-      {merge:true}
-    ).catch(()=>{});
+    const userRef = db.collection('users').doc(currentUser.uid);
+    const batch = db.batch();
+    batch.set(userRef,{boxes:[], rooms:[], chunkCount:0,
+      updatedAt: firebase.firestore.FieldValue.serverTimestamp()},{merge:false});
+    // Borrar todos los chunks
+    const prevCount = parseInt(localStorage.getItem("cb-chunkCount-"+currentUser.uid)||"0");
+    for(let i=0;i<prevCount+5;i++){
+      batch.delete(userRef.collection("chunks").doc(String(i)));
+    }
+    batch.commit().catch(()=>{});
   }
   goSplash();
 }
 
 function signOutUser(){
-  // Guardar antes de salir
+  // Cancelar cualquier operación pendiente
   if(typeof _saveTimer !== "undefined") clearTimeout(_saveTimer);
-  if(currentUser) saveToLocalStorage();
+  // Guardar antes de salir (solo si hay datos reales)
+  if(currentUser && boxes.length > 0) saveToLocalStorage();
   document.getElementById("userMenuPopup")?.remove();
   history.replaceState(null, "", location.pathname + location.search);
   if(auth){
     auth.signOut().catch(e=>console.warn("signOut error:", e));
     // onAuthStateChanged emitirá user=null → _showLoginScreen automáticamente
+    // _lastLaunchedUid se resetea en _showLoginScreen vía onAuthStateChanged
   } else {
     currentUser=null; boxes=[]; rooms=[];
     const ls=document.getElementById("loginScreen");
@@ -3316,52 +3445,120 @@ function signOutUser(){
 // FIRESTORE SYNC — fuente de verdad principal
 // ════════════════════════════════════════════════════
 
-// Guarda en localStorage SÍNCRONAMENTE (nunca falla aunque cierren la app)
+// Guarda en localStorage SÍNCRONAMENTE — separa fotos base64 para maximizar espacio
 function saveToLocalStorage(){
   if(!currentUser) return;
   try{
     const lean = boxes.map(b=>{
       const c = JSON.parse(JSON.stringify(b));
+      // Guardar foto por separado con su propia key para no llenar el array principal
+      if(b.photo){
+        try{localStorage.setItem("cb-photo-"+b.id, b.photo);}catch(e){}
+        delete c.photo;
+      }
       c.items = b.items.map(i=>({text:i.text,done:i.done}));
       return c;
     });
-    localStorage.setItem("cb-boxes-"+currentUser.uid, JSON.stringify(lean));
+    try{
+      localStorage.setItem("cb-boxes-"+currentUser.uid, JSON.stringify(lean));
+    }catch(quota){
+      // Si no cabe, intentar sin fotos de items también
+      console.warn("localStorage lleno, guardando versión mínima");
+      const minimal=lean.map(b=>({...b,items:b.items.slice(0,50)}));
+      localStorage.setItem("cb-boxes-"+currentUser.uid, JSON.stringify(minimal));
+    }
     localStorage.setItem("cb-rooms-"+currentUser.uid, JSON.stringify(rooms));
-    // thumbs aparte
+    // thumbs de items aparte
     boxes.forEach(b=>b.items.forEach(it=>{
       if(it.thumb){
-        try{ localStorage.setItem("cb-thumb-"+b.id+"-"+encodeURIComponent(it.text.slice(0,20)), it.thumb); }catch(e){}
+        try{localStorage.setItem("cb-thumb-"+b.id+"-"+encodeURIComponent(it.text.slice(0,20)), it.thumb);}catch(e){}
       }
     }));
   }catch(e){ console.warn("localStorage error:",e); }
 }
 
-// Sube a Firestore. No usa timer, se llama directo.
-// Las fotos (base64 grandes) se guardan solo en localStorage para no superar el límite de Firestore.
+// ── Firestore save con soporte de cajas ilimitadas (chunks de 400KB) ─────────
+// Firestore tiene límite de 1MB por documento. Para evitarlo, usamos una
+// colección de chunks: users/{uid}/chunks/0, chunks/1, etc.
+const CHUNK_BYTES = 400_000; // ~400KB por chunk (margen seguro)
+
+function _chunkBoxes(lean){
+  const chunks=[];
+  let cur=[];
+  let curSize=0;
+  for(const box of lean){
+    const s=JSON.stringify(box).length;
+    if(curSize+s>CHUNK_BYTES && cur.length){
+      chunks.push(cur);
+      cur=[box];curSize=s;
+    } else {
+      cur.push(box);curSize+=s;
+    }
+  }
+  if(cur.length) chunks.push(cur);
+  return chunks;
+}
+
 async function saveToFirestore(){
   if(!currentUser || !db) return;
+  // GUARD: nunca sobreescribir Firestore con array vacío si hay datos remotos
+  // (esto evita pérdida de datos al cerrar sesión y volver a entrar)
+  if(boxes.length === 0){
+    try{
+      const check = await db.collection("users").doc(currentUser.uid).get();
+      if(check.exists){
+        const d = check.data();
+        const remoteHasData = (d.chunkCount > 0) || (d.boxes && d.boxes.length > 0);
+        if(remoteHasData){
+          console.warn("🛡 saveToFirestore cancelado: boxes vacío pero Firestore tiene datos");
+          return;
+        }
+      }
+    }catch(e){ return; } // si falla la verificación, no arriesgarse
+  }
   try{
     const lean = boxes.map(b=>{
       const c = JSON.parse(JSON.stringify(b));
-      // Excluir foto de portada (base64 puede superar el límite de 1MB de Firestore)
+      // quitar fotos base64 del payload de Firestore (muy pesadas)
       delete c.photo;
       c.items = b.items.map(i=>({text:i.text,done:i.done}));
       return c;
     });
-    await db.collection("users").doc(currentUser.uid).set({
-      boxes: lean,
+
+    const chunks=_chunkBoxes(lean);
+    const batch=db.batch();
+    const userRef=db.collection("users").doc(currentUser.uid);
+
+    // Metadata: cuántos chunks hay
+    batch.set(userRef,{
+      chunkCount: chunks.length,
       rooms: rooms,
-      updatedAt: (typeof firebase !== 'undefined' && firebase.firestore)
-        ? firebase.firestore.FieldValue.serverTimestamp()
-        : null
+      updatedAt: (typeof firebase!=="undefined"&&firebase.firestore)
+        ? firebase.firestore.FieldValue.serverTimestamp() : null
     },{merge:true});
-    // actualizar caché local con los datos COMPLETOS (con fotos)
-    saveToLocalStorage();
+
+    // Guardar cada chunk
+    chunks.forEach((chunk,i)=>{
+      const ref=userRef.collection("chunks").doc(String(i));
+      batch.set(ref,{boxes:chunk,idx:i});
+    });
+
+    // Borrar chunks obsoletos si ahora hay menos que antes
+    const prevCount=parseInt(localStorage.getItem("cb-chunkCount-"+currentUser.uid)||"0");
+    for(let i=chunks.length;i<prevCount;i++){
+      batch.delete(userRef.collection("chunks").doc(String(i)));
+    }
+
+    await batch.commit();
+
+    // Caché local
+    localStorage.setItem("cb-boxes-"+currentUser.uid, JSON.stringify(lean));
+    localStorage.setItem("cb-rooms-"+currentUser.uid, JSON.stringify(rooms));
     localStorage.setItem("cb-updated-"+currentUser.uid, Date.now().toString());
-    console.log("✅ Guardado en Firestore:", lean.length, "cajas");
+    localStorage.setItem("cb-chunkCount-"+currentUser.uid, String(chunks.length));
+    console.log(`✅ Guardado en Firestore: ${lean.length} cajas en ${chunks.length} chunk(s)`);
   }catch(e){
     console.warn("Firestore save error:", e);
-    // Solo mostrar toast si estamos online (si estamos offline ya lo sabe el usuario)
     if(navigator.onLine){
       showToast("⚠️ Error al sincronizar — datos guardados localmente","#FF9500");
     }
@@ -3370,6 +3567,8 @@ async function saveToFirestore(){
 
 let _saveTimer = null;
 function scheduleSave(){
+  // No guardar mientras se está cargando de Firestore (evita race condition al iniciar sesión)
+  if(typeof _firestoreLoading !== "undefined" && _firestoreLoading) return;
   // PASO 1: guardar en localStorage AHORA (síncrono, 0ms)
   saveToLocalStorage();
   // PASO 2: subir a Firestore con debounce de 300ms para agrupar cambios rápidos
@@ -3393,77 +3592,99 @@ window.addEventListener("pagehide", ()=>{
   }
 });
 
-// Carga cajas desde Firestore. Si falla, usa localStorage como fallback.
+// ── Firestore load — reconstruye cajas desde chunks ──────────────────────────
 async function loadFromFirestore(){
   if(!currentUser || !db) return;
 
-  // Leer caché local primero (para mostrar algo rápido si Firestore tarda)
-  let localBoxes = [];
-  let localRooms = [];
+  // Mostrar caché local de inmediato (para UX rápida)
+  let localBoxCount = 0;
   try{
-    localBoxes = JSON.parse(localStorage.getItem("cb-boxes-"+currentUser.uid)||"[]");
-    localRooms = JSON.parse(localStorage.getItem("cb-rooms-"+currentUser.uid)||"[]");
-    if(localBoxes.length > 0){
-      boxes = localBoxes;
+    const localLean = JSON.parse(localStorage.getItem("cb-boxes-"+currentUser.uid)||"[]");
+    const localRooms = JSON.parse(localStorage.getItem("cb-rooms-"+currentUser.uid)||"[]");
+    localBoxCount = localLean.length;
+    if(localBoxCount > 0){
+      boxes = localLean;
       rooms = localRooms;
       restoreThumbs();
     }
   }catch(e){}
 
-  // Luego buscar en Firestore (fuente de verdad definitiva)
+  // Luego traer de Firestore (fuente de verdad definitiva)
   try{
     const doc = await db.collection("users").doc(currentUser.uid).get();
     if(doc.exists){
       const data = doc.data();
-      const remote = data.boxes || [];
       const remoteRooms = data.rooms || [];
-
-      // Decidir qué versión es más reciente usando updatedAt
       const remoteTs = data.updatedAt ? data.updatedAt.toMillis() : 0;
       const localTs  = parseInt(localStorage.getItem("cb-updated-"+currentUser.uid)||"0");
 
-      if(remote.length === 0 && localBoxes.length > 0){
-        // Firestore está vacío pero local tiene datos → subir local a Firestore
-        console.log("📤 Firestore vacío pero hay datos locales — subiendo...");
-        await saveToFirestore();
-      } else if(remoteTs >= localTs || localBoxes.length === 0){
-        // Firestore es más reciente (o igual), o local está vacío → confiar en Firestore
-        // Restaurar fotos locales sobre los datos de Firestore
-        boxes = remote.map(remoteBox => {
-          const localBox = localBoxes.find(lb => lb.id === remoteBox.id);
-          if(localBox && localBox.photo) remoteBox.photo = localBox.photo;
-          return remoteBox;
-        });
-        rooms = remoteRooms.length > 0 ? remoteRooms : rooms;
+      // REGLA CLAVE: si Firestore tiene datos y local está vacío → SIEMPRE usar Firestore
+      // Esto evita que un dispositivo nuevo sobreescriba datos del otro
+      const localIsEmpty = localBoxCount === 0;
+      const firestoreWins = remoteTs >= localTs || localIsEmpty;
+
+      if(firestoreWins){
+        // Intentar cargar chunks primero
+        const chunkCount = data.chunkCount || 0;
+        let remote = [];
+
+        if(chunkCount > 0){
+          // Formato nuevo: chunks
+          const chunkRefs = Array.from({length:chunkCount},(_,i)=>
+            db.collection("users").doc(currentUser.uid).collection("chunks").doc(String(i)).get()
+          );
+          const chunkDocs = await Promise.all(chunkRefs);
+          remote = chunkDocs
+            .sort((a,b)=>parseInt(a.id)-parseInt(b.id))
+            .flatMap(d=>d.exists ? (d.data().boxes||[]) : []);
+          console.log(`📥 Cargadas ${remote.length} cajas desde ${chunkCount} chunk(s)`);
+        } else if(data.boxes && data.boxes.length > 0){
+          // Formato antiguo: array directo en el documento
+          remote = data.boxes;
+          console.log(`📥 Cargadas ${remote.length} cajas (formato legacy)`);
+        }
+
+        // Solo reemplazar si Firestore tiene cajas O si local estaba vacío
+        // Nunca sobreescribir cajas locales existentes con un array vacío de Firestore
+        if(remote.length > 0 || localIsEmpty){
+          boxes = remote;
+          rooms = remoteRooms.length > 0 ? remoteRooms : rooms;
+        }
       } else {
-        // Local es más reciente Y tiene datos → subir a Firestore
+        // Local más reciente (cambios offline) → subir a Firestore
         console.log("📤 Local más reciente que Firestore — subiendo...");
         await saveToFirestore();
       }
       restoreThumbs();
     } else {
-      // Doc no existe aún → si hay cajas locales, subirlas
+      // Doc no existe en Firestore aún
       if(boxes.length > 0){
+        // Hay cajas locales → subirlas
         console.log("📤 Creando documento en Firestore con cajas locales...");
         await saveToFirestore();
       }
+      // Si no hay cajas locales tampoco, es cuenta nueva → no hacer nada
     }
   }catch(e){
     console.warn("Firestore load error:", e);
-    // Offline o error de red: boxes ya tiene el fallback de localStorage de arriba
-    // No mostramos toast aquí porque el detector online/offline ya lo maneja
+    // Offline o error: boxes ya tiene el fallback de localStorage de arriba
   }
-  // Actualizar caché local con lo que llegó de Firestore
   saveToLocalStorage();
 }
 
 function restoreThumbs(){
   boxes.forEach(b=>{
+    // Restaurar foto de caja guardada por separado
+    if(!b.photo){
+      const p=localStorage.getItem("cb-photo-"+b.id);
+      if(p) b.photo=p;
+    }
+    // Restaurar thumbs de items
     b.items.forEach(it=>{
       if(!it.thumb){
-        const k = "cb-thumb-"+b.id+"-"+encodeURIComponent(it.text.slice(0,20));
-        const t = localStorage.getItem(k);
-        if(t) it.thumb = t;
+        const k="cb-thumb-"+b.id+"-"+encodeURIComponent(it.text.slice(0,20));
+        const t=localStorage.getItem(k);
+        if(t) it.thumb=t;
       }
     });
   });
@@ -3476,8 +3697,20 @@ function restoreThumbs(){
 if(auth){
   window._authEnabled = true;
 
-  // ── UI helpers ───────────────────────────────────
+  // ── Capturar resultado de redirect de Google (login en móvil) ──
+  // Se llama UNA SOLA VEZ al cargar la página, no en cada click
+  auth.getRedirectResult().catch(err=>{
+    if(err && err.code !== 'auth/null-user'){
+      console.warn("[BoxVision] getRedirectResult error:", err.code);
+      const errEl = document.getElementById("loginError");
+      if(errEl){ errEl.textContent="Error al iniciar sesión. Intenta de nuevo."; errEl.style.display="block"; }
+      const lb=document.getElementById("loginBtn"); if(lb) lb.style.display="flex";
+      const ll=document.getElementById("loginLoading"); if(ll) ll.style.display="none";
+    }
+  });
   function _showLoginScreen(){
+    // Cancelar cualquier guardado pendiente antes de limpiar los datos
+    if(typeof _saveTimer !== "undefined") clearTimeout(_saveTimer);
     currentUser = null; boxes = []; rooms = [];
     const ls = document.getElementById("loginScreen");
     const lb = document.getElementById("loginBtn");
@@ -3502,6 +3735,8 @@ if(auth){
   // ── Lanzar app ───────────────────────────────────
   // Se puede llamar múltiples veces con el mismo usuario sin problema
   let _lastLaunchedUid = null;
+  let _firestoreLoading = false; // bloquea saves durante la carga inicial
+
   async function launchApp(user){
     // Si ya está corriendo con este usuario, solo refrescar datos silenciosamente
     if(_lastLaunchedUid === user.uid && document.getElementById("mainScreen") &&
@@ -3530,19 +3765,19 @@ if(auth){
     initTutorial();
     history.replaceState(null, "", location.pathname + location.search);
 
-    // Ocultar login
+    // Ocultar login e ir a la app
     _hideLoginScreen();
+    goMain();
 
-    // Si no hay datos locales, esperar a Firestore antes de mostrar la app
-    if(boxes.length === 0){
-      // Mostrar spinner breve mientras carga Firestore
-      try{ await loadFromFirestore(); }catch(e){}
-      goMain();
+    // Bloquear saves mientras Firestore carga (evita race condition)
+    _firestoreLoading = true;
+    try{
+      await loadFromFirestore();
       renderMain();
-    } else {
-      // Hay datos locales → ir inmediato y sincronizar en segundo plano
-      goMain();
-      loadFromFirestore().then(()=>renderMain()).catch(()=>{});
+    }catch(e){
+      console.warn("[BoxVision] loadFromFirestore falló en launchApp:", e);
+    }finally{
+      _firestoreLoading = false;
     }
   }
 
