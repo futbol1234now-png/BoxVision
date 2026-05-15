@@ -239,25 +239,52 @@ input,button,textarea,select{font-family:inherit}
 .room-chip-name{flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:12px}
 .unassigned{background:var(--card);border-radius:16px;padding:12px;margin-bottom:14px;border:0.5px solid var(--border)}
 .unassigned-title{font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.4px;margin-bottom:8px}
-.settings-body{;margin:0 auto}
-.settings-sec{background:var(--card);border-radius:18px;margin-bottom:14px;overflow:hidden;border:0.5px solid var(--border)}
-.settings-body{padding:16px;max-width:560px;margin:0 auto}
-.settings-sec{margin-bottom:24px;padding:0 4px}
-.settings-sec-label{font-size:11px;font-weight:700;letter-spacing:1px;color:var(--muted);margin-bottom:8px;padding:0 0 0 16px;text-transform:uppercase}
-.settings-card{background:var(--card);border-radius:18px;overflow:hidden;border:1px solid var(--border)}
-.settings-row{display:flex;align-items:center;padding:14px 16px;border-bottom:0.5px solid var(--border);gap:12px}
+/* ── Settings redesign ── */
+.settings-body{padding:16px 14px 32px;max-width:540px;margin:0 auto}
+.settings-sec{margin-bottom:28px}
+.settings-sec-label{font-size:13px;font-weight:600;color:var(--muted);margin-bottom:10px;padding:0 4px}
+.settings-card{background:var(--card);border-radius:20px;overflow:hidden;border:1px solid var(--border);box-shadow:0 2px 12px rgba(0,0,0,.1)}
+.settings-danger-card{border-color:rgba(255,59,48,.2)}
+
+/* Perfil */
+.settings-profile-row{display:flex;align-items:center;gap:14px;padding:18px 16px}
+.settings-avatar-wrap{width:56px;height:56px;border-radius:50%;overflow:hidden;flex-shrink:0;border:2px solid var(--border)}
+.settings-profile-info{flex:1;min-width:0}
+.settings-profile-name{font-size:16px;font-weight:700;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.settings-profile-email{font-size:12px;color:var(--muted);margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.settings-signout-btn{background:rgba(255,59,48,.1);color:var(--red);border:1px solid rgba(255,59,48,.2);border-radius:12px;padding:8px 14px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;white-space:nowrap;transition:background .15s}
+.settings-signout-btn:active{background:rgba(255,59,48,.2)}
+
+/* Stats */
+.settings-stats-row{display:flex;align-items:center;padding:20px 8px}
+.settings-stat-pill{flex:1;text-align:center}
+.settings-stat-divider{width:1px;height:40px;background:var(--border)}
+.settings-stat-n{font-size:30px;font-weight:800;color:var(--text);line-height:1}
+.settings-stat-l{font-size:11px;color:var(--muted);margin-top:5px}
+
+/* Rows */
+.settings-row{display:flex;align-items:center;padding:15px 16px;border-bottom:0.5px solid var(--border);gap:14px}
 .settings-row:last-child{border:none}
+.settings-tappable{cursor:pointer;transition:background .12s}
+.settings-tappable:active{background:var(--input)}
+.settings-row-icon{font-size:20px;width:36px;height:36px;display:flex;align-items:center;justify-content:center;background:var(--input);border-radius:10px;flex-shrink:0}
+.settings-row-text{flex:1}
 .settings-label{font-size:15px;font-weight:500;color:var(--text)}
 .settings-sub{font-size:12px;color:var(--muted);margin-top:2px}
-.settings-icon{font-size:20px;width:28px;text-align:center;flex-shrink:0}
-.settings-stat{flex:1;text-align:center}
-.settings-stat-n{font-size:28px;font-weight:800;color:var(--text)}
-.settings-stat-l{font-size:11px;color:var(--muted);margin-top:2px;text-transform:uppercase;letter-spacing:.5px}
-.settings-toggle{width:48px;height:28px;border-radius:99px;background:var(--input);position:relative;cursor:pointer;transition:background .25s;flex-shrink:0;border:1px solid var(--border)}
-.settings-toggle.on{background:var(--accent);border-color:var(--accent)}
-.settings-toggle-knob{position:absolute;top:3px;left:3px;width:20px;height:20px;border-radius:50%;background:#fff;transition:transform .25s cubic-bezier(.4,0,.2,1);box-shadow:0 2px 6px rgba(0,0,0,.3)}
+.settings-chevron{color:var(--muted);font-size:20px;font-weight:300;line-height:1}
+
+/* Toggle */
+.settings-toggle{width:50px;height:30px;border-radius:99px;background:var(--input);position:relative;cursor:pointer;transition:background .25s;flex-shrink:0;border:1px solid var(--border)}
+.settings-toggle.on{background:#34C759;border-color:#34C759}
+.settings-toggle-knob{position:absolute;top:4px;left:4px;width:20px;height:20px;border-radius:50%;background:#fff;transition:transform .25s cubic-bezier(.4,0,.2,1);box-shadow:0 2px 6px rgba(0,0,0,.3)}
 .settings-toggle.on .settings-toggle-knob{transform:translateX(20px)}
-.settings-input{background:var(--input);border:0.5px solid var(--border);border-radius:10px;padding:8px 12px;font-size:14px;color:var(--text);outline:none;min-width:130px;text-align:right}
+
+/* Input */
+.settings-input{background:var(--input);border:1px solid var(--border);border-radius:12px;padding:9px 12px;font-size:14px;color:var(--text);outline:none;width:120px;text-align:right;font-family:inherit}
+.settings-input:focus{border-color:var(--accent)}
+
+/* Footer */
+.settings-footer{text-align:center;padding:8px 0 12px;color:var(--muted)}
 .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:500;display:none;align-items:flex-end;justify-content:center}
 .modal-overlay.open{display:flex;animation:fadeIn .2s}
 .modal{background:var(--card);border-radius:24px 24px 0 0;padding:20px 18px 40px;width:100%;max-width:680px;max-height:90vh;overflow-y:auto}
@@ -886,11 +913,7 @@ body{
   box-shadow:0 4px 20px rgba(0,0,0,.12) !important;
 }
 
-/* ── Settings cards ── */
-.settings-card{
-  border-radius:22px !important;
-  box-shadow:0 4px 20px rgba(0,0,0,.12) !important;
-}
+
 
 /* ── Badges de número en card ── */
 .bc-num{
@@ -1201,34 +1224,65 @@ if(!auth){
   </div>
   <div class="settings-body">
 
-    <!-- Perfil de usuario -->
+    <!-- CUENTA -->
     <div class="settings-sec">
-      <div class="settings-sec-label">CUENTA</div>
+      <div class="settings-sec-label">Cuenta</div>
       <div class="settings-card">
-        <div class="settings-row" style="align-items:center;gap:14px;border:none;padding:18px 16px">
-          <img id="settingsAvatar" src="" style="width:52px;height:52px;border-radius:50%;object-fit:cover;display:none;border:2px solid rgba(255,255,255,.12)"/>
-          <div id="settingsAvatarPlaceholder" style="width:52px;height:52px;border-radius:50%;background:var(--input);display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0">👤</div>
-          <div style="flex:1">
-            <div id="settingsUserName" style="font-size:16px;font-weight:600;color:var(--text)">—</div>
-            <div id="settingsUserEmail" style="font-size:12px;color:var(--muted);margin-top:2px">—</div>
+        <div class="settings-profile-row">
+          <div class="settings-avatar-wrap">
+            <img id="settingsAvatar" src="" style="width:100%;height:100%;border-radius:50%;object-fit:cover;display:none"/>
+            <div id="settingsAvatarPlaceholder" style="width:100%;height:100%;border-radius:50%;background:linear-gradient(135deg,#007AFF,#5856D6);display:flex;align-items:center;justify-content:center;font-size:26px">👤</div>
           </div>
-          <button onclick="signOutUser()" style="background:rgba(255,59,48,.12);color:var(--red);border:none;border-radius:10px;padding:8px 14px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit">Salir</button>
+          <div class="settings-profile-info">
+            <div id="settingsUserName" class="settings-profile-name">—</div>
+            <div id="settingsUserEmail" class="settings-profile-email">—</div>
+          </div>
+          <button onclick="signOutUser()" class="settings-signout-btn">Cerrar sesión</button>
         </div>
       </div>
     </div>
 
-    <!-- Personalización -->
+    <!-- RESUMEN -->
     <div class="settings-sec">
-      <div class="settings-sec-label">PERSONALIZACIÓN</div>
+      <div class="settings-sec-label">Resumen</div>
+      <div class="settings-card">
+        <div class="settings-stats-row">
+          <div class="settings-stat-pill">
+            <div class="settings-stat-n" id="setTotalCajas">0</div>
+            <div class="settings-stat-l">📦 Cajas</div>
+          </div>
+          <div class="settings-stat-divider"></div>
+          <div class="settings-stat-pill">
+            <div class="settings-stat-n" id="setTotalObj">0</div>
+            <div class="settings-stat-l">🧺 Objetos</div>
+          </div>
+          <div class="settings-stat-divider"></div>
+          <div class="settings-stat-pill">
+            <div class="settings-stat-n" id="setTotalDone">0</div>
+            <div class="settings-stat-l">✅ Sacados</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PERSONALIZACIÓN -->
+    <div class="settings-sec">
+      <div class="settings-sec-label">Personalización</div>
       <div class="settings-card">
         <div class="settings-row">
-          <span class="settings-icon">🏷️</span>
-          <div style="flex:1"><div class="settings-label">Nombre o marca</div><div class="settings-sub">Aparece al escanear el QR</div></div>
+          <div class="settings-row-icon">🏷️</div>
+          <div class="settings-row-text">
+            <div class="settings-label">Nombre o marca</div>
+            <div class="settings-sub">Aparece al escanear el QR</div>
+          </div>
           <input class="settings-input" id="brandInput" type="text" placeholder="Ej: Familia García" oninput="saveBrand()"/>
         </div>
         <div class="settings-row" style="border:none">
-          <span class="settings-icon">🌙</span>
-          <div style="flex:1"><div class="settings-label">Modo oscuro</div><div class="settings-sub">Tema oscuro para la app</div></div>
+          <div class="settings-row-icon">🌙</div>
+          <div class="settings-row-text">
+            <div class="settings-label">Modo oscuro</div>
+            <div class="settings-sub">Tema visual de la app</div>
+          </div>
           <div class="settings-toggle" onclick="toggleDark()" id="darkToggleWrap">
             <div class="settings-toggle-knob" id="darkToggleKnob"></div>
           </div>
@@ -1236,51 +1290,49 @@ if(!auth){
       </div>
     </div>
 
-    <!-- Estadísticas -->
+    <!-- AYUDA -->
     <div class="settings-sec">
-      <div class="settings-sec-label">RESUMEN</div>
+      <div class="settings-sec-label">Ayuda</div>
       <div class="settings-card">
-        <div class="settings-row" style="border:none;padding:12px 16px;gap:0">
-          <div class="settings-stat"><div class="settings-stat-n" id="setTotalCajas">0</div><div class="settings-stat-l">Cajas</div></div>
-          <div style="width:1px;background:var(--border);margin:0 20px;align-self:stretch"></div>
-          <div class="settings-stat"><div class="settings-stat-n" id="setTotalObj">0</div><div class="settings-stat-l">Objetos</div></div>
-          <div style="width:1px;background:var(--border);margin:0 20px;align-self:stretch"></div>
-          <div class="settings-stat"><div class="settings-stat-n" id="setTotalDone">0</div><div class="settings-stat-l">Sacados</div></div>
+        <div class="settings-row settings-tappable" onclick="const uid=currentUser?.uid||'guest';localStorage.removeItem('cb-tutorial-done-'+uid);localStorage.removeItem('cb-tutorial-done');document.getElementById('tutorial').classList.add('active');tutStep=0;goTut(0);setTimeout(initTutSwipe,100);">
+          <div class="settings-row-icon">📖</div>
+          <div class="settings-row-text">
+            <div class="settings-label">Ver tutorial</div>
+            <div class="settings-sub">Las 7 pantallas de introducción</div>
+          </div>
+          <span class="settings-chevron">›</span>
+        </div>
+        <div class="settings-row settings-tappable" style="border:none" onclick="goMain();setTimeout(toggleAI,100)">
+          <div class="settings-row-icon">🤖</div>
+          <div class="settings-row-text">
+            <div class="settings-label">Abrir Box IA</div>
+            <div class="settings-sub">Tu asistente de búsqueda</div>
+          </div>
+          <span class="settings-chevron">›</span>
         </div>
       </div>
     </div>
 
-    <!-- Acciones -->
+    <!-- ZONA DE PELIGRO -->
     <div class="settings-sec">
-      <div class="settings-sec-label">AYUDA</div>
-      <div class="settings-card">
-        <div class="settings-row" style="cursor:pointer" onclick="const uid=currentUser?.uid||'guest';localStorage.removeItem('cb-tutorial-done-'+uid);localStorage.removeItem('cb-tutorial-done');document.getElementById('tutorial').classList.add('active');tutStep=0;goTut(0);setTimeout(initTutSwipe,100);">
-          <span class="settings-icon">📖</span>
-          <div style="flex:1"><div class="settings-label">Ver tutorial</div><div class="settings-sub">Las 7 pantallas de introducción</div></div>
-          <span style="color:var(--muted);font-size:18px">›</span>
-        </div>
-        <div class="settings-row" style="cursor:pointer;border:none" onclick="goMain();setTimeout(toggleAI,100)">
-          <span class="settings-icon">🤖</span>
-          <div style="flex:1"><div class="settings-label">Abrir Box IA</div><div class="settings-sub">Tu asistente de búsqueda</div></div>
-          <span style="color:var(--muted);font-size:18px">›</span>
+      <div class="settings-sec-label">Zona de peligro</div>
+      <div class="settings-card settings-danger-card">
+        <div class="settings-row settings-tappable" style="border:none" onclick="confirmDeleteAll()">
+          <div class="settings-row-icon">🗑️</div>
+          <div class="settings-row-text">
+            <div class="settings-label" style="color:var(--red)">Borrar todos los datos</div>
+            <div class="settings-sub">Elimina todas tus cajas permanentemente</div>
+          </div>
+          <span class="settings-chevron" style="color:var(--red)">›</span>
         </div>
       </div>
     </div>
 
-    <!-- Peligro -->
-    <div class="settings-sec">
-      <div class="settings-card" style="border-color:rgba(255,59,48,.15)">
-        <div class="settings-row" style="cursor:pointer;border:none" onclick="if(confirm('¿Borrar todas las cajas? Esto no se puede deshacer.')){boxes=[];rooms=[];saveData();saveRooms();
-if(currentUser&&db){db.collection("users").doc(currentUser.uid).set({boxes:[],rooms:[],updatedAt:firebase.firestore.FieldValue.serverTimestamp()},{merge:true}).catch(()=>{});}
-goSplash();}">
-          <span class="settings-icon">🗑️</span>
-          <div style="flex:1"><div class="settings-label" style="color:var(--red)">Borrar todos los datos</div><div class="settings-sub">Elimina todas tus cajas</div></div>
-          <span style="color:var(--red);font-size:18px">›</span>
-        </div>
-      </div>
+    <div class="settings-footer">
+      <div style="font-size:22px;margin-bottom:6px">📦</div>
+      <div style="font-weight:700;font-size:14px;color:var(--text);margin-bottom:2px">BoxVision</div>
+      <div style="font-size:12px;color:var(--muted)">Todos los derechos reservados</div>
     </div>
-
-    <div style="text-align:center;padding:24px 0;font-size:12px;color:var(--muted)">BoxVision · Todos los derechos reservados</div>
   </div>
 </div>
 
@@ -3220,6 +3272,19 @@ function showUserMenu(){
     <button onclick="signOutUser()" style="width:100%;padding:11px;border-radius:10px;border:none;background:rgba(255,59,48,.15);color:#FF3B30;font-size:14px;font-weight:600;cursor:pointer">Cerrar sesión</button>`;
   document.body.appendChild(m);
   setTimeout(()=>document.addEventListener("click",()=>m.remove(),{once:true}),100);
+}
+
+function confirmDeleteAll(){
+  if(!confirm('¿Borrar todas las cajas? Esto no se puede deshacer.')) return;
+  boxes=[]; rooms=[];
+  saveData(); saveRooms();
+  if(currentUser && db){
+    db.collection('users').doc(currentUser.uid).set(
+      {boxes:[], rooms:[], updatedAt:firebase.firestore.FieldValue.serverTimestamp()},
+      {merge:true}
+    ).catch(()=>{});
+  }
+  goSplash();
 }
 
 function signOutUser(){
