@@ -3166,23 +3166,24 @@ function signInGoogle(){
     alert("⚠️ Firebase no está disponible. Usa la app en modo local.");
     return;
   }
-  // Mostrar spinner y ocultar botón antes del redirect
   const btn = document.getElementById("loginBtn");
   const loading = document.getElementById("loginLoading");
+  const errEl = document.getElementById("loginError");
   if(btn) btn.style.display = "none";
   if(loading) loading.style.display = "flex";
+  if(errEl){ errEl.textContent=""; errEl.style.display="none"; }
 
   const provider = new firebase.auth.GoogleAuthProvider();
   provider.setCustomParameters({prompt: 'select_account'});
-  
-  auth.signInWithRedirect(provider).catch(err=>{
+
+  // Popup es más confiable que redirect en apps de archivo único
+  auth.signInWithPopup(provider).catch(err=>{
     console.error("Login error:", err);
     if(btn) btn.style.display = "flex";
     if(loading) loading.style.display = "none";
-    const el = document.getElementById("loginError");
-    if(el){
-      el.textContent = "Error: " + (err.message || err);
-      el.style.display = "block";
+    if(errEl && err.code !== 'auth/popup-closed-by-user'){
+      errEl.textContent = "Error: " + (err.message || err);
+      errEl.style.display = "block";
     }
   });
 }
@@ -3490,14 +3491,7 @@ if(auth){
     }
   });
 
-  // getRedirectResult: solo para mostrar/ocultar spinner en la pantalla de login
-  auth.getRedirectResult().catch(err=>{
-    if(_loginBtn) _loginBtn.style.display = "flex";
-    if(_loginLoading) _loginLoading.style.display = "none";
-    console.warn("getRedirectResult error:", err.message);
-    const el = document.getElementById("loginError");
-    if(el){ el.textContent = "Error al iniciar sesión: "+err.message; el.style.display="block"; }
-  });
+  // signInWithPopup no necesita getRedirectResult
 
 } else {
   // Sin Firebase — modo local puro
@@ -3524,44 +3518,21 @@ if(auth){
 <!-- Se coloca al final del body para que todas las variables estén definidas -->
 <script>
 (function(){
-  // ── Service Worker como blob (sin depender de sw.js externo) ──────────────
-  if('serviceWorker' in navigator){
-    var CACHE_NAME = 'bv-v4';
-    var APP_URL = location.origin + location.pathname;
-    var swLines = [
-      "var CACHE='" + CACHE_NAME + "';",
-      "var APP='" + APP_URL + "';",
-      "self.addEventListener('install',function(e){",
-      "  e.waitUntil(caches.open(CACHE).then(function(c){return c.add(APP);}).then(function(){return self.skipWaiting();}));",
-      "});",
-      "self.addEventListener('activate',function(e){",
-      "  e.waitUntil(caches.keys().then(function(ks){return Promise.all(ks.filter(function(k){return k!==CACHE;}).map(function(k){return caches.delete(k);}));}).then(function(){return self.clients.claim();}));",
-      "});",
-      "self.addEventListener('fetch',function(e){",
-      "  if(e.request.method!=='GET') return;",
-      "  var u=e.request.url;",
-      "  if(u.indexOf('firestore')>-1||u.indexOf('googleapis')>-1||u.indexOf('groq')>-1||u.indexOf('workers.dev')>-1||u.indexOf('gstatic')>-1) return;",
-      "  e.respondWith(caches.match(e.request).then(function(cached){",
-      "    var net=fetch(e.request).then(function(r){",
-      "      if(r&&r.status===200&&r.type!=='opaque'){var cl=r.clone();caches.open(CACHE).then(function(c){c.put(e.request,cl);});}",
-      "      return r;",
-      "    }).catch(function(){return cached;});",
-      "    return cached||net;",
-      "  }));",
-      "});"
-    ];
-    try{
-      var blob = new Blob([swLines.join('\n')], {type:'application/javascript'});
-      var swUrl = URL.createObjectURL(blob);
-      // Nota: blob SW solo funciona con scope del blob, no de la página.
-      // Esto es una limitación del navegador — para scope completo necesitas sw.js real.
-      // Aun así cachea el HTML cuando lo sirves desde un servidor que soporte SW.
-      navigator.serviceWorker.register(swUrl)
-        .then(function(reg){ console.log('[BoxVision] SW OK, scope:', reg.scope); })
-        .catch(function(e){ console.info('[BoxVision] SW no disponible (normal en file://):', e.message); });
-    }catch(e){
-      console.info('[BoxVision] SW no soportado:', e.message);
-    }
+  // ── Service Worker ───────────────────────────────────────────────────────
+  // Los blob: URLs no son válidos como SW en Chrome/Firefox.
+  // Solo registrar si existe un sw.js real en el mismo origen.
+  if('serviceWorker' in navigator && location.protocol !== 'blob:'){
+    fetch(location.pathname.replace(/[^/]*$/, '') + 'sw.js', {method:'HEAD'})
+      .then(function(r){
+        if(r.ok){
+          navigator.serviceWorker.register('sw.js')
+            .then(function(reg){ console.log('[BoxVision] SW registrado, scope:', reg.scope); })
+            .catch(function(e){ console.info('[BoxVision] SW no disponible:', e.message); });
+        } else {
+          console.info('[BoxVision] sw.js no encontrado — PWA offline desactivado (normal en archivo único)');
+        }
+      })
+      .catch(function(){ console.info('[BoxVision] SW no disponible en este entorno'); });
   }
 
   // ── Detector online/offline ───────────────────────────────────────────────
