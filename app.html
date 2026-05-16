@@ -648,6 +648,7 @@ button{-webkit-tap-highlight-color:transparent;outline:none}
 /* ── AI ASSISTANT ── */
 .ai-fab{
   position:fixed;bottom:24px;right:20px;z-index:400;
+  /* Pill horizontal en vez de círculo */
   width:auto;height:50px;
   border-radius:25px;
   padding:0 18px 0 14px;
@@ -670,7 +671,8 @@ button{-webkit-tap-highlight-color:transparent;outline:none}
 }
 .ai-fab-label{
   font-size:13px;font-weight:700;color:#fff;
-  letter-spacing:-.2px;opacity:.9;
+  letter-spacing:-.2px;
+  opacity:.9;
 }
 @keyframes fabIn{from{transform:scale(0) translateY(20px);opacity:0}to{transform:scale(1) translateY(0);opacity:1}}
 .ai-fab:hover{
@@ -687,69 +689,42 @@ button{-webkit-tap-highlight-color:transparent;outline:none}
 }
 @keyframes pulse{0%,100%{transform:scale(1);opacity:1}50%{transform:scale(1.4);opacity:.7}}
 
-/* Panel IA — fondo oscuro estilo splash */
 .ai-panel{
   position:fixed;bottom:0;left:0;right:0;z-index:450;
   max-height:85vh;
-  background:linear-gradient(160deg,#17171f 0%,#1a1a2e 60%,#17171f 100%);
+  background:var(--card);
   border-radius:24px 24px 0 0;
-  box-shadow:0 -8px 40px rgba(0,0,0,.5);
+  box-shadow:0 -8px 40px rgba(0,0,0,.18);
   display:none;flex-direction:column;
-  border-top:0.5px solid rgba(255,255,255,.1);
+  border-top:0.5px solid var(--border);
   overflow:hidden;
 }
-.ai-panel::before{
-  content:'';
-  position:absolute;inset:0;
-  background:
-    radial-gradient(ellipse 80% 40% at 20% 10%,rgba(10,132,255,.09) 0%,transparent 60%),
-    radial-gradient(ellipse 60% 40% at 80% 80%,rgba(88,86,214,.08) 0%,transparent 60%);
-  pointer-events:none;z-index:0;border-radius:24px 24px 0 0;
-}
-.ai-panel > *{position:relative;z-index:1}
 .ai-panel.open{
   display:flex;
   animation:aiPanelIn .4s var(--ease-out-expo) both;
 }
 @keyframes aiPanelIn{from{transform:translateY(100%)}to{transform:translateY(0)}}
 
-/* Header del panel IA */
 .ai-header{
-  padding:16px 18px 14px;
+  padding:14px 18px 10px;
   display:flex;align-items:center;gap:12px;
-  border-bottom:0.5px solid rgba(255,255,255,.08);
+  background:linear-gradient(135deg,#0A84FF 0%,#5856D6 100%);
+  border-radius:20px 20px 0 0;
   flex-shrink:0;
 }
 .ai-avatar{
-  width:44px;height:44px;border-radius:50%;
-  background:linear-gradient(135deg,#0A84FF 0%,#5856D6 50%,#AF52DE 100%);
-  box-shadow:0 0 0 2px rgba(255,255,255,.15), 0 4px 16px rgba(88,86,214,.5);
+  width:36px;height:36px;border-radius:50%;
+  background:rgba(255,255,255,.2);backdrop-filter:blur(6px);
+  border:1.5px solid rgba(255,255,255,.4);
   display:flex;align-items:center;justify-content:center;
-  font-size:22px;flex-shrink:0;
-  position:relative;overflow:hidden;
-}
-.ai-avatar::after{
-  content:'';position:absolute;inset:0;
-  background:linear-gradient(135deg,rgba(255,255,255,.25) 0%,transparent 60%);
-  border-radius:50%;
+  font-size:18px;flex-shrink:0;
 }
 .ai-header-info{flex:1}
-.ai-header-name{font-size:16px;font-weight:800;color:#fff;letter-spacing:-.3px}
-.ai-header-status{font-size:12px;color:rgba(255,255,255,.7);display:flex;align-items:center;gap:5px;margin-top:2px}
-.ai-header-status::before{content:"";width:7px;height:7px;border-radius:50%;background:#4CD964;display:inline-block;box-shadow:0 0 6px rgba(76,217,100,.7);animation:pulse 2s infinite}
-.ai-close{
-  background:rgba(255,255,255,.12);
-  border:0.5px solid rgba(255,255,255,.2);
-  backdrop-filter:blur(10px);
-  border-radius:50%;width:32px;height:32px;
-  display:flex;align-items:center;justify-content:center;
-  cursor:pointer;font-size:13px;color:rgba(255,255,255,.7);
-  transition:transform var(--dur-fast) var(--ease-spring),background var(--dur-fast),color var(--dur-fast);
-}
-.ai-close:hover{background:rgba(255,255,255,.2);color:#fff}
-.ai-close:active{transform:scale(.88)}
+.ai-header-name{font-size:15px;font-weight:700;color:#fff}
+.ai-header-status{font-size:12px;color:rgba(255,255,255,.85);display:flex;align-items:center;gap:4px}
+.ai-header-status::before{content:"";width:6px;height:6px;border-radius:50%;background:#4CD964;display:inline-block;animation:pulse 2s infinite}
+.ai-close{background:rgba(255,255,255,.15);border:none;border-radius:50%;width:30px;height:30px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:14px;color:#fff}
 
-/* Mensajes */
 .ai-messages{
   flex:1;overflow-y:auto;padding:14px 16px;
   display:flex;flex-direction:column;gap:10px;
@@ -763,107 +738,62 @@ button{-webkit-tap-highlight-color:transparent;outline:none}
 .ai-bubble{
   max-width:80%;padding:10px 14px;
   border-radius:18px;font-size:14px;line-height:1.5;
-  color:rgba(255,255,255,.9);
-  background:rgba(255,255,255,.1);
-  border:0.5px solid rgba(255,255,255,.12);
-  backdrop-filter:blur(8px);
+  color:var(--text);background:var(--input);
 }
 .ai-msg.user .ai-bubble{
-  background:rgba(255,255,255,.18);
-  border:0.5px solid rgba(255,255,255,.3);
+  background:linear-gradient(135deg,#5856D6,#AF52DE);
   color:#fff;border-radius:18px 18px 4px 18px;
 }
 .ai-msg.bot .ai-bubble{border-radius:18px 18px 18px 4px}
-.ai-msg-avatar{
-  width:30px;height:30px;border-radius:50%;
-  background:linear-gradient(135deg,#0A84FF,#5856D6);
-  box-shadow:0 2px 10px rgba(88,86,214,.5);
-  display:flex;align-items:center;justify-content:center;
-  font-size:13px;flex-shrink:0;color:#fff;
-  position:relative;overflow:hidden;
-}
-.ai-msg-avatar::after{
-  content:'';position:absolute;inset:0;
-  background:linear-gradient(135deg,rgba(255,255,255,.25) 0%,transparent 55%);
-}
+.ai-msg-avatar{width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,#5856D6,#AF52DE);display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0}
 
 .ai-typing{display:flex;gap:4px;padding:12px 16px;align-items:center}
-.ai-typing span{width:7px;height:7px;border-radius:50%;background:rgba(255,255,255,.4);animation:typingDot 1.2s infinite}
+.ai-typing span{width:7px;height:7px;border-radius:50%;background:var(--muted);animation:typingDot 1.2s infinite}
 .ai-typing span:nth-child(2){animation-delay:.2s}
 .ai-typing span:nth-child(3){animation-delay:.4s}
 @keyframes typingDot{0%,60%,100%{transform:translateY(0);opacity:.4}30%{transform:translateY(-5px);opacity:1}}
 
-/* Botones rápidos — chips con acento de color */
 .ai-quick{
-  display:flex;flex-wrap:wrap;gap:7px;
-  padding:12px 16px;
-  border-top:0.5px solid rgba(255,255,255,.07);
+  display:flex;flex-wrap:wrap;gap:6px;
+  padding:8px 16px;border-top:0.5px solid var(--border);
   flex-shrink:0;
 }
 .ai-quick-btn{
-  background:rgba(255,255,255,.08);
-  color:rgba(255,255,255,.9);
-  border:1px solid rgba(255,255,255,.14);
-  backdrop-filter:blur(12px);
-  border-radius:99px;
-  padding:8px 15px;font-size:12px;font-weight:600;
+  background:var(--input);color:var(--text);
+  border:0.5px solid var(--border);border-radius:99px;
+  padding:6px 12px;font-size:12px;font-weight:500;
   cursor:pointer;font-family:inherit;
-  transition:transform var(--dur-fast) var(--ease-spring),background var(--dur-fast),border-color var(--dur-fast),box-shadow var(--dur-fast);
+  transition:transform .1s,background .15s;
   white-space:nowrap;
-  letter-spacing:-.1px;
-  box-shadow:0 2px 8px rgba(0,0,0,.2);
 }
-.ai-quick-btn:hover{
-  background:rgba(255,255,255,.16);
-  border-color:rgba(255,255,255,.3);
-  transform:translateY(-1px);
-  box-shadow:0 4px 14px rgba(0,0,0,.25);
-}
-.ai-quick-btn:active{transform:scale(.91);box-shadow:none}
+.ai-quick-btn:active{transform:scale(.92)}
 
-/* Input row */
 .ai-input-row{
   display:flex;align-items:center;gap:10px;
   padding:10px 16px 24px;
-  border-top:0.5px solid rgba(255,255,255,.08);
+  border-top:0.5px solid var(--border);
   flex-shrink:0;
 }
 .ai-input{
-  flex:1;padding:10px 16px;
-  border:1px solid rgba(255,255,255,.2);
-  border-radius:22px;
-  font-size:15px;color:#fff;
-  background:rgba(255,255,255,.1);
-  backdrop-filter:blur(10px);
-  outline:none;
+  flex:1;padding:10px 14px;
+  border:1.5px solid var(--border);border-radius:22px;
+  font-size:15px;color:var(--text);
+  background:var(--input);outline:none;
   font-family:inherit;
-  transition:border-color .15s, background .15s, opacity .15s;
+  transition:border-color .15s, opacity .15s;
 }
-.ai-input::placeholder{color:rgba(255,255,255,.4)}
-.ai-input:focus{border-color:rgba(255,255,255,.5);background:rgba(255,255,255,.15)}
-.ai-input:disabled{opacity:.4;cursor:not-allowed}
-.ai-cursor{display:inline-block;animation:aiCursorBlink .7s infinite;margin-left:1px;color:rgba(255,255,255,.7)}
-/* Botón enviar — pill con gradiente */
+.ai-input:focus{border-color:#5856D6}
+.ai-input:disabled{opacity:.5;cursor:not-allowed}
+.ai-cursor{display:inline-block;animation:aiCursorBlink .7s infinite;margin-left:1px;color:#5856D6}
 .ai-send{
-  width:44px;height:44px;border-radius:50%;
-  background:linear-gradient(135deg,#0A84FF 0%,#5856D6 100%);
+  width:38px;height:38px;border-radius:50%;
+  background:linear-gradient(135deg,#5856D6,#AF52DE);
   border:none;cursor:pointer;
   display:flex;align-items:center;justify-content:center;
-  font-size:17px;flex-shrink:0;
-  font-weight:800;color:#fff;
-  box-shadow:0 4px 16px rgba(10,132,255,.45), 0 1px 0 rgba(255,255,255,.2) inset;
-  transition:transform var(--dur-fast) var(--ease-spring),box-shadow var(--dur-fast);
-  position:relative;overflow:hidden;
+  font-size:16px;flex-shrink:0;
+  transition:transform var(--dur-fast) var(--ease-spring);
 }
-.ai-send::before{
-  content:'';position:absolute;inset:0;
-  background:linear-gradient(135deg,rgba(255,255,255,.2) 0%,transparent 60%);
-}
-.ai-send:hover{
-  box-shadow:0 6px 22px rgba(10,132,255,.6), 0 1px 0 rgba(255,255,255,.2) inset;
-  transform:scale(1.06);
-}
-.ai-send:active{transform:scale(.88);box-shadow:0 2px 8px rgba(10,132,255,.3)}
+.ai-send:active{transform:scale(.88)}
 
 /* ═══ MOBILE OPTIMIZATION ═══ */
 *{-webkit-tap-highlight-color:transparent;tap-highlight-color:transparent}
@@ -882,7 +812,7 @@ body{
   .add-row input{font-size:16px!important} /* evita zoom iOS */
   .item-row{padding:13px 14px;gap:12px}
   .form-input{font-size:16px!important} /* evita zoom iOS */
-  .ai-input{font-size:16px!important;color:#fff!important}
+  .ai-input{font-size:16px!important}
   #aiKeyInput{font-size:16px!important}
   /* Botones de acción más grandes */
   .btn{min-height:48px;font-size:16px}
@@ -1206,12 +1136,15 @@ try {
   if(typeof firebase === 'undefined') throw new Error('Firebase SDK no cargado (¿sin internet?)');
   auth = firebase.auth();
   db = firebase.firestore();
-  db.enablePersistence({ synchronizeTabs: true })
+  // En Safari/iOS synchronizeTabs causa errores - detectar y usar modo single-tab
+const _isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
+db.enablePersistence(_isSafari ? {} : { synchronizeTabs: true })
     .catch(err => {
       if(err.code === 'failed-precondition'){
         console.warn('Persistencia: múltiples pestañas abiertas');
       } else if(err.code === 'unimplemented'){
         console.warn('Persistencia no soportada en este navegador');
+   
       }
     });
   console.log("✅ Firebase inicializado correctamente");
@@ -1608,7 +1541,7 @@ function saveRooms(){
       .catch(e=>console.warn("saveRooms Firestore error:",e));
   }
 }
-function saveSettings(){localStorage.setItem("cb-settings",JSON.stringify(settings));}
+function saveSettings(){try{localStorage.setItem("cb-settings",JSON.stringify(settings));}catch(e){}}
 function applyDark(){
   document.body.setAttribute("data-dark",dark?"1":"");
   const t=document.getElementById("darkToggleWrap");
@@ -1711,7 +1644,7 @@ function addSuggestion(text){
   if(inp) showSuggestions(inp.value);
 }
 
-function toggleDark(){dark=dark?0:1;localStorage.setItem("cb-dark",dark?"1":"0");applyDark();}
+function toggleDark(){dark=dark?0:1;try{localStorage.setItem("cb-dark",dark?"1":"0");}catch(e){}applyDark();}
 function esc(s){return String(s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");}
 function rgba(h,a){const r=parseInt(h.slice(1,3),16),g=parseInt(h.slice(3,5),16),b=parseInt(h.slice(5,7),16);return `rgba(${r},${g},${b},${a})`;}
 function fmtDate(){return new Date().toLocaleDateString("es-PE",{day:"2-digit",month:"short",year:"numeric"});}
@@ -1839,8 +1772,9 @@ function showSplash(){
 function goSplash(){showSplash();}
 
 let activeFilter="todo"; let activeSort="default";
-function goMain(){showScreen("mainScreen");renderMain();const f=document.getElementById("aiFab");if(f){f.classList.remove("hidden");}}
+function goMain(){showScreen("mainScreen");if(!Array.isArray(boxes))boxes=[];renderMain();const f=document.getElementById("aiFab");if(f){f.classList.remove("hidden");}}
 function renderMain(){
+  if(!Array.isArray(boxes)) boxes=[];
   const total=boxes.reduce((s,b)=>s+b.items.length,0);
   document.getElementById("mainSub").textContent=boxes.length+" caja"+(boxes.length!==1?"s":"")+" · "+total+" objetos";
   renderFilters();renderGrid();
@@ -2135,8 +2069,11 @@ Context: ${contexto}`;
     const modelos=["llama-3.2-90b-vision-preview","llama-3.2-11b-vision-preview"];
     for(const modelo of modelos){
       try{
+        const _sc = new AbortController();
+        const _st = setTimeout(()=>_sc.abort(), 20000); // 20s timeout
         const res=await fetch("https://broken-flower-327b.theincognit40.workers.dev/chat",{
           method:"POST",
+          signal:_sc.signal,
           headers:{"Content-Type":"application/json"},
           body:JSON.stringify({model:modelo,max_tokens:400,temperature:0.05,
             messages:[
@@ -2349,7 +2286,8 @@ function exportBox(){
 }
 function dupBox(){
   const box=boxes.find(b=>b.id===currentBoxId);if(!box) return;
-  const nb={...JSON.parse(JSON.stringify(box)),id:genId(),name:box.name+" (copia)",date:fmtDate(),lastUsed:0,fav:false,history:[],sealed:false};
+  let _bc;try{_bc=JSON.parse(JSON.stringify(box));}catch(e){showToast("Error al duplicar caja","#FF3B30");return;}
+  const nb={..._bc,id:genId(),name:box.name+" (copia)",date:fmtDate(),lastUsed:0,fav:false,history:[],sealed:false};
   nb.photo=null; // FIX F: no duplicar foto base64 (puede pesar 300-500KB)
   nb.items=nb.items.map(i=>({text:i.text,done:i.done})); // FIX F: no duplicar thumbs de items
   boxes.push(nb);saveData();showToast("⧉ Copia creada: "+nb.name,"#5856D6");goMain();
@@ -2442,6 +2380,7 @@ function doSearch(q){
   _searchTimer=setTimeout(()=>_runSearch(q),180);
 }
 function _runSearch(q){
+  if(!Array.isArray(boxes)||!boxes.length){document.getElementById("srWrap").innerHTML='<div class="sr-none">No hay cajas todavía</div>';document.getElementById("srWrap").classList.add("open");return;}
   const wrap=document.getElementById("srWrap");
   const ql=q.toLowerCase();
   const hits=[];
@@ -2551,7 +2490,7 @@ function showViewer(box){
       // Show "live" badge
       const be=document.getElementById("vBrand");
       const liveBadge='<span style="background:#34C759;color:#fff;font-size:10px;padding:2px 8px;border-radius:99px;font-weight:700;margin-left:6px">● EN VIVO</span>';
-      if(match.brand||box.brand) be.innerHTML=(match.brand||box.brand?'📦 '+(match.brand||box.brand):'')+liveBadge;
+      if(match.brand||box.brand){const _br=String(match.brand||box.brand||'').replace(/</g,'&lt;').replace(/>/g,'&gt;');be.innerHTML=(match.brand||box.brand?'📦 '+_br:'')+liveBadge;}
       else be.innerHTML=liveBadge;
       be.classList.remove("hidden");
     }
@@ -2650,11 +2589,25 @@ const TUT_TOTAL=7;
 
 function initTutorial(){
   const uid=currentUser?.uid||"guest";
-  const seen=localStorage.getItem("cb-tutorial-done-"+uid)||localStorage.getItem("cb-tutorial-done");
-  if(!seen){
-    document.getElementById("tutorial").classList.add("active");
-    tutStep=0;
-    setTimeout(initTutSwipe,100);
+  const seenLocal=localStorage.getItem("cb-tutorial-done-"+uid)||localStorage.getItem("cb-tutorial-done");
+  if(seenLocal) return; // ya visto en este dispositivo
+  if(uid!=="guest" && db){
+    // Verificar en Firestore si ya lo vio en otro dispositivo
+    db.collection("users").doc(uid).get().then(doc=>{
+      if(doc.exists && doc.data().tutorialDone){
+        try{localStorage.setItem("cb-tutorial-done-"+uid,"1");}catch(e){}
+      } else {
+        document.getElementById("tutorial").classList.add("active");
+        tutStep=0;
+        setTimeout(initTutSwipe,100);
+      }
+    }).catch(()=>{
+      document.getElementById("tutorial").classList.add("active");
+      tutStep=0;
+      setTimeout(initTutSwipe,100);
+    });
+  } else {
+    const _t=document.getElementById("tutorial");if(_t){_t.classList.add("active");tutStep=0;setTimeout(initTutSwipe,100);}
   }
 }
 
@@ -2695,7 +2648,12 @@ function nextTut(){
 
 function finishTut(){
   const uid=currentUser?.uid||"guest";
+  // Guardar localmente
   localStorage.setItem("cb-tutorial-done-"+uid,"1");
+  // Guardar en Firestore para sincronizar entre dispositivos
+  if(uid!=="guest" && db){
+    db.collection("users").doc(uid).set({tutorialDone:true},{merge:true}).catch(()=>{});
+  }
   const tut=document.getElementById("tutorial");
   tut.style.opacity="0";
   tut.style.transition="opacity .3s";
@@ -3128,7 +3086,7 @@ function aiAddMsg(role, html, animate=false){
   const div = document.createElement("div");
   div.className = `ai-msg ${role}`;
   if(role === "bot"){
-    div.innerHTML = `<div class="ai-msg-avatar"><span style="position:relative;z-index:1;font-size:12px">✦</span></div><div class="ai-bubble"></div>`;
+    div.innerHTML = `<div class="ai-msg-avatar">🤖</div><div class="ai-bubble"></div>`;
     msgs.appendChild(div);
     const bubble = div.querySelector(".ai-bubble");
     if(animate) typewriterHTML(bubble, html);
@@ -3165,7 +3123,7 @@ function aiShowTyping(){
   const msgs = document.getElementById("aiMessages");
   const div = document.createElement("div");
   div.className = "ai-msg bot"; div.id = "aiTyping";
-  div.innerHTML = `<div class="ai-msg-avatar"><span style="position:relative;z-index:1;font-size:12px">✦</span></div><div class="ai-bubble"><div class="ai-typing"><span></span><span></span><span></span></div></div>`;
+  div.innerHTML = `<div class="ai-msg-avatar">🤖</div><div class="ai-bubble"><div class="ai-typing"><span></span><span></span><span></span></div></div>`;
   msgs.appendChild(div);
   msgs.scrollTop = msgs.scrollHeight;
 }
@@ -3204,6 +3162,7 @@ CAJAS: ${JSON.stringify(boxList)}`;
 }
 
 async function aiAsk(q){
+  if(aiStreaming) return; // evita doble envío
   document.getElementById("aiQuick").style.display = "none";
   aiAddMsg("user", q);
   aiHistory.push({role:"user", content:q});
@@ -3213,8 +3172,11 @@ async function aiAsk(q){
   aiShowTyping();
 
   try {
+    const _ctrl = new AbortController();
+    const _timeout = setTimeout(()=>_ctrl.abort(), 30000); // 30s timeout
     const res = await fetch("https://broken-flower-327b.theincognit40.workers.dev/chat",{
       method:"POST",
+      signal:_ctrl.signal,
       headers:{"Content-Type":"application/json"},
       body:JSON.stringify({
         model:"llama-3.3-70b-versatile",
@@ -3226,7 +3188,8 @@ async function aiAsk(q){
       })
     });
     if(!res.ok){
-      const err = await res.json().catch(()=>({}));
+      clearTimeout(_timeout);
+    const err = await res.json().catch(()=>({}));
       throw new Error(err?.error?.message || res.status);
     }
     const data = await res.json();
@@ -3479,7 +3442,7 @@ document.addEventListener("DOMContentLoaded",applySplashGradient);
 <!-- ═══ BOX IA PANEL ═══ -->
 <div class="ai-panel" id="aiPanel">
   <div class="ai-header">
-    <div class="ai-avatar"><span style="position:relative;z-index:1;font-size:20px;filter:drop-shadow(0 1px 4px rgba(0,0,0,.4))">✦</span></div>
+    <div class="ai-avatar">🤖</div>
     <div class="ai-header-info">
       <div class="ai-header-name">Box IA</div>
       <div class="ai-header-status" id="aiStatus">Asistente inteligente</div>
@@ -3488,17 +3451,17 @@ document.addEventListener("DOMContentLoaded",applySplashGradient);
   </div>
 
   <!-- Pantalla configuración API key -->
-  <div id="aiKeyScreen" style="display:none;flex:1;padding:32px 24px;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:18px">
-    <div style="font-size:56px">🔑</div>
-    <div style="font-size:20px;font-weight:800;color:#fff;letter-spacing:-.4px">Conecta Box IA</div>
-    <div style="font-size:14px;color:rgba(255,255,255,.65);line-height:1.6">Powered by <b style="color:rgba(255,255,255,.9)">Groq</b> vía Cloudflare Workers.<br>Gratis, rápido, sin exponer tu key.</div>
-    <div style="background:rgba(255,255,255,.12);border:0.5px solid rgba(255,255,255,.25);border-radius:16px;padding:14px 16px;font-size:13px;color:rgba(255,255,255,.85);line-height:1.8;text-align:left;width:100%;box-sizing:border-box;backdrop-filter:blur(10px)">
+  <div id="aiKeyScreen" style="display:none;flex:1;padding:24px 20px;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:16px">
+    <div style="font-size:48px">🔑</div>
+    <div style="font-size:17px;font-weight:700;color:var(--text)">Conecta Box IA</div>
+    <div style="font-size:13px;color:var(--muted);line-height:1.6">Powered by <b>Groq</b> vía Cloudflare Workers.<br>Gratis, rápido, sin exponer tu key.</div>
+    <div style="background:rgba(10,132,255,.1);border:1px solid rgba(10,132,255,.2);border-radius:12px;padding:12px 14px;font-size:12px;color:#0A84FF;line-height:1.6;text-align:left;width:100%;box-sizing:border-box">
       ✅ Tu key de Groq está guardada en el Worker<br>
       ✅ Esta app no necesita la key directamente<br>
       ✅ Funciona en cualquier red
     </div>
-    <button onclick="saveApiKey()" style="width:100%;padding:15px;border-radius:14px;border:none;background:#fff;color:#007AFF;font-size:16px;font-weight:700;cursor:pointer;box-shadow:0 4px 20px rgba(0,0,0,.2);transition:transform .15s,box-shadow .15s" onmousedown="this.style.transform='scale(.97)'" onmouseup="this.style.transform=''" ontouchstart="this.style.transform='scale(.97)'" ontouchend="this.style.transform=''">🚀 Iniciar Box IA</button>
-    <button onclick="skipApiKey()" style="background:rgba(255,255,255,.12);border:0.5px solid rgba(255,255,255,.25);backdrop-filter:blur(10px);border-radius:14px;padding:11px 24px;color:rgba(255,255,255,.8);font-size:14px;font-weight:600;cursor:pointer;font-family:inherit;width:100%;transition:transform .15s" onmousedown="this.style.transform='scale(.97)'" onmouseup="this.style.transform=''" ontouchstart="this.style.transform='scale(.97)'" ontouchend="this.style.transform=''">Usar modo básico</button>
+    <button onclick="saveApiKey()" style="width:100%;padding:14px;border-radius:14px;border:none;background:linear-gradient(135deg,#0A84FF,#5856D6);color:#fff;font-size:16px;font-weight:700;cursor:pointer">🚀 Iniciar Box IA</button>
+    <button onclick="skipApiKey()" style="background:none;border:none;color:var(--muted);font-size:13px;cursor:pointer;padding:4px">Usar modo básico</button>
   </div>
 
   <div id="aiChatArea" style="display:none;flex:1;flex-direction:column;overflow:hidden">
@@ -3511,9 +3474,9 @@ document.addEventListener("DOMContentLoaded",applySplashGradient);
       <button class="ai-quick-btn" onclick="aiAsk('¿Qué cajas están en el cuarto principal?')">🛏 Por habitación</button>
       <button class="ai-quick-btn" onclick="aiAsk('¿Cuáles son las cajas más pesadas o con más objetos?')">⚖️ Análisis</button>
     </div>
-    <div style="display:flex;align-items:center;justify-content:space-between;padding:4px 16px 2px">
-      <button onclick="testGroqConnection()" style="background:none;border:none;color:rgba(255,255,255,.4);font-size:11px;cursor:pointer;padding:4px;font-family:inherit;transition:color .15s" onmouseenter="this.style.color='rgba(255,255,255,.8)'" onmouseleave="this.style.color='rgba(255,255,255,.4)'">🔌 Probar conexión</button>
-      <button onclick="clearApiKey()" style="background:none;border:none;color:rgba(255,255,255,.4);font-size:11px;cursor:pointer;padding:4px;font-family:inherit;transition:color .15s" onmouseenter="this.style.color='rgba(255,255,255,.8)'" onmouseleave="this.style.color='rgba(255,255,255,.4)'">⚙️ Cambiar API key</button>
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:2px 14px 0">
+      <button onclick="testGroqConnection()" style="background:none;border:none;color:#0A84FF;font-size:11px;cursor:pointer;padding:4px">🔌 Probar conexión</button>
+      <button onclick="clearApiKey()" style="background:none;border:none;color:var(--muted);font-size:11px;cursor:pointer;padding:4px">⚙️ Cambiar API key</button>
     </div>
     <div class="ai-input-row">
       <input class="ai-input" id="aiInput" type="text" placeholder="Pregúntale a Box IA…" onkeydown="if(event.key==='Enter')aiSend()"/>
@@ -3543,8 +3506,16 @@ function signInGoogle(){
   auth.signInWithPopup(provider).catch(err=>{
     // Si el popup fue bloqueado por el navegador/móvil, intentar redirect
     if(err.code === 'auth/popup-blocked' || err.code === 'auth/popup-cancelled'){
-      console.info("[BoxVision] Popup bloqueado — usando redirect");
-      auth.signInWithRedirect(provider);
+      // Guard: evitar redirect loop (solo redirigir si no venimos de un redirect)
+      if(!sessionStorage.getItem("bv-redirect-tried")){
+        sessionStorage.setItem("bv-redirect-tried","1");
+        console.info("[BoxVision] Popup bloqueado — usando redirect");
+        auth.signInWithRedirect(provider);
+      } else {
+        sessionStorage.removeItem("bv-redirect-tried");
+        showToast("No se pudo abrir el login. Permite popups e intenta de nuevo.","#FF3B30");
+        _showLoginScreen();
+      }
       return;
     }
     // Usuario cerró el popup: restaurar botón sin mensaje de error
@@ -3701,17 +3672,18 @@ async function saveToFirestore(){
   // GUARD: nunca sobreescribir Firestore con array vacío si hay datos remotos
   // (esto evita pérdida de datos al cerrar sesión y volver a entrar)
   if(boxes.length === 0){
-    try{
-      const check = await db.collection("users").doc(currentUser.uid).get();
-      if(check.exists){
-        const d = check.data();
-        const remoteHasData = (d.chunkCount > 0) || (d.boxes && d.boxes.length > 0);
-        if(remoteHasData){
-          console.warn("🛡 saveToFirestore cancelado: boxes vacío pero Firestore tiene datos");
-          return;
-        }
-      }
-    }catch(e){ return; } // si falla la verificación, no arriesgarse
+    // BUGFIX: usar localStorage como proxy en vez de hacer GET a Firestore
+    // (evita lectura costosa en cada save de array vacío)
+    const cachedCount = parseInt(localStorage.getItem("cb-chunkCount-"+currentUser.uid)||"0");
+    const cachedBoxes = localStorage.getItem("cb-boxes-"+currentUser.uid);
+    let localHasData = cachedCount > 0;
+    if(!localHasData && cachedBoxes){
+      try{ localHasData = JSON.parse(cachedBoxes).length > 0; }catch(e){}
+    }
+    if(localHasData){
+      console.warn("🛡 saveToFirestore cancelado: boxes vacío pero hay datos en caché local");
+      return;
+    }
   }
   try{
     const lean = boxes.map(b=>{
@@ -3746,13 +3718,25 @@ async function saveToFirestore(){
       batch.delete(userRef.collection("chunks").doc(String(i)));
     }
 
-    await batch.commit();
+    // Commit con reintento automático si falla por red
+    try{
+      await batch.commit();
+    }catch(commitErr){
+      if(navigator.onLine){
+        await new Promise(r=>setTimeout(r,1500));
+        await batch.commit(); // 1 reintento
+      } else {
+        throw commitErr; // offline → lo maneja el catch exterior
+      }
+    }
 
     // Caché local
     localStorage.setItem("cb-boxes-"+currentUser.uid, JSON.stringify(lean));
     localStorage.setItem("cb-rooms-"+currentUser.uid, JSON.stringify(rooms));
     localStorage.setItem("cb-updated-"+currentUser.uid, Date.now().toString());
     localStorage.setItem("cb-chunkCount-"+currentUser.uid, String(chunks.length));
+    // Actualizar también el count en memoria para el próximo ciclo de save
+    // (evita que prevCount quede desincronizado si hubo error previo)
     console.log(`✅ Guardado en Firestore: ${lean.length} cajas en ${chunks.length} chunk(s)`);
   }catch(e){
     console.warn("Firestore save error:", e);
@@ -3818,7 +3802,10 @@ async function loadFromFirestore(){
       // REGLA CLAVE: si Firestore tiene datos y local está vacío → SIEMPRE usar Firestore
       // Esto evita que un dispositivo nuevo sobreescriba datos del otro
       const localIsEmpty = localBoxCount === 0;
-      const firestoreWins = remoteTs >= localTs || localIsEmpty;
+      // BUGFIX: si ambos timestamps son 0 (cuenta nueva en otro dispositivo)
+      // y hay cajas locales, no dejar que Firestore vacío las borre
+      const bothZero = remoteTs === 0 && localTs === 0;
+      const firestoreWins = bothZero ? localIsEmpty : (remoteTs >= localTs || localIsEmpty);
 
       if(firestoreWins){
         // Intentar cargar chunks primero
@@ -3943,6 +3930,7 @@ if(auth){
     }
     _lastLaunchedUid = user.uid;
     currentUser = user;
+    sessionStorage.removeItem("bv-redirect-tried"); // limpiar flag de redirect
 
     // Avatar
     const avatar = document.getElementById("userAvatar");
@@ -3960,7 +3948,10 @@ if(auth){
 
     setupPWA();
     initTutorial();
-    history.replaceState(null, "", location.pathname + location.search);
+
+    // Reemplazar historial: elimina el landing de la pila
+    // así el botón "atrás" no puede volver a index.html
+    history.replaceState({bv:true}, document.title, location.href);
 
     // Ocultar login e ir a la app
     _hideLoginScreen();
