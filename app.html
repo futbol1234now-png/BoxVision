@@ -65,7 +65,7 @@ body::before{
     radial-gradient(ellipse 50% 30% at 50% 90%,rgba(255,149,0,0.04) 0%,transparent 60%);
   pointer-events:none;z-index:0;
 }
-body[data-dark=""] ::before{display:none}
+body[data-dark=""]::before{display:none}
 .screen,.topbar,.ai-panel,.modal-overlay{position:relative;z-index:1}
 img{display:block;max-width:100%}
 input,button,textarea,select{font-family:inherit}
@@ -107,15 +107,72 @@ input,button,textarea,select{font-family:inherit}
 .install-banner button{background:rgba(255,255,255,.25);color:#fff;border:none;border-radius:8px;padding:6px 12px;font-size:12px;font-weight:700;cursor:pointer}
 .main-scroll{padding:0 14px 120px;max-width:680px;margin:0 auto}
 /* .boxes-grid definida abajo con estilos completos */
-.search-wrap{padding:10px 14px;position:sticky;top:57px;z-index:100;background:var(--bg)}
-.search-inner{display:flex;align-items:center;gap:8px;background:var(--card);border:0.5px solid var(--border);border-radius:13px;padding:9px 13px}
-.search-inner input{flex:1;border:none;outline:none;font-size:15px;color:var(--text);background:transparent}
+/* ── SEARCH BAR rediseñado ── */
+.search-wrap{
+  padding:10px 14px 6px;
+  position:sticky;top:57px;z-index:100;
+  background:var(--bg);
+}
+.search-inner{
+  display:flex;align-items:center;gap:10px;
+  background:rgba(255,255,255,.07);
+  border:1px solid rgba(255,255,255,.13);
+  border-radius:16px;
+  padding:0 14px;
+  height:46px;
+  backdrop-filter:blur(16px);
+  -webkit-backdrop-filter:blur(16px);
+  transition:border-color .22s, box-shadow .22s, background .22s;
+  position:relative;
+  overflow:hidden;
+}
+[data-dark=""] .search-inner{
+  background:rgba(0,0,0,.04);
+  border-color:rgba(0,0,0,.1);
+}
+.search-inner:focus-within{
+  border-color:rgba(10,132,255,.55);
+  box-shadow:0 0 0 3px rgba(10,132,255,.12), 0 4px 20px rgba(0,0,0,.18);
+  background:rgba(255,255,255,.1);
+}
+[data-dark=""] .search-inner:focus-within{
+  background:rgba(0,0,0,.06);
+}
+.search-icon{
+  font-size:16px;color:rgba(255,255,255,.35);flex-shrink:0;
+  transition:color .2s;
+  display:flex;align-items:center;
+}
+[data-dark=""] .search-icon{color:rgba(0,0,0,.3)}
+.search-inner:focus-within .search-icon{color:var(--accent)}
+.search-inner input{
+  flex:1;border:none;outline:none;
+  font-size:15px;color:var(--text);
+  background:transparent;
+  padding:0;height:100%;
+}
 .search-inner input::placeholder{color:var(--muted)}
-.sr-wrap{background:var(--card);border:0.5px solid var(--border);border-radius:14px;margin-top:6px;overflow:hidden;display:none}
-.sr-wrap.open{display:block}
-.sr-item{display:flex;align-items:center;gap:10px;padding:11px 14px;border-bottom:0.5px solid var(--border);font-size:14px;cursor:pointer}
+.sr-wrap{
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:16px;
+  margin-top:8px;
+  overflow:hidden;
+  display:none;
+  box-shadow:0 8px 32px rgba(0,0,0,.18);
+}
+.sr-wrap.open{display:block;animation:srSlide .2s cubic-bezier(.34,1.2,.64,1)}
+@keyframes srSlide{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:translateY(0)}}
+.sr-item{
+  display:flex;align-items:center;gap:12px;
+  padding:12px 16px;
+  border-bottom:0.5px solid var(--border);
+  font-size:14px;cursor:pointer;
+  transition:background .12s;
+}
+.sr-item:hover{background:var(--card2)}
 .sr-item:last-child{border:none}
-.sr-none{padding:14px;text-align:center;color:var(--muted);font-size:14px}
+.sr-none{padding:20px;text-align:center;color:var(--muted);font-size:14px}
 .filter-row{display:flex;gap:7px;overflow-x:auto;padding:0 14px 10px;scrollbar-width:none}
 .filter-row::-webkit-scrollbar{display:none}
 .pill{flex-shrink:0;background:var(--pill);color:var(--pilltext);border:none;border-radius:99px;padding:6px 14px;font-size:13px;font-weight:500;cursor:pointer;white-space:nowrap}
@@ -591,25 +648,46 @@ button{-webkit-tap-highlight-color:transparent;outline:none}
 /* ── AI ASSISTANT ── */
 .ai-fab{
   position:fixed;bottom:24px;right:20px;z-index:400;
-  width:56px;height:56px;border-radius:50%;
-  background:linear-gradient(135deg,#5856D6,#AF52DE);
-  border:none;cursor:pointer;
+  /* Pill horizontal en vez de círculo */
+  width:auto;height:50px;
+  border-radius:25px;
+  padding:0 18px 0 14px;
+  gap:8px;
+  background:linear-gradient(135deg,#1a1a2e 0%,#16213e 50%,#0f3460 100%);
+  border:1px solid rgba(88,86,214,.35);
+  cursor:pointer;
   display:flex;align-items:center;justify-content:center;
-  font-size:24px;
-  box-shadow:0 4px 20px rgba(88,86,214,.45),0 1px 0 rgba(255,255,255,.15) inset;
-  transition:transform var(--dur-fast) var(--ease-spring),box-shadow var(--dur-fast);
+  font-size:18px;
+  box-shadow:
+    0 4px 24px rgba(88,86,214,.35),
+    0 1px 0 rgba(255,255,255,.08) inset,
+    0 -1px 0 rgba(0,0,0,.2) inset;
+  transition:transform var(--dur-fast) var(--ease-spring),
+             box-shadow var(--dur-fast),
+             width .3s var(--ease-spring);
   animation:fabIn .5s .3s var(--ease-spring) both;
+  overflow:hidden;
+  white-space:nowrap;
 }
-@keyframes fabIn{from{transform:scale(0) rotate(-180deg);opacity:0}to{transform:scale(1) rotate(0);opacity:1}}
-.ai-fab:hover{transform:scale(1.08);box-shadow:0 8px 32px rgba(88,86,214,.55)}
-.ai-fab:active{transform:scale(.92)}
+.ai-fab-label{
+  font-size:13px;font-weight:700;color:#fff;
+  letter-spacing:-.2px;
+  opacity:.9;
+}
+@keyframes fabIn{from{transform:scale(0) translateY(20px);opacity:0}to{transform:scale(1) translateY(0);opacity:1}}
+.ai-fab:hover{
+  transform:translateY(-2px) scale(1.03);
+  box-shadow:0 8px 36px rgba(88,86,214,.5),0 1px 0 rgba(255,255,255,.12) inset;
+  border-color:rgba(88,86,214,.6);
+}
+.ai-fab:active{transform:scale(.94);transition-duration:80ms}
 .ai-fab .ai-dot{
-  position:absolute;top:0;right:0;
-  width:14px;height:14px;background:#34C759;
-  border-radius:50%;border:2px solid var(--bg);
+  width:8px;height:8px;background:#34C759;
+  border-radius:50%;flex-shrink:0;
+  box-shadow:0 0 6px rgba(52,199,89,.6);
   animation:pulse 2s infinite;
 }
-@keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.3)}}
+@keyframes pulse{0%,100%{transform:scale(1);opacity:1}50%{transform:scale(1.4);opacity:.7}}
 
 .ai-panel{
   position:fixed;bottom:0;left:0;right:0;z-index:450;
@@ -741,13 +819,12 @@ body{
   .action-btn{min-height:48px}
   /* Box cards más altas para tocar fácil */
   .box-card{min-height:110px}
-  /* FAB más grande y con safe area */
+  /* FAB pill con safe area */
   .ai-fab{
-    bottom:calc(22px + env(safe-area-inset-bottom))!important;
-    right:20px!important;
-    width:58px!important;
-    height:58px!important;
-    font-size:26px!important;
+    bottom:calc(20px + env(safe-area-inset-bottom))!important;
+    right:16px!important;
+    height:46px!important;
+    font-size:16px!important;
   }
   /* Panel IA ocupa más pantalla */
   .ai-panel{
@@ -876,23 +953,27 @@ body{
   background:rgba(0,0,0,.1) !important;
 }
 
-/* ── FAB de IA: más grande, más premium ── */
+/* ── FAB de IA: pill premium ── */
 .ai-fab{
-  width:62px !important; height:62px !important;
-  border-radius:22px !important;
-  font-size:26px !important;
+  height:50px !important;
+  width:auto !important;
+  border-radius:25px !important;
+  font-size:17px !important;
   box-shadow:
-    0 8px 32px rgba(88,86,214,.55),
+    0 8px 32px rgba(88,86,214,.45),
     0 2px 8px rgba(0,0,0,.3),
-    0 1px 0 rgba(255,255,255,.2) inset !important;
+    0 1px 0 rgba(255,255,255,.12) inset !important;
 }
 .ai-fab:hover{
-  transform:scale(1.1) translateY(-2px) !important;
-  border-radius:24px !important;
+  transform:translateY(-3px) scale(1.04) !important;
+  box-shadow:
+    0 12px 40px rgba(88,86,214,.55),
+    0 2px 8px rgba(0,0,0,.3),
+    0 1px 0 rgba(255,255,255,.15) inset !important;
 }
 .ai-fab:active{
-  transform:scale(.9) !important;
-  border-radius:18px !important;
+  transform:scale(.94) !important;
+  transition-duration:80ms !important;
 }
 
 /* ── Botones de detalle (back, actions) ── */
@@ -1164,9 +1245,9 @@ if(!auth){
   </div>
   <div class="search-wrap">
     <div class="search-inner">
-      <span style="font-size:15px;color:var(--muted)">🔍</span>
+      <span class="search-icon"><i class="ti ti-search"></i></span>
       <input id="searchInput" type="text" placeholder="Buscar en todas las cajas..." oninput="doSearch(this.value)"/>
-      <span id="searchClear" class="hidden" style="font-size:14px;color:var(--muted);cursor:pointer" onclick="clearSearch()">✕</span>
+      <span id="searchClear" class="hidden" style="font-size:14px;color:var(--muted);cursor:pointer;padding:4px;margin-right:-4px;transition:color .15s" onmouseenter="this.style.color='var(--red)'" onmouseleave="this.style.color='var(--muted)'" onclick="clearSearch()">✕</span>
     </div>
     <div class="sr-wrap" id="srWrap"></div>
   </div>
@@ -1441,6 +1522,13 @@ function loadSettingsOnly(){
 function saveData(){
   scheduleSave();
 }
+// FIX A: ID único — Date.now() en base36 + 4 chars aleatorios evita colisiones en doble-tap
+function genId(){return Date.now().toString(36)+Math.random().toString(36).slice(2,6);}
+// FIX #3: hash simple para evitar colisiones de keys de thumbs con prefijos iguales
+function _thumbKey(boxId, itemText){
+  let h=5381;for(let i=0;i<itemText.length;i++) h=(h*33^itemText.charCodeAt(i))>>>0;
+  return "cb-thumb-"+boxId+"-"+h.toString(36);
+}
 function saveRooms(){
   const key=currentUser?"cb-rooms-"+currentUser.uid:"cb-rooms";
   localStorage.setItem(key,JSON.stringify(rooms));
@@ -1536,8 +1624,10 @@ function showSuggestions(val){
   sugs=[...new Set(sugs)].filter(s=>!existing.has(s.toLowerCase())).slice(0,5);
   if(!sugs.length){wrap.classList.remove("show");return;}
   wrap.classList.add("show");
+  // FIX B: usar data-val + listener para evitar XSS/rotura con apóstrofes en onclick
   wrap.innerHTML='<span class="sug-label">💡</span>'+
-    sugs.map(s=>`<button class="sug-chip" onclick="addSuggestion('${s}')">${s}</button>`).join("");
+    sugs.map(s=>`<button class="sug-chip" data-val="${s.replace(/"/g,'&quot;')}">${s}</button>`).join("");
+  wrap.querySelectorAll(".sug-chip").forEach(btn=>btn.addEventListener("click",()=>addSuggestion(btn.dataset.val)));
 }
 
 function addSuggestion(text){
@@ -2114,7 +2204,9 @@ function renderRelated(){
 function toggleHistory(){
   const list=document.getElementById("historyList");
   const btn=document.getElementById("histToggleBtn");
-  const hidden=list.style.display==="none";
+  // Usar dataset para mantener estado explícito independiente del CSS inline inicial
+  const hidden=list.dataset.collapsed==="1";
+  list.dataset.collapsed=hidden?"":"1";
   list.style.display=hidden?"":"none";
   if(btn) btn.textContent=hidden?"Ocultar":"Mostrar";
 }
@@ -2187,7 +2279,9 @@ function exportBox(){
 }
 function dupBox(){
   const box=boxes.find(b=>b.id===currentBoxId);if(!box) return;
-  const nb={...JSON.parse(JSON.stringify(box)),id:Date.now().toString(),name:box.name+" (copia)",date:fmtDate(),lastUsed:0,fav:false,history:[],sealed:false};
+  const nb={...JSON.parse(JSON.stringify(box)),id:genId(),name:box.name+" (copia)",date:fmtDate(),lastUsed:0,fav:false,history:[],sealed:false};
+  nb.photo=null; // FIX F: no duplicar foto base64 (puede pesar 300-500KB)
+  nb.items=nb.items.map(i=>({text:i.text,done:i.done})); // FIX F: no duplicar thumbs de items
   boxes.push(nb);saveData();showToast("⧉ Copia creada: "+nb.name,"#5856D6");goMain();
 }
 function delBox(){
@@ -2242,10 +2336,13 @@ function renderTagChips(){
 function handleTagKey(e){if((e.key==="Enter"||e.key===",")&&e.target.value.trim()){e.preventDefault();addTag(e.target.value.trim());e.target.value="";}}
 function addTag(t){if(!currentTags.includes(t)){currentTags.push(t);renderTagChips();}}
 function removeTag(i){currentTags.splice(i,1);renderTagChips();}
+let _savingForm=false;
 function saveForm(){
+  if(_savingForm) return; // FIX G: prevenir doble tap
   const name=document.getElementById("fName").value.trim();if(!name){alert("Escribe un nombre");return;}
+  _savingForm=true;
   if(formMode==="new"){
-    boxes.push({id:Date.now().toString(),name,number:document.getElementById("fNum").value.trim(),
+    boxes.push({id:genId(),name,number:document.getElementById("fNum").value.trim(),
       location:document.getElementById("fLoc").value.trim(),weight:document.getElementById("fWeight").value.trim(),
       color:selectedColor,priority:selectedPri,tags:[...currentTags],related:document.getElementById("fRelated").value||null,
       password:document.getElementById("fPassword").value||null,
@@ -2259,6 +2356,7 @@ function saveForm(){
   // Actualizar contadores del splash al instante (ya están en boxes[])
   updateSplashCounters && updateSplashCounters();
   setTimeout(()=>{
+    _savingForm=false; // FIX G
     if(_mode==="new"){showToast("✅ Caja guardada","#34C759");goMain();}
     else{showToast("✏️ Cambios guardados","#34C759");openDetail(_id);}
   },50);
@@ -2308,7 +2406,7 @@ function _runSearch(q){
 function clearSearch(){document.getElementById("searchInput").value="";doSearch("");}
 
 function goRoom(){showScreen("roomScreen");renderRoom();}
-function addRoom(){const n=prompt("Nombre del cuarto (ej: Cuarto 1, Garaje):");if(n){rooms.push({id:Date.now().toString(),name:n,boxIds:[]});saveRooms();renderRoom();}}
+function addRoom(){const raw=prompt("Nombre del cuarto (ej: Cuarto 1, Garaje):");const n=(raw||"").trim().slice(0,50);if(n){rooms.push({id:genId(),name:n,boxIds:[]});saveRooms();renderRoom();}} // FIX H
 function renderRoom(){
   const assigned=new Set(rooms.flatMap(r=>r.boxIds));
   const unassigned=boxes.filter(b=>!assigned.has(b.id));
@@ -2329,7 +2427,7 @@ function dropBox(e,toId){
     saveRooms();renderRoom();
   }catch(err){}
 }
-function renameRoom(id){const r=rooms.find(x=>x.id===id);if(!r) return;const n=prompt("Nuevo nombre:",r.name);if(n){r.name=n;saveRooms();renderRoom();}}
+function renameRoom(id){const r=rooms.find(x=>x.id===id);if(!r) return;const raw=prompt("Nuevo nombre:",r.name);const n=(raw||"").trim().slice(0,50);if(n){r.name=n;saveRooms();renderRoom();}} // FIX H
 function deleteRoom(id){
   if(!confirm("¿Eliminar esta habitación? Las cajas asignadas pasarán a 'Sin asignar'.")) return;
   rooms=rooms.filter(r=>r.id!==id);
@@ -2644,7 +2742,7 @@ function startVoice(){
     showToast(`🎤 ${items.length} objeto${items.length!==1?"s":""} agregado${items.length!==1?"s":""}!`,"#5856D6");
   };
   voiceRecog.onerror=e=>{showToast("No se pudo escuchar: "+e.error,"#FF3B30");};
-  voiceRecog.onend=()=>{const b=document.getElementById("micBtn");if(b){b.textContent="🎤";b.style.animation="";}};
+  voiceRecog.onend=()=>{const b=document.getElementById("micBtn");if(b){b.textContent="🎤";b.style.animation="";}voiceRecog=null;}; // FIX E
   voiceRecog.start();
 }
 
@@ -2672,6 +2770,7 @@ function hexToRgba(hex, alpha){
 
 // ═══ 3D CUBE ═══
 let cubeRotX=-18, cubeRotY=0, cubeDragging=false, cubeLastX=0, cubeLastY=0, cubeSpinning=true;
+let _cubeMouseMove=null, _cubeMouseUp=null; // FIX #1: refs globales para limpiar listeners
 
 function openCube(boxId){
   const box=boxes.find(b=>b.id===boxId); if(!box) return;
@@ -2744,6 +2843,10 @@ function openCube(boxId){
 function closeCube(){
   document.getElementById("cubeOverlay").classList.remove("open");
   cubeSpinning=false;
+  cubeDragging=false;
+  // FIX #1: limpiar listeners de mouse que quedan si el usuario cierra sin soltar el botón
+  if(typeof _cubeMouseMove==="function") window.removeEventListener("mousemove",_cubeMouseMove);
+  if(typeof _cubeMouseUp==="function")   window.removeEventListener("mouseup",_cubeMouseUp);
 }
 function closeCubeOutside(e){if(e.target===document.getElementById("cubeOverlay")) closeCube();}
 
@@ -2822,7 +2925,8 @@ function initCubeDrag(){
   };
   // BUG FIX #5: usar addEventListener en lugar de asignación directa (window.onX)
   // para no pisar otros listeners y evitar duplicados si initCubeDrag se llama más de una vez
-  function _onMouseMove(e){
+  // FIX #1: asignamos a variables de scope externo para que closeCube() pueda limpiarlas
+  _cubeMouseMove=function(e){
     if(!cubeDragging) return;
     const now=Date.now();
     const dx=e.clientX-cubeLastX; const dy=e.clientY-cubeLastY;
@@ -2832,8 +2936,8 @@ function initCubeDrag(){
     cubeRotX=Math.max(-65,Math.min(65,cubeRotX));
     cubeLastX=e.clientX; cubeLastY=e.clientY;
     lastMoveTime=now; applyRot();
-  }
-  function _onMouseUp(){
+  };
+  _cubeMouseUp=function(){
     if(!cubeDragging) return; cubeDragging=false;
     if(!cubeSpinning){
       let friction=0.92;
@@ -2846,11 +2950,11 @@ function initCubeDrag(){
       };
       runMomentumM();
     }
-    window.removeEventListener('mousemove',_onMouseMove);
-    window.removeEventListener('mouseup',_onMouseUp);
-  }
-  window.addEventListener('mousemove',_onMouseMove);
-  window.addEventListener('mouseup',_onMouseUp);
+    window.removeEventListener('mousemove',_cubeMouseMove);
+    window.removeEventListener('mouseup',_cubeMouseUp);
+  };
+  window.addEventListener('mousemove',_cubeMouseMove);
+  window.addEventListener('mouseup',_cubeMouseUp);
 
   // Tap to toggle spin
   scene.onclick=e=>{
@@ -3015,15 +3119,17 @@ function buildContextSnapshot(){
   const pct = totalItems ? Math.round(doneItems/totalItems*100) : 0;
   const urgent = boxes.filter(b=>b.priority==="red").length;
   const locationList = [...new Set(boxes.map(b=>b.location).filter(Boolean))]; // BUG FIX #3: renombrado para no pisar la variable global 'rooms'
-  const boxList = boxes.map(b=>({
+  // FIX D: limitar snapshot — max 30 cajas y 10 items por caja para no saturar el contexto
+  const boxList = boxes.slice(0,30).map(b=>({
     nombre:b.name, numero:b.number||null, ubicacion:b.location||null,
     prioridad:b.priority==="red"?"urgente":b.priority==="green"?"baja":"normal",
-    objetos:b.items.map(i=>i.text+(i.done?" [sacado]":"")),
+    objetos:b.items.slice(0,10).map(i=>i.text+(i.done?" [sacado]":"")),
     sellada:b.sealed, favorita:b.fav, peso:b.weight||null, tags:b.tags||[]
   }));
+  const snapshotNote = boxes.length>30?`\n(Mostrando 30 de ${boxes.length} cajas)`:"";
   return `CONTEXTO DE MUDANZA (${new Date().toLocaleDateString("es-PE",{weekday:"long",day:"numeric",month:"long"})}):
 - Cajas: ${boxes.length} | Objetos: ${totalItems} | Sacados: ${doneItems} | Progreso: ${pct}%
-- Urgentes: ${urgent} | Habitaciones: ${locationList.join(", ")||"sin asignar"}
+- Urgentes: ${urgent} | Habitaciones: ${locationList.join(", ")||"sin asignar"}${snapshotNote}
 CAJAS: ${JSON.stringify(boxList)}`;
 }
 
@@ -3045,7 +3151,7 @@ async function aiAsk(q){
         max_tokens:1000,
         messages:[
           {role:"system", content:`Eres Box IA, asistente experto en mudanzas y organización de cajas. Responde siempre en español (Perú). Usa HTML básico para formato: <b>, <br>. Sin markdown con asteriscos. Sé conciso, útil y empático. Cuando busques objetos revisa todas las cajas. Puedes dar consejos de organización y anticipar necesidades del usuario.\n\n${buildContextSnapshot()}`},
-          ...aiHistory.map(m=>({role:m.role, content:m.content}))
+          ...aiHistory.slice(-20).map(m=>({role:m.role, content:m.content})) // FIX C: max 20 msgs
         ]
       })
     });
@@ -3295,7 +3401,9 @@ document.addEventListener("DOMContentLoaded",applySplashGradient);
 
 <!-- ═══ AI ASSISTANT FAB ═══ -->
 <button class="ai-fab hidden" id="aiFab" onclick="toggleAI()">
-  🤖<div class="ai-dot"></div>
+  <div class="ai-dot"></div>
+  <span style="font-size:17px">✦</span>
+  <span class="ai-fab-label">Box IA</span>
 </button>
 
 <!-- ═══ BOX IA PANEL ═══ -->
@@ -3406,6 +3514,11 @@ function showUserMenu(){
 
 function confirmDeleteAll(){
   if(!confirm('¿Borrar todas las cajas? Esto no se puede deshacer.')) return;
+  // FIX #2: leer prevCount ANTES de sobreescribir localStorage a "0"
+  // para poder borrar todos los chunks existentes en Firestore
+  const prevCount = currentUser
+    ? parseInt(localStorage.getItem("cb-chunkCount-"+currentUser.uid)||"0")
+    : 0;
   boxes=[]; rooms=[];
   // Limpiar fotos y thumbs del localStorage
   Object.keys(localStorage).forEach(k=>{
@@ -3424,8 +3537,7 @@ function confirmDeleteAll(){
     const batch = db.batch();
     batch.set(userRef,{boxes:[], rooms:[], chunkCount:0,
       updatedAt: firebase.firestore.FieldValue.serverTimestamp()},{merge:false});
-    // Borrar todos los chunks
-    const prevCount = parseInt(localStorage.getItem("cb-chunkCount-"+currentUser.uid)||"0");
+    // FIX #2: usar prevCount leído antes del reset + margen de 5 por seguridad
     for(let i=0;i<prevCount+5;i++){
       batch.delete(userRef.collection("chunks").doc(String(i)));
     }
@@ -3486,7 +3598,7 @@ function saveToLocalStorage(){
     // thumbs de items aparte
     boxes.forEach(b=>b.items.forEach(it=>{
       if(it.thumb){
-        try{localStorage.setItem("cb-thumb-"+b.id+"-"+encodeURIComponent(it.text.slice(0,20)), it.thumb);}catch(e){}
+        try{localStorage.setItem(_thumbKey(b.id,it.text), it.thumb);}catch(e){} // FIX #3
       }
     }));
   }catch(e){ console.warn("localStorage error:",e); }
@@ -3697,7 +3809,7 @@ function restoreThumbs(){
     // Restaurar thumbs de items
     b.items.forEach(it=>{
       if(!it.thumb){
-        const k="cb-thumb-"+b.id+"-"+encodeURIComponent(it.text.slice(0,20));
+        const k=_thumbKey(b.id,it.text); // FIX #3
         const t=localStorage.getItem(k);
         if(t) it.thumb=t;
       }
