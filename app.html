@@ -3908,6 +3908,49 @@ if(auth){
     }
   }
 
+  // ── FIX: si hay sesión cacheada, ocultar login ANTES de que Firebase responda ──
+  // Evita el parpadeo del login al recargar o presionar "atrás"
+  (function(){
+    try{
+      const key = Object.keys(localStorage).find(k=>k.startsWith("firebase:authUser"));
+      if(key){
+        const cu = JSON.parse(localStorage.getItem(key)||"null");
+        if(cu && cu.uid){
+          // Hay sesión válida cacheada → ocultar login screen de inmediato
+          const ls = document.getElementById("loginScreen");
+          if(ls) ls.style.display = "none";
+        }
+      }
+    }catch(e){}
+  })();
+
+  // ── Interceptar botón "atrás" del navegador ──
+  // Evita que salga de la app o muestre el login al navegar hacia atrás
+  history.replaceState({bv:true}, "");
+  window.addEventListener("popstate", function(e){
+    // Si hay usuario activo, siempre quedarse en la app
+    if(currentUser || _lastLaunchedUid){
+      // Si estaba en detailScreen, volver a main
+      const detail = document.getElementById("detailScreen");
+      if(detail && !detail.classList.contains("hidden")){
+        history.pushState({bv:true}, "");
+        goMain();
+        return;
+      }
+      // Si estaba en room/settings, volver a main
+      const room = document.getElementById("roomScreen");
+      const settings = document.getElementById("settingsScreen");
+      if((room && !room.classList.contains("hidden")) ||
+         (settings && !settings.classList.contains("hidden"))){
+        history.pushState({bv:true}, "");
+        goMain();
+        return;
+      }
+      // En cualquier otro caso, empujar un nuevo estado para no salir
+      history.pushState({bv:true}, "");
+    }
+  });
+
   // ── Spinner inicial mientras Firebase verifica sesión ──
   const _lb0 = document.getElementById("loginBtn");
   const _ll0 = document.getElementById("loginLoading");
