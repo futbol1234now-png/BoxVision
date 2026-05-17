@@ -1881,6 +1881,11 @@ function loadSettingsOnly(){
   applyDark();
 }
 function saveData(){
+  // Actualizar timestamp de modificación en la caja activa (si hay una abierta)
+  if(currentBoxId){
+    const _b=boxes.find(b=>b.id===currentBoxId);
+    if(_b) _b.lastModified=Date.now();
+  }
   scheduleSave();
 }
 // FIX A: ID único — Date.now() en base36 + 4 chars aleatorios evita colisiones en doble-tap
@@ -2766,10 +2771,10 @@ function saveForm(){
       location:document.getElementById("fLoc").value.trim(),weight:document.getElementById("fWeight").value.trim(),
       color:selectedColor,priority:selectedPri,tags:[...currentTags],related:document.getElementById("fRelated").value||null,
       password:document.getElementById("fPassword").value||null,
-      items:[],date:fmtDate(),note:"",photo:null,fav:false,lastUsed:0,history:[],sealed:false});
+      items:[],date:fmtDate(),note:"",photo:null,fav:false,lastUsed:0,history:[],sealed:false,lastModified:Date.now()});
   }else{
     const box=boxes.find(b=>b.id===editingBoxId);
-    if(box) Object.assign(box,{name,number:document.getElementById("fNum").value.trim(),location:document.getElementById("fLoc").value.trim(),weight:document.getElementById("fWeight").value.trim(),color:selectedColor,priority:selectedPri,tags:[...currentTags],related:document.getElementById("fRelated").value||null,password:document.getElementById("fPassword").value||null});
+    if(box) Object.assign(box,{name,number:document.getElementById("fNum").value.trim(),location:document.getElementById("fLoc").value.trim(),weight:document.getElementById("fWeight").value.trim(),color:selectedColor,priority:selectedPri,tags:[...currentTags],related:document.getElementById("fRelated").value||null,password:document.getElementById("fPassword").value||null,lastModified:Date.now()});
   }
   const _mode=formMode, _id=editingBoxId;
   saveData();closeForm();
@@ -4250,78 +4255,106 @@ window.addEventListener("pagehide", ()=>{
   }
 });
 
-// ── Firestore load — reconstruye cajas desde chunks ──────────────────────────
+// ── Merge inteligente: combina cajas locales y remotas por ID ────────────────
+// Para cada ID, gana la versión con lastModified más reciente.
+// Las cajas que solo existen en un lado se incluyen siempre.
+function _mergeBoxes(local, remote){
+  const map = new Map();
+  // Primero cargar todas las locales
+  for(const b of local){
+    map.set(b.id, b);
+  }
+  // Luego aplicar las remotas: gana quien tenga lastModified mayor
+  for(const rb of remote){
+    const lb = map.get(rb.id);
+    if(!lb){
+      // Caja nueva que no tenemos localmente → agregarla siempre
+      map.set(rb.id, rb);
+    } else {
+      // Existe en ambos lados → gana el más reciente
+      const remoteTs = rb.lastModified || rb.lastUsed || 0;
+      const localTs  = lb.lastModified || lb.lastUsed || 0;
+      if(remoteTs > localTs){
+        map.set(rb.id, rb);
+      }
+      // si local es más reciente, ya está en el map → no hacer nada
+    }
+  }
+  return Array.from(map.values());
+}
+
+// ── Firestore load — reconstruye cajas desde chunks y hace merge ──────────────
 async function loadFromFirestore(){
   if(!currentUser || !db) return;
 
   // Mostrar caché local de inmediato (para UX rápida)
-  let localBoxCount = 0;
+  let localBoxes = [];
+  let localRooms = [];
   try{
-    const localLean = JSON.parse(localStorage.getItem("cb-boxes-"+currentUser.uid)||"[]");
-    const localRooms = JSON.parse(localStorage.getItem("cb-rooms-"+currentUser.uid)||"[]");
-    localBoxCount = localLean.length;
-    if(localBoxCount > 0){
-      boxes = localLean;
+    localBoxes = JSON.parse(localStorage.getItem("cb-boxes-"+currentUser.uid)||"[]");
+    localRooms  = JSON.parse(localStorage.getItem("cb-rooms-"+currentUser.uid)||"[]");
+    if(localBoxes.length > 0){
+      boxes = localBoxes;
       rooms = localRooms;
       restoreThumbs();
     }
   }catch(e){}
 
-  // Luego traer de Firestore (fuente de verdad definitiva)
+  // Luego traer de Firestore y hacer merge
   try{
     const doc = await db.collection("users").doc(currentUser.uid).get();
     if(doc.exists){
       const data = doc.data();
       const remoteRooms = data.rooms || [];
-      const remoteTs = data.updatedAt ? data.updatedAt.toMillis() : 0;
-      const localTs  = parseInt(localStorage.getItem("cb-updated-"+currentUser.uid)||"0");
 
-      // REGLA CLAVE: si Firestore tiene datos y local está vacío → SIEMPRE usar Firestore
-      // Esto evita que un dispositivo nuevo sobreescriba datos del otro
-      const localIsEmpty = localBoxCount === 0;
-      const firestoreWins = remoteTs >= localTs || localIsEmpty;
+      // Cargar cajas remotas desde chunks
+      const chunkCount = data.chunkCount || 0;
+      let remote = [];
 
-      if(firestoreWins){
-        // Intentar cargar chunks primero
-        const chunkCount = data.chunkCount || 0;
-        let remote = [];
+      if(chunkCount > 0){
+        const chunkRefs = Array.from({length:chunkCount},(_,i)=>
+          db.collection("users").doc(currentUser.uid).collection("chunks").doc(String(i)).get()
+        );
+        const chunkDocs = await Promise.all(chunkRefs);
+        remote = chunkDocs
+          .sort((a,b)=>parseInt(a.id)-parseInt(b.id))
+          .flatMap(d=>d.exists ? (d.data().boxes||[]) : []);
+        console.log(`📥 Firestore: ${remote.length} cajas en ${chunkCount} chunk(s)`);
+      } else if(data.boxes && data.boxes.length > 0){
+        // Formato legacy: array directo en el documento
+        remote = data.boxes;
+        console.log(`📥 Firestore (legacy): ${remote.length} cajas`);
+      }
 
-        if(chunkCount > 0){
-          // Formato nuevo: chunks
-          const chunkRefs = Array.from({length:chunkCount},(_,i)=>
-            db.collection("users").doc(currentUser.uid).collection("chunks").doc(String(i)).get()
-          );
-          const chunkDocs = await Promise.all(chunkRefs);
-          remote = chunkDocs
-            .sort((a,b)=>parseInt(a.id)-parseInt(b.id))
-            .flatMap(d=>d.exists ? (d.data().boxes||[]) : []);
-          console.log(`📥 Cargadas ${remote.length} cajas desde ${chunkCount} chunk(s)`);
-        } else if(data.boxes && data.boxes.length > 0){
-          // Formato antiguo: array directo en el documento
-          remote = data.boxes;
-          console.log(`📥 Cargadas ${remote.length} cajas (formato legacy)`);
-        }
+      // ── MERGE: fusionar local + remoto por ID ──────────────────────────────
+      const merged = _mergeBoxes(localBoxes, remote);
+      console.log(`🔀 Merge: ${localBoxes.length} local + ${remote.length} remoto → ${merged.length} total`);
+      boxes = merged;
 
-        // Solo reemplazar si Firestore tiene cajas O si local estaba vacío
-        // Nunca sobreescribir cajas locales existentes con un array vacío de Firestore
-        if(remote.length > 0 || localIsEmpty){
-          boxes = remote;
-          rooms = remoteRooms.length > 0 ? remoteRooms : rooms;
-        }
-      } else {
-        // Local más reciente (cambios offline) → subir a Firestore
-        console.log("📤 Local más reciente que Firestore — subiendo...");
+      // Rooms: usar los del lado que tenga más entradas (heurística simple)
+      if(remoteRooms.length >= localRooms.length){
+        rooms = remoteRooms;
+      }
+
+      restoreThumbs();
+
+      // Si el merge produjo un resultado diferente a Firestore → subir la versión unificada
+      const needsUpload = merged.length !== remote.length ||
+        merged.some(mb=>{
+          const rb = remote.find(r=>r.id===mb.id);
+          return !rb || (mb.lastModified||0) > (rb.lastModified||0);
+        });
+      if(needsUpload){
+        console.log("📤 Subiendo merge a Firestore...");
         await saveToFirestore();
       }
-      restoreThumbs();
+
     } else {
-      // Doc no existe en Firestore aún
+      // Documento no existe en Firestore → es cuenta nueva o primer dispositivo
       if(boxes.length > 0){
-        // Hay cajas locales → subirlas
         console.log("📤 Creando documento en Firestore con cajas locales...");
         await saveToFirestore();
       }
-      // Si no hay cajas locales tampoco, es cuenta nueva → no hacer nada
     }
   }catch(e){
     console.warn("Firestore load error:", e);
