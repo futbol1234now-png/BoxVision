@@ -374,20 +374,99 @@ input,button,textarea,select{font-family:inherit}
 
 /* Footer */
 .settings-footer{text-align:center;padding:8px 0 12px;color:var(--muted)}
-.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:500;display:none;align-items:flex-end;justify-content:center}
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.6);backdrop-filter:blur(10px);z-index:500;display:none;align-items:flex-end;justify-content:center}
 .modal-overlay.open{display:flex;animation:fadeIn .2s}
-.modal{background:var(--card);border-radius:24px 24px 0 0;padding:20px 18px 40px;width:100%;max-width:680px;max-height:90vh;overflow-y:auto}
-.modal-handle{width:36px;height:4px;background:var(--border);border-radius:99px;margin:0 auto 18px;cursor:grab}
-.modal-handle:active{cursor:grabbing}
-.modal-title{font-size:18px;font-weight:800;margin-bottom:16px}
+.modal{background:var(--card);border-radius:24px 24px 0 0;width:100%;max-width:680px;max-height:92vh;overflow-y:auto;scrollbar-width:none;position:relative}
+.modal::-webkit-scrollbar{display:none}
+/* Preview card header */
+.modal-preview{min-height:130px;padding:0 0 18px;position:relative;overflow:hidden;display:flex;flex-direction:column;justify-content:flex-end;border-radius:24px 24px 0 0;transition:background .3s}
+.modal-preview-bg{position:absolute;inset:0;background:linear-gradient(160deg,var(--accent),rgba(88,86,214,.75));transition:background .3s;border-radius:24px 24px 0 0}
+.modal-preview-noise{position:absolute;inset:0;opacity:.04;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E")}
+.modal-preview-handle{width:36px;height:4px;background:rgba(255,255,255,.35);border-radius:99px;margin:14px auto 12px;cursor:grab;position:relative;z-index:1}
+.modal-preview-handle:active{cursor:grabbing}
+.modal-preview-row{display:flex;align-items:flex-end;gap:12px;padding:0 18px;position:relative;z-index:1}
+.modal-preview-icon{font-size:40px;line-height:1;filter:drop-shadow(0 2px 8px rgba(0,0,0,.3));flex-shrink:0}
+.modal-preview-info{flex:1;min-width:0}
+.modal-preview-name{font-family:'Syne',var(--font,system-ui),sans-serif;font-size:21px;font-weight:800;color:#fff;line-height:1.1;letter-spacing:-.5px;text-shadow:0 1px 4px rgba(0,0,0,.25);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.modal-preview-meta{font-size:12px;color:rgba(255,255,255,.6);margin-top:3px}
+.modal-preview-badge{display:inline-block;padding:3px 10px;border-radius:99px;font-size:11px;font-weight:700;background:rgba(255,255,255,.18);color:#fff;border:1px solid rgba(255,255,255,.25);margin-top:6px}
+/* Form body */
+.modal-body{padding:18px 18px 0}
+.modal-handle{display:none} /* reemplazado por preview handle */
+.modal-title{display:none} /* reemplazado por preview */
 .form-group{margin-bottom:13px}
 .form-group label{font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.4px;display:block;margin-bottom:5px}
-.form-input{width:100%;padding:11px 13px;border:0.5px solid var(--border);border-radius:13px;font-size:15px;color:var(--text);background:var(--input);outline:none}
-.form-input:focus{border-color:var(--accent)}
+.form-input{width:100%;padding:12px 13px;border:1.5px solid var(--border);border-radius:13px;font-size:15px;color:var(--text);background:var(--input);outline:none;font-family:inherit;box-sizing:border-box;transition:border-color .18s,box-shadow .18s}
+.form-input:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(10,132,255,.13)}
+.form-input::placeholder{color:var(--muted);opacity:.6}
 .form-row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.colors-grid{display:flex;gap:7px;flex-wrap:wrap;margin-top:4px}
-.cdot{width:28px;height:28px;border-radius:50%;cursor:pointer;border:3px solid transparent;transition:.15s}
-.cdot.sel{border-color:var(--text);transform:scale(1.12)}
+/* Prioridad visual */
+.pri-btns{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.pri-btn{background:var(--card);border:1.5px solid var(--border);border-radius:12px;padding:10px 4px 8px;font-size:11px;font-weight:600;color:var(--muted);cursor:pointer;font-family:inherit;text-align:center;transition:all .15s;display:flex;flex-direction:column;align-items:center;gap:3px}
+.pri-btn .pri-icon{font-size:20px}
+.pri-btn.sel{border-width:2px}
+.pri-btn[id="pri-red"].sel{background:rgba(255,59,48,.1);border-color:#FF3B30;color:#FF3B30}
+.pri-btn[id="pri-yellow"].sel{background:rgba(255,149,0,.1);border-color:#FF9500;color:#FF9500}
+.pri-btn[id="pri-green"].sel{background:rgba(52,199,89,.1);border-color:#34C759;color:#34C759}
+/* Tags box */
+.tags-box{display:flex;flex-wrap:wrap;gap:6px;padding:10px 12px;background:var(--input);border:1.5px solid var(--border);border-radius:13px;min-height:44px;cursor:text;transition:border-color .18s}
+.tags-box:focus-within{border-color:var(--accent)}
+.tags-box input{border:none;outline:none;background:transparent;color:var(--text);font-size:14px;font-family:inherit;flex:1;min-width:80px}
+.tag-sugs{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.tag-sug{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:5px 11px;font-size:12px;color:var(--muted);cursor:pointer;font-family:inherit;transition:border-color .15s,color .15s}
+.tag-sug:hover{border-color:var(--accent);color:var(--accent)}
+/* Acciones */
+.modal-acts{display:grid;grid-template-columns:1fr 2fr;gap:10px;margin-top:14px;padding:0 18px 6px}
+.m-btn{padding:15px;border-radius:15px;border:none;font-size:16px;font-weight:700;cursor:pointer;font-family:inherit;transition:transform .12s,opacity .12s}
+.m-btn:active{transform:scale(.97)}
+.m-ghost{background:var(--card);color:var(--muted)}
+.m-primary{background:linear-gradient(135deg,var(--accent),#5856D6);color:#fff;box-shadow:0 4px 16px rgba(10,132,255,.3)}
+.rel-select{width:100%;box-sizing:border-box;background:var(--input);border:1.5px solid var(--border);border-radius:13px;padding:12px 36px 12px 13px;font-size:15px;color:var(--text);font-family:inherit;outline:none;appearance:none;-webkit-appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='rgba(255,255,255,0.3)' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 14px center}
+/* ── Empty state ilustrado ── */
+.empty-state{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:60px 32px;text-align:center;gap:0}
+.empty-state-svg{margin-bottom:24px;filter:drop-shadow(0 8px 24px rgba(10,132,255,.25))}
+.empty-state h3{font-family:'Syne',var(--font),sans-serif;font-size:22px;font-weight:800;color:var(--text);margin-bottom:8px;letter-spacing:-.5px}
+.empty-state p{font-size:14px;color:var(--muted);line-height:1.6;max-width:260px;margin-bottom:28px}
+.empty-state-btn{background:linear-gradient(135deg,var(--accent),#5856D6);color:#fff;border:none;border-radius:14px;padding:14px 28px;font-size:16px;font-weight:700;cursor:pointer;font-family:inherit;box-shadow:0 4px 20px rgba(10,132,255,.35);transition:transform .15s,box-shadow .15s}
+.empty-state-btn:active{transform:scale(.97)}
+
+/* ── Progress ring en cards ── */
+.bc-ring{position:absolute;top:10px;right:10px;z-index:5}
+.bc-ring svg{display:block}
+.bc-ring-bg{fill:none;stroke:rgba(255,255,255,.15);stroke-width:3}
+.bc-ring-fill{fill:none;stroke:#34C759;stroke-width:3;stroke-linecap:round;transition:stroke-dashoffset .6s cubic-bezier(.4,0,.2,1);transform-origin:center;transform:rotate(-90deg)}
+.bc-ring-pct{font-size:7px;font-weight:800;fill:#fff;text-anchor:middle;dominant-baseline:central}
+
+/* ── Skeleton loading ── */
+.skel-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;padding:16px}
+.skel-card{background:var(--card);border-radius:20px;padding:16px;min-height:140px;display:flex;flex-direction:column;gap:10px;overflow:hidden;position:relative}
+.skel-card::after{content:'';position:absolute;inset:0;background:linear-gradient(90deg,transparent 0%,rgba(255,255,255,.055) 50%,transparent 100%);background-size:200% 100%;animation:skelSlide 1.5s ease-in-out infinite}
+@keyframes skelSlide{0%{background-position:100% 0}100%{background-position:-100% 0}}
+.skel-line{border-radius:99px;background:rgba(255,255,255,.09)}
+.skel-line.w70{width:70%;height:11px}
+.skel-line.w50{width:50%;height:9px}
+.skel-line.w40{width:40%;height:9px}
+.skel-dot{width:26px;height:26px;border-radius:50%;background:rgba(255,255,255,.09)}
+
+/* ── Toggle grid / lista ── */
+.view-toggle{display:flex;gap:4px;background:rgba(255,255,255,.07);border-radius:10px;padding:3px}
+.view-toggle-btn{width:30px;height:30px;border-radius:7px;border:none;background:transparent;color:rgba(255,255,255,.5);cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;transition:background .15s,color .15s}
+.view-toggle-btn.active{background:rgba(255,255,255,.14);color:var(--text)}
+/* Lista view */
+.main-scroll.list-view{display:flex;flex-direction:column;gap:8px;padding:12px 16px}
+.main-scroll.list-view .box-card{min-height:unset !important;border-radius:16px}
+.main-scroll.list-view .bc-inner{flex-direction:row;align-items:center;gap:12px;padding:4px 0}
+.main-scroll.list-view .bc-name{font-size:15px;flex:1;margin:0}
+.main-scroll.list-view .bc-sub{font-size:12px;margin:0}
+.main-scroll.list-view .bc-progress{display:none}
+.main-scroll.list-view .bc-ring{top:50%;right:12px;transform:translateY(-50%)}
+
+/* ── Color picker mejorado con nombre ── */
+.cdot-wrap{display:flex;flex-direction:column;align-items:center;gap:4px;cursor:pointer}
+.cdot-name{font-size:9px;color:var(--muted);transition:color .15s;text-align:center;line-height:1;height:11px}
+.cdot-wrap:hover .cdot-name,.cdot-wrap.sel .cdot-name{color:var(--text)}
+.cdot-wrap.sel .cdot{border-color:var(--text);transform:scale(1.15)}
+.colors-grid{display:flex;gap:10px;flex-wrap:wrap;margin-top:4px}
 .tags-box{display:flex;flex-wrap:wrap;gap:6px;padding:8px 10px;border:0.5px solid var(--border);border-radius:13px;background:var(--input);min-height:44px;cursor:text}
 .tag-chip{background:var(--accent);color:#fff;font-size:12px;padding:3px 8px;border-radius:99px;display:flex;align-items:center;gap:4px;font-weight:600}
 .tag-chip button{background:none;border:none;color:rgba(255,255,255,.8);cursor:pointer;font-size:12px;padding:0;line-height:1}
@@ -1437,11 +1516,15 @@ if(!auth){
       </div>
     </div>
     <div class="topbar-actions">
+      <div class="view-toggle" title="Cambiar vista">
+        <button class="view-toggle-btn active" id="viewGrid" onclick="setViewMode('grid')" title="Cuadrícula"><i class="ti ti-layout-grid" aria-hidden="true"></i></button>
+        <button class="view-toggle-btn" id="viewList" onclick="setViewMode('list')" title="Lista"><i class="ti ti-list" aria-hidden="true"></i></button>
+      </div>
       <button class="tbtn" onclick="toggleDark()" id="darkBtn" title="Modo oscuro"><i class="ti ti-sun" aria-hidden="true"></i></button>
       <button class="tbtn" onclick="toggleSortMenu()" id="sortBtn" title="Ordenar"><i class="ti ti-arrows-sort" aria-hidden="true"></i></button>
       <button class="tbtn" onclick="goSettings()" title="Ajustes"><i class="ti ti-settings" aria-hidden="true"></i></button>
       <button class="tbtn tbtn-accent" onclick="openForm()" title="Nueva caja" style="font-size:20px"><i class="ti ti-plus" aria-hidden="true"></i></button>
-      <img id="userAvatar" src="" onclick="showUserMenu()" style="width:36px;height:36px;border-radius:50%;object-fit:cover;cursor:pointer;display:none;border:2px solid rgba(255,255,255,.2)"/>
+      <img id="userAvatar" src="" onclick="showUserMenu()" style="width:44px;height:44px;border-radius:50%;object-fit:cover;cursor:pointer;display:none;border:2px solid rgba(255,255,255,.2)"/>
     </div>
   </div>
   <div id="sortMenu" class="hidden" style="position:sticky;top:57px;z-index:150;background:var(--card);border-bottom:0.5px solid var(--border);padding:10px 14px;display:flex;gap:7px;overflow-x:auto;scrollbar-width:none">
@@ -1665,22 +1748,43 @@ if(!auth){
 
 <div class="modal-overlay" id="modalOverlay" onclick="closeFormOutside(event)">
   <div class="modal">
-    <div class="modal-handle"></div>
-    <div class="modal-title" id="modalTitle">Nueva caja</div>
-    <div class="form-row2">
-      <div class="form-group"><label>Nombre</label><input class="form-input" id="fName" type="text" placeholder="Ej: Ropa invierno"/></div>
-      <div class="form-group"><label>Número</label><input class="form-input" id="fNum" type="text" placeholder="Ej: 1, A3"/></div>
+    <!-- Preview card animada -->
+    <div class="modal-preview" id="formPreview">
+      <div class="modal-preview-bg" id="formPreviewBg"></div>
+      <div class="modal-preview-noise"></div>
+      <div class="modal-preview-handle" id="formHandle"></div>
+      <div class="modal-preview-row">
+        <div class="modal-preview-icon" id="formPreviewIcon">📦</div>
+        <div class="modal-preview-info">
+          <div class="modal-preview-name" id="formPreviewName">Nueva caja</div>
+          <div class="modal-preview-meta" id="formPreviewMeta">Sin ubicación · Sin número</div>
+          <div class="modal-preview-badge" id="formPreviewBadge">🟡 Normal</div>
+        </div>
+      </div>
     </div>
-    <div class="form-row2">
-      <div class="form-group"><label>Ubicación</label><input class="form-input" id="fLoc" type="text" placeholder="Ej: Cuarto, Garaje"/></div>
-      <div class="form-group"><label>Peso (kg)</label><input class="form-input" id="fWeight" type="number" placeholder="Ej: 5" min="0" step="0.5"/></div>
+    <!-- Cuerpo del formulario -->
+    <div class="modal-body">
+      <div class="form-row2">
+        <div class="form-group"><label>Nombre</label><input class="form-input" id="fName" type="text" placeholder="Ej: Ropa invierno" oninput="updateFormPreview()"/></div>
+        <div class="form-group"><label>Número</label><input class="form-input" id="fNum" type="text" placeholder="Ej: 1, A3" oninput="updateFormPreview()"/></div>
+      </div>
+      <div class="form-row2">
+        <div class="form-group"><label>Ubicación</label><input class="form-input" id="fLoc" type="text" placeholder="Ej: Cuarto, Garaje" oninput="updateFormPreview()"/></div>
+        <div class="form-group"><label>Peso (kg)</label><input class="form-input" id="fWeight" type="number" placeholder="Ej: 5" min="0" step="0.5"/></div>
+      </div>
+      <div class="form-group"><label>Contraseña (opcional)</label><div style="position:relative"><input class="form-input" id="fPassword" type="password" placeholder="Dejar vacío = sin contraseña" style="padding-right:42px"/><button type="button" onclick="const i=document.getElementById('fPassword');i.type=i.type==='password'?'text':'password';this.textContent=i.type==='password'?'👁':'🙈'" style="position:absolute;right:10px;top:50%;transform:translateY(-50%);background:none;border:none;font-size:16px;cursor:pointer;padding:0">👁</button></div></div>
+      <div class="form-group"><label>Prioridad</label>
+        <div class="pri-btns">
+          <button class="pri-btn" id="pri-red" onclick="setPri('red')"><span class="pri-icon">🔴</span>Urgente</button>
+          <button class="pri-btn sel" id="pri-yellow" onclick="setPri('yellow')"><span class="pri-icon">🟡</span>Normal</button>
+          <button class="pri-btn" id="pri-green" onclick="setPri('green')"><span class="pri-icon">🟢</span>Sin prisa</button>
+        </div>
+      </div>
+      <div class="form-group"><label>Color</label><div class="colors-grid" id="colorGrid"></div></div>
+      <div class="form-group"><label>Etiquetas</label><div class="tags-box" id="tagsBox" onclick="document.getElementById('tagField').focus()"><input type="text" id="tagField" placeholder="Escribe y Enter..." onkeydown="handleTagKey(event)"/></div><div class="tag-sugs"><button class="tag-sug" onclick="addTag('mudanza')">mudanza</button><button class="tag-sug" onclick="addTag('invierno')">invierno</button><button class="tag-sug" onclick="addTag('trabajo')">trabajo</button><button class="tag-sug" onclick="addTag('cocina')">cocina</button><button class="tag-sug" onclick="addTag('ropa')">ropa</button><button class="tag-sug" onclick="addTag('libros')">libros</button></div></div>
+      <div class="form-group"><label>Caja relacionada (opcional)</label><select class="rel-select" id="fRelated"><option value="">— Ninguna —</option></select></div>
     </div>
-    <div class="form-group"><label>Contraseña (opcional)</label><div style="position:relative"><input class="form-input" id="fPassword" type="password" placeholder="Dejar vacío = sin contraseña" style="padding-right:42px"/><button type="button" onclick="const i=document.getElementById('fPassword');i.type=i.type==='password'?'text':'password';this.textContent=i.type==='password'?'👁':'🙈'" style="position:absolute;right:10px;top:50%;transform:translateY(-50%);background:none;border:none;font-size:16px;cursor:pointer;padding:0">👁</button></div></div>
-    <div class="form-group"><label>Prioridad</label><div class="pri-btns"><button class="pri-btn" id="pri-red" onclick="setPri('red')">🔴 Urgente</button><button class="pri-btn sel" id="pri-yellow" onclick="setPri('yellow')">🟡 Normal</button><button class="pri-btn" id="pri-green" onclick="setPri('green')">🟢 Cuando pueda</button></div></div>
-    <div class="form-group"><label>Color</label><div class="colors-grid" id="colorGrid"></div></div>
-    <div class="form-group"><label>Etiquetas</label><div class="tags-box" id="tagsBox" onclick="document.getElementById('tagField').focus()"><input type="text" id="tagField" placeholder="Escribe y Enter..." onkeydown="handleTagKey(event)"/></div><div class="tag-sugs"><button class="tag-sug" onclick="addTag('mudanza')">mudanza</button><button class="tag-sug" onclick="addTag('invierno')">invierno</button><button class="tag-sug" onclick="addTag('trabajo')">trabajo</button><button class="tag-sug" onclick="addTag('cocina')">cocina</button><button class="tag-sug" onclick="addTag('ropa')">ropa</button><button class="tag-sug" onclick="addTag('libros')">libros</button></div></div>
-    <div class="form-group"><label>Caja relacionada (opcional)</label><select class="rel-select" id="fRelated"><option value="">— Ninguna —</option></select></div>
-    <div class="modal-acts"><button class="m-btn m-ghost" onclick="closeForm()">Cancelar</button><button class="m-btn m-primary" onclick="saveForm()">Guardar</button></div>
+    <div class="modal-acts"><button class="m-btn m-ghost" onclick="closeForm()">Cancelar</button><button class="m-btn m-primary" onclick="saveForm()">Guardar caja</button></div>
   </div>
 </div>
 
@@ -2017,11 +2121,33 @@ function renderGrid(){
 
   if(!filtered.length){
     scroll.innerHTML=boxes.length===0
-      ?`<div style="text-align:center;padding:80px 24px">
-          <div style="font-size:56px;margin-bottom:16px">📦</div>
-          <div style="font-size:20px;font-weight:700;color:var(--text);margin-bottom:8px">No tienes cajas aún</div>
-          <div style="font-size:14px;color:var(--muted);margin-bottom:28px;line-height:1.6">Toca el botón <strong style="color:var(--accent)">+</strong> arriba para crear tu primera caja</div>
-          <button onclick="openForm()" style="background:linear-gradient(135deg,var(--accent),#5856D6);color:#fff;border:none;border-radius:14px;padding:14px 28px;font-size:16px;font-weight:700;cursor:pointer;font-family:inherit;box-shadow:0 4px 20px rgba(10,132,255,0.3)">+ Crear primera caja</button>
+      ?`<div class="empty-state">
+          <svg class="empty-state-svg" width="140" height="130" viewBox="0 0 140 130" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <linearGradient id="boxGrad" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0%" stop-color="#0A84FF"/>
+                <stop offset="100%" stop-color="#5856D6"/>
+              </linearGradient>
+              <filter id="glow"><feGaussianBlur stdDeviation="4" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+            </defs>
+            <!-- cuerpo caja -->
+            <rect x="22" y="58" width="96" height="62" rx="12" fill="url(#boxGrad)" opacity=".9" filter="url(#glow)"/>
+            <!-- tapa izq -->
+            <path d="M22 70 L70 58 L70 38 L22 50 Z" fill="#1a4aaa" opacity=".85"/>
+            <!-- tapa der -->
+            <path d="M118 70 L70 58 L70 38 L118 50 Z" fill="#3a3aaa" opacity=".85"/>
+            <!-- brillo tapa -->
+            <path d="M70 38 L118 50 L118 52 L70 40 Z" fill="rgba(255,255,255,.15)"/>
+            <!-- cinta -->
+            <rect x="58" y="38" width="24" height="82" rx="5" fill="rgba(255,255,255,.18)"/>
+            <!-- estrellas flotantes -->
+            <circle cx="108" cy="28" r="3" fill="#FFCC00" opacity=".8"><animate attributeName="cy" values="28;22;28" dur="2.5s" repeatCount="indefinite"/><animate attributeName="opacity" values=".8;1;.8" dur="2.5s" repeatCount="indefinite"/></circle>
+            <circle cx="30" cy="42" r="2" fill="#34C759" opacity=".7"><animate attributeName="cy" values="42;36;42" dur="2s" begin=".4s" repeatCount="indefinite"/></circle>
+            <circle cx="120" cy="55" r="1.5" fill="#AF52DE" opacity=".6"><animate attributeName="cy" values="55;49;55" dur="1.8s" begin=".8s" repeatCount="indefinite"/></circle>
+          </svg>
+          <h3>Tu primer paso hacia el orden</h3>
+          <p>Crea tu primera caja, ponle un nombre y empieza a organizar lo que guardas.</p>
+          <button class="empty-state-btn" onclick="openForm()">+ Crear mi primera caja</button>
         </div>`
       :`<div style="text-align:center;padding:60px 20px"><div style="font-size:40px;margin-bottom:12px">🔍</div><div style="font-size:16px;font-weight:600;color:var(--text);margin-bottom:4px">Sin resultados</div><div style="font-size:13px;color:var(--muted)">No hay cajas con este filtro</div></div>`;
     _teardownGridObserver();
@@ -2123,9 +2249,23 @@ function boxCard(b){
     ? `url(${b.photo}) center/cover, linear-gradient(135deg,${col},${hexToRgba(col,.65)})`
     : `linear-gradient(135deg,${col},${hexToRgba(col,.65)})`;
   const hasPhoto = !!b.photo;
+  // Progress ring: circunferencia de r=12 → 2π×12 ≈ 75.4
+  const R=12, C=2*Math.PI*R, offset=total>0 ? C*(1-pct/100) : C;
+  const ringColor = pct>=100?"#34C759":pct>=50?"#0A84FF":"rgba(255,255,255,.7)";
+  const ringHtml = total>0 ? `<div class="bc-ring">
+    <svg width="34" height="34" viewBox="0 0 34 34">
+      <circle class="bc-ring-bg" cx="17" cy="17" r="${R}"/>
+      <circle class="bc-ring-fill" cx="17" cy="17" r="${R}"
+        stroke="${ringColor}"
+        stroke-dasharray="${C.toFixed(1)}"
+        stroke-dashoffset="${offset.toFixed(1)}"/>
+      <text class="bc-ring-pct" x="17" y="17">${pct}%</text>
+    </svg>
+  </div>` : "";
   return `<div class="box-card${b.priority==="red"?" urgent":""}" style="background:${cardBg}" onclick="openDetail('${b.id}')">
     ${hasPhoto?`<div style="position:absolute;inset:0;background:linear-gradient(160deg,${hexToRgba(col,.8)},${hexToRgba(col,.5)});z-index:0"></div>`:''}
     ${b.priority==="red"?'<div class="bc-urgent-dot" title="Urgente"></div>':""}
+    ${ringHtml}
     <div class="bc-inner">
       <div class="bc-top">
         <button class="bc-fav" onclick="event.stopPropagation();toggleFavId('${b.id}')">${b.fav?"⭐":"☆"}</button>
@@ -2138,7 +2278,6 @@ function boxCard(b){
       <span class="bc-icon">${getIcon(b.name)}</span>
       <div class="bc-name">${esc(b.name)}</div>
       <div class="bc-sub">${total} objeto${total!==1?"s":""}${done?" · "+done+" sacado"+(done!==1?"s":""):""}${b.location?" · 📍"+esc(b.location):""}</div>
-      ${total>0?`<div class="bc-progress"><div class="bc-progress-fill" style="width:${pct}%"></div></div>`:""}
       ${tags?`<div class="bc-tags">${tags}</div>`:""}
       <button class="cube-open-btn" onclick="event.stopPropagation();openCube('${b.id}')">📦 3D</button>
     </div>
@@ -2513,22 +2652,22 @@ function delBox(){
 
 function openForm(){
   formMode="new";editingBoxId=null;currentTags=[];selectedColor=COLORS[5];selectedPri="yellow";
-  document.getElementById("modalTitle").textContent="Nueva caja";
   ["fName","fNum","fLoc","fWeight","fPassword"].forEach(id=>document.getElementById(id).value="");
   buildColorGrid();renderTagChips();updatePriBtns();populateRelatedSelect(null);
+  updateFormPreview();
   document.getElementById("modalOverlay").classList.add("open");
   setTimeout(()=>document.getElementById("fName").focus(),100);
 }
 function openEditForm(){
   const box=boxes.find(b=>b.id===currentBoxId);if(!box) return;
   formMode="edit";editingBoxId=currentBoxId;currentTags=[...(box.tags||[])];selectedColor=box.color||COLORS[5];selectedPri=box.priority||"yellow";
-  document.getElementById("modalTitle").textContent="Editar caja";
   document.getElementById("fName").value=box.name||"";
   document.getElementById("fNum").value=box.number||"";
   document.getElementById("fLoc").value=box.location||"";
   document.getElementById("fWeight").value=box.weight||"";
   document.getElementById("fPassword").value=box.password||"";
   buildColorGrid();renderTagChips();updatePriBtns();populateRelatedSelect(box.related);
+  updateFormPreview();
   document.getElementById("modalOverlay").classList.add("open");
 }
 function closeForm(){document.getElementById("modalOverlay").classList.remove("open");}
@@ -2537,10 +2676,34 @@ function populateRelatedSelect(cur){
   document.getElementById("fRelated").innerHTML='<option value="">— Ninguna —</option>'+
     boxes.filter(b=>b.id!==editingBoxId&&b.id!==currentBoxId).map(b=>`<option value="${b.id}"${b.id===cur?" selected":""}>${esc(b.name)}</option>`).join("");
 }
-function buildColorGrid(){document.getElementById("colorGrid").innerHTML=COLORS.map(c=>`<div class="cdot${c===selectedColor?" sel":""}" style="background:${c}" onclick="selectColor('${c}')"></div>`).join("");}
-function selectColor(c){selectedColor=c;buildColorGrid();}
-function setPri(p){selectedPri=p;updatePriBtns();}
+const COLOR_NAMES={"#FF3B30":"Rojo","#FF9500":"Naranja","#FFCC00":"Amarillo","#34C759":"Verde","#00C7BE":"Teal","#007AFF":"Azul","#5856D6":"Índigo","#AF52DE":"Púrpura","#FF2D55":"Rosa","#636366":"Gris"};
+function buildColorGrid(){
+  document.getElementById("colorGrid").innerHTML=COLORS.map(c=>`<div class="cdot-wrap${c===selectedColor?" sel":""}" onclick="selectColor('${c}')"><div class="cdot" style="background:${c}"></div><div class="cdot-name">${COLOR_NAMES[c]||""}</div></div>`).join("");
+}
+function selectColor(c){selectedColor=c;buildColorGrid();updateFormPreview();}
+function setPri(p){selectedPri=p;updatePriBtns();updateFormPreview();}
 function updatePriBtns(){["red","yellow","green"].forEach(p=>{document.getElementById("pri-"+p).classList.toggle("sel",p===selectedPri);});}
+const PRI_BADGES={red:"🔴 Urgente",yellow:"🟡 Normal",green:"🟢 Sin prisa"};
+function updateFormPreview(){
+  const name=document.getElementById("fName")?.value||"";
+  const loc=document.getElementById("fLoc")?.value||"";
+  const num=document.getElementById("fNum")?.value||"";
+  const nameEl=document.getElementById("formPreviewName");
+  const metaEl=document.getElementById("formPreviewMeta");
+  const badgeEl=document.getElementById("formPreviewBadge");
+  const bgEl=document.getElementById("formPreviewBg");
+  const iconEl=document.getElementById("formPreviewIcon");
+  if(nameEl) nameEl.textContent=name||"Nueva caja";
+  if(metaEl){
+    const parts=[];
+    if(loc) parts.push("📍 "+loc);
+    if(num) parts.push("#"+num);
+    metaEl.textContent=parts.length?parts.join(" · "):"Sin ubicación";
+  }
+  if(badgeEl) badgeEl.textContent=PRI_BADGES[selectedPri]||"🟡 Normal";
+  if(bgEl) bgEl.style.background=`linear-gradient(160deg,${selectedColor},${hexToRgba(selectedColor,.55)} 90%,rgba(88,86,214,.5))`;
+  if(iconEl) iconEl.textContent=getIcon(name)||"📦";
+}
 function renderTagChips(){
   const box=document.getElementById("tagsBox"),field=document.getElementById("tagField");
   box.innerHTML="";
@@ -4287,76 +4450,97 @@ if(auth){
     var startY = 0, currentY = 0, isDragging = false;
     var handle = modal.querySelector('.modal-handle');
     var dragTarget = handle || modal;
-
     dragTarget.addEventListener('touchstart', function(e){
-      startY = e.touches[0].clientY;
-      isDragging = true;
-      modal.style.transition = 'none';
+      startY = e.touches[0].clientY; isDragging = true; modal.style.transition = 'none';
     }, {passive:true});
-
     document.addEventListener('touchmove', function(e){
       if(!isDragging) return;
       currentY = e.touches[0].clientY;
       var dy = Math.max(0, currentY - startY);
       modal.style.transform = 'translateY('+dy+'px)';
     }, {passive:true});
-
     document.addEventListener('touchend', function(){
       if(!isDragging) return;
-      isDragging = false;
-      modal.style.transition = '';
-      var dy = currentY - startY;
-      if(dy > 120){
-        // Cerrar modal
-        overlay.classList.remove('open');
-        modal.style.transform = '';
-      } else {
-        modal.style.transform = '';
-      }
+      isDragging = false; modal.style.transition = '';
+      if(currentY - startY > 120){ overlay.classList.remove('open'); modal.style.transform = ''; }
+      else modal.style.transform = '';
     });
   }
 
-  // ── 2. Splash stats: marcar como "cargando" hasta que haya datos reales ──
+  // ── 2. Splash stats skeleton ─────────────────────────────────────────────
   var statEls = ['sp-c','sp-o','sp-f'].map(function(id){ return document.getElementById(id); });
-  statEls.forEach(function(el){ if(el){ el.classList.add('loading'); } });
-
-  // Patch: sobreescribir updateSplash para quitar clase loading al actualizar
+  statEls.forEach(function(el){ if(el) el.classList.add('loading'); });
   var _origUpdateSplash = window.updateSplash;
   if(typeof _origUpdateSplash === 'function'){
     window.updateSplash = function(){
       _origUpdateSplash.apply(this, arguments);
-      statEls.forEach(function(el){ if(el){ el.classList.remove('loading'); } });
+      statEls.forEach(function(el){ if(el) el.classList.remove('loading'); });
     };
   } else {
-    // Si updateSplash se define después, usar MutationObserver en los elementos
     var _obs = new MutationObserver(function(){
-      statEls.forEach(function(el){
-        if(el && el.textContent !== '—'){ el.classList.remove('loading'); }
-      });
+      statEls.forEach(function(el){ if(el && el.textContent !== '—') el.classList.remove('loading'); });
     });
-    statEls.forEach(function(el){ if(el){ _obs.observe(el,{childList:true,characterData:true,subtree:true}); } });
+    statEls.forEach(function(el){ if(el) _obs.observe(el,{childList:true,characterData:true,subtree:true}); });
   }
 
-  // ── 3. AI panel: mostrar shimmer mientras carga la primera respuesta ─────
+  // ── 3. Toggle grid / lista ─────────────────────────────────────────────
+  var _viewMode = localStorage.getItem('bv_view') || 'grid';
+  window.setViewMode = function(mode){
+    _viewMode = mode;
+    localStorage.setItem('bv_view', mode);
+    var scroll = document.getElementById('mainScroll');
+    if(scroll){
+      scroll.classList.toggle('list-view', mode === 'list');
+    }
+    document.getElementById('viewGrid').classList.toggle('active', mode === 'grid');
+    document.getElementById('viewList').classList.toggle('active', mode === 'list');
+  };
+  // Aplicar al cargar
+  document.addEventListener('DOMContentLoaded', function(){
+    setViewMode(_viewMode);
+  });
+  // También aplicar después del primer renderGrid
+  var _origRenderGrid = window.renderGrid;
+  if(typeof _origRenderGrid === 'function'){
+    window.renderGrid = function(){
+      _origRenderGrid.apply(this, arguments);
+      var scroll = document.getElementById('mainScroll');
+      if(scroll) scroll.classList.toggle('list-view', _viewMode === 'list');
+    };
+  }
+
+  // ── 4. Skeleton loading al entrar en pantalla main ───────────────────────
+  window.showGridSkeleton = function(){
+    var scroll = document.getElementById('mainScroll');
+    if(!scroll) return;
+    var html = '<div class="skel-grid">';
+    for(var i=0;i<4;i++){
+      html += '<div class="skel-card">'
+        +'<div style="display:flex;justify-content:space-between;align-items:center">'
+        +'<div class="skel-dot"></div>'
+        +'<div class="skel-line w40"></div>'
+        +'</div>'
+        +'<div class="skel-line w70" style="margin-top:auto"></div>'
+        +'<div class="skel-line w50"></div>'
+        +'</div>';
+    }
+    html += '</div>';
+    scroll.innerHTML = html;
+  };
+
+  // ── 5. AI shimmer ────────────────────────────────────────────────────────
   var aiMessages = document.querySelector('.ai-messages');
   if(aiMessages){
-    var _origShowTyping = window.showAITyping;
-    // Sólo se activa si hay 0 mensajes visibles en el panel
     document.addEventListener('aiPanelOpen', function(){
       if(aiMessages.querySelectorAll('.ai-msg').length === 0){
         var shimmer = document.createElement('div');
-        shimmer.className = 'ai-loading-shimmer';
-        shimmer.id = 'aiShimmer';
+        shimmer.className = 'ai-loading-shimmer'; shimmer.id = 'aiShimmer';
         shimmer.innerHTML = '<div class="ai-shimmer-line" style="width:70%"></div><div class="ai-shimmer-line" style="width:90%"></div><div class="ai-shimmer-line" style="width:55%"></div>';
         aiMessages.appendChild(shimmer);
-        setTimeout(function(){
-          var s = document.getElementById('aiShimmer');
-          if(s) s.remove();
-        }, 1800);
+        setTimeout(function(){ var s=document.getElementById('aiShimmer'); if(s) s.remove(); }, 1800);
       }
     });
   }
-
 })();
 </script>
 </body>
