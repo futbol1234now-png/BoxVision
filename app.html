@@ -99,8 +99,10 @@ input,button,textarea,select{font-family:inherit}
 .sp-last-icon{font-size:26px}
 .sp-last-name{font-size:15px;font-weight:700;color:#fff}
 .sp-last-sub{font-size:12px;color:rgba(255,255,255,.7);margin-top:2px}
-.sp-btn{background:#fff;color:#007AFF;border:none;border-radius:14px;padding:15px;font-size:16px;font-weight:700;cursor:pointer;width:100%;max-width:360px;margin-bottom:10px}
-.sp-btn2{background:rgba(255,255,255,.18);color:#fff;border:0.5px solid rgba(255,255,255,.3);backdrop-filter:blur(10px);border-radius:14px;padding:13px;font-size:14px;font-weight:600;cursor:pointer;width:100%;max-width:360px;margin-bottom:10px}
+.sp-btn{background:#fff;color:#007AFF;border:none;border-radius:16px;padding:16px 20px;font-size:16px;font-weight:700;cursor:pointer;width:100%;max-width:360px;margin-bottom:10px;display:flex;align-items:center;justify-content:center;transition:transform .15s,opacity .15s}
+.sp-btn:active{transform:scale(.97);opacity:.9}
+.sp-btn2{background:rgba(255,255,255,.14);color:#fff;border:0.5px solid rgba(255,255,255,.22);backdrop-filter:blur(10px);border-radius:16px;padding:14px 16px;font-size:14px;font-weight:600;cursor:pointer;width:100%;max-width:360px;margin-bottom:10px;display:flex;align-items:center;justify-content:center;transition:transform .15s,background .15s}
+.sp-btn2:active{transform:scale(.97);background:rgba(255,255,255,.2)}
 .sp-row{display:flex;gap:10px;width:100%;max-width:360px;margin-bottom:0}
 .sp-row .sp-btn2{margin-bottom:0;flex:1}
 .install-banner{background:var(--accent);color:#fff;padding:10px 16px;display:flex;align-items:center;gap:10px;font-size:13px}
@@ -173,10 +175,11 @@ input,button,textarea,select{font-family:inherit}
 .sr-item:hover{background:var(--card2)}
 .sr-item:last-child{border:none}
 .sr-none{padding:20px;text-align:center;color:var(--muted);font-size:14px}
-.filter-row{display:flex;gap:7px;overflow-x:auto;padding:0 14px 10px;scrollbar-width:none}
+.filter-row{display:flex;gap:7px;overflow-x:auto;padding:6px 14px 10px;scrollbar-width:none}
 .filter-row::-webkit-scrollbar{display:none}
-.pill{flex-shrink:0;background:var(--pill);color:var(--pilltext);border:none;border-radius:99px;padding:6px 14px;font-size:13px;font-weight:500;cursor:pointer;white-space:nowrap}
-.pill.active{background:var(--accent);color:#fff;font-weight:600}
+.pill{flex-shrink:0;display:inline-flex;align-items:center;gap:5px;background:var(--pill);color:var(--pilltext);border:0.5px solid transparent;border-radius:99px;padding:7px 14px;font-size:13px;font-weight:500;cursor:pointer;white-space:nowrap;transition:background .15s,color .15s,border-color .15s;-webkit-tap-highlight-color:transparent}
+.pill:active{transform:scale(.96)}
+.pill.active{background:var(--accent);color:#fff;font-weight:600;border-color:transparent}
 [data-dark=""] .pill.active{background:#0055CC;color:#fff}
 .sec-hdr{font-size:12px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;padding:14px 0 8px}
 .boxes-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:4px}
@@ -478,9 +481,10 @@ input,button,textarea,select{font-family:inherit}
 .pri-btn.sel{border-color:var(--accent);background:rgba(0,122,255,.1);color:var(--accent)}
 .rel-select{width:100%;padding:10px 13px;border:0.5px solid var(--border);border-radius:13px;font-size:14px;color:var(--text);background:var(--input);outline:none}
 .modal-acts{display:flex;gap:10px;margin-top:18px}
-.m-btn{flex:1;padding:14px;border-radius:14px;border:none;font-size:16px;font-weight:700;cursor:pointer;font-family:inherit}
-.m-primary{background:var(--accent);color:#fff}
-.m-ghost{background:var(--input);color:var(--text)}
+.m-btn{flex:1;padding:15px;border-radius:16px;border:none;font-size:15px;font-weight:700;cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center;transition:transform .12s,opacity .12s}
+.m-btn:active{transform:scale(.97);opacity:.85}
+.m-primary{background:var(--accent);color:#fff;box-shadow:0 4px 16px rgba(10,132,255,.3)}
+.m-ghost{background:var(--card2);color:var(--muted);border:0.5px solid var(--border)}
 #viewer{background:var(--bg);min-height:100vh}
 .vh{position:relative;overflow:hidden;min-height:220px;display:flex;flex-direction:column;justify-content:flex-end;padding:24px 20px 20px}
 .vh-bg{position:absolute;inset:0}
@@ -642,29 +646,36 @@ input[type=file]{display:none}
 #tutorial{position:fixed;inset:0;z-index:1000;display:none;flex-direction:column;background:#17171f}
 #tutorial.active{display:flex}
 .tut-slides{flex:1;display:flex;overflow:hidden;position:relative}
-.tut-slide{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px 28px;text-align:center;transition:transform .4s cubic-bezier(.4,0,.2,1),opacity .4s;opacity:0;transform:translateX(100%)}
+.tut-slide{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px 24px 28px;text-align:center;transition:transform .45s cubic-bezier(.4,0,.2,1),opacity .45s;opacity:0;transform:translateX(100%)}
 .tut-slide.prev{transform:translateX(-100%);opacity:0}
 .tut-slide.active{transform:translateX(0);opacity:1}
 .tut-slide.next{transform:translateX(100%);opacity:0}
 .tut-bg{position:absolute;inset:0;z-index:0}
 .tut-content{position:relative;z-index:1;max-width:360px;width:100%}
-.tut-emoji{font-size:80px;margin-bottom:24px;display:block;animation:tutPop .5s cubic-bezier(.175,.885,.32,1.275) both}
-@keyframes tutPop{from{transform:scale(0);opacity:0}to{transform:scale(1);opacity:1}}
-.tut-title{font-size:28px;font-weight:800;color:#fff;letter-spacing:-.6px;margin-bottom:12px;line-height:1.2}
-.tut-desc{font-size:16px;color:rgba(255,255,255,.75);line-height:1.6;margin-bottom:32px}
-.tut-demo{background:rgba(255,255,255,.12);border-radius:18px;padding:16px;margin-bottom:32px;backdrop-filter:blur(10px);border:0.5px solid rgba(255,255,255,.15)}
-.tut-demo-row{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:0.5px solid rgba(255,255,255,.1);text-align:left}
-.tut-demo-row:last-child{border:none;padding-bottom:0}
-.tut-demo-icon{font-size:22px;width:28px;text-align:center;flex-shrink:0}
-.tut-demo-text{font-size:14px;color:rgba(255,255,255,.85);font-weight:500}
-.tut-demo-sub{font-size:12px;color:rgba(255,255,255,.5);margin-top:1px}
+/* Icon circle replacing big emoji */
+.tut-icon-wrap{width:80px;height:80px;border-radius:26px;margin:0 auto 22px;display:flex;align-items:center;justify-content:center;animation:tutPop .5s cubic-bezier(.175,.885,.32,1.275) both;border:0.5px solid rgba(255,255,255,.15)}
+.tut-icon-wrap i{font-size:36px;color:#fff}
+.tut-emoji{font-size:72px;margin-bottom:22px;display:block;animation:tutPop .5s cubic-bezier(.175,.885,.32,1.275) both}
+@keyframes tutPop{from{transform:scale(0) rotate(-8deg);opacity:0}to{transform:scale(1) rotate(0);opacity:1}}
+.tut-title{font-size:26px;font-weight:800;color:#fff;letter-spacing:-.6px;margin-bottom:10px;line-height:1.2}
+.tut-desc{font-size:15px;color:rgba(255,255,255,.65);line-height:1.65;margin-bottom:24px}
+.tut-demo{background:rgba(255,255,255,.08);border-radius:20px;padding:4px 14px;margin-bottom:28px;border:0.5px solid rgba(255,255,255,.1)}
+.tut-demo-row{display:flex;align-items:center;gap:14px;padding:12px 0;border-bottom:0.5px solid rgba(255,255,255,.07);text-align:left}
+.tut-demo-row:last-child{border:none;padding-bottom:12px}
+.tut-demo-icon-wrap{width:36px;height:36px;border-radius:11px;background:rgba(255,255,255,.1);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.tut-demo-icon-wrap i{font-size:17px;color:rgba(255,255,255,.85)}
+.tut-demo-icon{font-size:20px;width:36px;height:36px;display:flex;align-items:center;justify-content:center;flex-shrink:0;background:rgba(255,255,255,.1);border-radius:11px}
+.tut-demo-text{font-size:14px;color:rgba(255,255,255,.9);font-weight:600;line-height:1.3}
+.tut-demo-sub{font-size:12px;color:rgba(255,255,255,.45);margin-top:2px}
 .tut-bottom{position:relative;z-index:1;width:100%;max-width:360px}
-.tut-dots{display:flex;justify-content:center;gap:8px;margin-bottom:24px}
-.tut-dot{width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,.3);transition:.3s;cursor:pointer}
-.tut-dot.active{background:#fff;width:24px;border-radius:99px}
-.tut-btn{width:100%;background:#fff;color:#000;border:none;border-radius:16px;padding:16px;font-size:17px;font-weight:800;cursor:pointer;font-family:inherit;letter-spacing:-.3px;transition:.15s}
-.tut-btn:active{transform:scale(.97)}
-.tut-skip{background:none;border:none;color:rgba(255,255,255,.45);font-size:14px;cursor:pointer;font-family:inherit;width:100%;padding:12px;margin-top:4px}
+.tut-dots{display:flex;justify-content:center;gap:7px;margin-bottom:20px}
+.tut-dot{width:7px;height:7px;border-radius:50%;background:rgba(255,255,255,.22);transition:all .3s cubic-bezier(.4,0,.2,1);cursor:pointer}
+.tut-dot.active{background:#fff;width:22px;border-radius:99px}
+.tut-btn{width:100%;background:#fff;color:#111;border:none;border-radius:16px;padding:16px;font-size:16px;font-weight:700;cursor:pointer;font-family:inherit;letter-spacing:-.2px;transition:transform .15s,opacity .15s;display:flex;align-items:center;justify-content:center;gap:8px}
+.tut-btn:active{transform:scale(.97);opacity:.9}
+.tut-btn i{font-size:18px}
+.tut-skip{background:none;border:none;color:rgba(255,255,255,.35);font-size:13px;cursor:pointer;font-family:inherit;width:100%;padding:11px;margin-top:2px;transition:color .15s}
+.tut-skip:hover{color:rgba(255,255,255,.6)}
 
 
 /* ── APPLE POLISH ── */
@@ -1499,12 +1510,12 @@ if(!auth){
       <div style="flex:1;min-width:0"><div class="sp-last-name" id="spLastName">—</div><div class="sp-last-sub" id="spLastSub">—</div></div>
     </div>
   </div>
-  <button class="sp-btn" onclick="goMain()">✦ Ver mis cajas</button>
+  <button class="sp-btn" onclick="goMain()"><i class="ti ti-box" aria-hidden="true" style="font-size:18px;vertical-align:-2px;margin-right:6px"></i>Ver mis cajas</button>
   <div class="sp-row" style="margin-bottom:10px">
-    <button class="sp-btn2" onclick="openForm()">+ Nueva caja</button>
-    <button class="sp-btn2" onclick="goRoom()">🗺 Habitaciones</button>
+    <button class="sp-btn2" onclick="openForm()"><i class="ti ti-plus" aria-hidden="true" style="font-size:15px;vertical-align:-2px;margin-right:5px"></i>Nueva caja</button>
+    <button class="sp-btn2" onclick="goRoom()"><i class="ti ti-layout-grid" aria-hidden="true" style="font-size:15px;vertical-align:-2px;margin-right:5px"></i>Habitaciones</button>
   </div>
-  <button class="sp-btn2" onclick="goSettings()">⚙️ Ajustes</button>
+  <button class="sp-btn2" onclick="goSettings()"><i class="ti ti-settings" aria-hidden="true" style="font-size:15px;vertical-align:-2px;margin-right:5px"></i>Ajustes</button>
 </div>
 
 <div id="mainScreen" class="hidden">
@@ -1528,12 +1539,12 @@ if(!auth){
     </div>
   </div>
   <div id="sortMenu" class="hidden" style="position:sticky;top:57px;z-index:150;background:var(--card);border-bottom:0.5px solid var(--border);padding:10px 14px;display:flex;gap:7px;overflow-x:auto;scrollbar-width:none">
-    <button class="pill active" id="sort-default" onclick="setSort('default')">✦ Por defecto</button>
-    <button class="pill" id="sort-priority" onclick="setSort('priority')">🔴 Prioridad</button>
-    <button class="pill" id="sort-location" onclick="setSort('location')">📍 Habitación</button>
-    <button class="pill" id="sort-date" onclick="setSort('date')">📅 Fecha</button>
-    <button class="pill" id="sort-name" onclick="setSort('name')">A-Z Nombre</button>
-    <button class="pill" id="sort-count" onclick="setSort('count')">🔢 Objetos</button>
+    <button class="pill active" id="sort-default" onclick="setSort('default')"><i class="ti ti-layout-grid" style="font-size:13px" aria-hidden="true"></i> Por defecto</button>
+    <button class="pill" id="sort-priority" onclick="setSort('priority')"><i class="ti ti-alert-circle" style="font-size:13px;color:#FF3B30" aria-hidden="true"></i> Prioridad</button>
+    <button class="pill" id="sort-location" onclick="setSort('location')"><i class="ti ti-map-pin" style="font-size:13px" aria-hidden="true"></i> Habitación</button>
+    <button class="pill" id="sort-date" onclick="setSort('date')"><i class="ti ti-calendar" style="font-size:13px" aria-hidden="true"></i> Fecha</button>
+    <button class="pill" id="sort-name" onclick="setSort('name')"><i class="ti ti-sort-ascending-letters" style="font-size:13px" aria-hidden="true"></i> Nombre</button>
+    <button class="pill" id="sort-count" onclick="setSort('count')"><i class="ti ti-hash" style="font-size:13px" aria-hidden="true"></i> Objetos</button>
   </div>
   <div class="search-wrap">
     <div class="search-inner">
@@ -1772,41 +1783,73 @@ if(!auth){
         <div class="form-group"><label>Ubicación</label><input class="form-input" id="fLoc" type="text" placeholder="Ej: Cuarto, Garaje" oninput="updateFormPreview()"/></div>
         <div class="form-group"><label>Peso (kg)</label><input class="form-input" id="fWeight" type="number" placeholder="Ej: 5" min="0" step="0.5"/></div>
       </div>
-      <div class="form-group"><label>Contraseña (opcional)</label><div style="position:relative"><input class="form-input" id="fPassword" type="password" placeholder="Dejar vacío = sin contraseña" style="padding-right:42px"/><button type="button" onclick="const i=document.getElementById('fPassword');i.type=i.type==='password'?'text':'password';this.textContent=i.type==='password'?'👁':'🙈'" style="position:absolute;right:10px;top:50%;transform:translateY(-50%);background:none;border:none;font-size:16px;cursor:pointer;padding:0">👁</button></div></div>
+      <div class="form-group"><label>Contraseña <span style="font-size:10px;color:var(--muted);font-weight:400">(opcional)</span></label><div style="position:relative"><input class="form-input" id="fPassword" type="password" placeholder="Dejar vacío = sin contraseña" style="padding-right:46px"/><button type="button" aria-label="Mostrar contraseña" onclick="const i=document.getElementById('fPassword');i.type=i.type==='password'?'text':'password';this.querySelector('i').className=i.type==='password'?'ti ti-eye':'ti ti-eye-off'" style="position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;font-size:17px;cursor:pointer;padding:4px;color:var(--muted);display:flex;align-items:center;justify-content:center"><i class="ti ti-eye" aria-hidden="true"></i></button></div><div style="font-size:11px;color:var(--muted);margin-top:5px;display:flex;align-items:center;gap:4px"><i class="ti ti-info-circle" style="font-size:13px" aria-hidden="true"></i>Si agregas contraseña, se pedirá al abrir la caja</div></div>
       <div class="form-group"><label>Prioridad</label>
         <div class="pri-btns">
-          <button class="pri-btn" id="pri-red" onclick="setPri('red')"><span class="pri-icon">🔴</span>Urgente</button>
-          <button class="pri-btn sel" id="pri-yellow" onclick="setPri('yellow')"><span class="pri-icon">🟡</span>Normal</button>
-          <button class="pri-btn" id="pri-green" onclick="setPri('green')"><span class="pri-icon">🟢</span>Sin prisa</button>
+          <button class="pri-btn" id="pri-red" onclick="setPri('red')"><span class="pri-dot" style="width:9px;height:9px;border-radius:50%;background:#FF3B30;display:inline-block;margin-bottom:3px"></span><br>Urgente</button>
+          <button class="pri-btn sel" id="pri-yellow" onclick="setPri('yellow')"><span class="pri-dot" style="width:9px;height:9px;border-radius:50%;background:#FF9500;display:inline-block;margin-bottom:3px"></span><br>Normal</button>
+          <button class="pri-btn" id="pri-green" onclick="setPri('green')"><span class="pri-dot" style="width:9px;height:9px;border-radius:50%;background:#34C759;display:inline-block;margin-bottom:3px"></span><br>Sin prisa</button>
         </div>
       </div>
       <div class="form-group"><label>Color</label><div class="colors-grid" id="colorGrid"></div></div>
       <div class="form-group"><label>Etiquetas</label><div class="tags-box" id="tagsBox" onclick="document.getElementById('tagField').focus()"><input type="text" id="tagField" placeholder="Escribe y Enter..." onkeydown="handleTagKey(event)"/></div><div class="tag-sugs"><button class="tag-sug" onclick="addTag('mudanza')">mudanza</button><button class="tag-sug" onclick="addTag('invierno')">invierno</button><button class="tag-sug" onclick="addTag('trabajo')">trabajo</button><button class="tag-sug" onclick="addTag('cocina')">cocina</button><button class="tag-sug" onclick="addTag('ropa')">ropa</button><button class="tag-sug" onclick="addTag('libros')">libros</button></div></div>
       <div class="form-group"><label>Caja relacionada (opcional)</label><select class="rel-select" id="fRelated"><option value="">— Ninguna —</option></select></div>
     </div>
-    <div class="modal-acts"><button class="m-btn m-ghost" onclick="closeForm()">Cancelar</button><button class="m-btn m-primary" onclick="saveForm()">Guardar caja</button></div>
+    <div class="modal-acts"><button class="m-btn m-ghost" onclick="closeForm()"><i class="ti ti-x" style="font-size:15px;vertical-align:-2px;margin-right:5px" aria-hidden="true"></i>Cancelar</button><button class="m-btn m-primary" onclick="saveForm()"><i class="ti ti-check" style="font-size:15px;vertical-align:-2px;margin-right:5px" aria-hidden="true"></i>Guardar caja</button></div>
   </div>
 </div>
 
 <input type="file" id="photoInput" accept="image/*" onchange="handlePhoto(event)"/>
 
-<!-- Modal contraseña -->
-<div id="pwOverlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:10000;align-items:center;justify-content:center;backdrop-filter:blur(8px)" onclick="if(event.target===this)closePwModal()">
-  <div style="background:var(--card,#1C1C1E);border-radius:20px;padding:28px 24px;width:min(320px,88vw);box-shadow:0 20px 60px rgba(0,0,0,.5);animation:toastSpring .35s cubic-bezier(.175,.885,.32,1.275) both">
-    <div style="font-size:36px;text-align:center;margin-bottom:8px">🔐</div>
-    <div style="font-size:17px;font-weight:700;color:var(--text,#fff);text-align:center;margin-bottom:4px" id="pwBoxName"></div>
-    <div style="font-size:13px;color:var(--muted,#8E8E93);text-align:center;margin-bottom:20px">Esta caja está protegida con contraseña</div>
-    <input id="pwInput" type="password" placeholder="Escribe la contraseña..." style="width:100%;box-sizing:border-box;padding:13px 14px;border-radius:12px;border:1.5px solid var(--border,rgba(255,255,255,.12));background:var(--bg,#000);color:var(--text,#fff);font-size:16px;outline:none" onkeydown="if(event.key==='Enter')submitPw()"/>
-    <div style="display:flex;gap:10px;margin-top:14px">
-      <button onclick="closePwModal()" style="flex:1;padding:13px;border-radius:12px;border:none;background:var(--border,rgba(255,255,255,.1));color:var(--text,#fff);font-size:15px;font-weight:600;cursor:pointer">Cancelar</button>
-      <button onclick="submitPw()" style="flex:1;padding:13px;border-radius:12px;border:none;background:#007AFF;color:#fff;font-size:15px;font-weight:600;cursor:pointer">Entrar</button>
+<!-- Modal contraseña — PIN numpad -->
+<div id="pwOverlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:10000;align-items:center;justify-content:center;backdrop-filter:blur(12px)" onclick="if(event.target===this)closePwModal()">
+  <div style="background:var(--card,#1C1C1E);border-radius:28px;padding:32px 24px 24px;width:min(320px,90vw);box-shadow:0 32px 80px rgba(0,0,0,.6);animation:toastSpring .35s cubic-bezier(.175,.885,.32,1.275) both">
+    <!-- Ícono y título -->
+    <div style="display:flex;flex-direction:column;align-items:center;margin-bottom:24px;gap:10px">
+      <div style="width:56px;height:56px;border-radius:18px;background:rgba(10,132,255,.12);border:0.5px solid rgba(10,132,255,.25);display:flex;align-items:center;justify-content:center">
+        <i class="ti ti-lock" style="font-size:24px;color:#0A84FF" aria-hidden="true"></i>
+      </div>
+      <div>
+        <div id="pwBoxName" style="font-size:16px;font-weight:700;color:var(--text,#fff);text-align:center;margin-bottom:3px"></div>
+        <div style="font-size:12px;color:var(--muted,#8E8E93);text-align:center">Ingresa la contraseña para continuar</div>
+      </div>
+    </div>
+    <!-- PIN dots -->
+    <div id="pwDots" style="display:flex;gap:14px;justify-content:center;margin-bottom:24px">
+      <div class="pw-dot" id="pwd0"></div>
+      <div class="pw-dot" id="pwd1"></div>
+      <div class="pw-dot" id="pwd2"></div>
+      <div class="pw-dot" id="pwd3"></div>
+    </div>
+    <!-- Input oculto para texto libre (fallback) -->
+    <input id="pwInput" type="password" placeholder="Contraseña..." autocomplete="off"
+      style="width:100%;box-sizing:border-box;padding:13px 14px;border-radius:14px;border:0.5px solid var(--border,rgba(255,255,255,.12));background:var(--input,#2a2a38);color:var(--text,#fff);font-size:16px;outline:none;margin-bottom:16px;transition:border-color .18s"
+      onfocus="this.style.borderColor='#0A84FF'" onblur="this.style.borderColor=''"
+      onkeydown="if(event.key==='Enter')submitPw()" oninput="syncPwDots(this.value)"/>
+    <!-- Botones -->
+    <div style="display:flex;gap:10px">
+      <button onclick="closePwModal()" style="flex:1;padding:14px;border-radius:14px;border:0.5px solid rgba(255,255,255,.1);background:rgba(255,255,255,.07);color:var(--text,#fff);font-size:15px;font-weight:600;cursor:pointer;font-family:inherit;transition:background .15s" onmousedown="this.style.background='rgba(255,255,255,.14)'" onmouseup="this.style.background='rgba(255,255,255,.07)'">Cancelar</button>
+      <button onclick="submitPw()" style="flex:1;padding:14px;border-radius:14px;border:none;background:#007AFF;color:#fff;font-size:15px;font-weight:600;cursor:pointer;font-family:inherit;transition:transform .12s,opacity .12s" onmousedown="this.style.transform='scale(.97)'" onmouseup="this.style.transform=''"><i class="ti ti-arrow-right" style="font-size:16px;vertical-align:-2px;margin-right:4px" aria-hidden="true"></i>Entrar</button>
     </div>
   </div>
 </div>
+<style>
+.pw-dot{width:13px;height:13px;border-radius:50%;border:1.5px solid rgba(255,255,255,.25);background:transparent;transition:all .15s}
+.pw-dot.filled{background:#0A84FF;border-color:#0A84FF;transform:scale(1.15)}
+.pw-dot.error{background:#FF3B30;border-color:#FF3B30}
+</style>
 
 <script>var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],f={},c=function(t,r){o=function(t){for(var r=new Array(t),e=0;e<t;e+=1){r[e]=new Array(t);for(var n=0;n<t;n+=1)r[e][n]=null}return r}(i=4*e+17),l(0,0),l(i-7,0),l(0,i-7),s(),h(),d(t,r),e>=7&&v(t),null==a&&(a=p(e,n,u)),w(a,r)},l=function(t,r){for(var e=-1;e<=7;e+=1)if(!(t+e<=-1||i<=t+e))for(var n=-1;n<=7;n+=1)r+n<=-1||i<=r+n||(o[t+e][r+n]=0<=e&&e<=6&&(0==n||6==n)||0<=n&&n<=6&&(0==e||6==e)||2<=e&&e<=4&&2<=n&&n<=4)},h=function(){for(var t=8;t<i-8;t+=1)null==o[t][6]&&(o[t][6]=t%2==0);for(var r=8;r<i-8;r+=1)null==o[6][r]&&(o[6][r]=r%2==0)},s=function(){for(var t=B.getPatternPosition(e),r=0;r<t.length;r+=1)for(var n=0;n<t.length;n+=1){var i=t[r],a=t[n];if(null==o[i][a])for(var u=-2;u<=2;u+=1)for(var f=-2;f<=2;f+=1)o[i+u][a+f]=-2==u||2==u||-2==f||2==f||0==u&&0==f}},v=function(t){for(var r=B.getBCHTypeNumber(e),n=0;n<18;n+=1){var a=!t&&1==(r>>n&1);o[Math.floor(n/3)][n%3+i-8-3]=a}for(n=0;n<18;n+=1){a=!t&&1==(r>>n&1);o[n%3+i-8-3][Math.floor(n/3)]=a}},d=function(t,r){for(var e=n<<3|r,a=B.getBCHTypeInfo(e),u=0;u<15;u+=1){var f=!t&&1==(a>>u&1);u<6?o[u][8]=f:u<8?o[u+1][8]=f:o[i-15+u][8]=f}for(u=0;u<15;u+=1){f=!t&&1==(a>>u&1);u<8?o[8][i-u-1]=f:u<9?o[8][15-u-1+1]=f:o[8][15-u-1]=f}o[i-8][8]=!t},w=function(t,r){for(var e=-1,n=i-1,a=7,u=0,f=B.getMaskFunction(r),c=i-1;c>0;c-=2)for(6==c&&(c-=1);;){for(var g=0;g<2;g+=1)if(null==o[n][c-g]){var l=!1;u<t.length&&(l=1==(t[u]>>>a&1)),f(n,c-g)&&(l=!l),o[n][c-g]=l,-1==(a-=1)&&(u+=1,a=7)}if((n+=e)<0||i<=n){n-=e,e=-e;break}}},p=function(t,r,e){for(var n=A.getRSBlocks(t,r),o=b(),i=0;i<e.length;i+=1){var a=e[i];o.put(a.getMode(),4),o.put(a.getLength(),B.getLengthInBits(a.getMode(),t)),a.write(o)}var u=0;for(i=0;i<n.length;i+=1)u+=n[i].dataCount;if(o.getLengthInBits()>8*u)throw"code length overflow. ("+o.getLengthInBits()+">"+8*u+")";for(o.getLengthInBits()+4<=8*u&&o.put(0,4);o.getLengthInBits()%8!=0;)o.putBit(!1);for(;!(o.getLengthInBits()>=8*u||(o.put(236,8),o.getLengthInBits()>=8*u));)o.put(17,8);return function(t,r){for(var e=0,n=0,o=0,i=new Array(r.length),a=new Array(r.length),u=0;u<r.length;u+=1){var f=r[u].dataCount,c=r[u].totalCount-f;n=Math.max(n,f),o=Math.max(o,c),i[u]=new Array(f);for(var g=0;g<i[u].length;g+=1)i[u][g]=255&t.getBuffer()[g+e];e+=f;var l=B.getErrorCorrectPolynomial(c),h=k(i[u],l.getLength()-1).mod(l);for(a[u]=new Array(l.getLength()-1),g=0;g<a[u].length;g+=1){var s=g+h.getLength()-a[u].length;a[u][g]=s>=0?h.getAt(s):0}}var v=0;for(g=0;g<r.length;g+=1)v+=r[g].totalCount;var d=new Array(v),w=0;for(g=0;g<n;g+=1)for(u=0;u<r.length;u+=1)g<i[u].length&&(d[w]=i[u][g],w+=1);for(g=0;g<o;g+=1)for(u=0;u<r.length;u+=1)g<a[u].length&&(d[w]=a[u][g],w+=1);return d}(o,n)};f.addData=function(t,r){var e=null;switch(r=r||"Byte"){case"Numeric":e=M(t);break;case"Alphanumeric":e=x(t);break;case"Byte":e=m(t);break;case"Kanji":e=L(t);break;default:throw"mode:"+r}u.push(e),a=null},f.isDark=function(t,r){if(t<0||i<=t||r<0||i<=r)throw t+","+r;return o[t][r]},f.getModuleCount=function(){return i},f.make=function(){if(e<1){for(var t=1;t<40;t++){for(var r=A.getRSBlocks(t,n),o=b(),i=0;i<u.length;i++){var a=u[i];o.put(a.getMode(),4),o.put(a.getLength(),B.getLengthInBits(a.getMode(),t)),a.write(o)}var g=0;for(i=0;i<r.length;i++)g+=r[i].dataCount;if(o.getLengthInBits()<=8*g)break}e=t}c(!1,function(){for(var t=0,r=0,e=0;e<8;e+=1){c(!0,e);var n=B.getLostPoint(f);(0==e||t>n)&&(t=n,r=e)}return r}())},f.createTableTag=function(t,r){t=t||2;var e="";e+='<table style="',e+=" border-width: 0px; border-style: none;",e+=" border-collapse: collapse;",e+=" padding: 0px; margin: "+(r=void 0===r?4*t:r)+"px;",e+='">',e+="<tbody>";for(var n=0;n<f.getModuleCount();n+=1){e+="<tr>";for(var o=0;o<f.getModuleCount();o+=1)e+='<td style="',e+=" border-width: 0px; border-style: none;",e+=" border-collapse: collapse;",e+=" padding: 0px; margin: 0px;",e+=" width: "+t+"px;",e+=" height: "+t+"px;",e+=" background-color: ",e+=f.isDark(n,o)?"#000000":"#ffffff",e+=";",e+='"/>';e+="</tr>"}return e+="</tbody>",e+="</table>"},f.createSvgTag=function(t,r,e,n){var o={};"object"==typeof arguments[0]&&(t=(o=arguments[0]).cellSize,r=o.margin,e=o.alt,n=o.title),t=t||2,r=void 0===r?4*t:r,(e="string"==typeof e?{text:e}:e||{}).text=e.text||null,e.id=e.text?e.id||"qrcode-description":null,(n="string"==typeof n?{text:n}:n||{}).text=n.text||null,n.id=n.text?n.id||"qrcode-title":null;var i,a,u,c,g=f.getModuleCount()*t+2*r,l="";for(c="l"+t+",0 0,"+t+" -"+t+",0 0,-"+t+"z ",l+='<svg version="1.1" xmlns="http://www.w3.org/2000/svg"',l+=o.scalable?"":' width="'+g+'px" height="'+g+'px"',l+=' viewBox="0 0 '+g+" "+g+'" ',l+=' preserveAspectRatio="xMinYMin meet"',l+=n.text||e.text?' role="img" aria-labelledby="'+y([n.id,e.id].join(" ").trim())+'"':"",l+=">",l+=n.text?'<title id="'+y(n.id)+'">'+y(n.text)+"</title>":"",l+=e.text?'<description id="'+y(e.id)+'">'+y(e.text)+"</description>":"",l+='<rect width="100%" height="100%" fill="white" cx="0" cy="0"/>',l+='<path d="',a=0;a<f.getModuleCount();a+=1)for(u=a*t+r,i=0;i<f.getModuleCount();i+=1)f.isDark(a,i)&&(l+="M"+(i*t+r)+","+u+c);return l+='" stroke="transparent" fill="black"/>',l+="</svg>"},f.createDataURL=function(t,r){t=t||2,r=void 0===r?4*t:r;var e=f.getModuleCount()*t+2*r,n=r,o=e-r;return I(e,e,function(r,e){if(n<=r&&r<o&&n<=e&&e<o){var i=Math.floor((r-n)/t),a=Math.floor((e-n)/t);return f.isDark(a,i)?0:1}return 1})},f.createImgTag=function(t,r,e){t=t||2,r=void 0===r?4*t:r;var n=f.getModuleCount()*t+2*r,o="";return o+="<img",o+=' src="',o+=f.createDataURL(t,r),o+='"',o+=' width="',o+=n,o+='"',o+=' height="',o+=n,o+='"',e&&(o+=' alt="',o+=y(e),o+='"'),o+="/>"};var y=function(t){for(var r="",e=0;e<t.length;e+=1){var n=t.charAt(e);switch(n){case"<":r+="&lt;";break;case">":r+="&gt;";break;case"&":r+="&amp;";break;case'"':r+="&quot;";break;default:r+=n}}return r};return f.createASCII=function(t,r){if((t=t||1)<2)return function(t){t=void 0===t?2:t;var r,e,n,o,i,a=1*f.getModuleCount()+2*t,u=t,c=a-t,g={"██":"█","█ ":"▀"," █":"▄","  ":" "},l={"██":"▀","█ ":"▀"," █":" ","  ":" "},h="";for(r=0;r<a;r+=2){for(n=Math.floor((r-u)/1),o=Math.floor((r+1-u)/1),e=0;e<a;e+=1)i="█",u<=e&&e<c&&u<=r&&r<c&&f.isDark(n,Math.floor((e-u)/1))&&(i=" "),u<=e&&e<c&&u<=r+1&&r+1<c&&f.isDark(o,Math.floor((e-u)/1))?i+=" ":i+="█",h+=t<1&&r+1>=c?l[i]:g[i];h+="\n"}return a%2&&t>0?h.substring(0,h.length-a-1)+Array(a+1).join("▀"):h.substring(0,h.length-1)}(r);t-=1,r=void 0===r?2*t:r;var e,n,o,i,a=f.getModuleCount()*t+2*r,u=r,c=a-r,g=Array(t+1).join("██"),l=Array(t+1).join("  "),h="",s="";for(e=0;e<a;e+=1){for(o=Math.floor((e-u)/t),s="",n=0;n<a;n+=1)i=1,u<=n&&n<c&&u<=e&&e<c&&f.isDark(o,Math.floor((n-u)/t))&&(i=0),s+=i?g:l;for(o=0;o<t;o+=1)h+=s+"\n"}return h.substring(0,h.length-1)},f.renderTo2dContext=function(t,r){r=r||2;for(var e=f.getModuleCount(),n=0;n<e;n++)for(var o=0;o<e;o++)t.fillStyle=f.isDark(n,o)?"black":"white",t.fillRect(o*r,n*r,r,r)},f};t.stringToBytes=(t.stringToBytesFuncs={default:function(t){for(var r=[],e=0;e<t.length;e+=1){var n=t.charCodeAt(e);r.push(255&n)}return r}}).default,t.createStringToBytes=function(t,r){var e=function(){for(var e=S(t),n=function(){var t=e.read();if(-1==t)throw"eof";return t},o=0,i={};;){var a=e.read();if(-1==a)break;var u=n(),f=n()<<8|n();i[String.fromCharCode(a<<8|u)]=f,o+=1}if(o!=r)throw o+" != "+r;return i}(),n="?".charCodeAt(0);return function(t){for(var r=[],o=0;o<t.length;o+=1){var i=t.charCodeAt(o);if(i<128)r.push(i);else{var a=e[t.charAt(o)];"number"==typeof a?(255&a)==a?r.push(a):(r.push(a>>>8),r.push(255&a)):r.push(n)}}return r}};var r,e,n,o,i,a=1,u=2,f=4,c=8,g={L:1,M:0,Q:3,H:2},l=0,h=1,s=2,v=3,d=4,w=5,p=6,y=7,B=(r=[[],[6,18],[6,22],[6,26],[6,30],[6,34],[6,22,38],[6,24,42],[6,26,46],[6,28,50],[6,30,54],[6,32,58],[6,34,62],[6,26,46,66],[6,26,48,70],[6,26,50,74],[6,30,54,78],[6,30,56,82],[6,30,58,86],[6,34,62,90],[6,28,50,72,94],[6,26,50,74,98],[6,30,54,78,102],[6,28,54,80,106],[6,32,58,84,110],[6,30,58,86,114],[6,34,62,90,118],[6,26,50,74,98,122],[6,30,54,78,102,126],[6,26,52,78,104,130],[6,30,56,82,108,134],[6,34,60,86,112,138],[6,30,58,86,114,142],[6,34,62,90,118,146],[6,30,54,78,102,126,150],[6,24,50,76,102,128,154],[6,28,54,80,106,132,158],[6,32,58,84,110,136,162],[6,26,54,82,110,138,166],[6,30,58,86,114,142,170]],e=1335,n=7973,i=function(t){for(var r=0;0!=t;)r+=1,t>>>=1;return r},(o={}).getBCHTypeInfo=function(t){for(var r=t<<10;i(r)-i(e)>=0;)r^=e<<i(r)-i(e);return 21522^(t<<10|r)},o.getBCHTypeNumber=function(t){for(var r=t<<12;i(r)-i(n)>=0;)r^=n<<i(r)-i(n);return t<<12|r},o.getPatternPosition=function(t){return r[t-1]},o.getMaskFunction=function(t){switch(t){case l:return function(t,r){return(t+r)%2==0};case h:return function(t,r){return t%2==0};case s:return function(t,r){return r%3==0};case v:return function(t,r){return(t+r)%3==0};case d:return function(t,r){return(Math.floor(t/2)+Math.floor(r/3))%2==0};case w:return function(t,r){return t*r%2+t*r%3==0};case p:return function(t,r){return(t*r%2+t*r%3)%2==0};case y:return function(t,r){return(t*r%3+(t+r)%2)%2==0};default:throw"bad maskPattern:"+t}},o.getErrorCorrectPolynomial=function(t){for(var r=k([1],0),e=0;e<t;e+=1)r=r.multiply(k([1,C.gexp(e)],0));return r},o.getLengthInBits=function(t,r){if(1<=r&&r<10)switch(t){case a:return 10;case u:return 9;case f:case c:return 8;default:throw"mode:"+t}else if(r<27)switch(t){case a:return 12;case u:return 11;case f:return 16;case c:return 10;default:throw"mode:"+t}else{if(!(r<41))throw"type:"+r;switch(t){case a:return 14;case u:return 13;case f:return 16;case c:return 12;default:throw"mode:"+t}}},o.getLostPoint=function(t){for(var r=t.getModuleCount(),e=0,n=0;n<r;n+=1)for(var o=0;o<r;o+=1){for(var i=0,a=t.isDark(n,o),u=-1;u<=1;u+=1)if(!(n+u<0||r<=n+u))for(var f=-1;f<=1;f+=1)o+f<0||r<=o+f||0==u&&0==f||a==t.isDark(n+u,o+f)&&(i+=1);i>5&&(e+=3+i-5)}for(n=0;n<r-1;n+=1)for(o=0;o<r-1;o+=1){var c=0;t.isDark(n,o)&&(c+=1),t.isDark(n+1,o)&&(c+=1),t.isDark(n,o+1)&&(c+=1),t.isDark(n+1,o+1)&&(c+=1),0!=c&&4!=c||(e+=3)}for(n=0;n<r;n+=1)for(o=0;o<r-6;o+=1)t.isDark(n,o)&&!t.isDark(n,o+1)&&t.isDark(n,o+2)&&t.isDark(n,o+3)&&t.isDark(n,o+4)&&!t.isDark(n,o+5)&&t.isDark(n,o+6)&&(e+=40);for(o=0;o<r;o+=1)for(n=0;n<r-6;n+=1)t.isDark(n,o)&&!t.isDark(n+1,o)&&t.isDark(n+2,o)&&t.isDark(n+3,o)&&t.isDark(n+4,o)&&!t.isDark(n+5,o)&&t.isDark(n+6,o)&&(e+=40);var g=0;for(o=0;o<r;o+=1)for(n=0;n<r;n+=1)t.isDark(n,o)&&(g+=1);return e+=Math.abs(100*g/r/r-50)/5*10},o),C=function(){for(var t=new Array(256),r=new Array(256),e=0;e<8;e+=1)t[e]=1<<e;for(e=8;e<256;e+=1)t[e]=t[e-4]^t[e-5]^t[e-6]^t[e-8];for(e=0;e<255;e+=1)r[t[e]]=e;var n={glog:function(t){if(t<1)throw"glog("+t+")";return r[t]},gexp:function(r){for(;r<0;)r+=255;for(;r>=256;)r-=255;return t[r]}};return n}();function k(t,r){if(void 0===t.length)throw t.length+"/"+r;var e=function(){for(var e=0;e<t.length&&0==t[e];)e+=1;for(var n=new Array(t.length-e+r),o=0;o<t.length-e;o+=1)n[o]=t[o+e];return n}(),n={getAt:function(t){return e[t]},getLength:function(){return e.length},multiply:function(t){for(var r=new Array(n.getLength()+t.getLength()-1),e=0;e<n.getLength();e+=1)for(var o=0;o<t.getLength();o+=1)r[e+o]^=C.gexp(C.glog(n.getAt(e))+C.glog(t.getAt(o)));return k(r,0)},mod:function(t){if(n.getLength()-t.getLength()<0)return n;for(var r=C.glog(n.getAt(0))-C.glog(t.getAt(0)),e=new Array(n.getLength()),o=0;o<n.getLength();o+=1)e[o]=n.getAt(o);for(o=0;o<t.getLength();o+=1)e[o]^=C.gexp(C.glog(t.getAt(o))+r);return k(e,0).mod(t)}};return n}var A=function(){var t=[[1,26,19],[1,26,16],[1,26,13],[1,26,9],[1,44,34],[1,44,28],[1,44,22],[1,44,16],[1,70,55],[1,70,44],[2,35,17],[2,35,13],[1,100,80],[2,50,32],[2,50,24],[4,25,9],[1,134,108],[2,67,43],[2,33,15,2,34,16],[2,33,11,2,34,12],[2,86,68],[4,43,27],[4,43,19],[4,43,15],[2,98,78],[4,49,31],[2,32,14,4,33,15],[4,39,13,1,40,14],[2,121,97],[2,60,38,2,61,39],[4,40,18,2,41,19],[4,40,14,2,41,15],[2,146,116],[3,58,36,2,59,37],[4,36,16,4,37,17],[4,36,12,4,37,13],[2,86,68,2,87,69],[4,69,43,1,70,44],[6,43,19,2,44,20],[6,43,15,2,44,16],[4,101,81],[1,80,50,4,81,51],[4,50,22,4,51,23],[3,36,12,8,37,13],[2,116,92,2,117,93],[6,58,36,2,59,37],[4,46,20,6,47,21],[7,42,14,4,43,15],[4,133,107],[8,59,37,1,60,38],[8,44,20,4,45,21],[12,33,11,4,34,12],[3,145,115,1,146,116],[4,64,40,5,65,41],[11,36,16,5,37,17],[11,36,12,5,37,13],[5,109,87,1,110,88],[5,65,41,5,66,42],[5,54,24,7,55,25],[11,36,12,7,37,13],[5,122,98,1,123,99],[7,73,45,3,74,46],[15,43,19,2,44,20],[3,45,15,13,46,16],[1,135,107,5,136,108],[10,74,46,1,75,47],[1,50,22,15,51,23],[2,42,14,17,43,15],[5,150,120,1,151,121],[9,69,43,4,70,44],[17,50,22,1,51,23],[2,42,14,19,43,15],[3,141,113,4,142,114],[3,70,44,11,71,45],[17,47,21,4,48,22],[9,39,13,16,40,14],[3,135,107,5,136,108],[3,67,41,13,68,42],[15,54,24,5,55,25],[15,43,15,10,44,16],[4,144,116,4,145,117],[17,68,42],[17,50,22,6,51,23],[19,46,16,6,47,17],[2,139,111,7,140,112],[17,74,46],[7,54,24,16,55,25],[34,37,13],[4,151,121,5,152,122],[4,75,47,14,76,48],[11,54,24,14,55,25],[16,45,15,14,46,16],[6,147,117,4,148,118],[6,73,45,14,74,46],[11,54,24,16,55,25],[30,46,16,2,47,17],[8,132,106,4,133,107],[8,75,47,13,76,48],[7,54,24,22,55,25],[22,45,15,13,46,16],[10,142,114,2,143,115],[19,74,46,4,75,47],[28,50,22,6,51,23],[33,46,16,4,47,17],[8,152,122,4,153,123],[22,73,45,3,74,46],[8,53,23,26,54,24],[12,45,15,28,46,16],[3,147,117,10,148,118],[3,73,45,23,74,46],[4,54,24,31,55,25],[11,45,15,31,46,16],[7,146,116,7,147,117],[21,73,45,7,74,46],[1,53,23,37,54,24],[19,45,15,26,46,16],[5,145,115,10,146,116],[19,75,47,10,76,48],[15,54,24,25,55,25],[23,45,15,25,46,16],[13,145,115,3,146,116],[2,74,46,29,75,47],[42,54,24,1,55,25],[23,45,15,28,46,16],[17,145,115],[10,74,46,23,75,47],[10,54,24,35,55,25],[19,45,15,35,46,16],[17,145,115,1,146,116],[14,74,46,21,75,47],[29,54,24,19,55,25],[11,45,15,46,46,16],[13,145,115,6,146,116],[14,74,46,23,75,47],[44,54,24,7,55,25],[59,46,16,1,47,17],[12,151,121,7,152,122],[12,75,47,26,76,48],[39,54,24,14,55,25],[22,45,15,41,46,16],[6,151,121,14,152,122],[6,75,47,34,76,48],[46,54,24,10,55,25],[2,45,15,64,46,16],[17,152,122,4,153,123],[29,74,46,14,75,47],[49,54,24,10,55,25],[24,45,15,46,46,16],[4,152,122,18,153,123],[13,74,46,32,75,47],[48,54,24,14,55,25],[42,45,15,32,46,16],[20,147,117,4,148,118],[40,75,47,7,76,48],[43,54,24,22,55,25],[10,45,15,67,46,16],[19,148,118,6,149,119],[18,75,47,31,76,48],[34,54,24,34,55,25],[20,45,15,61,46,16]],r=function(t,r){var e={};return e.totalCount=t,e.dataCount=r,e},e={};return e.getRSBlocks=function(e,n){var o=function(r,e){switch(e){case g.L:return t[4*(r-1)+0];case g.M:return t[4*(r-1)+1];case g.Q:return t[4*(r-1)+2];case g.H:return t[4*(r-1)+3];default:return}}(e,n);if(void 0===o)throw"bad rs block @ typeNumber:"+e+"/errorCorrectionLevel:"+n;for(var i=o.length/3,a=[],u=0;u<i;u+=1)for(var f=o[3*u+0],c=o[3*u+1],l=o[3*u+2],h=0;h<f;h+=1)a.push(r(c,l));return a},e}(),b=function(){var t=[],r=0,e={getBuffer:function(){return t},getAt:function(r){var e=Math.floor(r/8);return 1==(t[e]>>>7-r%8&1)},put:function(t,r){for(var n=0;n<r;n+=1)e.putBit(1==(t>>>r-n-1&1))},getLengthInBits:function(){return r},putBit:function(e){var n=Math.floor(r/8);t.length<=n&&t.push(0),e&&(t[n]|=128>>>r%8),r+=1}};return e},M=function(t){var r=a,e=t,n={getMode:function(){return r},getLength:function(t){return e.length},write:function(t){for(var r=e,n=0;n+2<r.length;)t.put(o(r.substring(n,n+3)),10),n+=3;n<r.length&&(r.length-n==1?t.put(o(r.substring(n,n+1)),4):r.length-n==2&&t.put(o(r.substring(n,n+2)),7))}},o=function(t){for(var r=0,e=0;e<t.length;e+=1)r=10*r+i(t.charAt(e));return r},i=function(t){if("0"<=t&&t<="9")return t.charCodeAt(0)-"0".charCodeAt(0);throw"illegal char :"+t};return n},x=function(t){var r=u,e=t,n={getMode:function(){return r},getLength:function(t){return e.length},write:function(t){for(var r=e,n=0;n+1<r.length;)t.put(45*o(r.charAt(n))+o(r.charAt(n+1)),11),n+=2;n<r.length&&t.put(o(r.charAt(n)),6)}},o=function(t){if("0"<=t&&t<="9")return t.charCodeAt(0)-"0".charCodeAt(0);if("A"<=t&&t<="Z")return t.charCodeAt(0)-"A".charCodeAt(0)+10;switch(t){case" ":return 36;case"$":return 37;case"%":return 38;case"*":return 39;case"+":return 40;case"-":return 41;case".":return 42;case"/":return 43;case":":return 44;default:throw"illegal char :"+t}};return n},m=function(r){var e=f,n=t.stringToBytes(r),o={getMode:function(){return e},getLength:function(t){return n.length},write:function(t){for(var r=0;r<n.length;r+=1)t.put(n[r],8)}};return o},L=function(r){var e=c,n=t.stringToBytesFuncs.SJIS;if(!n)throw"sjis not supported.";!function(){var t=n("友");if(2!=t.length||38726!=(t[0]<<8|t[1]))throw"sjis not supported."}();var o=n(r),i={getMode:function(){return e},getLength:function(t){return~~(o.length/2)},write:function(t){for(var r=o,e=0;e+1<r.length;){var n=(255&r[e])<<8|255&r[e+1];if(33088<=n&&n<=40956)n-=33088;else{if(!(57408<=n&&n<=60351))throw"illegal char at "+(e+1)+"/"+n;n-=49472}n=192*(n>>>8&255)+(255&n),t.put(n,13),e+=2}if(e<r.length)throw"illegal char at "+(e+1)}};return i},D=function(){var t=[],r={writeByte:function(r){t.push(255&r)},writeShort:function(t){r.writeByte(t),r.writeByte(t>>>8)},writeBytes:function(t,e,n){e=e||0,n=n||t.length;for(var o=0;o<n;o+=1)r.writeByte(t[o+e])},writeString:function(t){for(var e=0;e<t.length;e+=1)r.writeByte(t.charCodeAt(e))},toByteArray:function(){return t},toString:function(){var r="";r+="[";for(var e=0;e<t.length;e+=1)e>0&&(r+=","),r+=t[e];return r+="]"}};return r},S=function(t){var r=t,e=0,n=0,o=0,i={read:function(){for(;o<8;){if(e>=r.length){if(0==o)return-1;throw"unexpected end of file./"+o}var t=r.charAt(e);if(e+=1,"="==t)return o=0,-1;t.match(/^\s$/)||(n=n<<6|a(t.charCodeAt(0)),o+=6)}var i=n>>>o-8&255;return o-=8,i}},a=function(t){if(65<=t&&t<=90)return t-65;if(97<=t&&t<=122)return t-97+26;if(48<=t&&t<=57)return t-48+52;if(43==t)return 62;if(47==t)return 63;throw"c:"+t};return i},I=function(t,r,e){for(var n=function(t,r){var e=t,n=r,o=new Array(t*r),i={setPixel:function(t,r,n){o[r*e+t]=n},write:function(t){t.writeString("GIF87a"),t.writeShort(e),t.writeShort(n),t.writeByte(128),t.writeByte(0),t.writeByte(0),t.writeByte(0),t.writeByte(0),t.writeByte(0),t.writeByte(255),t.writeByte(255),t.writeByte(255),t.writeString(","),t.writeShort(0),t.writeShort(0),t.writeShort(e),t.writeShort(n),t.writeByte(0);var r=a(2);t.writeByte(2);for(var o=0;r.length-o>255;)t.writeByte(255),t.writeBytes(r,o,255),o+=255;t.writeByte(r.length-o),t.writeBytes(r,o,r.length-o),t.writeByte(0),t.writeString(";")}},a=function(t){for(var r=1<<t,e=1+(1<<t),n=t+1,i=u(),a=0;a<r;a+=1)i.add(String.fromCharCode(a));i.add(String.fromCharCode(r)),i.add(String.fromCharCode(e));var f,c,g,l=D(),h=(f=l,c=0,g=0,{write:function(t,r){if(t>>>r!=0)throw"length over";for(;c+r>=8;)f.writeByte(255&(t<<c|g)),r-=8-c,t>>>=8-c,g=0,c=0;g|=t<<c,c+=r},flush:function(){c>0&&f.writeByte(g)}});h.write(r,n);var s=0,v=String.fromCharCode(o[s]);for(s+=1;s<o.length;){var d=String.fromCharCode(o[s]);s+=1,i.contains(v+d)?v+=d:(h.write(i.indexOf(v),n),i.size()<4095&&(i.size()==1<<n&&(n+=1),i.add(v+d)),v=d)}return h.write(i.indexOf(v),n),h.write(e,n),h.flush(),l.toByteArray()},u=function(){var t={},r=0,e={add:function(n){if(e.contains(n))throw"dup key:"+n;t[n]=r,r+=1},size:function(){return r},indexOf:function(r){return t[r]},contains:function(r){return void 0!==t[r]}};return e};return i}(t,r),o=0;o<r;o+=1)for(var i=0;i<t;i+=1)n.setPixel(i,o,e(i,o));var a=D();n.write(a);for(var u=function(){var t=0,r=0,e=0,n="",o={},i=function(t){n+=String.fromCharCode(a(63&t))},a=function(t){if(t<0);else{if(t<26)return 65+t;if(t<52)return t-26+97;if(t<62)return t-52+48;if(62==t)return 43;if(63==t)return 47}throw"n:"+t};return o.writeByte=function(n){for(t=t<<8|255&n,r+=8,e+=1;r>=6;)i(t>>>r-6),r-=6},o.flush=function(){if(r>0&&(i(t<<6-r),t=0,r=0),e%3!=0)for(var o=3-e%3,a=0;a<o;a+=1)n+="="},o.toString=function(){return n},o}(),f=a.toByteArray(),c=0;c<f.length;c+=1)u.writeByte(f[c]);return u.flush(),"data:image/gif;base64,"+u};return t}();qrcode.stringToBytesFuncs["UTF-8"]=function(t){return function(t){for(var r=[],e=0;e<t.length;e++){var n=t.charCodeAt(e);n<128?r.push(n):n<2048?r.push(192|n>>6,128|63&n):n<55296||n>=57344?r.push(224|n>>12,128|n>>6&63,128|63&n):(e++,n=65536+((1023&n)<<10|1023&t.charCodeAt(e)),r.push(240|n>>18,128|n>>12&63,128|n>>6&63,128|63&n))}return r}(t)},function(t){"function"==typeof define&&define.amd?define([],t):"object"==typeof exports&&(module.exports=t())}(function(){return qrcode});</script>
 <script>
 /* BoxVision — JavaScript principal */
+
+// Sync PIN dots on pw modal input
+function syncPwDots(val){
+  for(var i=0;i<4;i++){
+    var d=document.getElementById('pwd'+i);
+    if(d) d.classList.toggle('filled', i < val.length);
+  }
+}
 
 const COLORS=["#FF3B30","#FF9500","#FFCC00","#34C759","#00C7BE","#007AFF","#5856D6","#AF52DE","#FF2D55","#636366"];
 const PRI={red:"🔴",yellow:"🟡",green:"🟢"};
@@ -3606,147 +3649,245 @@ document.addEventListener("DOMContentLoaded",applySplashGradient);
 
     <!-- Slide 0: Bienvenida -->
     <div class="tut-slide active" id="ts0">
-      <div class="tut-bg" style="background:#17171f"></div>
+      <div class="tut-bg" style="background:linear-gradient(160deg,#1a1a3e 0%,#17171f 100%)"></div>
       <div class="tut-content">
-        <img class="tut-logo" src="./icons/logo.png" style="width:90px;height:90px;object-fit:contain;;margin-bottom:16px;display:block;margin-left:auto;margin-right:auto"/>
-        <div class="tut-title" style="font-size:32px">BoxVision</div>
+        <div class="tut-icon-wrap" style="background:rgba(10,132,255,.18);border-color:rgba(10,132,255,.3)">
+          <i class="ti ti-box" aria-hidden="true"></i>
+        </div>
+        <div class="tut-title">BoxVision</div>
         <div class="tut-desc">Organiza todo lo que guardas — cajas, bodegas, almacenes y más. Encuentra cualquier objeto en segundos.</div>
         <div class="tut-demo">
-          <div class="tut-demo-row"><span class="tut-demo-icon">📦</span><div><div class="tut-demo-text">Crea cajas con QR</div><div class="tut-demo-sub">Escanea y ve el contenido al instante</div></div></div>
-          <div class="tut-demo-row"><span class="tut-demo-icon">📷</span><div><div class="tut-demo-text">Fotografía tus objetos</div><div class="tut-demo-sub">Se guardan con imagen visual</div></div></div>
-          <div class="tut-demo-row"><span class="tut-demo-icon">🔍</span><div><div class="tut-demo-text">Búsqueda inteligente</div><div class="tut-demo-sub">Encuentra cualquier cosa al instante</div></div></div>
-          <div class="tut-demo-row"><span class="tut-demo-icon">☁️</span><div><div class="tut-demo-text">Sincronizado en la nube</div><div class="tut-demo-sub">Accede desde cualquier dispositivo</div></div></div>
+          <div class="tut-demo-row">
+            <div class="tut-demo-icon-wrap"><i class="ti ti-qrcode" aria-hidden="true"></i></div>
+            <div><div class="tut-demo-text">Crea cajas con QR</div><div class="tut-demo-sub">Escanea y ve el contenido al instante</div></div>
+          </div>
+          <div class="tut-demo-row">
+            <div class="tut-demo-icon-wrap"><i class="ti ti-camera" aria-hidden="true"></i></div>
+            <div><div class="tut-demo-text">Fotografía tus objetos</div><div class="tut-demo-sub">Se guardan con imagen visual</div></div>
+          </div>
+          <div class="tut-demo-row">
+            <div class="tut-demo-icon-wrap"><i class="ti ti-search" aria-hidden="true"></i></div>
+            <div><div class="tut-demo-text">Búsqueda inteligente</div><div class="tut-demo-sub">Encuentra cualquier cosa al instante</div></div>
+          </div>
+          <div class="tut-demo-row">
+            <div class="tut-demo-icon-wrap"><i class="ti ti-cloud" aria-hidden="true"></i></div>
+            <div><div class="tut-demo-text">Sincronizado en la nube</div><div class="tut-demo-sub">Accede desde cualquier dispositivo</div></div>
+          </div>
         </div>
       </div>
       <div class="tut-bottom">
-        <div class="tut-dots" id="tutDots0"><div class="tut-dot active"></div><div class="tut-dot"></div><div class="tut-dot"></div><div class="tut-dot"></div><div class="tut-dot"></div><div class="tut-dot"></div><div class="tut-dot"></div></div>
-        <button class="tut-btn" onclick="nextTut()">Empezar →</button>
+        <div class="tut-dots"><div class="tut-dot active"></div><div class="tut-dot"></div><div class="tut-dot"></div><div class="tut-dot"></div><div class="tut-dot"></div><div class="tut-dot"></div><div class="tut-dot"></div></div>
+        <button class="tut-btn" onclick="nextTut()">Empezar <i class="ti ti-arrow-right" aria-hidden="true"></i></button>
         <button class="tut-skip" onclick="finishTut()">Saltar tutorial</button>
       </div>
     </div>
 
     <!-- Slide 1: Crea una caja -->
     <div class="tut-slide next" id="ts1">
-      <div class="tut-bg" style="background:#17171f"></div>
+      <div class="tut-bg" style="background:linear-gradient(160deg,#1a2a1a 0%,#17171f 100%)"></div>
       <div class="tut-content">
-        <span class="tut-emoji">➕</span>
+        <div class="tut-icon-wrap" style="background:rgba(10,132,255,.18);border-color:rgba(10,132,255,.3)">
+          <i class="ti ti-plus" aria-hidden="true"></i>
+        </div>
         <div class="tut-title">Crea tu primera caja</div>
-        <div class="tut-desc">Toca el botón <strong style="color:#fff;background:rgba(255,255,255,0.15);padding:2px 8px;border-radius:6px">+</strong> arriba a la derecha para comenzar.</div>
+        <div class="tut-desc">Toca el botón <strong style="color:#fff;background:rgba(10,132,255,.25);padding:2px 10px;border-radius:8px;font-size:13px">+ Nueva caja</strong> para comenzar.</div>
         <div class="tut-demo">
-          <div class="tut-demo-row"><span class="tut-demo-icon">🏷️</span><div><div class="tut-demo-text">Nombre y número</div><div class="tut-demo-sub">Ej: "Cocina #1", "Ropa invierno"</div></div></div>
-          <div class="tut-demo-row"><span class="tut-demo-icon">🎨</span><div><div class="tut-demo-text">Color personalizado</div><div class="tut-demo-sub">Para identificarla visualmente</div></div></div>
-          <div class="tut-demo-row"><span class="tut-demo-icon">📍</span><div><div class="tut-demo-text">Ubicación</div><div class="tut-demo-sub">Cuarto, garaje, depósito, bodega...</div></div></div>
-          <div class="tut-demo-row"><span class="tut-demo-icon">🔴</span><div><div class="tut-demo-text">Prioridad</div><div class="tut-demo-sub">Urgente, normal o sin prisa</div></div></div>
+          <div class="tut-demo-row">
+            <div class="tut-demo-icon-wrap"><i class="ti ti-tag" aria-hidden="true"></i></div>
+            <div><div class="tut-demo-text">Nombre y número</div><div class="tut-demo-sub">Ej: "Cocina #1", "Ropa invierno"</div></div>
+          </div>
+          <div class="tut-demo-row">
+            <div class="tut-demo-icon-wrap"><i class="ti ti-palette" aria-hidden="true"></i></div>
+            <div><div class="tut-demo-text">Color personalizado</div><div class="tut-demo-sub">Para identificarla visualmente</div></div>
+          </div>
+          <div class="tut-demo-row">
+            <div class="tut-demo-icon-wrap"><i class="ti ti-map-pin" aria-hidden="true"></i></div>
+            <div><div class="tut-demo-text">Ubicación</div><div class="tut-demo-sub">Cuarto, garaje, depósito, bodega...</div></div>
+          </div>
+          <div class="tut-demo-row">
+            <div class="tut-demo-icon-wrap"><i class="ti ti-alert-circle" aria-hidden="true" style="color:#FF9500"></i></div>
+            <div><div class="tut-demo-text">Prioridad</div><div class="tut-demo-sub">Urgente, normal o sin prisa</div></div>
+          </div>
         </div>
       </div>
       <div class="tut-bottom">
         <div class="tut-dots"><div class="tut-dot"></div><div class="tut-dot active"></div><div class="tut-dot"></div><div class="tut-dot"></div><div class="tut-dot"></div><div class="tut-dot"></div><div class="tut-dot"></div></div>
-        <button class="tut-btn" onclick="nextTut()">Siguiente →</button>
+        <button class="tut-btn" onclick="nextTut()">Siguiente <i class="ti ti-arrow-right" aria-hidden="true"></i></button>
         <button class="tut-skip" onclick="finishTut()">Saltar</button>
       </div>
     </div>
 
     <!-- Slide 2: Agrega objetos -->
     <div class="tut-slide next" id="ts2">
-      <div class="tut-bg" style="background:#17171f"></div>
+      <div class="tut-bg" style="background:linear-gradient(160deg,#1e1a2e 0%,#17171f 100%)"></div>
       <div class="tut-content">
-        <span class="tut-emoji">📝</span>
+        <div class="tut-icon-wrap" style="background:rgba(88,86,214,.2);border-color:rgba(88,86,214,.35)">
+          <i class="ti ti-list" aria-hidden="true"></i>
+        </div>
         <div class="tut-title">Agrega tus objetos</div>
         <div class="tut-desc">Tienes 3 formas de agregar objetos a cada caja. Usa la que más te convenga.</div>
         <div class="tut-demo">
-          <div class="tut-demo-row"><span class="tut-demo-icon">✍️</span><div><div class="tut-demo-text">Escribe el nombre</div><div class="tut-demo-sub">Escribe y presiona + o Enter</div></div></div>
-          <div class="tut-demo-row"><span class="tut-demo-icon">🎤</span><div><div class="tut-demo-text">Dicta por voz</div><div class="tut-demo-sub">Toca el micrófono y habla</div></div></div>
-          <div class="tut-demo-row"><span class="tut-demo-icon">📷</span><div><div class="tut-demo-text">Fotografía el objeto</div><div class="tut-demo-sub">BoxVision lo reconoce automáticamente</div></div></div>
-          <div class="tut-demo-row"><span class="tut-demo-icon">✅</span><div><div class="tut-demo-text">Marca como sacado</div><div class="tut-demo-sub">Toca el círculo para marcar progreso</div></div></div>
+          <div class="tut-demo-row">
+            <div class="tut-demo-icon-wrap"><i class="ti ti-pencil" aria-hidden="true"></i></div>
+            <div><div class="tut-demo-text">Escribe el nombre</div><div class="tut-demo-sub">Escribe y presiona + o Enter</div></div>
+          </div>
+          <div class="tut-demo-row">
+            <div class="tut-demo-icon-wrap"><i class="ti ti-microphone" aria-hidden="true"></i></div>
+            <div><div class="tut-demo-text">Dicta por voz</div><div class="tut-demo-sub">Toca el micrófono y habla</div></div>
+          </div>
+          <div class="tut-demo-row">
+            <div class="tut-demo-icon-wrap"><i class="ti ti-camera" aria-hidden="true"></i></div>
+            <div><div class="tut-demo-text">Fotografía el objeto</div><div class="tut-demo-sub">BoxVision lo reconoce automáticamente</div></div>
+          </div>
+          <div class="tut-demo-row">
+            <div class="tut-demo-icon-wrap"><i class="ti ti-circle-check" aria-hidden="true" style="color:#34C759"></i></div>
+            <div><div class="tut-demo-text">Marca como sacado</div><div class="tut-demo-sub">Toca el círculo para marcar progreso</div></div>
+          </div>
         </div>
       </div>
       <div class="tut-bottom">
         <div class="tut-dots"><div class="tut-dot"></div><div class="tut-dot"></div><div class="tut-dot active"></div><div class="tut-dot"></div><div class="tut-dot"></div><div class="tut-dot"></div><div class="tut-dot"></div></div>
-        <button class="tut-btn" onclick="nextTut()">Siguiente →</button>
+        <button class="tut-btn" onclick="nextTut()">Siguiente <i class="ti ti-arrow-right" aria-hidden="true"></i></button>
         <button class="tut-skip" onclick="finishTut()">Saltar</button>
       </div>
     </div>
 
     <!-- Slide 3: QR -->
     <div class="tut-slide next" id="ts3">
-      <div class="tut-bg" style="background:#17171f"></div>
+      <div class="tut-bg" style="background:linear-gradient(160deg,#1a2832 0%,#17171f 100%)"></div>
       <div class="tut-content">
-        <span class="tut-emoji">📲</span>
+        <div class="tut-icon-wrap" style="background:rgba(0,199,190,.15);border-color:rgba(0,199,190,.3)">
+          <i class="ti ti-qrcode" aria-hidden="true"></i>
+        </div>
         <div class="tut-title">Escanea el QR</div>
         <div class="tut-desc">Cada caja tiene su propio código QR. Pégalo en la caja física y escanéalo con cualquier celular.</div>
         <div class="tut-demo">
-          <div class="tut-demo-row"><span class="tut-demo-icon">🖨️</span><div><div class="tut-demo-text">Imprime o muestra el QR</div><div class="tut-demo-sub">Desde la pantalla de la caja</div></div></div>
-          <div class="tut-demo-row"><span class="tut-demo-icon">📱</span><div><div class="tut-demo-text">Escanea con cualquier celular</div><div class="tut-demo-sub">Sin necesidad de tener la app</div></div></div>
-          <div class="tut-demo-row"><span class="tut-demo-icon">🔦</span><div><div class="tut-demo-text">Linterna integrada</div><div class="tut-demo-sub">Para escanear en lugares oscuros</div></div></div>
-          <div class="tut-demo-row"><span class="tut-demo-icon">🔊</span><div><div class="tut-demo-text">Lee en voz alta</div><div class="tut-demo-sub">Escucha el contenido sin mirar</div></div></div>
+          <div class="tut-demo-row">
+            <div class="tut-demo-icon-wrap"><i class="ti ti-printer" aria-hidden="true"></i></div>
+            <div><div class="tut-demo-text">Imprime o muestra el QR</div><div class="tut-demo-sub">Desde la pantalla de la caja</div></div>
+          </div>
+          <div class="tut-demo-row">
+            <div class="tut-demo-icon-wrap"><i class="ti ti-device-mobile" aria-hidden="true"></i></div>
+            <div><div class="tut-demo-text">Escanea con cualquier celular</div><div class="tut-demo-sub">Sin necesidad de tener la app</div></div>
+          </div>
+          <div class="tut-demo-row">
+            <div class="tut-demo-icon-wrap"><i class="ti ti-flashlight" aria-hidden="true"></i></div>
+            <div><div class="tut-demo-text">Linterna integrada</div><div class="tut-demo-sub">Para escanear en lugares oscuros</div></div>
+          </div>
+          <div class="tut-demo-row">
+            <div class="tut-demo-icon-wrap"><i class="ti ti-volume" aria-hidden="true"></i></div>
+            <div><div class="tut-demo-text">Lee en voz alta</div><div class="tut-demo-sub">Escucha el contenido sin mirar</div></div>
+          </div>
         </div>
       </div>
       <div class="tut-bottom">
         <div class="tut-dots"><div class="tut-dot"></div><div class="tut-dot"></div><div class="tut-dot"></div><div class="tut-dot active"></div><div class="tut-dot"></div><div class="tut-dot"></div><div class="tut-dot"></div></div>
-        <button class="tut-btn" onclick="nextTut()">Siguiente →</button>
+        <button class="tut-btn" onclick="nextTut()">Siguiente <i class="ti ti-arrow-right" aria-hidden="true"></i></button>
         <button class="tut-skip" onclick="finishTut()">Saltar</button>
       </div>
     </div>
 
     <!-- Slide 4: Buscar -->
     <div class="tut-slide next" id="ts4">
-      <div class="tut-bg" style="background:#17171f"></div>
+      <div class="tut-bg" style="background:linear-gradient(160deg,#1a1e30 0%,#17171f 100%)"></div>
       <div class="tut-content">
-        <span class="tut-emoji">🔍</span>
+        <div class="tut-icon-wrap" style="background:rgba(10,132,255,.18);border-color:rgba(10,132,255,.3)">
+          <i class="ti ti-search" aria-hidden="true"></i>
+        </div>
         <div class="tut-title">Encuentra cualquier cosa</div>
         <div class="tut-desc">¿No recuerdas en qué caja pusiste algo? Búscalo y BoxVision te dice dónde está.</div>
         <div class="tut-demo">
-          <div class="tut-demo-row"><span class="tut-demo-icon">🔎</span><div><div class="tut-demo-text">Busca desde la pantalla principal</div><div class="tut-demo-sub">Escribe el nombre del objeto</div></div></div>
-          <div class="tut-demo-row"><span class="tut-demo-icon">🤖</span><div><div class="tut-demo-text">Pregunta al asistente</div><div class="tut-demo-sub">Toca 🤖 y escribe lo que buscas</div></div></div>
-          <div class="tut-demo-row"><span class="tut-demo-icon">⭐</span><div><div class="tut-demo-text">Marca favoritas</div><div class="tut-demo-sub">Las cajas más importantes siempre arriba</div></div></div>
-          <div class="tut-demo-row"><span class="tut-demo-icon">↕️</span><div><div class="tut-demo-text">Ordena como quieras</div><div class="tut-demo-sub">Por prioridad, habitación, fecha o nombre</div></div></div>
+          <div class="tut-demo-row">
+            <div class="tut-demo-icon-wrap"><i class="ti ti-search" aria-hidden="true"></i></div>
+            <div><div class="tut-demo-text">Busca desde la pantalla principal</div><div class="tut-demo-sub">Escribe el nombre del objeto</div></div>
+          </div>
+          <div class="tut-demo-row">
+            <div class="tut-demo-icon-wrap" style="background:rgba(10,132,255,.2)"><i class="ti ti-robot" aria-hidden="true" style="color:#0A84FF"></i></div>
+            <div><div class="tut-demo-text">Pregunta al asistente IA</div><div class="tut-demo-sub">Toca el botón IA y escribe lo que buscas</div></div>
+          </div>
+          <div class="tut-demo-row">
+            <div class="tut-demo-icon-wrap"><i class="ti ti-star" aria-hidden="true" style="color:#FFCC00"></i></div>
+            <div><div class="tut-demo-text">Marca favoritas</div><div class="tut-demo-sub">Las cajas más importantes siempre arriba</div></div>
+          </div>
+          <div class="tut-demo-row">
+            <div class="tut-demo-icon-wrap"><i class="ti ti-arrows-sort" aria-hidden="true"></i></div>
+            <div><div class="tut-demo-text">Ordena como quieras</div><div class="tut-demo-sub">Por prioridad, habitación, fecha o nombre</div></div>
+          </div>
         </div>
       </div>
       <div class="tut-bottom">
         <div class="tut-dots"><div class="tut-dot"></div><div class="tut-dot"></div><div class="tut-dot"></div><div class="tut-dot"></div><div class="tut-dot active"></div><div class="tut-dot"></div><div class="tut-dot"></div></div>
-        <button class="tut-btn" onclick="nextTut()">Siguiente →</button>
+        <button class="tut-btn" onclick="nextTut()">Siguiente <i class="ti ti-arrow-right" aria-hidden="true"></i></button>
         <button class="tut-skip" onclick="finishTut()">Saltar</button>
       </div>
     </div>
 
     <!-- Slide 5: Seguridad -->
     <div class="tut-slide next" id="ts5">
-      <div class="tut-bg" style="background:#17171f"></div>
+      <div class="tut-bg" style="background:linear-gradient(160deg,#1e1a18 0%,#17171f 100%)"></div>
       <div class="tut-content">
-        <span class="tut-emoji">🔐</span>
+        <div class="tut-icon-wrap" style="background:rgba(255,149,0,.15);border-color:rgba(255,149,0,.3)">
+          <i class="ti ti-lock" aria-hidden="true"></i>
+        </div>
         <div class="tut-title">Protege tus cajas</div>
         <div class="tut-desc">Algunas cajas merecen más privacidad. BoxVision tiene varias formas de protegerlas.</div>
         <div class="tut-demo">
-          <div class="tut-demo-row"><span class="tut-demo-icon">🔐</span><div><div class="tut-demo-text">Contraseña por caja</div><div class="tut-demo-sub">Nadie puede abrirla sin el código</div></div></div>
-          <div class="tut-demo-row"><span class="tut-demo-icon">🔒</span><div><div class="tut-demo-text">Sellar una caja</div><div class="tut-demo-sub">Cuando terminaste de empacar</div></div></div>
-          <div class="tut-demo-row"><span class="tut-demo-icon">📸</span><div><div class="tut-demo-text">Foto de portada</div><div class="tut-demo-sub">Pon una foto para identificarla rápido</div></div></div>
-          <div class="tut-demo-row"><span class="tut-demo-icon">💬</span><div><div class="tut-demo-text">Comparte por WhatsApp</div><div class="tut-demo-sub">Envía el contenido a quien necesites</div></div></div>
+          <div class="tut-demo-row">
+            <div class="tut-demo-icon-wrap"><i class="ti ti-lock-password" aria-hidden="true"></i></div>
+            <div><div class="tut-demo-text">Contraseña por caja</div><div class="tut-demo-sub">Nadie puede abrirla sin el código</div></div>
+          </div>
+          <div class="tut-demo-row">
+            <div class="tut-demo-icon-wrap"><i class="ti ti-lock" aria-hidden="true"></i></div>
+            <div><div class="tut-demo-text">Sellar una caja</div><div class="tut-demo-sub">Cuando terminaste de empacar</div></div>
+          </div>
+          <div class="tut-demo-row">
+            <div class="tut-demo-icon-wrap"><i class="ti ti-photo" aria-hidden="true"></i></div>
+            <div><div class="tut-demo-text">Foto de portada</div><div class="tut-demo-sub">Pon una foto para identificarla rápido</div></div>
+          </div>
+          <div class="tut-demo-row">
+            <div class="tut-demo-icon-wrap" style="background:rgba(37,211,102,.15)"><i class="ti ti-brand-whatsapp" aria-hidden="true" style="color:#25D366"></i></div>
+            <div><div class="tut-demo-text">Comparte por WhatsApp</div><div class="tut-demo-sub">Envía el contenido a quien necesites</div></div>
+          </div>
         </div>
       </div>
       <div class="tut-bottom">
         <div class="tut-dots"><div class="tut-dot"></div><div class="tut-dot"></div><div class="tut-dot"></div><div class="tut-dot"></div><div class="tut-dot"></div><div class="tut-dot active"></div><div class="tut-dot"></div></div>
-        <button class="tut-btn" onclick="nextTut()">Siguiente →</button>
+        <button class="tut-btn" onclick="nextTut()">Siguiente <i class="ti ti-arrow-right" aria-hidden="true"></i></button>
         <button class="tut-skip" onclick="finishTut()">Saltar</button>
       </div>
     </div>
 
     <!-- Slide 6: Cuenta -->
     <div class="tut-slide next" id="ts6">
-      <div class="tut-bg" style="background:#17171f"></div>
+      <div class="tut-bg" style="background:linear-gradient(160deg,#17221f 0%,#17171f 100%)"></div>
       <div class="tut-content">
-        <span class="tut-emoji">☁️</span>
+        <div class="tut-icon-wrap" style="background:rgba(52,199,89,.15);border-color:rgba(52,199,89,.3)">
+          <i class="ti ti-cloud" aria-hidden="true"></i>
+        </div>
         <div class="tut-title">Todo en tu cuenta</div>
         <div class="tut-desc">Iniciaste sesión con Google. Tus cajas están seguras en la nube y disponibles desde cualquier dispositivo.</div>
         <div class="tut-demo">
-          <div class="tut-demo-row"><span class="tut-demo-icon">📱</span><div><div class="tut-demo-text">Accede desde cualquier celular</div><div class="tut-demo-sub">Tus cajas siempre disponibles</div></div></div>
-          <div class="tut-demo-row"><span class="tut-demo-icon">🔄</span><div><div class="tut-demo-text">Sincronización automática</div><div class="tut-demo-sub">Los cambios se guardan al instante</div></div></div>
-          <div class="tut-demo-row"><span class="tut-demo-icon">👥</span><div><div class="tut-demo-text">Cada cuenta es independiente</div><div class="tut-demo-sub">Tu familia puede tener sus propias cajas</div></div></div>
-          <div class="tut-demo-row"><span class="tut-demo-icon">🗺️</span><div><div class="tut-demo-text">Mapa de habitaciones</div><div class="tut-demo-sub">Organiza tus cajas por espacios</div></div></div>
+          <div class="tut-demo-row">
+            <div class="tut-demo-icon-wrap"><i class="ti ti-device-mobile" aria-hidden="true"></i></div>
+            <div><div class="tut-demo-text">Accede desde cualquier celular</div><div class="tut-demo-sub">Tus cajas siempre disponibles</div></div>
+          </div>
+          <div class="tut-demo-row">
+            <div class="tut-demo-icon-wrap"><i class="ti ti-refresh" aria-hidden="true"></i></div>
+            <div><div class="tut-demo-text">Sincronización automática</div><div class="tut-demo-sub">Los cambios se guardan al instante</div></div>
+          </div>
+          <div class="tut-demo-row">
+            <div class="tut-demo-icon-wrap"><i class="ti ti-users" aria-hidden="true"></i></div>
+            <div><div class="tut-demo-text">Cada cuenta es independiente</div><div class="tut-demo-sub">Tu familia puede tener sus propias cajas</div></div>
+          </div>
+          <div class="tut-demo-row">
+            <div class="tut-demo-icon-wrap"><i class="ti ti-layout-grid" aria-hidden="true"></i></div>
+            <div><div class="tut-demo-text">Mapa de habitaciones</div><div class="tut-demo-sub">Organiza tus cajas por espacios</div></div>
+          </div>
         </div>
       </div>
       <div class="tut-bottom">
         <div class="tut-dots"><div class="tut-dot"></div><div class="tut-dot"></div><div class="tut-dot"></div><div class="tut-dot"></div><div class="tut-dot"></div><div class="tut-dot"></div><div class="tut-dot active"></div></div>
-        <button class="tut-btn" onclick="finishTut()">¡Listo, empezar! 🚀</button>
+        <button class="tut-btn" onclick="finishTut()"><i class="ti ti-rocket" aria-hidden="true"></i> ¡Listo, empezar!</button>
       </div>
     </div>
 
@@ -3847,8 +3988,21 @@ function signInGoogle(){
   const provider = new firebase.auth.GoogleAuthProvider();
   provider.setCustomParameters({prompt: 'select_account'});
 
+  // Detectar si es móvil o archivo local → usar redirect (evita COOP warning y popup bloqueado)
+  const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+  const isFile   = location.protocol === 'file:';
+  const useRedirect = isMobile || isFile;
+
+  if(useRedirect){
+    // Guardar estado de "iniciando sesión" para restaurar UI si vuelve
+    try{ sessionStorage.setItem('bv_login_pending','1'); }catch(e){}
+    auth.signInWithRedirect(provider);
+    return;
+  }
+
+  // Desktop: intentar popup primero
   auth.signInWithPopup(provider).catch(err=>{
-    // Si el popup fue bloqueado por el navegador/móvil, intentar redirect
+    // Popup bloqueado → fallback a redirect silencioso
     if(err.code === 'auth/popup-blocked' || err.code === 'auth/popup-cancelled'){
       console.info("[BoxVision] Popup bloqueado — usando redirect");
       auth.signInWithRedirect(provider);
@@ -4203,8 +4357,16 @@ if(auth){
 
   // ── Capturar resultado de redirect de Google (login en móvil) ──
   // Se llama UNA SOLA VEZ al cargar la página, no en cada click
-  auth.getRedirectResult().catch(err=>{
-    if(err && err.code !== 'auth/null-user'){
+  auth.getRedirectResult().then(result=>{
+    // Limpiar bandera de login pendiente
+    try{ sessionStorage.removeItem('bv_login_pending'); }catch(e){}
+    // Si hay resultado (usuario recién autenticado vía redirect), onAuthStateChanged lo manejará
+    if(result && result.user){
+      console.info("[BoxVision] Login por redirect OK:", result.user.displayName);
+    }
+  }).catch(err=>{
+    try{ sessionStorage.removeItem('bv_login_pending'); }catch(e){}
+    if(err && err.code !== 'auth/null-user' && err.code !== 'auth/no-auth-event'){
       console.warn("[BoxVision] getRedirectResult error:", err.code);
       const errEl = document.getElementById("loginError");
       if(errEl){ errEl.textContent="Error al iniciar sesión. Intenta de nuevo."; errEl.style.display="block"; }
