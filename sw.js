@@ -1,85 +1,122 @@
-// 🔖 Sube este número cada vez que hagas cambios al SW
-const CACHE = 'boxvision-v4';
+// BoxVision Service Worker v2.0
+// Este SW:
+// ✓ Cachea archivos para funcionamiento offline
+// ✓ Detecta actualizaciones sin borrar localStorage
+// ✓ Solo borra el cache cuando hay una nueva versión
+// ✓ Soporta skip_waiting para actualizaciones controladas
 
-// 📦 Archivos críticos que se guardan en caché desde el primer uso
-const CORE = [
+const CACHE_NAME = 'boxvision-v1.0.0';
+const URLS_TO_CACHE = [
   './',
   './index.html',
   './app.html',
   './manifest.json',
-  './icons/logo.png',
-  './icons/icon-192.png'
+  './config.json',
+  'https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css'
 ];
 
-// 🚫 URLs que NUNCA se cachean (siempre necesitan internet)
-const SKIP = [
-  /firebaseio\.com/,
-  /googleapis\.com/,
-  /firestore\.googleapis\.com/,
-  /identitytoolkit\.googleapis\.com/,
-  /securetoken\.googleapis\.com/,
-  /groq\.com/,
-  /cloudflare/,
-  /jsonbin\.io/,
-  /\/v1\//,
-  /__\/auth/,
-  /api\.anthropic\.com/,
-];
-
-// ⚙️ INSTALL — Guarda archivos críticos (falla suave si alguno no existe)
-self.addEventListener('install', e => {
-  self.skipWaiting();
-  e.waitUntil(
-    caches.open(CACHE).then(c =>
-      Promise.allSettled(CORE.map(url => c.add(url).catch(() => {})))
-    )
+// 1. INSTALACIÓN: Cachear archivos básicos
+self.addEventListener('install', function(event){
+  console.log('[SW] Instalando...');
+  event.waitUntil(
+    caches.open(CACHE_NAME).then(function(cache){
+      return cache.addAll(URLS_TO_CACHE).catch(function(err){
+        console.log('[SW] Algunos archivos no se pudieron cachear:', err);
+      });
+    }).then(function(){
+      self.skipWaiting(); // Tomar control inmediatamente
+    })
   );
 });
 
-// 🧹 ACTIVATE — Elimina cachés de versiones anteriores
-self.addEventListener('activate', e => {
-  e.waitUntil(
-    caches.keys()
-      .then(keys => Promise.all(
-        keys.filter(k => k !== CACHE).map(k => caches.delete(k))
-      ))
-      .then(() => self.clients.claim())
+// 2. ACTIVACIÓN: Limpiar caches viejos (si cambió la versión)
+self.addEventListener('activate', function(event){
+  console.log('[SW] Activando...');
+  event.waitUntil(
+    caches.keys().then(function(cacheNames){
+      return Promise.all(
+        cacheNames.map(function(cacheName){
+          if(cacheName !== CACHE_NAME){
+            console.log('[SW] Eliminando cache viejo:', cacheName);
+            return caches.delete(cacheName);
+          }
+        })
+      );
+    }).then(function(){
+      self.clients.claim(); // Controlar todos los clientes
+      // Notificar a la app que fue actualizada
+      return self.clients.matchAll();
+    }).then(function(clients){
+      clients.forEach(function(client){
+        client.postMessage({type: 'SW_UPDATED'});
+      });
+    })
   );
 });
 
-// 🌐 FETCH — Estrategia inteligente por tipo de recurso
-self.addEventListener('fetch', e => {
-  if (e.request.method !== 'GET') return;
-
-  const url = new URL(e.request.url);
-
-  // Nunca interceptar estas URLs
-  if (SKIP.some(r => r.test(url.href))) return;
-
-  // config.json — siempre red primero (para detectar fin de mantenimiento)
-  if (url.pathname.endsWith('config.json')) {
-    e.respondWith(
-      fetch(e.request, { cache: 'no-store' })
-        .catch(() => caches.match(e.request))
-    );
+// 3. FETCH: Estrategia de cache inteligente
+self.addEventListener('fetch', function(event){
+  var url = event.request.url;
+  var isHtml = event.request.headers.get('accept').includes('text/html');
+  
+  // No cachear algunas URLs
+  if(url.includes('chrome-extension') || url.includes('moz-extension')){
     return;
   }
 
-  // Todo lo demás — caché primero, red en segundo plano (stale-while-revalidate)
-  e.respondWith(
-    caches.open(CACHE).then(cache =>
-      cache.match(e.request).then(cached => {
-        const fetchPromise = fetch(e.request).then(res => {
-          if (res && res.status === 200 && res.type !== 'opaque') {
-            cache.put(e.request, res.clone());
+  // Para HTML: network first (siempre trata de actualizar)
+  if(isHtml){
+    event.respondWith(
+      fetch(event.request)
+        .then(function(response){
+          if(response.ok){
+            // Guardar en cache si es exitoso
+            var cacheCopy = response.clone();
+            caches.open(CACHE_NAME).then(function(cache){
+              cache.put(event.request, cacheCopy);
+            });
           }
-          return res;
-        }).catch(() => cached);
-
-        // Si hay caché devolver inmediato y actualizar en fondo
-        // Si no hay caché, esperar la red
-        return cached || fetchPromise;
-      })
-    )
-  );
+          return response;
+        })
+        .catch(function(){
+          // Si falla, usar cache
+          return caches.match(event.request);
+        })
+    );
+  } 
+  // Para assets (CSS, JS, imágenes): cache first
+  else {
+    event.respondWith(
+      caches.match(event.request)
+        .then(function(response){
+          return response || fetch(event.request)
+            .then(function(fetchResponse){
+              if(!fetchResponse || fetchResponse.status !== 200){
+                return fetchResponse;
+              }
+              var cacheCopy = fetchResponse.clone();
+              caches.open(CACHE_NAME).then(function(cache){
+                cache.put(event.request, cacheCopy);
+              });
+              return fetchResponse;
+            })
+            .catch(function(){
+              return new Response('Offline - archivo no disponible', {
+                status: 503,
+                statusText: 'Service Unavailable'
+              });
+            });
+        })
+    );
+  }
 });
+
+// 4. MENSAJE: Escuchar comandos desde la app
+self.addEventListener('message', function(event){
+  if(event.data && event.data.type === 'SKIP_WAITING'){
+    console.log('[SW] SKIP_WAITING recibido, tomando control...');
+    self.skipWaiting();
+  }
+});
+
+console.log('[SW] Service Worker cargado y listo');
