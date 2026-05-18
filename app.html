@@ -1597,6 +1597,8 @@ body{
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-check-compat.js"></script>
+<script src="https://www.google.com/recaptcha/enterprise.js?render=6LcoSe8sAAAAAIHiSCczNBQiy3eLbWQAbC-Muo92" async defer></script>
 <script>
 // ── Detectar si Tabler Icons cargó; si no, inyectar fallback emoji ──────
 (function(){
@@ -1676,6 +1678,15 @@ if(typeof firebase !== 'undefined'){
       });
     }
   }catch(e){ console.warn("[BoxVision] firebase.initializeApp error:", e.message); }
+
+  // ── App Check con reCAPTCHA Enterprise ──
+  try{
+    firebase.appCheck().activate(
+      new firebase.appCheck.ReCaptchaEnterpriseProvider('6LcoSe8sAAAAAIHiSCczNBQiy3eLbWQAbC-Muo92'),
+      true // renovar token automáticamente
+    );
+    console.log("✅ App Check activado");
+  }catch(e){ console.warn("[BoxVision] App Check no disponible:", e.message); }
 }
 
 let auth = null;
