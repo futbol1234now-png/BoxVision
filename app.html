@@ -27,16 +27,16 @@
     name:"BoxVision",
     short_name:"BoxVision",
     description:"Gestor de cajas para mudanzas con QR e IA",
-    start_url:location.pathname+location.search,
-    scope:location.pathname,
+    start_url:"https://futbol1234now-png.github.io/BoxVision/app.html",
+    scope:"https://futbol1234now-png.github.io/BoxVision/",
     display:"standalone",
     orientation:"portrait",
     background_color:"#000000",
     theme_color:"#0A84FF",
     lang:"es",
     icons:[
-      {src:icon192url,sizes:"192x192",type:"image/png",purpose:"any maskable"},
-      {src:icon512url,sizes:"512x512",type:"image/png",purpose:"any maskable"}
+      {src:i192,sizes:"192x192",type:"image/png",purpose:"any maskable"},
+      {src:i512,sizes:"512x512",type:"image/png",purpose:"any maskable"}
     ]
   };
   var blob=new Blob([JSON.stringify(m)],{type:"application/manifest+json"});
@@ -1679,6 +1679,11 @@ if(!auth){
     <div class="settings-sec">
       <div class="settings-sec-label">Ayuda</div>
       <div class="settings-card">
+        <div class="settings-row settings-tappable" onclick="_showBackups()">
+            <div class="settings-icon"><i class="ti ti-database-backup"></i></div>
+            <div class="settings-label">Mis backups</div>
+            <div class="settings-chevron"><i class="ti ti-chevron-right"></i></div>
+        </div>
         <div class="settings-row settings-tappable" onclick="const uid=currentUser?.uid||'guest';localStorage.removeItem('cb-tutorial-done-'+uid);localStorage.removeItem('cb-tutorial-done');document.getElementById('tutorial').classList.add('active');tutStep=0;goTut(0);setTimeout(initTutSwipe,100);">
           <div class="settings-row-icon">📖</div>
           <div class="settings-row-text">
@@ -2688,6 +2693,8 @@ function dupBox(){
 function delBox(){
   if(!confirm("¿Eliminar esta caja?")) return;
   const id=currentBoxId;
+  // Registrar como eliminada para que el merge no la restaure en otros dispositivos
+  _registerDeletedBox(id);
   // Clean related refs in other boxes
   boxes.forEach(b=>{ if(b.related===id) b.related=null; });
   // Clean from room map
@@ -2696,6 +2703,27 @@ function delBox(){
   saveData(); saveRooms();
   showToast("🗑️ Caja eliminada","#FF3B30");
   setTimeout(()=>goMain(),400);
+}
+
+function _registerDeletedBox(id){
+  if(!currentUser) return;
+  // Guardar en localStorage
+  const key="cb-deleted-"+currentUser.uid;
+  let deleted=[];
+  try{ deleted=JSON.parse(localStorage.getItem(key)||"[]"); }catch(e){}
+  if(!deleted.includes(id)){ deleted.push(id); localStorage.setItem(key,JSON.stringify(deleted)); }
+  // Guardar en Firestore
+  if(db){
+    db.collection("users").doc(currentUser.uid).set(
+      {deletedIds: firebase.firestore.FieldValue.arrayUnion(id)},
+      {merge:true}
+    ).catch(()=>{});
+  }
+}
+
+function _getDeletedIds(){
+  if(!currentUser) return [];
+  try{ return JSON.parse(localStorage.getItem("cb-deleted-"+currentUser.uid)||"[]"); }catch(e){ return []; }
 }
 
 function openForm(){
@@ -3003,14 +3031,28 @@ function speakItems(){
 let tutStep=0;
 const TUT_TOTAL=7;
 
-function initTutorial(){
+async function initTutorial(){
   const uid=currentUser?.uid||"guest";
-  const seen=localStorage.getItem("cb-tutorial-done-"+uid)||localStorage.getItem("cb-tutorial-done");
-  if(!seen){
-    document.getElementById("tutorial").classList.add("active");
-    tutStep=0;
-    setTimeout(initTutSwipe,100);
+  // Primero verificar local (rápido)
+  const seenLocal=localStorage.getItem("cb-tutorial-done-"+uid)||localStorage.getItem("cb-tutorial-done");
+  if(seenLocal) return; // Ya visto → no mostrar
+
+  // Si hay Firestore, verificar también ahí (para dispositivos nuevos)
+  if(db && currentUser){
+    try{
+      const doc=await db.collection("users").doc(currentUser.uid).get();
+      if(doc.exists && doc.data().tutorialDone){
+        // Ya lo vio en otro dispositivo → guardar local y no mostrar
+        localStorage.setItem("cb-tutorial-done-"+uid,"1");
+        return;
+      }
+    }catch(e){}
   }
+
+  // No lo ha visto nunca → mostrar
+  document.getElementById("tutorial").classList.add("active");
+  tutStep=0;
+  setTimeout(initTutSwipe,100);
 }
 
 function initTutSwipe(){
@@ -3051,6 +3093,10 @@ function nextTut(){
 function finishTut(){
   const uid=currentUser?.uid||"guest";
   localStorage.setItem("cb-tutorial-done-"+uid,"1");
+  // Guardar en Firestore para que no salga en otros dispositivos
+  if(db && currentUser){
+    db.collection("users").doc(currentUser.uid).set({tutorialDone:true},{merge:true}).catch(()=>{});
+  }
   const tut=document.getElementById("tutorial");
   tut.style.opacity="0";
   tut.style.transition="opacity .3s";
@@ -3993,27 +4039,34 @@ function signInGoogle(){
   const provider = new firebase.auth.GoogleAuthProvider();
   provider.setCustomParameters({prompt: 'select_account'});
 
-  // Detectar si es móvil o archivo local → usar redirect (evita COOP warning y popup bloqueado)
-  const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
-  const isFile   = location.protocol === 'file:';
-  const useRedirect = isMobile || isFile;
+  // Detectar entorno para elegir método de login
+  const isMobile  = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+  const isFile    = location.protocol === 'file:';
+  const isPWA     = window.matchMedia('(display-mode: standalone)').matches
+                 || window.navigator.standalone === true
+                 || document.referrer.includes('android-app://');
+  const isIOS     = /iPhone|iPad|iPod/i.test(navigator.userAgent);
+  const isSafari  = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
+
+  // iOS Safari no soporta bien signInWithRedirect en web normal (sí en PWA)
+  // Android y desktop: redirect en móvil/PWA, popup en desktop
+  const useRedirect = (isMobile && !isIOS) || isFile || (isPWA && !isSafari);
 
   if(useRedirect){
-    // Guardar estado de "iniciando sesión" para restaurar UI si vuelve
     try{ sessionStorage.setItem('bv_login_pending','1'); }catch(e){}
     auth.signInWithRedirect(provider);
     return;
   }
 
-  // Desktop: intentar popup primero
+  // iOS Safari / Desktop: usar popup
   auth.signInWithPopup(provider).catch(err=>{
-    // Popup bloqueado → fallback a redirect silencioso
     if(err.code === 'auth/popup-blocked' || err.code === 'auth/popup-cancelled'){
+      // Popup bloqueado en iOS PWA → redirect como último recurso
       console.info("[BoxVision] Popup bloqueado — usando redirect");
+      try{ sessionStorage.setItem('bv_login_pending','1'); }catch(e){}
       auth.signInWithRedirect(provider);
       return;
     }
-    // Usuario cerró el popup: restaurar botón sin mensaje de error
     if(btn) btn.style.display = "flex";
     if(loading) loading.style.display = "none";
     if(err.code !== 'auth/popup-closed-by-user' && err.code !== 'auth/cancelled-popup-request'){
@@ -4071,8 +4124,10 @@ function confirmDeleteAll(){
   if(currentUser && db){
     const userRef = db.collection('users').doc(currentUser.uid);
     const batch = db.batch();
-    batch.set(userRef,{boxes:[], rooms:[], chunkCount:0,
+    batch.set(userRef,{boxes:[], rooms:[], chunkCount:0, deletedIds:[],
       updatedAt: firebase.firestore.FieldValue.serverTimestamp()},{merge:false});
+    // Limpiar deletedIds locales también
+    localStorage.removeItem("cb-deleted-"+currentUser.uid);
     // FIX #2: usar prevCount leído antes del reset + margen de 5 por seguridad
     for(let i=0;i<prevCount+5;i++){
       batch.delete(userRef.collection("chunks").doc(String(i)));
@@ -4162,6 +4217,114 @@ function _chunkBoxes(lean){
   return chunks;
 }
 
+
+
+// ── Ver backups disponibles ───────────────────────────────────────────────────
+async function _showBackups(){
+  if(!currentUser || !db){ showToast("⚠️ Necesitas estar conectado","#FF9500"); return; }
+  showToast("🔍 Cargando backups...","#0A84FF");
+  try{
+    const snap = await db.collection("users").doc(currentUser.uid)
+      .collection("backups").orderBy("date","desc").get();
+
+    if(snap.empty){
+      showToast("No hay backups aún — se crean automáticamente cada día","#8E8E93");
+      return;
+    }
+
+    const items = snap.docs.map(d=>d.data());
+    const list = items.map(b=>
+      `<div style="display:flex;align-items:center;justify-content:space-between;padding:14px 0;border-bottom:1px solid rgba(255,255,255,0.07);">
+        <div>
+          <div style="font-weight:600;font-size:15px;">${b.date}</div>
+          <div style="font-size:12px;color:#8E8E93;margin-top:2px;">${b.boxCount} cajas guardadas</div>
+        </div>
+        <button onclick="_restoreBackup('${b.date}')" style="background:#0A84FF;color:#fff;border:none;border-radius:10px;padding:8px 14px;font-size:13px;font-weight:600;cursor:pointer;">Restaurar</button>
+      </div>`
+    ).join('');
+
+    const modal = document.createElement('div');
+    modal.style.cssText = 'position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,0.7);display:flex;align-items:flex-end;';
+    modal.innerHTML = `
+      <div style="background:#1e1e28;border-radius:24px 24px 0 0;padding:24px;width:100%;max-height:70vh;overflow-y:auto;">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
+          <h3 style="font-size:18px;font-weight:700;">💾 Mis Backups</h3>
+          <button onclick="this.closest('[style]').remove()" style="background:rgba(255,255,255,0.1);border:none;color:#fff;border-radius:50%;width:32px;height:32px;font-size:16px;cursor:pointer;">✕</button>
+        </div>
+        <p style="font-size:13px;color:#8E8E93;margin-bottom:16px;">Backups automáticos diarios — los últimos ${BACKUP_MAX} días.</p>
+        ${list}
+      </div>`;
+    document.body.appendChild(modal);
+  }catch(e){
+    showToast("Error al cargar backups","#FF3B30");
+  }
+}
+
+async function _restoreBackup(date){
+  if(!confirm("¿Restaurar el backup del "+date+"? Tus cajas actuales se reemplazarán.")) return;
+  try{
+    const doc = await db.collection("users").doc(currentUser.uid)
+      .collection("backups").doc(date).get();
+    if(!doc.exists){ showToast("Backup no encontrado","#FF3B30"); return; }
+    boxes = doc.data().boxes || [];
+    restoreThumbs();
+    await saveToFirestore();
+    renderMain();
+    document.querySelectorAll('[style*="inset:0"][style*="z-index:9999"]').forEach(el=>el.remove());
+    showToast("✅ Backup restaurado — "+boxes.length+" cajas","#34C759");
+  }catch(e){
+    showToast("Error al restaurar","#FF3B30");
+  }
+}
+
+// ── Backup automático diario ─────────────────────────────────────────────────
+// Guarda una copia de las cajas del usuario en backups/{fecha} una vez al día.
+// Máximo 7 backups — el más antiguo se elimina automáticamente.
+const BACKUP_MAX = 7;
+
+async function _maybeBackup(){
+  if(!currentUser || !db || boxes.length === 0) return;
+  try{
+    const todayKey = new Date().toISOString().slice(0,10); // "2026-05-17"
+    const lastBackup = localStorage.getItem("cb-last-backup-"+currentUser.uid);
+    if(lastBackup === todayKey) return; // Ya se hizo el backup de hoy
+
+    const userRef = db.collection("users").doc(currentUser.uid);
+    const backupsRef = userRef.collection("backups");
+
+    // Leer backups existentes para rotar (máx BACKUP_MAX)
+    const existing = await backupsRef.orderBy("date","asc").get();
+    const batch = db.batch();
+
+    // Eliminar los más antiguos si ya hay BACKUP_MAX
+    if(existing.size >= BACKUP_MAX){
+      const toDelete = existing.docs.slice(0, existing.size - BACKUP_MAX + 1);
+      toDelete.forEach(d=>batch.delete(d.ref));
+    }
+
+    // Guardar backup de hoy (sin fotos base64 para no gastar cuota)
+    const lean = boxes.map(b=>{
+      const c = JSON.parse(JSON.stringify(b));
+      delete c.photo;
+      c.items = (b.items||[]).map(i=>({text:i.text, done:i.done}));
+      return c;
+    });
+
+    batch.set(backupsRef.doc(todayKey), {
+      date: todayKey,
+      createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+      boxCount: lean.length,
+      boxes: lean
+    });
+
+    await batch.commit();
+    localStorage.setItem("cb-last-backup-"+currentUser.uid, todayKey);
+    console.log("💾 Backup diario guardado:", todayKey, `(${lean.length} cajas)`);
+  }catch(e){
+    console.warn("Backup error:", e);
+  }
+}
+
 async function saveToFirestore(){
   if(!currentUser || !db) return;
   // GUARD: nunca sobreescribir Firestore con array vacío si hay datos remotos
@@ -4192,10 +4355,12 @@ async function saveToFirestore(){
     const batch=db.batch();
     const userRef=db.collection("users").doc(currentUser.uid);
 
-    // Metadata: cuántos chunks hay
+    // Metadata: cuántos chunks hay + deletedIds para sync entre dispositivos
+    const _deletedIds = _getDeletedIds ? _getDeletedIds() : [];
     batch.set(userRef,{
       chunkCount: chunks.length,
       rooms: rooms,
+      deletedIds: _deletedIds,
       updatedAt: (typeof firebase!=="undefined"&&firebase.firestore)
         ? firebase.firestore.FieldValue.serverTimestamp() : null
     },{merge:true});
@@ -4258,26 +4423,23 @@ window.addEventListener("pagehide", ()=>{
 // ── Merge inteligente: combina cajas locales y remotas por ID ────────────────
 // Para cada ID, gana la versión con lastModified más reciente.
 // Las cajas que solo existen en un lado se incluyen siempre.
-function _mergeBoxes(local, remote){
+function _mergeBoxes(local, remote, deletedIds=[]){
+  const deleted = new Set(deletedIds);
   const map = new Map();
-  // Primero cargar todas las locales
+  // Cargar locales (excluyendo las eliminadas)
   for(const b of local){
-    map.set(b.id, b);
+    if(!deleted.has(b.id)) map.set(b.id, b);
   }
-  // Luego aplicar las remotas: gana quien tenga lastModified mayor
+  // Aplicar remotas: gana quien tenga lastModified mayor; respetar eliminadas
   for(const rb of remote){
+    if(deleted.has(rb.id)) continue; // fue eliminada → no restaurar
     const lb = map.get(rb.id);
     if(!lb){
-      // Caja nueva que no tenemos localmente → agregarla siempre
       map.set(rb.id, rb);
     } else {
-      // Existe en ambos lados → gana el más reciente
       const remoteTs = rb.lastModified || rb.lastUsed || 0;
       const localTs  = lb.lastModified || lb.lastUsed || 0;
-      if(remoteTs > localTs){
-        map.set(rb.id, rb);
-      }
-      // si local es más reciente, ya está en el map → no hacer nada
+      if(remoteTs > localTs) map.set(rb.id, rb);
     }
   }
   return Array.from(map.values());
@@ -4326,8 +4488,14 @@ async function loadFromFirestore(){
         console.log(`📥 Firestore (legacy): ${remote.length} cajas`);
       }
 
-      // ── MERGE: fusionar local + remoto por ID ──────────────────────────────
-      const merged = _mergeBoxes(localBoxes, remote);
+      // ── MERGE: fusionar local + remoto por ID (respetando eliminadas) ──────
+      // Combinar deletedIds locales + remotas
+      let localDeleted = _getDeletedIds();
+      const remoteDeleted = data.deletedIds || [];
+      const allDeleted = [...new Set([...localDeleted, ...remoteDeleted])];
+      // Sincronizar deletedIds localmente
+      if(currentUser) localStorage.setItem("cb-deleted-"+currentUser.uid, JSON.stringify(allDeleted));
+      const merged = _mergeBoxes(localBoxes, remote, allDeleted);
       console.log(`🔀 Merge: ${localBoxes.length} local + ${remote.length} remoto → ${merged.length} total`);
       boxes = merged;
 
@@ -4473,6 +4641,8 @@ if(auth){
     try{
       await loadFromFirestore();
       renderMain();
+      // Backup diario silencioso (no bloquea la UI)
+      setTimeout(()=>_maybeBackup().catch(()=>{}), 3000);
     }catch(e){
       console.warn("[BoxVision] loadFromFirestore falló en launchApp:", e);
     }finally{
@@ -4500,16 +4670,18 @@ if(auth){
   // Evita que salga de la app o muestre el login al navegar hacia atrás
   history.replaceState({bv:true}, "");
   window.addEventListener("popstate", function(e){
-    // Si hay usuario activo, siempre quedarse en la app
-    if(currentUser || _lastLaunchedUid){
-      // Si estaba en detailScreen, volver a main
+    // SIEMPRE interceptar el atrás — nunca dejar que el usuario vea el landing
+    // si ya inició sesión o está en proceso de auth
+    const hasSession = currentUser || _lastLaunchedUid ||
+      (typeof firebase !== "undefined" && firebase.auth && firebase.auth().currentUser);
+
+    if(hasSession){
       const detail = document.getElementById("detailScreen");
       if(detail && !detail.classList.contains("hidden")){
         history.pushState({bv:true}, "");
         goMain();
         return;
       }
-      // Si estaba en room/settings, volver a main
       const room = document.getElementById("roomScreen");
       const settings = document.getElementById("settingsScreen");
       if((room && !room.classList.contains("hidden")) ||
@@ -4518,7 +4690,9 @@ if(auth){
         goMain();
         return;
       }
-      // En cualquier otro caso, empujar un nuevo estado para no salir
+      history.pushState({bv:true}, "");
+    } else {
+      // Sin sesión: también bloquear para que no salga de la app
       history.pushState({bv:true}, "");
     }
   });
@@ -4597,7 +4771,25 @@ if(auth){
       .then(function(r){
         if(r.ok){
           navigator.serviceWorker.register('sw.js')
-            .then(function(reg){ console.log('[BoxVision] SW registrado, scope:', reg.scope); })
+            .then(function(reg){
+              console.log('[BoxVision] SW registrado, scope:', reg.scope);
+              // Detectar nueva versión del SW disponible
+              reg.addEventListener('updatefound', function(){
+                const newWorker = reg.installing;
+                if(!newWorker) return;
+                newWorker.addEventListener('statechange', function(){
+                  if(newWorker.state === 'installed' && navigator.serviceWorker.controller){
+                    // Hay nueva versión — mostrar banner
+                    const nb = document.createElement('div');
+                    nb.style.cssText = 'position:fixed;bottom:80px;left:16px;right:16px;z-index:9999;background:#0A84FF;color:#fff;border-radius:14px;padding:14px 16px;display:flex;align-items:center;justify-content:space-between;box-shadow:0 4px 24px rgba(0,0,0,.4);font-size:14px;font-weight:600;';
+                    nb.innerHTML = '<span>🆕 Nueva versión disponible</span><button onclick="window.location.reload()" style="background:rgba(255,255,255,.2);border:none;color:#fff;border-radius:8px;padding:6px 14px;font-weight:700;cursor:pointer;font-size:13px;">Actualizar</button>';
+                    document.body.appendChild(nb);
+                  }
+                });
+              });
+              // Verificar actualizaciones cada 30 minutos
+              setInterval(function(){ reg.update(); }, 30*60*1000);
+            })
             .catch(function(e){ console.info('[BoxVision] SW no disponible:', e.message); });
         } else {
           console.info('[BoxVision] sw.js no encontrado — PWA offline desactivado (normal en archivo único)');
@@ -4611,14 +4803,32 @@ if(auth){
   // y currentUser ya estén disponibles cuando se disparen los eventos.
   var _wasOffline = !navigator.onLine;
 
+  // Crear indicador offline en topbar
+  function _setOfflineBanner(show){
+    let banner = document.getElementById('bv-offline-banner');
+    if(show){
+      if(!banner){
+        banner = document.createElement('div');
+        banner.id = 'bv-offline-banner';
+        banner.style.cssText = 'position:fixed;top:0;left:0;right:0;z-index:9999;background:#FF9500;color:#fff;text-align:center;font-size:12px;font-weight:600;padding:6px 16px;letter-spacing:.3px;pointer-events:none;';
+        banner.textContent = '📵 Sin internet — los cambios se guardarán cuando vuelva la conexión';
+        document.body.appendChild(banner);
+      }
+    } else {
+      if(banner) banner.remove();
+    }
+  }
+
+  // Mostrar banner si arranca offline
+  if(!navigator.onLine) _setOfflineBanner(true);
+
   window.addEventListener('online', function(){
     if(!_wasOffline) return;
     _wasOffline = false;
-    // showToast está definida más arriba en el mismo body
+    _setOfflineBanner(false);
     if(typeof showToast === 'function'){
       showToast('🌐 Conexión restaurada — sincronizando...', '#34C759');
     }
-    // Subir cambios pendientes a Firestore
     setTimeout(function(){
       if(typeof saveToFirestore === 'function' && typeof currentUser !== 'undefined' && currentUser){
         saveToFirestore();
@@ -4628,6 +4838,7 @@ if(auth){
 
   window.addEventListener('offline', function(){
     _wasOffline = true;
+    _setOfflineBanner(true);
     if(typeof showToast === 'function'){
       showToast('📵 Sin internet — funcionando offline', '#FF9500');
     }
@@ -4740,4 +4951,3 @@ if(auth){
 </script>
 </body>
 </html>
-
