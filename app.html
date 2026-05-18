@@ -1852,7 +1852,7 @@ if(!auth){
       <div class="sp-stat-bar"><div class="sp-stat-bar-fill" id="sp-bar-f" style="width:0%;background:var(--orange)"></div></div>
     </div>
   </div>
-  <div class="sp-last" id="spLast">
+  <div class="sp-last" id="spLast" style="display:none!important">
     <div class="sp-last-lbl"><i class="ti ti-history" style="font-size:10px;vertical-align:0px;margin-right:3px"></i>Última caja abierta</div>
     <div class="sp-last-row">
       <div class="sp-last-icon-wrap">
@@ -2556,21 +2556,6 @@ function _renderSplashStats(animate){
     document.getElementById('sp-c').textContent = nBoxes;
     document.getElementById('sp-o').textContent = total;
     document.getElementById('sp-f').textContent = favs;
-  }
-  // Última caja
-  const last = boxes.slice().sort((a,b)=>(b.lastUsed||0)-(a.lastUsed||0))[0];
-  const spLast = document.getElementById('spLast');
-  if(last && spLast){
-    spLast.style.display='block';
-    document.getElementById('spLastIcon').textContent = getIcon(last.name);
-    document.getElementById('spLastName').textContent = last.name;
-    const done = last.items.filter(i=>i.done).length;
-    const sub = last.items.length+' objeto'+(last.items.length!==1?'s':'');
-    const prog = last.items.length ? ' · '+done+'/'+last.items.length+' sacados' : '';
-    const loc  = last.location ? ' · '+last.location : '';
-    document.getElementById('spLastSub').textContent = sub+prog+loc;
-  } else if(spLast){
-    spLast.style.display='none';
   }
 }
 // Actualiza solo los contadores del splash sin redibujar toda la pantalla
