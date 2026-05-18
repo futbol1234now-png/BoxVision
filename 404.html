@@ -2,328 +2,222 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>BoxVision — Seguimos Mejorando</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#17171f">
+<title>BoxVision — Mantenimiento</title>
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@400;500&display=swap');
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 
-  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+body{
+  font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','Segoe UI',sans-serif;
+  background:#17171f;
+  color:#fff;
+  min-height:100vh;
+  min-height:100dvh;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  padding:32px 24px;
+  text-align:center;
+  overflow:hidden;
+  position:relative;
+}
 
-  :root {
-    --bg: #0d0d14;
-    --card: #13131e;
-    --gold: #F5A623;
-    --gold2: #FFD166;
-    --blue: #0A84FF;
-    --text: #ffffff;
-    --muted: rgba(255,255,255,0.45);
-    --border: rgba(255,255,255,0.07);
-  }
+/* Orbes de fondo — igual que el splash */
+body::before{
+  content:'';
+  position:fixed;inset:0;pointer-events:none;
+  background:
+    radial-gradient(ellipse 70% 50% at 50% 0%,rgba(10,132,255,0.18) 0%,transparent 70%),
+    radial-gradient(ellipse 40% 30% at 15% 80%,rgba(88,86,214,0.12) 0%,transparent 60%),
+    radial-gradient(ellipse 35% 25% at 85% 75%,rgba(255,149,0,0.07) 0%,transparent 60%);
+}
 
-  html, body {
-    height: 100%;
-    background: var(--bg);
-    color: var(--text);
-    font-family: 'DM Sans', sans-serif;
-    overflow: hidden;
-  }
+/* Ícono */
+.icon-wrap{
+  position:relative;
+  width:100px;height:100px;
+  display:flex;align-items:center;justify-content:center;
+  margin-bottom:28px;
+}
+.icon-glow{
+  position:absolute;inset:-20px;
+  background:radial-gradient(circle,rgba(10,132,255,0.3) 0%,transparent 70%);
+  border-radius:50%;
+  animation:glowPulse 3s ease-in-out infinite;
+}
+@keyframes glowPulse{
+  0%,100%{transform:scale(1);opacity:.6}
+  50%{transform:scale(1.2);opacity:1}
+}
+.icon-ring{
+  position:absolute;inset:-6px;
+  border-radius:50%;
+  border:1.5px solid rgba(10,132,255,0.3);
+  animation:ringRot 10s linear infinite;
+}
+.icon-ring::before{
+  content:'';position:absolute;
+  width:7px;height:7px;background:#0A84FF;border-radius:50%;
+  top:-3.5px;left:50%;transform:translateX(-50%);
+  box-shadow:0 0 8px 2px rgba(10,132,255,0.6);
+}
+@keyframes ringRot{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+.icon-bg{
+  width:84px;height:84px;border-radius:24px;
+  background:linear-gradient(145deg,#1e2d47,#152039);
+  border:1px solid rgba(10,132,255,0.25);
+  box-shadow:0 8px 32px rgba(0,0,0,0.45),0 0 0 1px rgba(255,255,255,0.05);
+  display:flex;align-items:center;justify-content:center;
+  position:relative;z-index:1;
+  font-size:40px;line-height:1;
+}
 
-  /* Fondo animado */
-  .bg-glow {
-    position: fixed;
-    inset: 0;
-    pointer-events: none;
-    z-index: 0;
-  }
-  .glow-1 {
-    position: absolute;
-    width: 600px; height: 600px;
-    top: -200px; left: 50%;
-    transform: translateX(-50%);
-    background: radial-gradient(circle, rgba(245,166,35,0.12) 0%, transparent 70%);
-    animation: pulse 4s ease-in-out infinite;
-  }
-  .glow-2 {
-    position: absolute;
-    width: 400px; height: 400px;
-    bottom: -100px; left: -100px;
-    background: radial-gradient(circle, rgba(10,132,255,0.08) 0%, transparent 70%);
-    animation: pulse 6s ease-in-out infinite reverse;
-  }
-  .glow-3 {
-    position: absolute;
-    width: 300px; height: 300px;
-    bottom: 50px; right: -50px;
-    background: radial-gradient(circle, rgba(245,166,35,0.06) 0%, transparent 70%);
-    animation: pulse 5s ease-in-out infinite 1s;
-  }
-  @keyframes pulse {
-    0%, 100% { opacity: 1; transform: translateX(-50%) scale(1); }
-    50% { opacity: 0.6; transform: translateX(-50%) scale(1.1); }
-  }
-  .glow-2, .glow-3 { animation: pulse2 5s ease-in-out infinite; }
-  @keyframes pulse2 {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0.5; }
-  }
+/* Texto */
+.title{
+  font-size:28px;font-weight:800;letter-spacing:-.6px;
+  margin-bottom:10px;
+  background:linear-gradient(135deg,#fff 30%,rgba(180,210,255,0.85));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+}
+.subtitle{
+  font-size:15px;color:rgba(255,255,255,.55);
+  line-height:1.6;max-width:280px;margin:0 auto 36px;
+}
 
-  /* Grid de puntos */
-  .dots-bg {
-    position: fixed;
-    inset: 0;
-    background-image: radial-gradient(rgba(255,255,255,0.04) 1px, transparent 1px);
-    background-size: 32px 32px;
-    pointer-events: none;
-    z-index: 0;
-  }
+/* Tarjeta de estado */
+.card{
+  background:rgba(255,255,255,.06);
+  border:0.5px solid rgba(255,255,255,.1);
+  border-radius:20px;
+  padding:18px 22px;
+  display:flex;align-items:center;gap:14px;
+  max-width:320px;width:100%;
+  margin-bottom:32px;
+  backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
+  box-shadow:0 4px 20px rgba(0,0,0,.25),inset 0 1px 0 rgba(255,255,255,.06);
+}
+.card-dot{
+  width:10px;height:10px;border-radius:50%;
+  background:#0A84FF;
+  flex-shrink:0;
+  box-shadow:0 0 8px 2px rgba(10,132,255,.4);
+  animation:dotPulse 3s ease-in-out infinite;
+}
+@keyframes dotPulse{
+  0%,100%{opacity:.9;transform:scale(1)}
+  50%{opacity:.5;transform:scale(.9)}
+}
+.card-text{
+  text-align:left;
+}
+.card-label{
+  font-size:13px;font-weight:700;color:#fff;letter-spacing:.1px;
+}
+.card-sub{
+  font-size:11px;color:rgba(255,255,255,.45);margin-top:2px;
+}
 
-  /* Contenido */
-  .container {
-    position: relative;
-    z-index: 1;
-    height: 100vh;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    padding: 32px 24px;
-    text-align: center;
-  }
+/* Indicador de comprobación */
+.checking{
+  display:flex;align-items:center;gap:10px;
+  color:rgba(255,255,255,.35);
+  font-size:13px;font-weight:500;
+}
+.check-spinner{
+  width:16px;height:16px;flex-shrink:0;
+  border:1.5px solid rgba(255,255,255,.1);
+  border-top-color:rgba(255,255,255,.35);
+  border-radius:50%;
+  animation:spin 1.2s linear infinite;
+}
+@keyframes spin{to{transform:rotate(360deg)}}
 
-  /* Logo */
-  .logo-wrap {
-    position: relative;
-    margin-bottom: 32px;
-    animation: floatIn 0.8s cubic-bezier(0.34,1.56,0.64,1) both;
-  }
-  .logo-box {
-    width: 96px; height: 96px;
-    background: linear-gradient(135deg, #1a1a2e, #16213e);
-    border-radius: 26px;
-    border: 1px solid rgba(245,166,35,0.2);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 48px;
-    box-shadow: 0 0 40px rgba(245,166,35,0.15), 0 8px 32px rgba(0,0,0,0.5);
-    position: relative;
-    overflow: hidden;
-  }
-  .logo-box::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(135deg, rgba(245,166,35,0.1), transparent);
-    border-radius: inherit;
-  }
-  .logo-shine {
-    position: absolute;
-    top: -2px; left: -2px; right: -2px;
-    height: 50%;
-    background: linear-gradient(180deg, rgba(255,255,255,0.08), transparent);
-    border-radius: 26px 26px 0 0;
-    pointer-events: none;
-  }
-  .logo-badge {
-    position: absolute;
-    top: -6px; right: -6px;
-    width: 24px; height: 24px;
-    background: var(--gold);
-    border-radius: 50%;
-    border: 2px solid var(--bg);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 11px;
-    animation: spin 3s linear infinite;
-  }
-  @keyframes spin {
-    from { transform: rotate(0deg); }
-    to { transform: rotate(360deg); }
-  }
+/* Dots decorativos abajo */
+.footer{
+  position:fixed;bottom:max(24px,env(safe-area-inset-bottom));
+  font-size:12px;color:rgba(255,255,255,.25);
+  letter-spacing:.2px;
+}
 
-  /* Nombre */
-  .brand {
-    font-family: 'Syne', sans-serif;
-    font-size: 13px;
-    font-weight: 700;
-    letter-spacing: 3px;
-    text-transform: uppercase;
-    color: var(--gold);
-    margin-bottom: 24px;
-    animation: floatIn 0.8s cubic-bezier(0.34,1.56,0.64,1) 0.1s both;
-  }
-
-  /* Título */
-  .title {
-    font-family: 'Syne', sans-serif;
-    font-size: clamp(32px, 8vw, 52px);
-    font-weight: 800;
-    line-height: 1.05;
-    margin-bottom: 16px;
-    animation: floatIn 0.8s cubic-bezier(0.34,1.56,0.64,1) 0.2s both;
-  }
-  .title .highlight {
-    background: linear-gradient(135deg, var(--gold), var(--gold2));
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-  }
-
-  /* Subtítulo */
-  .subtitle {
-    font-size: 17px;
-    color: var(--muted);
-    margin-bottom: 40px;
-    line-height: 1.5;
-    max-width: 320px;
-    animation: floatIn 0.8s cubic-bezier(0.34,1.56,0.64,1) 0.3s both;
-  }
-
-  /* Card de estado */
-  .status-card {
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: 20px;
-    padding: 20px 28px;
-    margin-bottom: 32px;
-    display: flex;
-    align-items: center;
-    gap: 14px;
-    animation: floatIn 0.8s cubic-bezier(0.34,1.56,0.64,1) 0.4s both;
-    box-shadow: 0 4px 32px rgba(0,0,0,0.3);
-  }
-  .status-dot {
-    width: 10px; height: 10px;
-    border-radius: 50%;
-    background: var(--gold);
-    flex-shrink: 0;
-    box-shadow: 0 0 8px var(--gold);
-    animation: blink 1.5s ease-in-out infinite;
-  }
-  @keyframes blink {
-    0%, 100% { opacity: 1; box-shadow: 0 0 8px var(--gold); }
-    50% { opacity: 0.4; box-shadow: 0 0 2px var(--gold); }
-  }
-  .status-text {
-    font-size: 14px;
-    color: rgba(255,255,255,0.7);
-    font-weight: 500;
-  }
-  .status-text strong {
-    color: var(--text);
-  }
-
-  /* Footer info */
-  .footer-info {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 8px;
-    animation: floatIn 0.8s cubic-bezier(0.34,1.56,0.64,1) 0.5s both;
-  }
-  .footer-email {
-    font-size: 13px;
-    color: var(--blue);
-    text-decoration: none;
-    font-weight: 500;
-    padding: 6px 14px;
-    border: 1px solid rgba(10,132,255,0.3);
-    border-radius: 20px;
-    transition: all 0.2s;
-  }
-  .footer-email:hover {
-    background: rgba(10,132,255,0.1);
-    border-color: rgba(10,132,255,0.6);
-  }
-  .footer-version {
-    font-size: 11px;
-    color: var(--muted);
-    letter-spacing: 1px;
-  }
-
-  /* Partículas flotantes */
-  .particle {
-    position: fixed;
-    border-radius: 50%;
-    pointer-events: none;
-    opacity: 0;
-    animation: floatParticle linear infinite;
-  }
-  @keyframes floatParticle {
-    0% { transform: translateY(100vh) scale(0); opacity: 0; }
-    10% { opacity: 0.6; }
-    90% { opacity: 0.2; }
-    100% { transform: translateY(-20px) scale(1); opacity: 0; }
-  }
-
-  @keyframes floatIn {
-    from { opacity: 0; transform: translateY(20px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
+/* Animación de entrada */
+.content{
+  display:flex;flex-direction:column;align-items:center;
+  animation:slideUp .5s cubic-bezier(.34,1.3,.64,1) both;
+}
+@keyframes slideUp{
+  from{opacity:0;transform:translateY(18px)}
+  to{opacity:1;transform:translateY(0)}
+}
 </style>
 </head>
 <body>
 
-<div class="dots-bg"></div>
-<div class="bg-glow">
-  <div class="glow-1"></div>
-  <div class="glow-2"></div>
-  <div class="glow-3"></div>
-</div>
+<div class="content">
 
-<div class="container">
-
-  <div class="logo-wrap">
-    <div class="logo-box">
-      📦
-      <div class="logo-shine"></div>
-    </div>
-    <div class="logo-badge">⚙️</div>
+  <div class="icon-wrap">
+    <div class="icon-glow"></div>
+    <div class="icon-ring"></div>
+    <div class="icon-bg">📦</div>
   </div>
 
-  <div class="brand">BoxVision</div>
+  <div class="title">Volvemos pronto</div>
+  <div class="subtitle">Estamos puliendo algunas cosas.<br>No tardaremos mucho.</div>
 
-  <h1 class="title">
-    Seguimos<br><span class="highlight">Mejorando</span>
-  </h1>
-
-  <p class="subtitle">
-    Vuelve pronto — estamos trabajando para darte la mejor experiencia.
-  </p>
-
-  <div class="status-card">
-    <div class="status-dot"></div>
-    <div class="status-text">
-      <strong>Mantenimiento en curso</strong> — Estaremos de vuelta muy pronto
+  <div class="card">
+    <div class="card-dot"></div>
+    <div class="card-text">
+      <div class="card-label">Todo bajo control</div>
+      <div class="card-sub">La app estará lista en un momento</div>
     </div>
   </div>
 
-  <div class="footer-info">
-    <a class="footer-email" href="mailto:futbol1234now@gmail.com">
-      futbol1234now@gmail.com
-    </a>
-    <div class="footer-version">BoxVision v1.1</div>
+  <div class="checking">
+    <div class="check-spinner"></div>
+    <span id="checkMsg">Revisando disponibilidad…</span>
   </div>
 
 </div>
+
+<div class="footer">BoxVision · futbol1234now-png.github.io</div>
 
 <script>
-  // Partículas flotantes
-  const colors = ['#F5A623','#FFD166','#0A84FF','#34C759'];
-  for(let i = 0; i < 12; i++){
-    const p = document.createElement('div');
-    p.className = 'particle';
-    const size = Math.random() * 6 + 3;
-    p.style.cssText = `
-      width:${size}px;height:${size}px;
-      left:${Math.random()*100}%;
-      background:${colors[Math.floor(Math.random()*colors.length)]};
-      animation-duration:${Math.random()*10+8}s;
-      animation-delay:${Math.random()*8}s;
-    `;
-    document.body.appendChild(p);
+(function(){
+  var msg = document.getElementById('checkMsg');
+  var attempts = 0;
+  var maxAttempts = 20;
+  var appUrl = location.origin + '/BoxVision/app.html';
+
+  function setMsg(text){ if(msg) msg.textContent = text; }
+
+  function tryReload(){
+    attempts++;
+    if(attempts > maxAttempts){
+      setMsg('Seguimos trabajando en ello…');
+      return;
+    }
+    setMsg('Revisando disponibilidad…');
+    fetch(appUrl, {method:'HEAD', cache:'no-store'})
+      .then(function(r){
+        if(r.ok){
+          setMsg('¡Ya está lista! Redirigiendo…');
+          setTimeout(function(){ window.location.href = appUrl; }, 800);
+        } else {
+          setMsg('Aún no está lista, seguimos…');
+        }
+      })
+      .catch(function(){
+        setMsg('Revisando disponibilidad…');
+      });
   }
+
+  // Primera comprobación a los 10s, luego cada 30s
+  setTimeout(tryReload, 10000);
+  setInterval(tryReload, 30000);
+})();
 </script>
 </body>
 </html>
