@@ -56,6 +56,7 @@ body{
   background:var(--bg);color:var(--text);min-height:100vh;
   position:relative;
 }
+body.splash-active{overflow:hidden;height:100vh;}
 body::before{
   content:'';
   position:fixed;inset:0;
@@ -84,7 +85,7 @@ input,button,textarea,select{font-family:inherit}
 .tbtn{background:rgba(255,255,255,.09);border:0.5px solid rgba(255,255,255,.12);border-radius:12px;width:44px;height:44px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:17px;color:rgba(255,255,255,.8);transition:transform .15s cubic-bezier(.34,1.56,.64,1),background .15s}
 .tbtn-accent{background:linear-gradient(135deg,#0A84FF,#5E5CE6);border:none;color:#fff}
 
-#splash{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;padding:40px 24px;text-align:center;transition:background 1s;background:linear-gradient(160deg,#17171f 0%,#1a1a2e 60%,#17171f 100%)}
+#splash{display:flex;flex-direction:column;align-items:center;justify-content:center;height:100vh;max-height:100vh;overflow:hidden;padding:40px 24px;text-align:center;transition:background 1s;background:linear-gradient(160deg,#17171f 0%,#1a1a2e 60%,#17171f 100%)}
 .sp-icon{font-size:72px;margin-bottom:16px}
 .sp-title{font-size:32px;font-weight:800;letter-spacing:-.8px;margin-bottom:4px;color:#fff;text-shadow:0 2px 12px rgba(0,0,0,.4)}
 .sp-brand{font-size:15px;color:rgba(255,255,255,.85);font-weight:600;margin-bottom:8px}
@@ -260,20 +261,36 @@ input,button,textarea,select{font-family:inherit}
   color:rgba(255,255,255,.9);padding:2px 7px;border-radius:99px;
   font-weight:500;
 }
-.cube-open-btn{
-  position:absolute;bottom:12px;right:12px;
-  background:rgba(255,255,255,.15);border:none;
-  color:#fff;font-size:11px;font-weight:600;
-  padding:4px 10px;border-radius:99px;cursor:pointer;
-  backdrop-filter:blur(6px);letter-spacing:.2px;
-}
-.cube-open-btn:active{background:rgba(255,255,255,.25)}
 .detail-hero{position:relative;overflow:hidden;min-height:200px;display:flex;flex-direction:column;justify-content:flex-end;padding:20px 18px 18px}
 .dh-img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
 .dh-overlay{position:absolute;inset:0;background:linear-gradient(to bottom,rgba(0,0,0,.08),rgba(0,0,0,.6))}
-.dh-back{position:absolute;top:14px;left:14px;background:rgba(255,255,255,.25);border:none;border-radius:50%;width:34px;height:34px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:20px;backdrop-filter:blur(8px);color:#fff;z-index:10}
-.dh-acts{position:absolute;top:14px;right:14px;display:flex;gap:8px;z-index:10}
-.dh-act{background:rgba(255,255,255,.25);border:none;border-radius:50%;width:34px;height:34px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:15px;backdrop-filter:blur(8px);color:#fff}
+.dh-back{
+  position:absolute;top:14px;left:14px;z-index:10;
+  background:rgba(0,0,0,.35);border:1px solid rgba(255,255,255,.18);
+  border-radius:13px;width:38px;height:38px;
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;backdrop-filter:blur(12px);color:#fff;
+  transition:transform 120ms cubic-bezier(.175,.885,.32,1.275),background 120ms;
+  -webkit-tap-highlight-color:transparent;
+}
+.dh-back:active{transform:scale(.84);background:rgba(0,0,0,.5)}
+.dh-acts{position:absolute;top:14px;right:14px;display:flex;gap:7px;z-index:10}
+.dh-act{
+  background:rgba(0,0,0,.35);border:1px solid rgba(255,255,255,.18);
+  border-radius:13px;width:38px;height:38px;
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;backdrop-filter:blur(12px);color:#fff;
+  transition:transform 120ms cubic-bezier(.175,.885,.32,1.275),background 120ms,border-color 120ms;
+  -webkit-tap-highlight-color:transparent;
+}
+.dh-act:active{transform:scale(.84);transition-duration:60ms}
+/* Favorito activo */
+#favBtn.active{
+  background:rgba(255,204,0,.25);
+  border-color:rgba(255,204,0,.5);
+  color:#FFD60A;
+}
+
 .dh-icon{font-size:46px;position:relative;z-index:1;margin-bottom:6px}
 .dh-num{font-size:12px;color:rgba(255,255,255,.7);font-weight:700;position:relative;z-index:1}
 .dh-name{font-size:22px;font-weight:800;color:#fff;position:relative;z-index:1;letter-spacing:-.4px;text-shadow:0 2px 8px rgba(0,0,0,.2)}
@@ -297,7 +314,52 @@ input,button,textarea,select{font-family:inherit}
 .add-row{display:flex;align-items:center;gap:10px;padding:10px 16px;border-top:0.5px solid var(--border)}
 .add-row input{flex:1;border:none;outline:none;font-size:15px;color:var(--text);background:transparent;padding:4px 0}
 .add-row input::placeholder{color:var(--muted)}
-.add-btn2{background:var(--accent);color:#fff;border:none;border-radius:50%;width:26px;height:26px;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center}
+.add-btn2{
+  color:#fff;border:none;
+  border-radius:14px;width:38px;height:38px;
+  font-size:18px;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  flex-shrink:0;
+  transition:transform 120ms cubic-bezier(.175,.885,.32,1.275), opacity 120ms, box-shadow 120ms;
+  position:relative;
+  -webkit-tap-highlight-color:transparent;
+}
+.add-btn2:active{transform:scale(.86);opacity:.85;transition-duration:60ms}
+/* Micrófono */
+#micBtn{
+  background:linear-gradient(145deg,#6B5CE7,#5856D6);
+  box-shadow:0 3px 12px rgba(88,86,214,.4);
+}
+#micBtn.recording{
+  background:linear-gradient(145deg,#FF3B30,#FF2D20);
+  box-shadow:0 3px 14px rgba(255,59,48,.5);
+  animation:micPulse 1s ease-in-out infinite;
+}
+@keyframes spin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+@keyframes micPulse{0%,100%{box-shadow:0 3px 14px rgba(255,59,48,.5)}50%{box-shadow:0 3px 22px rgba(255,59,48,.8)}}
+/* Cámara / scan */
+#scanBtn{
+  background:linear-gradient(145deg,#FF9F0A,#FF8C00);
+  box-shadow:0 3px 12px rgba(255,149,0,.4);
+}
+#scanBtn.scanning{
+  background:linear-gradient(145deg,#FF9F0A,#FF6B00);
+  animation:scanPulse .8s ease-in-out infinite;
+}
+@keyframes scanPulse{0%,100%{opacity:1}50%{opacity:.65}}
+/* Botón + agregar */
+.add-main-btn{
+  background:linear-gradient(145deg,#1A8AFF,#0A84FF);
+  box-shadow:0 3px 12px rgba(10,132,255,.4);
+  border-radius:14px;width:38px;height:38px;
+  display:flex;align-items:center;justify-content:center;
+  border:none;color:#fff;cursor:pointer;font-size:18px;flex-shrink:0;
+  transition:transform 120ms cubic-bezier(.175,.885,.32,1.275), opacity 120ms;
+  -webkit-tap-highlight-color:transparent;
+}
+.add-main-btn:active{transform:scale(.86);opacity:.85;transition-duration:60ms}
+/* Tooltip label debajo de los botones */
+.add-row-btns{display:flex;gap:6px;align-items:center;flex-shrink:0}
 .note-area{width:100%;border:none;outline:none;font-size:15px;color:var(--text);background:transparent;resize:none;min-height:60px;line-height:1.5;padding:12px 16px}
 .note-area::placeholder{color:var(--muted)}
 .photo-add{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;padding:20px;color:var(--muted);cursor:pointer;font-size:13px}
@@ -517,73 +579,7 @@ input[type=file]{display:none}
 @keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.15)}}
 
 /* ── 3D CUBE MODAL ── */
-.cube-overlay{position:fixed;inset:0;z-index:600;display:none;flex-direction:column;align-items:center;justify-content:center;background:rgba(0,0,0,.8);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px)}
-.cube-overlay.open{display:flex}
-.cube-modal{display:flex;flex-direction:column;align-items:center;gap:20px;padding:28px 20px;width:100%;max-width:360px}
-.cube-title{font-size:22px;font-weight:800;color:#fff;letter-spacing:-.5px;text-align:center;text-shadow:0 2px 12px rgba(0,0,0,.4);animation:cubeItemIn .4s var(--ease-out-expo) both}
-.cube-sub{font-size:13px;color:rgba(255,255,255,.55);text-align:center;margin-top:-12px;animation:cubeItemIn .4s .05s var(--ease-out-expo) both}
-.cube-scene{width:190px;height:190px;perspective:600px;cursor:grab;animation:cubeItemIn .5s .1s var(--ease-out-expo) both}
-.cube-scene:active{cursor:grabbing}
-.cube-wrap{width:190px;height:190px;position:relative;transform-style:preserve-3d;transform:rotateX(-20deg) rotateY(0deg)}
-.cube-wrap.spinning{animation:cubeAutoSpin 8s linear infinite}
-@keyframes cubeAutoSpin{from{transform:rotateX(-20deg) rotateY(0deg)}to{transform:rotateX(-20deg) rotateY(360deg)}}
-.cube-face{
-  position:absolute;width:190px;height:190px;
-  border:1.5px solid rgba(255,255,255,.15);
-  display:flex;align-items:center;justify-content:center;
-  border-radius:12px;overflow:hidden;
-  box-shadow:inset 0 1px 0 rgba(255,255,255,.15),0 8px 32px rgba(0,0,0,.3);
-  font-size:44px;font-weight:900;color:#fff;
-  text-shadow:0 2px 10px rgba(0,0,0,.5);
-  backface-visibility:hidden;
-  -webkit-backface-visibility:hidden;
-}
-.cube-face img{width:100%;height:100%;object-fit:cover;position:absolute;inset:0}
-.cube-face .face-label{position:relative;z-index:1;font-size:44px;filter:drop-shadow(0 2px 8px rgba(0,0,0,.3))}
-.cube-face .face-num{position:relative;z-index:1;font-size:30px;font-weight:900;background:rgba(0,0,0,.3);padding:10px 20px;border-radius:99px;backdrop-filter:blur(8px)}
-.cube-face .face-overlay{position:absolute;inset:0;background:linear-gradient(145deg,rgba(255,255,255,.12),rgba(0,0,0,.25));z-index:0}
-.cf-front {transform:translateZ(95px)}
-.cf-back  {transform:rotateY(180deg) translateZ(95px)}
-.cf-right {transform:rotateY(90deg)  translateZ(95px)}
-.cf-left  {transform:rotateY(-90deg) translateZ(95px)}
-.cf-top   {transform:rotateX(90deg)  translateZ(95px)}
-.cf-bottom{transform:rotateX(-90deg) translateZ(95px)}
-.cube-hint{font-size:11px;color:rgba(255,255,255,.35);text-align:center;letter-spacing:.2px;animation:cubeItemIn .4s .2s var(--ease-out-expo) both}
-.cube-items{
-  background:rgba(255,255,255,.08);
-  border-radius:18px;padding:12px 14px;
-  width:100%;max-height:140px;overflow-y:auto;
-  border:0.5px solid rgba(255,255,255,.12);
-  backdrop-filter:blur(16px);
-  scrollbar-width:none;
-  animation:cubeItemIn .4s .25s var(--ease-out-expo) both;
-}
-.cube-items::-webkit-scrollbar{display:none}
-.cube-item-row{display:flex;align-items:center;gap:10px;padding:7px 0;border-bottom:0.5px solid rgba(255,255,255,.06);font-size:13px;color:rgba(255,255,255,.8);letter-spacing:-.1px}
-.cube-item-row:last-child{border:none;padding-bottom:0}
-.cube-item-num{width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:800;color:#fff;flex-shrink:0}
-.cube-item-done{text-decoration:line-through;opacity:.35}
-.cube-close{
-  background:rgba(255,255,255,.12);
-  border:0.5px solid rgba(255,255,255,.15);
-  color:#fff;border-radius:14px;
-  padding:13px 40px;font-size:16px;font-weight:600;
-  cursor:pointer;font-family:inherit;
-  backdrop-filter:blur(16px);letter-spacing:-.2px;
-  animation:cubeItemIn .4s .3s var(--ease-out-expo) both;
-}
 @keyframes slideUpScreen{from{opacity:0;transform:translateY(40px)}to{opacity:1;transform:translateY(0)}}
-@keyframes cubeItemIn{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
-.cube-open-btn{
-  background:rgba(0,0,0,.35);
-  border:1px solid rgba(255,255,255,.2);
-  color:#fff;border-radius:99px;
-  padding:5px 11px;font-size:11px;font-weight:700;
-  cursor:pointer;font-family:inherit;
-  position:absolute;bottom:10px;right:10px;
-  backdrop-filter:blur(8px);z-index:10;
-  letter-spacing:.2px;
-}
 
 @keyframes toastIn{from{transform:translateX(-50%) translateY(20px);opacity:0}to{transform:translateX(-50%) translateY(0);opacity:1}}
 
@@ -721,9 +717,6 @@ button{-webkit-tap-highlight-color:transparent;outline:none}
 .m-btn:active{transform:scale(.96)}
 .pill{transition:transform var(--dur-fast) var(--ease-spring),background var(--dur-med) var(--ease-ios),color var(--dur-med)}
 .pill:active{transform:scale(.9)}
-.cube-close{transition:transform var(--dur-fast) var(--ease-spring),background var(--dur-fast)}
-.cube-close:hover{background:rgba(255,255,255,.25)}
-.cube-close:active{transform:scale(.94)}
 .det-btn{transition:transform var(--dur-fast) var(--ease-spring),opacity var(--dur-fast)}
 .det-btn:active{transform:scale(.94);opacity:.85}
 
@@ -748,8 +741,6 @@ button{-webkit-tap-highlight-color:transparent;outline:none}
 .modal{box-shadow:0 -4px 40px rgba(0,0,0,.18)}
 
 /* Cube overlay */
-.cube-overlay.open{animation:cubeIn var(--dur-med) var(--ease-out-expo)}
-@keyframes cubeIn{from{opacity:0;backdrop-filter:blur(0px)}to{opacity:1;backdrop-filter:blur(12px)}}
 
 /* Toast - more springy */
 .toast-anim{animation:toastSpring .4s var(--ease-spring) both}
@@ -1021,7 +1012,9 @@ body{
 
 /* Touch targets mínimo 44px en móvil */
 @media(max-width:600px){
-  .add-btn2{width:44px!important;height:44px!important;font-size:20px!important;border-radius:14px!important}
+  .add-btn2,.add-main-btn{width:44px!important;height:44px!important;border-radius:14px!important}
+  .add-btn2 i,.add-main-btn i{font-size:19px!important}
+  .add-row-btns{gap:7px}
   .i-chk{width:32px!important;height:32px!important}
   .i-del{width:36px;height:36px;display:flex;align-items:center;justify-content:center}
   .add-row{padding:10px 12px;gap:8px}
@@ -1062,7 +1055,6 @@ body{
 .ai-messages,.screen{-webkit-overflow-scrolling:touch}
 
 /* Prevenir selección accidental al arrastrar cubo */
-.cube-container{user-select:none;-webkit-user-select:none}
 
 /* Input type file para cámara — asegurar capture trasera */
 #scanObjInput{display:none!important}
@@ -1193,15 +1185,8 @@ body{
 }
 
 /* ── Botones de detalle (back, actions) ── */
-.dh-back{
-  border-radius:14px !important;
-  width:38px !important; height:38px !important;
-  box-shadow:0 4px 16px rgba(0,0,0,.3) !important;
-}
-.dh-act{
-  border-radius:14px !important;
-  width:38px !important; height:38px !important;
-  box-shadow:0 4px 16px rgba(0,0,0,.3) !important;
+.dh-back,.dh-act{
+  box-shadow:0 4px 20px rgba(0,0,0,.35) !important;
 }
 
 /* ── Pills/filtros ── */
@@ -1259,11 +1244,6 @@ body{
 }
 
 /* ── Cube open button ── */
-.cube-open-btn{
-  border-radius:12px !important;
-  box-shadow:0 4px 12px rgba(0,0,0,.3) !important;
-  border:1px solid rgba(255,255,255,.2) !important;
-}
 
 /* ── Splash stats ── */
 .sp-stat{
@@ -1522,7 +1502,7 @@ if(!auth){
   <div class="topbar">
     <div style="display:flex;align-items:center;gap:10px">
       <div>
-        <div class="topbar-title" style="font-size:20px;font-weight:800;letter-spacing:-.5px">BoxVision</div>
+        <div class="topbar-title" style="font-size:20px;font-weight:800;letter-spacing:-.5px;cursor:pointer;" onclick="goSplash()">BoxVision</div>
         <div class="topbar-sub" id="mainSub"></div>
       </div>
     </div>
@@ -1560,12 +1540,10 @@ if(!auth){
 
 <div id="detailScreen" class="hidden">
   <div class="detail-hero" id="dHero">
-    <button class="dh-back" onclick="goMain()">‹</button>
+    <button class="dh-back" onclick="goMain()" title="Volver" aria-label="Volver"><i class="ti ti-chevron-left" style="font-size:20px;pointer-events:none"></i></button>
     <div class="dh-acts">
-      <button class="dh-act" onclick="openCube(currentBoxId)" title="Ver en 3D">📦</button>
-      <button class="dh-act" id="sealBtn" onclick="toggleSealed()" title="Sellar/desellar">🔓</button>
-      <button class="dh-act" id="favBtn" onclick="toggleFav()">☆</button>
-      <button class="dh-act" onclick="openEditForm()">✏️</button>
+      <button class="dh-act" id="favBtn" onclick="toggleFav()" title="Favorito" aria-label="Marcar favorito"><i class="ti ti-star" style="font-size:16px;pointer-events:none"></i></button>
+      <button class="dh-act" onclick="openEditForm()" title="Editar caja" aria-label="Editar caja"><i class="ti ti-pencil" style="font-size:16px;pointer-events:none"></i></button>
     </div>
     <img class="dh-img hidden" id="dHeroImg"/>
     <div class="dh-overlay"></div>
@@ -1578,19 +1556,21 @@ if(!auth){
     <div class="dsec" id="progSec"><div class="dsec-title">PROGRESO DE DESEMPAQUE</div><div class="prog-wrap"><div class="prog-bar"><div class="prog-fill" id="progFill"></div></div><div class="prog-lbl"><span id="progLbl"></span><span id="progPct"></span></div></div></div>
     <div class="dsec"><div class="dsec-title">FOTO</div><div id="photoArea" onclick="triggerPhoto()"></div></div>
     <div class="dsec"><div class="dsec-title">NOTAS</div><textarea class="note-area" id="noteArea" placeholder="Agrega una nota… (frágil, abrir primero…)" oninput="saveNote()"></textarea></div>
-    <div class="dsec"><div class="dsec-title" id="itemsTitle">CONTENIDO</div><div id="itemsList"></div><div class="add-row" id="addRow"><input id="addItemInput" type="text" placeholder="Agregar objeto..." onkeydown="if(event.key==='Enter')addItem()" oninput="showSuggestions(this.value)"/><button class="add-btn2" id="micBtn" onclick="startVoice()" title="Agregar por voz" style="background:#5856D6;margin-right:4px">🎤</button><button class="add-btn2" onclick="triggerScanObj()" title="Escanear objeto con cámara" style="background:#FF9500;margin-right:4px" id="scanBtn">📷</button><button class="add-btn2" onclick="addItem()">+</button></div>
+    <div class="dsec"><div class="dsec-title" id="itemsTitle">CONTENIDO</div><div id="itemsList"></div><div class="add-row" id="addRow"><input id="addItemInput" type="text" placeholder="Agregar objeto..." onkeydown="if(event.key==='Enter')addItem()" oninput="showSuggestions(this.value)"/><div class="add-row-btns">
+<button class="add-btn2" id="micBtn" onclick="startVoice()" title="Agregar por voz" aria-label="Agregar por voz"><i class="ti ti-microphone" style="font-size:17px;pointer-events:none"></i></button>
+<button class="add-btn2" id="scanBtn" onclick="triggerScanObj()" title="Escanear con cámara" aria-label="Escanear objeto con cámara"><i class="ti ti-camera" style="font-size:17px;pointer-events:none"></i></button>
+<button class="add-main-btn" onclick="addItem()" title="Agregar objeto" aria-label="Agregar objeto"><i class="ti ti-plus" style="font-size:19px;pointer-events:none"></i></button>
+</div></div>
     <input type="file" id="scanObjInput" accept="image/*" capture="environment" style="display:none!important" onchange="handleScanObj(event)"/>
-<div id="sealedMsg" class="hidden" style="padding:10px 16px;font-size:13px;color:var(--muted);text-align:center;border-top:0.5px solid var(--border)">🔒 Caja sellada — puedes marcar objetos pero no agregar ni borrar</div>
 <div class="suggestions-wrap" id="suggestionsWrap"><span class="sug-label">💡</span></div></div>
     <div class="dsec" id="relatedSec"><div class="dsec-title">CAJA RELACIONADA</div><div id="relatedList"></div></div>
     <div class="dsec" id="historySec"><div class="dsec-title" style="display:flex;align-items:center;justify-content:space-between">HISTORIAL<button onclick="toggleHistory()" id="histToggleBtn" style="background:none;border:none;color:var(--muted);font-size:12px;cursor:pointer;padding:2px 6px;border-radius:6px">Ocultar</button></div><div id="historyList"></div></div>
     <div class="dsec"><div class="qr-sec"><div style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:12px">CÓDIGO QR</div><div class="qr-box" id="detailQR"></div><div class="qr-hint">Escanea con la cámara del celular</div><div style="font-size:11px;color:var(--muted);margin-top:4px" id="detailDate"></div></div></div>
-    <button onclick="openCube(currentBoxId)" style="width:100%;margin-top:12px;padding:16px;background:linear-gradient(135deg,#5856D6,#AF52DE);color:#fff;border:none;border-radius:16px;font-size:16px;font-weight:800;cursor:pointer;font-family:inherit;letter-spacing:-.3px">📦 Ver en 3D</button>
-<div class="det-btns" style="flex-wrap:wrap;margin-top:8px">
-  <button class="det-btn db-exp" onclick="exportBox()" style="flex:1;min-width:80px">📤 Copiar</button>
-  <button class="det-btn" style="flex:1;min-width:80px;background:#25D366;color:#fff" onclick="shareBoxWhatsApp()">💬 WhatsApp</button>
-  <button class="det-btn db-dup" onclick="dupBox()" style="flex:1;min-width:80px">⧉ Duplicar</button>
-  <button class="det-btn db-del" onclick="delBox()" style="flex:1;min-width:80px">🗑</button>
+<div style="margin-top:12px;display:grid;grid-template-columns:1fr 1fr;gap:8px">
+  <button onclick="exportBox()" style="padding:14px 10px;background:var(--card2);color:var(--text);border:0.5px solid var(--border);border-radius:14px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:7px;transition:transform .15s,opacity .15s" onmousedown="this.style.transform='scale(.96)'" onmouseup="this.style.transform=''" ontouchstart="this.style.transform='scale(.96)'" ontouchend="this.style.transform=''"><i class="ti ti-copy" style="font-size:16px"></i>Copiar</button>
+  <button onclick="shareBoxWhatsApp()" style="padding:14px 10px;background:#25D366;color:#fff;border:none;border-radius:14px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:7px;box-shadow:0 3px 12px rgba(37,211,102,0.3);transition:transform .15s,opacity .15s" onmousedown="this.style.transform='scale(.96)'" onmouseup="this.style.transform=''" ontouchstart="this.style.transform='scale(.96)'" ontouchend="this.style.transform=''"><i class="ti ti-brand-whatsapp" style="font-size:16px"></i>WhatsApp</button>
+  <button onclick="confirmDupBox()" style="padding:14px 10px;background:linear-gradient(135deg,#0A84FF,#5856D6);color:#fff;border:none;border-radius:14px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:7px;box-shadow:0 3px 12px rgba(10,132,255,0.3);transition:transform .15s,opacity .15s" onmousedown="this.style.transform='scale(.96)'" onmouseup="this.style.transform=''" ontouchstart="this.style.transform='scale(.96)'" ontouchend="this.style.transform=''"><i class="ti ti-copy-plus" style="font-size:16px"></i>Duplicar</button>
+  <button onclick="confirmDelBox()" style="padding:14px 10px;background:rgba(255,59,48,0.1);color:#FF3B30;border:0.5px solid rgba(255,59,48,0.25);border-radius:14px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:7px;transition:transform .15s,opacity .15s" onmousedown="this.style.transform='scale(.96)'" onmouseup="this.style.transform=''" ontouchstart="this.style.transform='scale(.96)'" ontouchend="this.style.transform=''"><i class="ti ti-trash" style="font-size:16px"></i>Eliminar</button>
 </div>
 </div>
 
@@ -2075,6 +2055,11 @@ function route(){
 }
 
 function showScreen(id){
+  // Restaurar scroll al salir del splash
+  if(id !== "splash"){
+    document.body.style.overflow="";
+    document.body.style.height="";
+  }
   // Stop TTS if leaving viewer
   if(id!=="viewer"&&window.speechSynthesis&&speaking){
     window.speechSynthesis.cancel();speaking=false;
@@ -2082,7 +2067,7 @@ function showScreen(id){
   }
   // Cancel voice recognition if active
   if(voiceRecog){try{voiceRecog.abort();}catch(e){}voiceRecog=null;
-    const mb=document.getElementById("micBtn");if(mb){mb.textContent="🎤";mb.style.animation="";}
+    const mb=document.getElementById("micBtn");if(mb){mb.classList.remove("recording");}
   }
   document.querySelectorAll("#splash,#mainScreen,#detailScreen,#roomScreen,#settingsScreen,#viewer").forEach(el=>{
     el.classList.add("hidden");el.classList.remove("active");el.style.display="";
@@ -2126,6 +2111,8 @@ function updateSplashCounters(){
 
 function showSplash(){
   showScreen("splash");
+  document.body.style.overflow="hidden";
+  document.body.style.height="100vh";
   applySplashGradient();
   const _fab=document.getElementById("aiFab");if(_fab) _fab.classList.remove("hidden");
   const total=boxes.reduce((s,b)=>s+b.items.length,0);
@@ -2323,7 +2310,7 @@ function boxCard(b){
       <div class="bc-top">
         <button class="bc-fav" onclick="event.stopPropagation();toggleFavId('${b.id}')">${b.fav?"⭐":"☆"}</button>
         <div class="bc-badges">
-          ${b.sealed?'<span style="font-size:11px">🔒</span>':""}
+          
           ${b.password?'<span style="font-size:11px">🔐</span>':""}
           ${b.number?`<span class="bc-num">#${esc(b.number)}</span>`:""}
         </div>
@@ -2332,7 +2319,7 @@ function boxCard(b){
       <div class="bc-name">${esc(b.name)}</div>
       <div class="bc-sub">${total} objeto${total!==1?"s":""}${done?" · "+done+" sacado"+(done!==1?"s":""):""}${b.location?" · 📍"+esc(b.location):""}</div>
       ${tags?`<div class="bc-tags">${tags}</div>`:""}
-      <button class="cube-open-btn" onclick="event.stopPropagation();openCube('${b.id}')">📦 3D</button>
+      
     </div>
   </div>`;
 }
@@ -2376,8 +2363,8 @@ function _doOpenDetail(id){
   document.getElementById("dIcon").textContent=getIcon(box.name);
   document.getElementById("dNum").textContent=box.number?`Caja #${box.number} ${PRI[box.priority]||""}`:PRI[box.priority]||"";
   document.getElementById("dName").textContent=box.name;
-  document.getElementById("favBtn").textContent=box.fav?"⭐":"☆";
-  const sb=document.getElementById("sealBtn"); if(sb) sb.textContent=box.sealed?"🔒":"🔓";
+  const fb=document.getElementById("favBtn");
+  if(fb) fb.classList.toggle("active", !!box.fav);
   const meta=[];
   if(box.location) meta.push("📍 "+box.location);
   if(box.weight) meta.push("⚖️ "+box.weight+"kg");
@@ -2403,9 +2390,8 @@ function renderItems(){
   const box=boxes.find(b=>b.id===currentBoxId);if(!box) return;
   const col=box.color||"#007AFF",done=box.items.filter(i=>i.done).length;
   document.getElementById("itemsTitle").textContent=`CONTENIDO (${box.items.length} obj · ${done} sacado${done!==1?"s":""})`;
-  const addRow=document.getElementById("addRow");const sealMsg=document.getElementById("sealedMsg");
+  const addRow=document.getElementById("addRow");
   if(addRow) addRow.style.display=box.sealed?"none":"flex";
-  if(sealMsg) sealMsg.classList.toggle("hidden",!box.sealed);
   document.getElementById("itemsList").innerHTML=box.items.length===0
     ?funnyEmpty()
     :box.items.map((it,i)=>`<div class="item-row">${it.thumb?`<img src="${it.thumb}" style="width:36px;height:36px;border-radius:8px;object-fit:cover;flex-shrink:0;margin-right:2px;opacity:${it.done?0.4:1}" loading="lazy">`:""}<div class="i-chk${it.done?" done":""}" style="${it.done?"background:"+col:""}" onclick="toggleItem(${i})">${it.done?"✓":""}</div><div class="i-txt${it.done?" done":""}">${esc(it.text)}</div><button class="i-del" onclick="delItem(${i})">✕</button></div>`).join("");
@@ -2443,8 +2429,8 @@ function triggerScanObj(){
 async function handleScanObj(e){
   const file=e.target.files[0]; e.target.value=""; if(!file) return;
   const box=boxes.find(b=>b.id===currentBoxId); if(!box) return;
-  const btn=document.getElementById("scanBtn");
-  btn.textContent="⏳"; btn.disabled=true;
+  const btn=document.getElementById("scanBtn"); if(btn){btn.classList.add("scanning");}
+  btn.innerHTML='<i class="ti ti-loader" style="font-size:17px;pointer-events:none;animation:spin 1s linear infinite"></i>'; btn.disabled=true;
 
   let thumb=null, b64=null;
   try{
@@ -2452,7 +2438,7 @@ async function handleScanObj(e){
     thumb=enc.thumb; b64=enc.b64;
   }catch(err){
     showToast("❌ No se pudo leer la imagen","#FF3B30");
-    btn.textContent="📷"; btn.disabled=false; return;
+    btn.innerHTML='<i class="ti ti-camera" style="font-size:17px;pointer-events:none"></i>'; btn.classList.remove("scanning"); btn.disabled=false; return;
   }
 
   const connected=localStorage.getItem("boxia_connected");
@@ -2516,7 +2502,7 @@ Context: ${contexto}`;
     document.getElementById("scanLoadingModal")?.remove();
   }
 
-  btn.textContent="📷"; btn.disabled=false;
+  btn.innerHTML='<i class="ti ti-camera" style="font-size:17px;pointer-events:none"></i>'; btn.classList.remove("scanning"); btn.disabled=false;
   showScanResultModal(thumb, box, analisis);
 }
 
@@ -2596,7 +2582,13 @@ function saveNote(){
     if(box){box.note=document.getElementById("noteArea").value;saveData();}
   },500);
 }
-function toggleFav(){const box=boxes.find(b=>b.id===currentBoxId);if(box){box.fav=!box.fav;document.getElementById("favBtn").textContent=box.fav?"⭐":"☆";saveData();}}
+function toggleFav(){
+  const box=boxes.find(b=>b.id===currentBoxId); if(!box) return;
+  box.fav=!box.fav; saveData();
+  const fb=document.getElementById("favBtn");
+  if(fb) fb.classList.toggle("active", box.fav);
+  showToast(box.fav?"⭐ Agregada a favoritas":"☆ Quitada de favoritas", box.fav?"#FFD60A":"#8E8E93");
+}
 function toggleFavId(id){const box=boxes.find(b=>b.id===id);if(box){box.fav=!box.fav;saveData();renderGrid();}}
 
 function renderRelated(){
@@ -2686,23 +2678,66 @@ function exportBox(){
 function dupBox(){
   const box=boxes.find(b=>b.id===currentBoxId);if(!box) return;
   const nb={...JSON.parse(JSON.stringify(box)),id:genId(),name:box.name+" (copia)",date:fmtDate(),lastUsed:0,fav:false,history:[],sealed:false};
-  nb.photo=null; // FIX F: no duplicar foto base64 (puede pesar 300-500KB)
-  nb.items=nb.items.map(i=>({text:i.text,done:i.done})); // FIX F: no duplicar thumbs de items
+  nb.photo=null;
+  nb.items=nb.items.map(i=>({text:i.text,done:i.done}));
   boxes.push(nb);saveData();showToast("⧉ Copia creada: "+nb.name,"#5856D6");goMain();
 }
+function confirmDupBox(){
+  const box=boxes.find(b=>b.id===currentBoxId);if(!box) return;
+  _showConfirm({
+    icon:"⧉",
+    title:"Duplicar caja",
+    msg:"Se creará una copia de <strong>"+esc(box.name)+"</strong> con todos sus objetos.",
+    confirmLabel:"Duplicar",
+    confirmColor:"#0A84FF",
+    onConfirm: dupBox
+  });
+}
+function confirmDelBox(){
+  const box=boxes.find(b=>b.id===currentBoxId);if(!box) return;
+  _showConfirm({
+    icon:"🗑️",
+    title:"Eliminar caja",
+    msg:"¿Eliminar <strong>"+esc(box.name)+"</strong>? Esta acción no se puede deshacer.",
+    confirmLabel:"Eliminar",
+    confirmColor:"#FF3B30",
+    onConfirm: delBox
+  });
+}
 function delBox(){
-  if(!confirm("¿Eliminar esta caja?")) return;
   const id=currentBoxId;
-  // Registrar como eliminada para que el merge no la restaure en otros dispositivos
   _registerDeletedBox(id);
-  // Clean related refs in other boxes
   boxes.forEach(b=>{ if(b.related===id) b.related=null; });
-  // Clean from room map
   rooms.forEach(r=>{ r.boxIds=r.boxIds.filter(bid=>bid!==id); });
   boxes=boxes.filter(b=>b.id!==id);
   saveData(); saveRooms();
   showToast("🗑️ Caja eliminada","#FF3B30");
   setTimeout(()=>goMain(),400);
+}
+function _showConfirm({icon,title,msg,confirmLabel,confirmColor,onConfirm}){
+  const overlay=document.createElement("div");
+  overlay.style.cssText="position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,0.6);display:flex;align-items:flex-end;justify-content:center;animation:fadeIn .2s ease";
+  overlay.innerHTML=`
+    <div style="background:var(--card);border-radius:24px 24px 0 0;padding:28px 24px 36px;width:100%;max-width:480px;box-shadow:0 -4px 40px rgba(0,0,0,.4)">
+      <div style="text-align:center;margin-bottom:20px">
+        <div style="font-size:44px;margin-bottom:12px">${icon}</div>
+        <div style="font-size:19px;font-weight:800;margin-bottom:8px;color:var(--text)">${title}</div>
+        <div style="font-size:14px;color:var(--muted);line-height:1.5">${msg}</div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <button id="_bvConfirmBtn" style="width:100%;padding:16px;background:${confirmColor};color:#fff;border:none;border-radius:14px;font-size:16px;font-weight:700;cursor:pointer;font-family:inherit">${confirmLabel}</button>
+        <button id="_bvCancelBtn" style="width:100%;padding:16px;background:var(--card2);color:var(--muted);border:0.5px solid var(--border);border-radius:14px;font-size:16px;font-weight:600;cursor:pointer;font-family:inherit">Cancelar</button>
+      </div>
+    </div>`;
+  window._bvConfirmCb = onConfirm;
+  overlay.querySelector('button').onclick = function(){
+    overlay.remove();
+    window._bvConfirmCb && window._bvConfirmCb();
+    window._bvConfirmCb = null;
+  };
+  overlay.querySelectorAll('button')[1].onclick = function(){ overlay.remove(); window._bvConfirmCb=null; };
+  overlay.addEventListener("click",e=>{ if(e.target===overlay){ overlay.remove(); window._bvConfirmCb=null; } });
+  document.body.appendChild(overlay);
 }
 
 function _registerDeletedBox(id){
@@ -3166,12 +3201,7 @@ const ANIMO_MSGS=["¡Uno menos! 💪","¡Vas genial! 🚀","¡Qué crack! ✨","
 function animoToast(){const m=ANIMO_MSGS[Math.floor(Math.random()*ANIMO_MSGS.length)];showToast(m,"#34C759");}
 
 
-function toggleSealed(){
-  const box=boxes.find(b=>b.id===currentBoxId); if(!box) return;
-  box.sealed=!box.sealed;
-  saveData(); openDetail(currentBoxId);
-  showToast(box.sealed?"🔒 Caja sellada — no se puede modificar":"🔓 Caja desbloqueada","#5856D6");
-}
+
 
 
 function shareBoxWhatsApp(){
@@ -3201,7 +3231,7 @@ function startVoice(){
   voiceRecog.interimResults=false;
   voiceRecog.maxAlternatives=1;
   const btn=document.getElementById("micBtn");
-  if(btn){btn.textContent="🔴";btn.style.animation="pulse 1s infinite";}
+  if(btn){btn.classList.add("recording");}
   showToast("🎤 Habla... separa objetos con comas","#5856D6");
   const capturedBoxId=currentBoxId; // capture before async
   voiceRecog.onresult=e=>{
@@ -3213,7 +3243,7 @@ function startVoice(){
     showToast(`🎤 ${items.length} objeto${items.length!==1?"s":""} agregado${items.length!==1?"s":""}!`,"#5856D6");
   };
   voiceRecog.onerror=e=>{showToast("No se pudo escuchar: "+e.error,"#FF3B30");};
-  voiceRecog.onend=()=>{const b=document.getElementById("micBtn");if(b){b.textContent="🎤";b.style.animation="";}voiceRecog=null;}; // FIX E
+  voiceRecog.onend=()=>{const b=document.getElementById("micBtn");if(b){b.classList.remove("recording");}voiceRecog=null;}; // FIX E
   voiceRecog.start();
 }
 
@@ -3238,204 +3268,6 @@ function hexToRgba(hex, alpha){
   const b=parseInt(h.length===3?h[2]+h[2]:h.slice(4,6),16);
   return `rgba(${r},${g},${b},${alpha})`;
 }
-
-// ═══ 3D CUBE ═══
-let cubeRotX=-18, cubeRotY=0, cubeDragging=false, cubeLastX=0, cubeLastY=0, cubeSpinning=true;
-let _cubeMouseMove=null, _cubeMouseUp=null; // FIX #1: refs globales para limpiar listeners
-
-function openCube(boxId){
-  const box=boxes.find(b=>b.id===boxId); if(!box) return;
-  const col=box.color||"#007AFF";
-  const col2=box.color?hexToRgba(col,.7):"#5856D6"; // BUG FIX #2: rgba() → hexToRgba()
-
-  // Title
-  document.getElementById("cubeTitle").textContent=getIcon(box.name)+" "+box.name;
-  const meta=[];
-  if(box.number) meta.push("Caja #"+box.number);
-  if(box.location) meta.push("📍 "+box.location);
-  if(box.items.length) meta.push(box.items.length+" objeto"+(box.items.length!==1?"s":""));
-  document.getElementById("cubeSub").textContent=meta.join(" · ");
-
-  // Faces
-  const faces={
-    front:"cfFront", back:"cfBack", right:"cfRight",
-    left:"cfLeft",  top:"cfTop",   bottom:"cfBottom"
-  };
-  const faceColors=[col,hexToRgba(col,.75),hexToRgba(col,.6),hexToRgba(col,.85),hexToRgba(col,.5),hexToRgba(col,.7)]; // BUG FIX #2
-  const faceContents=[
-    // front: photo or icon
-    box.photo
-      ?`<img src="${box.photo}"/><div class="face-overlay"></div><div class="face-label" style="position:relative;z-index:1">${getIcon(box.name)}</div>`
-      :`<span class="face-label">${getIcon(box.name)}</span>`,
-    // back: icon large
-    `<span class="face-label">${getIcon(box.name)}</span>`,
-    // right: number
-    box.number
-      ?`<span class="face-num">#${esc(box.number)}</span>`
-      :`<span class="face-label">📦</span>`,
-    // left: location
-    box.location
-      ?`<div style="text-align:center;padding:8px"><div style="font-size:22px;margin-bottom:8px">📍</div><div style="font-size:13px;font-weight:700;color:#fff">${esc(box.location)}</div></div>`
-      :`<span class="face-label">🗺</span>`,
-    // top: count
-    `<div style="text-align:center"><div style="font-size:32px;font-weight:900">${box.items.length}</div><div style="font-size:12px;font-weight:700;opacity:.8;margin-top:4px">objeto${box.items.length!==1?"s":""}</div></div>`,
-    // bottom: date
-    `<div style="text-align:center;padding:8px"><div style="font-size:18px;margin-bottom:6px">📅</div><div style="font-size:11px;font-weight:700;color:#fff;opacity:.85">${esc(box.date||"—")}</div></div>`
-  ];
-
-  Object.values(faces).forEach((id,i)=>{
-    const el=document.getElementById(id);
-    el.style.background=`linear-gradient(135deg,${faceColors[i]},${faceColors[(i+1)%6]})`;
-    el.innerHTML=faceContents[i];
-  });
-
-  // Items list
-  const done=box.items.filter(it=>it.done).length;
-  document.getElementById("cubeItems").innerHTML=box.items.length===0
-    ?`<div style="text-align:center;color:rgba(255,255,255,.5);font-size:13px;padding:8px">Sin objetos en esta caja</div>`
-    :box.items.map((it,i)=>`
-      <div class="cube-item-row">
-        <div class="cube-item-num" style="background:${col}">${i+1}</div>
-        <div class="${it.done?"cube-item-done":""}">${esc(it.text)}</div>
-        ${it.done?'<span style="font-size:12px">✅</span>':''} 
-      </div>`).join("")+
-    (done>0?`<div style="text-align:center;font-size:11px;color:rgba(255,255,255,.4);padding:6px 0 2px">${done} sacado${done!==1?"s":""} de ${box.items.length}</div>`:"");
-
-  // Reset spin state
-  cubeRotX=-18; cubeRotY=0; cubeSpinning=true;
-  const wrap=document.getElementById("cubeWrap");
-  wrap.classList.add("spinning");
-  wrap.style.transform="";
-
-  document.getElementById("cubeOverlay").classList.add("open");
-  initCubeDrag();
-}
-
-function closeCube(){
-  document.getElementById("cubeOverlay").classList.remove("open");
-  cubeSpinning=false;
-  cubeDragging=false;
-  // FIX #1: limpiar listeners de mouse que quedan si el usuario cierra sin soltar el botón
-  if(typeof _cubeMouseMove==="function") window.removeEventListener("mousemove",_cubeMouseMove);
-  if(typeof _cubeMouseUp==="function")   window.removeEventListener("mouseup",_cubeMouseUp);
-}
-function closeCubeOutside(e){if(e.target===document.getElementById("cubeOverlay")) closeCube();}
-
-function initCubeDrag(){
-  const scene=document.getElementById("cubeScene");
-  const wrap=document.getElementById("cubeWrap");
-
-  // Read current rotation from animation when user starts drag
-  function getCurrentRot(){
-    if(cubeSpinning){
-      const st=getComputedStyle(wrap).transform;
-      if(st&&st!=="none"){
-        // parse matrix3d or matrix
-        const m=new DOMMatrix(st);
-        cubeRotY=Math.atan2(m.m13,m.m33)*(180/Math.PI);
-        cubeRotX=-18;
-      }
-    }
-  }
-
-  function stopSpin(){
-    if(cubeSpinning){
-      getCurrentRot();
-      wrap.classList.remove("spinning");
-      wrap.style.transform=`rotateX(${cubeRotX}deg) rotateY(${cubeRotY}deg)`;
-      cubeSpinning=false;
-    }
-  }
-
-  function applyRot(){
-    wrap.style.transform=`rotateX(${cubeRotX}deg) rotateY(${cubeRotY}deg)`;
-  }
-
-  let velX=0, velY=0, lastMoveTime=0;
-
-  // Touch with momentum
-  scene.ontouchstart=e=>{
-    stopSpin(); cubeDragging=true;
-    cubeLastX=e.touches[0].clientX; cubeLastY=e.touches[0].clientY;
-    velX=0; velY=0; lastMoveTime=Date.now();
-    e.preventDefault();
-  };
-  scene.ontouchmove=e=>{
-    if(!cubeDragging) return;
-    const now=Date.now();
-    const dx=e.touches[0].clientX-cubeLastX;
-    const dy=e.touches[0].clientY-cubeLastY;
-    const dt=Math.max(1,now-lastMoveTime);
-    velX=dx/dt*16; velY=dy/dt*16;
-    cubeRotY+=dx*0.55; cubeRotX-=dy*0.28;
-    cubeRotX=Math.max(-65,Math.min(65,cubeRotX));
-    cubeLastX=e.touches[0].clientX; cubeLastY=e.touches[0].clientY;
-    lastMoveTime=now;
-    applyRot(); e.preventDefault();
-  };
-  scene.ontouchend=e=>{
-    cubeDragging=false;
-    if(!cubeSpinning){
-      let friction=0.92;
-      const runMomentum=()=>{
-        if(Math.abs(velX)<0.1&&Math.abs(velY)<0.1) return;
-        cubeRotY+=velX; cubeRotX-=velY;
-        cubeRotX=Math.max(-65,Math.min(65,cubeRotX));
-        velX*=friction; velY*=friction;
-        applyRot(); requestAnimationFrame(runMomentum);
-      };
-      runMomentum();
-    }
-  };
-
-  // Mouse with momentum
-  scene.onmousedown=e=>{
-    stopSpin(); cubeDragging=true;
-    cubeLastX=e.clientX; cubeLastY=e.clientY;
-    velX=0; velY=0; lastMoveTime=Date.now();
-  };
-  // BUG FIX #5: usar addEventListener en lugar de asignación directa (window.onX)
-  // para no pisar otros listeners y evitar duplicados si initCubeDrag se llama más de una vez
-  // FIX #1: asignamos a variables de scope externo para que closeCube() pueda limpiarlas
-  _cubeMouseMove=function(e){
-    if(!cubeDragging) return;
-    const now=Date.now();
-    const dx=e.clientX-cubeLastX; const dy=e.clientY-cubeLastY;
-    const dt=Math.max(1,now-lastMoveTime);
-    velX=dx/dt*16; velY=dy/dt*16;
-    cubeRotY+=dx*0.45; cubeRotX-=dy*0.25;
-    cubeRotX=Math.max(-65,Math.min(65,cubeRotX));
-    cubeLastX=e.clientX; cubeLastY=e.clientY;
-    lastMoveTime=now; applyRot();
-  };
-  _cubeMouseUp=function(){
-    if(!cubeDragging) return; cubeDragging=false;
-    if(!cubeSpinning){
-      let friction=0.92;
-      const runMomentumM=()=>{
-        if(Math.abs(velX)<0.1&&Math.abs(velY)<0.1) return;
-        cubeRotY+=velX; cubeRotX-=velY;
-        cubeRotX=Math.max(-65,Math.min(65,cubeRotX));
-        velX*=friction; velY*=friction;
-        applyRot(); requestAnimationFrame(runMomentumM);
-      };
-      runMomentumM();
-    }
-    window.removeEventListener('mousemove',_cubeMouseMove);
-    window.removeEventListener('mouseup',_cubeMouseUp);
-  };
-  window.addEventListener('mousemove',_cubeMouseMove);
-  window.addEventListener('mouseup',_cubeMouseUp);
-
-  // Tap to toggle spin
-  scene.onclick=e=>{
-    if(Math.abs(e.clientX-cubeLastX)<5&&Math.abs(e.clientY-cubeLastY)<5){
-      if(cubeSpinning){stopSpin();showToast("⏸ Pausado — arrastra para girar","#5856D6");}
-      else{wrap.classList.add("spinning");cubeSpinning=true;showToast("▶ Girando","#5856D6");}
-    }
-  };
-}
-
 
 // ═══ BOX IA — Motor con API Anthropic ═══
 let aiOpen = false;
@@ -3947,26 +3779,6 @@ document.addEventListener("DOMContentLoaded",applySplashGradient);
 
 
 <!-- ═══ 3D CUBE MODAL ═══ -->
-<div class="cube-overlay" id="cubeOverlay" onclick="closeCubeOutside(event)">
-  <div class="cube-modal">
-    <div class="cube-title" id="cubeTitle">📦</div>
-    <div class="cube-sub" id="cubeSub"></div>
-    <div class="cube-scene" id="cubeScene">
-      <div class="cube-wrap spinning" id="cubeWrap">
-        <div class="cube-face cf-front" id="cfFront"></div>
-        <div class="cube-face cf-back"  id="cfBack"></div>
-        <div class="cube-face cf-right" id="cfRight"></div>
-        <div class="cube-face cf-left"  id="cfLeft"></div>
-        <div class="cube-face cf-top"   id="cfTop"></div>
-        <div class="cube-face cf-bottom"id="cfBottom"></div>
-      </div>
-    </div>
-    <div class="cube-hint">👆 Toca para pausar · Arrastra para girar</div>
-    <div class="cube-items" id="cubeItems"></div>
-    <button class="cube-close" onclick="closeCube()">Cerrar</button>
-  </div>
-</div>
-
 
 <!-- ═══ AI ASSISTANT FAB ═══ -->
 <button class="ai-fab hidden" id="aiFab" onclick="toggleAI()">
