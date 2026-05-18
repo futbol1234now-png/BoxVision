@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BoxVision — Seguimos Mejorando</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@400;500&display=swap');
+
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --bg: #0d0d14;
+    --card: #13131e;
+    --gold: #F5A623;
+    --gold2: #FFD166;
+    --blue: #0A84FF;
+    --text: #ffffff;
+    --muted: rgba(255,255,255,0.45);
+    --border: rgba(255,255,255,0.07);
+  }
+
+  html, body {
+    height: 100%;
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    overflow: hidden;
+  }
+
+  /* Fondo animado */
+  .bg-glow {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+  }
+  .glow-1 {
+    position: absolute;
+    width: 600px; height: 600px;
+    top: -200px; left: 50%;
+    transform: translateX(-50%);
+    background: radial-gradient(circle, rgba(245,166,35,0.12) 0%, transparent 70%);
+    animation: pulse 4s ease-in-out infinite;
+  }
+  .glow-2 {
+    position: absolute;
+    width: 400px; height: 400px;
+    bottom: -100px; left: -100px;
+    background: radial-gradient(circle, rgba(10,132,255,0.08) 0%, transparent 70%);
+    animation: pulse 6s ease-in-out infinite reverse;
+  }
+  .glow-3 {
+    position: absolute;
+    width: 300px; height: 300px;
+    bottom: 50px; right: -50px;
+    background: radial-gradient(circle, rgba(245,166,35,0.06) 0%, transparent 70%);
+    animation: pulse 5s ease-in-out infinite 1s;
+  }
+  @keyframes pulse {
+    0%, 100% { opacity: 1; transform: translateX(-50%) scale(1); }
+    50% { opacity: 0.6; transform: translateX(-50%) scale(1.1); }
+  }
+  .glow-2, .glow-3 { animation: pulse2 5s ease-in-out infinite; }
+  @keyframes pulse2 {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+  }
+
+  /* Grid de puntos */
+  .dots-bg {
+    position: fixed;
+    inset: 0;
+    background-image: radial-gradient(rgba(255,255,255,0.04) 1px, transparent 1px);
+    background-size: 32px 32px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* Contenido */
+  .container {
+    position: relative;
+    z-index: 1;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 32px 24px;
+    text-align: center;
+  }
+
+  /* Logo */
+  .logo-wrap {
+    position: relative;
+    margin-bottom: 32px;
+    animation: floatIn 0.8s cubic-bezier(0.34,1.56,0.64,1) both;
+  }
+  .logo-box {
+    width: 96px; height: 96px;
+    background: linear-gradient(135deg, #1a1a2e, #16213e);
+    border-radius: 26px;
+    border: 1px solid rgba(245,166,35,0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 48px;
+    box-shadow: 0 0 40px rgba(245,166,35,0.15), 0 8px 32px rgba(0,0,0,0.5);
+    position: relative;
+    overflow: hidden;
+  }
+  .logo-box::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(245,166,35,0.1), transparent);
+    border-radius: inherit;
+  }
+  .logo-shine {
+    position: absolute;
+    top: -2px; left: -2px; right: -2px;
+    height: 50%;
+    background: linear-gradient(180deg, rgba(255,255,255,0.08), transparent);
+    border-radius: 26px 26px 0 0;
+    pointer-events: none;
+  }
+  .logo-badge {
+    position: absolute;
+    top: -6px; right: -6px;
+    width: 24px; height: 24px;
+    background: var(--gold);
+    border-radius: 50%;
+    border: 2px solid var(--bg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    animation: spin 3s linear infinite;
+  }
+  @keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+  }
+
+  /* Nombre */
+  .brand {
+    font-family: 'Syne', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 24px;
+    animation: floatIn 0.8s cubic-bezier(0.34,1.56,0.64,1) 0.1s both;
+  }
+
+  /* Título */
+  .title {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(32px, 8vw, 52px);
+    font-weight: 800;
+    line-height: 1.05;
+    margin-bottom: 16px;
+    animation: floatIn 0.8s cubic-bezier(0.34,1.56,0.64,1) 0.2s both;
+  }
+  .title .highlight {
+    background: linear-gradient(135deg, var(--gold), var(--gold2));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  /* Subtítulo */
+  .subtitle {
+    font-size: 17px;
+    color: var(--muted);
+    margin-bottom: 40px;
+    line-height: 1.5;
+    max-width: 320px;
+    animation: floatIn 0.8s cubic-bezier(0.34,1.56,0.64,1) 0.3s both;
+  }
+
+  /* Card de estado */
+  .status-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 20px 28px;
+    margin-bottom: 32px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    animation: floatIn 0.8s cubic-bezier(0.34,1.56,0.64,1) 0.4s both;
+    box-shadow: 0 4px 32px rgba(0,0,0,0.3);
+  }
+  .status-dot {
+    width: 10px; height: 10px;
+    border-radius: 50%;
+    background: var(--gold);
+    flex-shrink: 0;
+    box-shadow: 0 0 8px var(--gold);
+    animation: blink 1.5s ease-in-out infinite;
+  }
+  @keyframes blink {
+    0%, 100% { opacity: 1; box-shadow: 0 0 8px var(--gold); }
+    50% { opacity: 0.4; box-shadow: 0 0 2px var(--gold); }
+  }
+  .status-text {
+    font-size: 14px;
+    color: rgba(255,255,255,0.7);
+    font-weight: 500;
+  }
+  .status-text strong {
+    color: var(--text);
+  }
+
+  /* Footer info */
+  .footer-info {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    animation: floatIn 0.8s cubic-bezier(0.34,1.56,0.64,1) 0.5s both;
+  }
+  .footer-email {
+    font-size: 13px;
+    color: var(--blue);
+    text-decoration: none;
+    font-weight: 500;
+    padding: 6px 14px;
+    border: 1px solid rgba(10,132,255,0.3);
+    border-radius: 20px;
+    transition: all 0.2s;
+  }
+  .footer-email:hover {
+    background: rgba(10,132,255,0.1);
+    border-color: rgba(10,132,255,0.6);
+  }
+  .footer-version {
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: 1px;
+  }
+
+  /* Partículas flotantes */
+  .particle {
+    position: fixed;
+    border-radius: 50%;
+    pointer-events: none;
+    opacity: 0;
+    animation: floatParticle linear infinite;
+  }
+  @keyframes floatParticle {
+    0% { transform: translateY(100vh) scale(0); opacity: 0; }
+    10% { opacity: 0.6; }
+    90% { opacity: 0.2; }
+    100% { transform: translateY(-20px) scale(1); opacity: 0; }
+  }
+
+  @keyframes floatIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+</style>
+</head>
+<body>
+
+<div class="dots-bg"></div>
+<div class="bg-glow">
+  <div class="glow-1"></div>
+  <div class="glow-2"></div>
+  <div class="glow-3"></div>
+</div>
+
+<div class="container">
+
+  <div class="logo-wrap">
+    <div class="logo-box">
+      📦
+      <div class="logo-shine"></div>
+    </div>
+    <div class="logo-badge">⚙️</div>
+  </div>
+
+  <div class="brand">BoxVision</div>
+
+  <h1 class="title">
+    Seguimos<br><span class="highlight">Mejorando</span>
+  </h1>
+
+  <p class="subtitle">
+    Vuelve pronto — estamos trabajando para darte la mejor experiencia.
+  </p>
+
+  <div class="status-card">
+    <div class="status-dot"></div>
+    <div class="status-text">
+      <strong>Mantenimiento en curso</strong> — Estaremos de vuelta muy pronto
+    </div>
+  </div>
+
+  <div class="footer-info">
+    <a class="footer-email" href="mailto:futbol1234now@gmail.com">
+      futbol1234now@gmail.com
+    </a>
+    <div class="footer-version">BoxVision v1.1</div>
+  </div>
+
+</div>
+
+<script>
+  // Partículas flotantes
+  const colors = ['#F5A623','#FFD166','#0A84FF','#34C759'];
+  for(let i = 0; i < 12; i++){
+    const p = document.createElement('div');
+    p.className = 'particle';
+    const size = Math.random() * 6 + 3;
+    p.style.cssText = `
+      width:${size}px;height:${size}px;
+      left:${Math.random()*100}%;
+      background:${colors[Math.floor(Math.random()*colors.length)]};
+      animation-duration:${Math.random()*10+8}s;
+      animation-delay:${Math.random()*8}s;
+    `;
+    document.body.appendChild(p);
+  }
+</script>
+</body>
+</html>
