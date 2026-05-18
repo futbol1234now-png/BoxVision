@@ -181,6 +181,29 @@ body.fading{opacity:0;filter:blur(6px);transform:scale(1.03);pointer-events:none
 .checking{display:flex;align-items:center;gap:10px;color:var(--muted);font-size:13px}
 .spinner{width:15px;height:15px;flex-shrink:0;border:1.5px solid rgba(255,255,255,.1);border-top-color:rgba(255,255,255,.4);border-radius:50%;animation:spin .9s linear infinite}
 .footer{position:fixed;bottom:max(18px,env(safe-area-inset-bottom));font-size:11px;color:rgba(255,255,255,.12);letter-spacing:.3px;z-index:1}
+
+/* READY BANNER */
+.ready-banner{
+  display:none;position:fixed;bottom:max(80px,env(safe-area-inset-bottom));
+  left:50%;transform:translateX(-50%);z-index:300;
+  background:linear-gradient(135deg,rgba(10,132,255,.18),rgba(48,209,88,.14));
+  border:1px solid rgba(48,209,88,.4);border-radius:20px;
+  padding:14px 20px;align-items:center;gap:14px;
+  box-shadow:0 8px 32px rgba(0,0,0,.5);
+  backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
+  white-space:nowrap;
+}
+@keyframes bannerIn{from{opacity:0;transform:translateX(-50%) translateY(20px)}to{opacity:1;transform:translateX(-50%) translateY(0)}}
+.ready-text{font-size:14px;font-weight:600;color:#fff}
+.ready-text span{color:#30D158}
+.ready-btn{
+  padding:8px 18px;border:none;border-radius:12px;
+  background:linear-gradient(135deg,#30D158,#0A84FF);
+  color:#fff;font-family:inherit;font-size:13px;font-weight:700;
+  cursor:pointer;transition:transform .15s,opacity .15s;letter-spacing:.2px
+}
+.ready-btn:hover{transform:scale(1.05);opacity:.9}
+.ready-btn:active{transform:scale(.96)}
 </style>
 </head>
 <body>
@@ -249,6 +272,10 @@ body.fading{opacity:0;filter:blur(6px);transform:scale(1.03);pointer-events:none
   </div>
   <div class="progress-wrap"><div class="progress-bar"></div></div>
   <div class="checking"><div class="spinner"></div><span id="checkMsg">Revisando disponibilidad…</span></div>
+</div>
+<div class="ready-banner" id="readyBanner">
+  <div class="ready-text">🎉 <span>¡BoxVision ya está lista!</span></div>
+  <button class="ready-btn" id="readyBtn">Entrar ahora →</button>
 </div>
 <div class="footer">BoxVision · futbol1234now-png.github.io</div>
 
@@ -496,25 +523,30 @@ if(savedName && savedName.length >= 2){
   setInterval(function(){ refreshBoard(); }, 20000);
 })();
 
-/* ── REDIRECT POLLING (sin recargar la página) ── */
+/* ── CONFIG POLLING (sin recargar, sin interrumpir el juego) ── */
 (function(){
   var msg = document.getElementById('checkMsg');
-  var attempts = 0;
   var appUrl = '/BoxVision/app.html';
+  var configUrl = '/BoxVision/config.json';
+  var bannerShown = false;
 
-  function tryCheck(){
-    attempts++;
-    if(attempts > 20){ msg.textContent = 'Seguimos trabajando… ¡sigue jugando!'; return; }
-    fetch(appUrl, {method:'HEAD', cache:'no-store'})
-      .then(function(r){
-        if(r.ok){
-          msg.textContent = '¡Ya está lista! Redirigiendo…';
-          setTimeout(function(){
-            document.body.classList.add('fading');
-            setTimeout(function(){ window.location.href = appUrl; }, 950);
-          }, 900);
+  function showReadyBanner(){
+    if(bannerShown) return;
+    bannerShown = true;
+    msg.textContent = '';
+    var banner = document.getElementById('readyBanner');
+    banner.style.display = 'flex';
+    banner.style.animation = 'bannerIn .5s cubic-bezier(.34,1.2,.64,1) both';
+  }
+
+  function checkConfig(){
+    fetch(configUrl, {cache:'no-store'})
+      .then(function(r){ return r.json(); })
+      .then(function(cfg){
+        if(cfg && cfg.mantenimiento === false){
+          showReadyBanner();
         } else {
-          msg.textContent = 'Aún no está lista, ¡sigue jugando!';
+          msg.textContent = 'Seguimos puliendo… ¡sigue jugando!';
         }
       })
       .catch(function(){
@@ -522,8 +554,13 @@ if(savedName && savedName.length >= 2){
       });
   }
 
-  setTimeout(tryCheck, 3000);
-  setInterval(tryCheck, 20000);
+  document.getElementById('readyBtn').addEventListener('click', function(){
+    document.body.classList.add('fading');
+    setTimeout(function(){ window.location.href = appUrl; }, 950);
+  });
+
+  setTimeout(checkConfig, 3000);
+  setInterval(checkConfig, 30000);
 })();
 </script>
 </body>
