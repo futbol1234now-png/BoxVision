@@ -1806,6 +1806,66 @@ if(!auth){
     Continuar con Google
   </button>
 
+  <!-- Divider "o continúa con correo" -->
+  <div style="display:flex;align-items:center;gap:12px;width:100%;max-width:320px;margin:18px 0 16px;animation:lsFadeUp .5s .5s both ease">
+    <div style="flex:1;height:0.5px;background:rgba(255,255,255,0.09)"></div>
+    <div style="font-size:11px;color:rgba(255,255,255,0.28);white-space:nowrap">o continúa con correo</div>
+    <div style="flex:1;height:0.5px;background:rgba(255,255,255,0.09)"></div>
+  </div>
+
+  <!-- Formulario correo/contraseña -->
+  <div id="emailForm" style="width:100%;max-width:320px;animation:lsFadeUp .5s .55s both ease">
+    <!-- Tabs Entrar / Crear cuenta -->
+    <div style="display:flex;background:rgba(255,255,255,0.06);border:0.5px solid rgba(255,255,255,0.1);border-radius:12px;padding:3px;margin-bottom:16px;">
+      <button id="tabSignIn" onclick="switchEmailTab('signin')" style="flex:1;border:none;cursor:pointer;font-family:inherit;border-radius:9px;padding:8px;font-size:13px;font-weight:600;transition:background .2s,color .2s;background:rgba(255,255,255,0.12);color:#fff;">Entrar</button>
+      <button id="tabSignUp" onclick="switchEmailTab('signup')" style="flex:1;border:none;cursor:pointer;font-family:inherit;border-radius:9px;padding:8px;font-size:13px;font-weight:600;transition:background .2s,color .2s;background:transparent;color:rgba(255,255,255,0.4);">Crear cuenta</button>
+    </div>
+
+    <!-- Campo nombre (solo en registro) -->
+    <div id="fieldName" style="display:none;margin-bottom:10px;">
+      <input id="emailName" type="text" placeholder="Tu nombre" autocomplete="name"
+        style="width:100%;background:rgba(255,255,255,0.07);border:0.5px solid rgba(255,255,255,0.13);border-radius:13px;padding:14px 16px;font-size:15px;color:#fff;font-family:inherit;outline:none;transition:border-color .2s,background .2s;"
+        onfocus="this.style.borderColor='rgba(10,132,255,0.6)';this.style.background='rgba(255,255,255,0.1)'"
+        onblur="this.style.borderColor='rgba(255,255,255,0.13)';this.style.background='rgba(255,255,255,0.07)'">
+    </div>
+
+    <!-- Campo correo -->
+    <div style="margin-bottom:10px;">
+      <input id="emailInput" type="email" placeholder="Correo electrónico" autocomplete="email"
+        style="width:100%;background:rgba(255,255,255,0.07);border:0.5px solid rgba(255,255,255,0.13);border-radius:13px;padding:14px 16px;font-size:15px;color:#fff;font-family:inherit;outline:none;transition:border-color .2s,background .2s;"
+        onfocus="this.style.borderColor='rgba(10,132,255,0.6)';this.style.background='rgba(255,255,255,0.1)'"
+        onblur="this.style.borderColor='rgba(255,255,255,0.13)';this.style.background='rgba(255,255,255,0.07)'"
+        onkeydown="if(event.key==='Enter')document.getElementById('passInput').focus()">
+    </div>
+
+    <!-- Campo contraseña -->
+    <div style="margin-bottom:14px;position:relative;">
+      <input id="passInput" type="password" placeholder="Contraseña" autocomplete="current-password"
+        style="width:100%;background:rgba(255,255,255,0.07);border:0.5px solid rgba(255,255,255,0.13);border-radius:13px;padding:14px 46px 14px 16px;font-size:15px;color:#fff;font-family:inherit;outline:none;transition:border-color .2s,background .2s;"
+        onfocus="this.style.borderColor='rgba(10,132,255,0.6)';this.style.background='rgba(255,255,255,0.1)'"
+        onblur="this.style.borderColor='rgba(255,255,255,0.13)';this.style.background='rgba(255,255,255,0.07)'"
+        onkeydown="if(event.key==='Enter')submitEmailForm()">
+      <!-- Toggle mostrar/ocultar contraseña -->
+      <button onclick="togglePassVisibility()" tabindex="-1" style="position:absolute;right:14px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:rgba(255,255,255,0.35);font-size:18px;padding:4px;line-height:1;" id="passToggleBtn">
+        <i class="ti ti-eye" id="passToggleIcon"></i>
+      </button>
+    </div>
+
+    <!-- Botón principal acción -->
+    <button id="emailSubmitBtn" onclick="submitEmailForm()" style="width:100%;background:linear-gradient(135deg,#0A84FF,#1a6fe8);color:#fff;border:none;border-radius:13px;padding:15px;font-size:15px;font-weight:700;cursor:pointer;font-family:inherit;box-shadow:0 4px 20px rgba(10,132,255,0.35);transition:transform .15s,box-shadow .15s;letter-spacing:.1px;"
+      onmousedown="this.style.transform='scale(.98)'" onmouseup="this.style.transform=''" ontouchstart="this.style.transform='scale(.98)'" ontouchend="this.style.transform=''">
+      Entrar
+    </button>
+
+    <!-- Olvidé mi contraseña -->
+    <div id="forgotWrap" style="text-align:center;margin-top:12px;">
+      <button onclick="sendPasswordReset()" style="background:none;border:none;cursor:pointer;font-family:inherit;font-size:12px;color:rgba(255,255,255,0.35);transition:color .2s;"
+        onmouseover="this.style.color='rgba(255,255,255,0.7)'" onmouseout="this.style.color='rgba(255,255,255,0.35)'">
+        ¿Olvidaste tu contraseña?
+      </button>
+    </div>
+  </div>
+
   <!-- Estado de carga mejorado -->
   <div id="loginLoading" style="margin-top:24px;display:none;flex-direction:column;align-items:center;gap:14px;animation:lsFadeUp .35s both ease">
     <div style="width:34px;height:34px;border-radius:50%;border:2.5px solid rgba(255,255,255,0.12);border-top-color:rgba(255,255,255,0.75);animation:lsSpin .75s linear infinite"></div>
@@ -1817,15 +1877,8 @@ if(!auth){
     <div style="font-size:13px;color:rgba(255,255,255,0.5)">Iniciando sesión…</div>
   </div>
 
-  <!-- Divider -->
-  <div style="display:flex;align-items:center;gap:12px;width:100%;max-width:320px;margin:22px 0 0;animation:lsFadeUp .5s .5s both ease">
-    <div style="flex:1;height:0.5px;background:rgba(255,255,255,0.09)"></div>
-    <div style="font-size:11px;color:rgba(255,255,255,0.22)">100% gratis</div>
-    <div style="flex:1;height:0.5px;background:rgba(255,255,255,0.09)"></div>
-  </div>
-
   <!-- Error -->
-  <div id="loginError" style="margin-top:14px;font-size:13px;color:#FF3B30;display:none;animation:lsFadeUp .3s both ease"></div>
+  <div id="loginError" style="margin-top:14px;font-size:13px;color:#FF3B30;display:none;animation:lsFadeUp .3s both ease;max-width:320px;text-align:center;line-height:1.4"></div>
 
   <!-- Footer -->
   <div style="position:absolute;bottom:28px;font-size:11px;color:rgba(255,255,255,0.2);letter-spacing:.2px;animation:lsFadeUp .5s .6s both ease">Tus cajas se guardan en tu cuenta</div>
@@ -4460,6 +4513,147 @@ function signInGoogle(){
   // NOTA: getRedirectResult se maneja una sola vez al cargar la página (ver abajo)
 }
 
+// ── Email/Password Auth ───────────────────────────────────────────────────
+var _emailTab = 'signin'; // 'signin' | 'signup'
+
+function switchEmailTab(tab){
+  _emailTab = tab;
+  const btnSignIn = document.getElementById('tabSignIn');
+  const btnSignUp = document.getElementById('tabSignUp');
+  const fieldName = document.getElementById('fieldName');
+  const submitBtn = document.getElementById('emailSubmitBtn');
+  const forgotWrap = document.getElementById('forgotWrap');
+  const passInput = document.getElementById('passInput');
+  const errEl = document.getElementById('loginError');
+  if(errEl){ errEl.textContent=''; errEl.style.display='none'; }
+
+  const activeStyle = 'background:rgba(255,255,255,0.12);color:#fff;';
+  const inactiveStyle = 'background:transparent;color:rgba(255,255,255,0.4);';
+
+  if(tab === 'signin'){
+    btnSignIn.style.cssText += activeStyle;
+    btnSignUp.style.cssText += inactiveStyle;
+    fieldName.style.display = 'none';
+    submitBtn.textContent = 'Entrar';
+    forgotWrap.style.display = 'block';
+    passInput.setAttribute('autocomplete','current-password');
+  } else {
+    btnSignUp.style.cssText += activeStyle;
+    btnSignIn.style.cssText += inactiveStyle;
+    fieldName.style.display = 'block';
+    submitBtn.textContent = 'Crear cuenta';
+    forgotWrap.style.display = 'none';
+    passInput.setAttribute('autocomplete','new-password');
+  }
+}
+
+function _emailAuthError(code){
+  const msgs = {
+    'auth/invalid-email':           'Correo inválido.',
+    'auth/user-not-found':          'No existe una cuenta con ese correo.',
+    'auth/wrong-password':          'Contraseña incorrecta.',
+    'auth/email-already-in-use':    'Ese correo ya está registrado. Intenta entrar.',
+    'auth/weak-password':           'La contraseña debe tener al menos 6 caracteres.',
+    'auth/too-many-requests':       'Demasiados intentos. Espera un momento.',
+    'auth/network-request-failed':  'Sin conexión. Revisa tu internet.',
+    'auth/invalid-credential':      'Correo o contraseña incorrectos.',
+  };
+  return msgs[code] || 'Error al autenticar. Intenta de nuevo.';
+}
+
+function _setEmailLoading(on){
+  const btn     = document.getElementById('loginBtn');
+  const emailF  = document.getElementById('emailForm');
+  const loading = document.getElementById('loginLoading');
+  if(btn)    btn.style.opacity    = on ? '0.5' : '1';
+  if(btn)    btn.style.pointerEvents = on ? 'none' : '';
+  if(emailF) emailF.style.opacity = on ? '0.5' : '1';
+  if(emailF) emailF.style.pointerEvents = on ? 'none' : '';
+  if(loading){ loading.style.display = on ? 'flex' : 'none'; }
+}
+
+function submitEmailForm(){
+  if(!auth){
+    alert("⚠️ Firebase no está disponible.");
+    return;
+  }
+  const email = (document.getElementById('emailInput').value || '').trim();
+  const pass  = (document.getElementById('passInput').value  || '');
+  const name  = (document.getElementById('emailName').value  || '').trim();
+  const errEl = document.getElementById('loginError');
+
+  if(errEl){ errEl.textContent=''; errEl.style.display='none'; }
+
+  if(!email){ _showEmailErr('Ingresa tu correo.'); return; }
+  if(!pass)  { _showEmailErr('Ingresa tu contraseña.'); return; }
+  if(_emailTab === 'signup' && !name){ _showEmailErr('Ingresa tu nombre.'); return; }
+  if(_emailTab === 'signup' && pass.length < 6){ _showEmailErr('La contraseña debe tener al menos 6 caracteres.'); return; }
+
+  _setEmailLoading(true);
+
+  if(_emailTab === 'signin'){
+    auth.signInWithEmailAndPassword(email, pass)
+      .catch(err=>{
+        _setEmailLoading(false);
+        _showEmailErr(_emailAuthError(err.code));
+      });
+  } else {
+    auth.createUserWithEmailAndPassword(email, pass)
+      .then(cred=>{
+        // Guardar nombre en el perfil
+        if(name && cred.user){
+          return cred.user.updateProfile({ displayName: name });
+        }
+      })
+      .catch(err=>{
+        _setEmailLoading(false);
+        _showEmailErr(_emailAuthError(err.code));
+      });
+  }
+}
+
+function _showEmailErr(msg){
+  const errEl = document.getElementById('loginError');
+  if(!errEl) return;
+  errEl.textContent = msg;
+  errEl.style.display = 'block';
+}
+
+function togglePassVisibility(){
+  const inp  = document.getElementById('passInput');
+  const icon = document.getElementById('passToggleIcon');
+  if(!inp) return;
+  if(inp.type === 'password'){
+    inp.type = 'text';
+    if(icon){ icon.className='ti ti-eye-off'; }
+  } else {
+    inp.type = 'password';
+    if(icon){ icon.className='ti ti-eye'; }
+  }
+}
+
+function sendPasswordReset(){
+  if(!auth) return;
+  const email = (document.getElementById('emailInput').value || '').trim();
+  const errEl = document.getElementById('loginError');
+  if(!email){
+    _showEmailErr('Ingresa tu correo para recuperar la contraseña.');
+    return;
+  }
+  auth.sendPasswordResetEmail(email)
+    .then(()=>{
+      if(errEl){
+        errEl.style.color='#34C759';
+        errEl.textContent='✓ Correo de recuperación enviado. Revisa tu bandeja.';
+        errEl.style.display='block';
+        setTimeout(()=>{ errEl.style.color='#FF3B30'; errEl.style.display='none'; }, 4000);
+      }
+    })
+    .catch(err=>{
+      _showEmailErr(_emailAuthError(err.code));
+    });
+}
+
 function showUserMenu(){
   if(!currentUser) return;
   const existing=document.getElementById("userMenuPopup");
@@ -4954,8 +5148,9 @@ if(auth){
       console.warn("[BoxVision] getRedirectResult error:", err.code);
       const errEl = document.getElementById("loginError");
       if(errEl){ errEl.textContent="Error al iniciar sesión. Intenta de nuevo."; errEl.style.display="block"; }
-      const lb=document.getElementById("loginBtn"); if(lb) lb.style.display="flex";
+      const lb=document.getElementById("loginBtn"); if(lb){ lb.style.display="flex"; lb.style.opacity="1"; lb.style.pointerEvents=""; }
       const ll=document.getElementById("loginLoading"); if(ll) ll.style.display="none";
+      const ef=document.getElementById("emailForm"); if(ef){ ef.style.opacity="1"; ef.style.pointerEvents=""; }
     }
   });
   function _showLoginScreen(){
@@ -4968,10 +5163,17 @@ if(auth){
     const le = document.getElementById("loginError");
     const av = document.getElementById("userAvatar");
     if(ls){ ls.style.transition="none"; ls.style.display="flex"; ls.style.opacity="1"; }
-    if(lb){ lb.style.display="flex"; }
+    if(lb){ lb.style.display="flex"; lb.style.opacity="1"; lb.style.pointerEvents=""; }
     if(ll){ ll.style.display="none"; }
-    if(le){ le.style.display="none"; le.textContent=""; }
+    if(le){ le.style.display="none"; le.textContent=""; le.style.color="#FF3B30"; }
     if(av){ av.style.display="none"; }
+    // Resetear form de correo
+    const ef = document.getElementById('emailForm');
+    if(ef){ ef.style.opacity="1"; ef.style.pointerEvents=""; }
+    const ei = document.getElementById('emailInput'); if(ei) ei.value="";
+    const pi = document.getElementById('passInput');  if(pi){ pi.value=""; pi.type="password"; }
+    const ni = document.getElementById('emailName');  if(ni) ni.value="";
+    if(typeof switchEmailTab === 'function') switchEmailTab('signin');
   }
 
   function _hideLoginScreen(){
