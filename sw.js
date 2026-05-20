@@ -48,7 +48,7 @@ self.addEventListener('activate', function(event){
       return self.clients.matchAll();
     }).then(function(clients){
       clients.forEach(function(client){
-        client.postMessage({type: 'SW_UPDATED'});
+        client.postMessage({type: 'SW_ACTIVATED'});
       });
     })
   );
