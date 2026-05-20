@@ -57,10 +57,17 @@ self.addEventListener('activate', function(event){
 // 3. FETCH: Estrategia de cache inteligente
 self.addEventListener('fetch', function(event){
   var url = event.request.url;
-  var isHtml = event.request.headers.get('accept').includes('text/html');
-  
+  var isHtml = event.request.headers.get('accept') && event.request.headers.get('accept').includes('text/html');
+
+  // Solo cachear GET — POST, HEAD y otros métodos no son cacheables
+  if(event.request.method !== 'GET'){
+    return;
+  }
+
   // No cachear algunas URLs
-  if(url.includes('chrome-extension') || url.includes('moz-extension')){
+  if(url.includes('chrome-extension') || url.includes('moz-extension') ||
+     url.includes('firestore.googleapis.com') || url.includes('firebase') ||
+     url.includes('googleapis.com')){
     return;
   }
 
