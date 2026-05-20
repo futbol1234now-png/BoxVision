@@ -5149,40 +5149,9 @@ if(auth){
 <!-- Se coloca al final del body para que todas las variables estén definidas -->
 <script>
 (function(){
-  // ── Service Worker ───────────────────────────────────────────────────────
-  // Los blob: URLs no son válidos como SW en Chrome/Firefox.
-  // Solo registrar si existe un sw.js real en el mismo origen.
-  if('serviceWorker' in navigator && location.protocol !== 'blob:'){
-    fetch(location.pathname.replace(/[^/]*$/, '') + 'sw.js', {method:'HEAD'})
-      .then(function(r){
-        if(r.ok){
-          navigator.serviceWorker.register('sw.js')
-            .then(function(reg){
-              console.log('[BoxVision] SW registrado, scope:', reg.scope);
-              // Detectar nueva versión del SW disponible
-              reg.addEventListener('updatefound', function(){
-                const newWorker = reg.installing;
-                if(!newWorker) return;
-                newWorker.addEventListener('statechange', function(){
-                  if(newWorker.state === 'installed' && navigator.serviceWorker.controller){
-                    // Hay nueva versión — mostrar banner
-                    const nb = document.createElement('div');
-                    nb.style.cssText = 'position:fixed;bottom:80px;left:16px;right:16px;z-index:9999;background:#0A84FF;color:#fff;border-radius:14px;padding:14px 16px;display:flex;align-items:center;justify-content:space-between;box-shadow:0 4px 24px rgba(0,0,0,.4);font-size:14px;font-weight:600;';
-                    nb.innerHTML = '<span>🆕 Nueva versión disponible</span><button onclick="window.location.reload()" style="background:rgba(255,255,255,.2);border:none;color:#fff;border-radius:8px;padding:6px 14px;font-weight:700;cursor:pointer;font-size:13px;">Actualizar</button>';
-                    document.body.appendChild(nb);
-                  }
-                });
-              });
-              // Verificar actualizaciones cada 30 minutos
-              setInterval(function(){ reg.update(); }, 30*60*1000);
-            })
-            .catch(function(e){ console.info('[BoxVision] SW no disponible:', e.message); });
-        } else {
-          console.info('[BoxVision] sw.js no encontrado — PWA offline desactivado (normal en archivo único)');
-        }
-      })
-      .catch(function(){ console.info('[BoxVision] SW no disponible en este entorno'); });
-  }
+  // ── Service Worker (registro único) ─────────────────────────────────────
+  // El registro principal está más abajo junto al sistema de notificación.
+  // Este bloque solo gestiona el detector online/offline.
 
   // ── Detector online/offline ───────────────────────────────────────────────
   // Se define aquí (al final del body) para que showToast, saveToFirestore
@@ -5356,7 +5325,7 @@ if(auth){
 
 <!-- ── Banner offline / online ── -->
 <div id="offlineBanner" style="
-  display:none;position:fixed;bottom:80px;left:50%;transform:translateX(-50%);
+  position:fixed;bottom:80px;left:50%;transform:translateX(-50%);
   z-index:9000;
   background:rgba(30,30,40,.95);border:0.5px solid rgba(255,255,255,.12);
   backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);
@@ -5610,38 +5579,47 @@ if(auth){
   var dismissBtn = document.getElementById('updateDismiss');
   var pendingWorker = null;
 
-  // Registrar Service Worker
-  if ('serviceWorker' in navigator) {
+  // Registrar Service Worker (registro único y definitivo)
+  if ('serviceWorker' in navigator && location.protocol !== 'blob:') {
     window.addEventListener('load', function() {
-      navigator.serviceWorker.register('./sw.js', { scope: './' })
-        .then(function(registration) {
-          console.log('✅ Service Worker registrado');
-          
-          // Verificar actualizaciones cada 30 segundos
-          setInterval(function() {
-            if (navigator.onLine) {
-              registration.update().catch(function(err) {
-                console.log('[Update] Error al verificar:', err);
-              });
-            }
-          }, 30000);
+      fetch(location.pathname.replace(/[^/]*$/, '') + 'sw.js', {method:'HEAD'})
+        .then(function(r){
+          if(!r.ok){
+            console.info('[BoxVision] sw.js no encontrado — PWA offline desactivado');
+            return;
+          }
+          navigator.serviceWorker.register('./sw.js', { scope: './' })
+            .then(function(registration) {
+              console.log('✅ Service Worker registrado, scope:', registration.scope);
+              
+              // Verificar actualizaciones cada 30 minutos
+              setInterval(function() {
+                if (navigator.onLine) {
+                  registration.update().catch(function(err) {
+                    console.log('[Update] Error al verificar:', err);
+                  });
+                }
+              }, 30 * 60 * 1000);
 
-          // Escuchar si hay una nueva versión instalada
-          registration.addEventListener('updatefound', function() {
-            var newWorker = registration.installing;
-            console.log('🔔 Nueva versión detectada');
-            
-            newWorker.addEventListener('statechange', function() {
-              if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
-                pendingWorker = newWorker;
-                showUpdateNotification();
-              }
+              // Escuchar si hay una nueva versión instalada
+              registration.addEventListener('updatefound', function() {
+                var newWorker = registration.installing;
+                if(!newWorker) return;
+                console.log('🔔 Nueva versión detectada');
+                
+                newWorker.addEventListener('statechange', function() {
+                  if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                    pendingWorker = newWorker;
+                    showUpdateNotification();
+                  }
+                });
+              });
+            })
+            .catch(function(err) {
+              console.log('❌ Error registrando SW:', err);
             });
-          });
         })
-        .catch(function(err) {
-          console.log('❌ Error registrando SW:', err);
-        });
+        .catch(function(){ console.info('[BoxVision] SW no disponible en este entorno'); });
     });
   }
 
