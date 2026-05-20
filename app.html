@@ -5255,34 +5255,31 @@ if(auth){
   })();
 
   // ── Interceptar botón "atrás" del navegador ──
-  // Evita que salga de la app o muestre el login al navegar hacia atrás
-  history.replaceState({bv:true}, "");
+  // Evita que salga de la app o muestre el landing/splash al navegar hacia atrás
+  // Usamos dos entradas en el historial para que siempre haya algo que interceptar
+  history.replaceState({bv:'base'}, "");
+  history.pushState({bv:'app'}, "");
+
   window.addEventListener("popstate", function(e){
-    // SIEMPRE interceptar el atrás — nunca dejar que el usuario vea el landing
-    // si ya inició sesión o está en proceso de auth
+    // Siempre empujar de vuelta para no salir nunca
+    history.pushState({bv:'app'}, "");
+
     const hasSession = currentUser || _lastLaunchedUid ||
       (typeof firebase !== "undefined" && firebase.auth && firebase.auth().currentUser);
 
     if(hasSession){
-      const detail = document.getElementById("detailScreen");
-      if(detail && !detail.classList.contains("hidden")){
-        history.pushState({bv:true}, "");
-        goMain();
-        return;
+      // Si hay una pantalla interior abierta, volver a main
+      const screens = ['detailScreen','roomScreen','settingsScreen'];
+      for(var i=0;i<screens.length;i++){
+        const s = document.getElementById(screens[i]);
+        if(s && !s.classList.contains("hidden")){
+          goMain();
+          return;
+        }
       }
-      const room = document.getElementById("roomScreen");
-      const settings = document.getElementById("settingsScreen");
-      if((room && !room.classList.contains("hidden")) ||
-         (settings && !settings.classList.contains("hidden"))){
-        history.pushState({bv:true}, "");
-        goMain();
-        return;
-      }
-      history.pushState({bv:true}, "");
-    } else {
-      // Sin sesión: también bloquear para que no salga de la app
-      history.pushState({bv:true}, "");
+      // Ya estamos en main → no hacer nada (no ir al landing)
     }
+    // Sin sesión: bloquear igual, no ir a ningún landing externo
   });
 
   // ── Spinner inicial mientras Firebase verifica sesión ──
@@ -5334,13 +5331,22 @@ if(auth){
     loadAll();
     setupPWA();
     initTutorial();
-    // FIX: en modo local, si hay cajas guardadas ir directo a main
     if(boxes && boxes.length > 0){
-      history.replaceState(null, "", location.pathname + location.search);
+      history.replaceState({bv:'base'}, "");
+      history.pushState({bv:'app'}, "");
       goMain();
     } else {
-      showSplash(); // primera vez sin cajas: mostrar landing
+      showSplash();
     }
+    // Bloquear atrás en modo local también
+    window.addEventListener("popstate", function(){
+      history.pushState({bv:'app'}, "");
+      const screens = ['detailScreen','roomScreen','settingsScreen'];
+      for(var i=0;i<screens.length;i++){
+        const s = document.getElementById(screens[i]);
+        if(s && !s.classList.contains("hidden")){ goMain(); return; }
+      }
+    });
   });
 }
 </script>
