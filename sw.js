@@ -5,7 +5,7 @@
 // ✓ Solo borra el cache cuando hay una nueva versión
 // ✓ Soporta skip_waiting para actualizaciones controladas
 
-const CACHE_NAME = 'boxvision-v1.0.0';
+const CACHE_NAME = 'boxvision-v1.1.0';
 const URLS_TO_CACHE = [
   './',
   './index.html',
