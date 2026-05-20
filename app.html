@@ -2619,6 +2619,8 @@ function loadSettingsOnly(){
   document.body.setAttribute("data-dark",dark?"1":"");
   applyDark();
 }
+// FIX: exportar al scope global para acceso entre bloques de script
+window.loadSettingsOnly = loadSettingsOnly;
 function saveData(){
   // Actualizar timestamp de modificación en la caja activa (si hay una abierta)
   if(currentBoxId){
@@ -4811,9 +4813,10 @@ function signInGoogle(){
   const isIOS     = /iPhone|iPad|iPod/i.test(navigator.userAgent);
   const isSafari  = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
 
-  // iOS Safari no soporta bien signInWithRedirect en web normal (sí en PWA)
-  // Android y desktop: redirect en móvil/PWA, popup en desktop
-  const useRedirect = (isMobile && !isIOS) || isFile || (isPWA && !isSafari);
+  // FIX COOP: signInWithPopup causa errores Cross-Origin-Opener-Policy en GitHub Pages.
+  // Redirect en móvil (todos), PWA y file://. Solo popup en desktop no-Safari.
+  const isDesktopChromium = !isMobile && !isSafari;
+  const useRedirect = isMobile || isFile || isPWA || !isDesktopChromium;
 
   if(useRedirect){
     try{ sessionStorage.setItem('bv_login_pending','1'); }catch(e){}
@@ -5530,8 +5533,17 @@ if(auth){
     const avatar = document.getElementById("userAvatar");
     if(avatar){ if(user.photoURL){ avatar.src=user.photoURL; avatar.style.display="block"; } else { avatar.style.display="none"; } }
 
-    // Settings y tema
-    loadSettingsOnly();
+    // Settings y tema (guard: por si el bloque QR falló antes de definirla)
+    if(typeof loadSettingsOnly === 'function'){
+      loadSettingsOnly();
+    } else {
+      // Fallback inline
+      try{
+        var _s=JSON.parse(localStorage.getItem("cb-settings")||'{"brand":""}');
+        var _d=localStorage.getItem("cb-dark")==="0"?0:1;
+        document.body.setAttribute("data-dark",_d?"1":"");
+      }catch(e){}
+    }
 
     // Datos locales primero (respuesta inmediata)
     try{
