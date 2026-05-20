@@ -14,15 +14,123 @@
 
 <!-- ── Verificación de mantenimiento ── -->
 <script>
+/* ══════════════════════════════════════════════════════════
+   BoxVision — Sistema de Auto-Mantenimiento v2
+   Detecta y redirige al 404 automáticamente en:
+   1. Errores JS críticos repetidos (SyntaxError, undefined, etc.)
+   2. Login fallido varias veces seguidas
+   3. App congelada / no carga en tiempo razonable
+   4. Firebase SDK bloqueado o caído
+   5. Firestore inaccesible repetidamente
+   6. Promesas rechazadas sin manejar (app rota silenciosa)
+   7. Pantalla en blanco (body vacío mucho tiempo)
+   ══════════════════════════════════════════════════════════ */
 (function(){
-  fetch('./config.json', {cache:'no-store'})
-    .then(function(r){ return r.json(); })
-    .then(function(cfg){
-      if(cfg && cfg.mantenimiento === true){
-        window.location.replace('./404.html');
+  var REDIRECT      = './404.html';
+  var MAX_JS_ERRORS = 4;    // errores críticos JS
+  var MAX_LOGINS    = 3;    // fallos de login
+  var MAX_FIRESTORE = 5;    // fallos de Firestore
+  var MAX_PROMISE   = 6;    // promesas rechazadas críticas
+  var LOAD_TIMEOUT  = 18000;// ms sin que la app cargue
+  var RESET_MS      = 120000;// limpiar contadores cada 2 min
+
+  var LS = {
+    js:   'bv_ec_js',
+    lg:   'bv_ec_lg',
+    fs:   'bv_ec_fs',
+    pr:   'bv_ec_pr',
+    time: 'bv_ec_t',
+    why:  'bv_maint_reason'
+  };
+
+  // Limpiar si pasaron más de 2 min (evitar bloqueo permanente por error puntual)
+  var lastT = parseInt(localStorage.getItem(LS.time)||'0');
+  if(Date.now() - lastT > RESET_MS){
+    [LS.js, LS.lg, LS.fs, LS.pr].forEach(function(k){ localStorage.removeItem(k); });
+  }
+
+  function bump(key, max, label){
+    var n = parseInt(localStorage.getItem(key)||'0') + 1;
+    localStorage.setItem(key, n);
+    localStorage.setItem(LS.time, Date.now());
+    if(n >= max){
+      [LS.js, LS.lg, LS.fs, LS.pr].forEach(function(k){ localStorage.removeItem(k); });
+      go(label + ' (x'+n+')');
+    }
+  }
+
+  function go(reason){
+    console.warn('[BoxVision] Auto-mantenimiento:', reason);
+    try{ localStorage.setItem(LS.why, reason); }catch(e){}
+    window.location.replace(REDIRECT);
+  }
+
+  // ── 1. Errores JS críticos globales ──────────────────────
+  var CRITICAL_MSGS = [
+    'illegal return','is not defined','is not a function',
+    'cannot read prop','unexpected token','syntaxerror',
+    'cannot set prop','maximum call stack'
+  ];
+  var IGNORE_MSGS = [
+    'slow network','intervention','tabler','woff','font',
+    'favicon','cross-origin','coop','blocked the window'
+  ];
+  window.addEventListener('error', function(e){
+    // Solo errores de JS, no de recursos (img, css, etc.)
+    if(e.target && e.target !== window && e.target.tagName) return;
+    var msg = (e.message||e.type||'').toLowerCase();
+    for(var i=0;i<IGNORE_MSGS.length;i++) if(msg.indexOf(IGNORE_MSGS[i])>=0) return;
+    for(var j=0;j<CRITICAL_MSGS.length;j++){
+      if(msg.indexOf(CRITICAL_MSGS[j])>=0){
+        bump(LS.js, MAX_JS_ERRORS, 'error JS: '+msg.slice(0,60));
+        return;
       }
-    })
-    .catch(function(){/* si no existe config.json, seguir normal */});
+    }
+  }, true);
+
+  // ── 2. Promesas rechazadas sin manejar ───────────────────
+  window.addEventListener('unhandledrejection', function(e){
+    var msg = '';
+    try{ msg = (e.reason && (e.reason.message||String(e.reason))||'').toLowerCase(); }catch(x){}
+    // Ignorar errores de red normales y COOP
+    var netIgnore = ['failed to fetch','networkerror','network error',
+                     'load failed','cors','cross-origin','coop','blocked'];
+    for(var i=0;i<netIgnore.length;i++) if(msg.indexOf(netIgnore[i])>=0) return;
+    // Solo contar si parece error de código, no de red
+    if(msg.indexOf('is not')>=0 || msg.indexOf('undefined')>=0 ||
+       msg.indexOf('null')>=0   || msg.indexOf('syntaxerror')>=0){
+      bump(LS.pr, MAX_PROMISE, 'promesa: '+msg.slice(0,60));
+    }
+  });
+
+  // ── 3. Fallos de login (llamado desde launchApp) ─────────
+  window._bvLoginFail = function(reason){
+    bump(LS.lg, MAX_LOGINS, 'login: '+(reason||'').slice(0,60));
+  };
+
+  // ── 4. Fallos de Firestore (llamado desde loadFromFirestore) ──
+  window._bvFirestoreFail = function(reason){
+    bump(LS.fs, MAX_FIRESTORE, 'firestore: '+(reason||'').slice(0,60));
+  };
+
+  // ── 5. Timeout: app no carga en LOAD_TIMEOUT ms ──────────
+  var _loadTimer = setTimeout(function(){
+    var login  = document.getElementById('loginScreen');
+    var main   = document.getElementById('mainScreen');
+    var splash = document.getElementById('splash');
+    var loginVisible  = login  && login.style.display  !== 'none' && login.style.display !== '';
+    var mainVisible   = main   && !main.classList.contains('hidden');
+    var splashVisible = splash && splash.classList.contains('active');
+    if(!loginVisible && !mainVisible && !splashVisible){
+      go('pantalla en blanco '+LOAD_TIMEOUT+'ms');
+    }
+  }, LOAD_TIMEOUT);
+
+  // ── 6. App cargó bien: limpiar todo ──────────────────────
+  window._bvAppLoaded = function(){
+    clearTimeout(_loadTimer);
+    [LS.js, LS.lg, LS.fs, LS.pr].forEach(function(k){ localStorage.removeItem(k); });
+  };
 })();
 </script>
 
@@ -2619,7 +2727,6 @@ function loadSettingsOnly(){
   document.body.setAttribute("data-dark",dark?"1":"");
   applyDark();
 }
-// FIX: exportar al scope global para acceso entre bloques de script
 window.loadSettingsOnly = loadSettingsOnly;
 function saveData(){
   // Actualizar timestamp de modificación en la caja activa (si hay una abierta)
@@ -3507,6 +3614,7 @@ function showQuickQR(){
   },80);
 }
 
+function generateQR(id){
   const box=boxes.find(b=>b.id===id);const el=document.getElementById("detailQR");if(!box||!el) return;
   el.innerHTML='<div style="padding:20px;color:var(--muted);font-size:12px">Generando QR...</div>';
   // defer to next frame for smooth UI
@@ -4813,8 +4921,7 @@ function signInGoogle(){
   const isIOS     = /iPhone|iPad|iPod/i.test(navigator.userAgent);
   const isSafari  = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
 
-  // FIX COOP: signInWithPopup causa errores Cross-Origin-Opener-Policy en GitHub Pages.
-  // Redirect en móvil (todos), PWA y file://. Solo popup en desktop no-Safari.
+  // FIX COOP: usar redirect en móvil y PWA, popup solo en desktop no-Safari
   const isDesktopChromium = !isMobile && !isSafari;
   const useRedirect = isMobile || isFile || isPWA || !isDesktopChromium;
 
@@ -5433,6 +5540,14 @@ async function loadFromFirestore(){
     }
   }catch(e){
     console.warn("Firestore load error:", e);
+    // Notificar al sistema de auto-mantenimiento
+    if(typeof window._bvFirestoreFail === 'function'){
+      // Solo contar si NO es error de red normal (offline)
+      var emsg = (e.message||'').toLowerCase();
+      if(emsg.indexOf('offline')<0 && emsg.indexOf('network')<0 && emsg.indexOf('unavailable')<0){
+        window._bvFirestoreFail(e.message||'load error');
+      }
+    }
     // Offline o error: boxes ya tiene el fallback de localStorage de arriba
   }
   saveToLocalStorage();
@@ -5533,17 +5648,9 @@ if(auth){
     const avatar = document.getElementById("userAvatar");
     if(avatar){ if(user.photoURL){ avatar.src=user.photoURL; avatar.style.display="block"; } else { avatar.style.display="none"; } }
 
-    // Settings y tema (guard: por si el bloque QR falló antes de definirla)
-    if(typeof loadSettingsOnly === 'function'){
-      loadSettingsOnly();
-    } else {
-      // Fallback inline
-      try{
-        var _s=JSON.parse(localStorage.getItem("cb-settings")||'{"brand":""}');
-        var _d=localStorage.getItem("cb-dark")==="0"?0:1;
-        document.body.setAttribute("data-dark",_d?"1":"");
-      }catch(e){}
-    }
+    // Settings y tema
+    if(typeof loadSettingsOnly === 'function') loadSettingsOnly();
+    else { try{ var _d=localStorage.getItem("cb-dark")==="0"?0:1; document.body.setAttribute("data-dark",_d?"1":""); }catch(e){} }
 
     // Datos locales primero (respuesta inmediata)
     try{
@@ -5552,12 +5659,14 @@ if(auth){
       if(lb.length > 0){ boxes=lb; rooms=lr; restoreThumbs(); }
     }catch(e){}
 
-    setupPWA();
+    if(typeof setupPWA === 'function') setupPWA();
     history.replaceState(null, "", location.pathname + location.search);
 
     // Ocultar login e ir a la app
     _hideLoginScreen();
     goMain();
+    // Notificar al sistema de auto-mantenimiento que cargó bien
+    if(typeof window._bvAppLoaded === 'function') window._bvAppLoaded();
 
     // Bloquear saves mientras Firestore carga (evita race condition)
     _firestoreLoading = true;
@@ -5657,6 +5766,8 @@ if(auth){
       launchApp(user).catch(e=>{
         console.error("[BoxVision] launchApp falló:", e);
         _lastLaunchedUid = null;
+        // Notificar al sistema de auto-mantenimiento
+        if(typeof window._bvLoginFail === 'function') window._bvLoginFail(e.message||'launchApp error');
         _showLoginScreen();
       });
     } else {
@@ -5671,8 +5782,9 @@ if(auth){
   window._authEnabled = false;
   document.addEventListener("DOMContentLoaded", ()=>{
     loadAll();
-    setupPWA();
+    if(typeof setupPWA === 'function') setupPWA();
     initTutorial();
+    if(typeof window._bvAppLoaded === 'function') window._bvAppLoaded();
     // FIX: en modo local, si hay cajas guardadas ir directo a main
     if(boxes && boxes.length > 0){
       history.replaceState(null, "", location.pathname + location.search);
