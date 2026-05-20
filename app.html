@@ -414,6 +414,23 @@ input,button,textarea,select{font-family:inherit}
   letter-spacing:.3px;
 }
 .bc-icon{font-size:36px;display:block;margin:10px 0 6px;line-height:1;filter:drop-shadow(0 2px 4px rgba(0,0,0,.3))}
+/* Thumbnail flotante en tarjeta con foto */
+.bc-thumb{
+  position:absolute;bottom:14px;right:14px;z-index:5;
+  width:46px;height:46px;border-radius:12px;
+  object-fit:cover;
+  border:1.5px solid rgba(255,255,255,.25);
+  box-shadow:0 3px 12px rgba(0,0,0,.4);
+  opacity:.9;transition:opacity .2s;
+}
+.box-card:active .bc-thumb{opacity:.7}
+.bc-photo-badge{
+  position:absolute;top:10px;right:10px;z-index:6;
+  background:rgba(0,0,0,.42);border:0.5px solid rgba(255,255,255,.2);
+  border-radius:8px;padding:3px 7px;font-size:10px;
+  backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
+  color:rgba(255,255,255,.9);font-weight:700;letter-spacing:.2px;
+}
 .bc-name{
   font-size:15px;font-weight:800;color:#fff;
   white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
@@ -653,52 +670,176 @@ input,button,textarea,select{font-family:inherit}
 .room-chip-name{flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:12px}
 .unassigned{background:var(--card);border-radius:16px;padding:12px;margin-bottom:14px;border:0.5px solid var(--border)}
 .unassigned-title{font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.4px;margin-bottom:8px}
-/* ── Settings redesign ── */
-.settings-body{padding:16px 14px 32px;max-width:540px;margin:0 auto}
-.settings-sec{margin-bottom:28px}
-.settings-sec-label{font-size:13px;font-weight:600;color:var(--muted);margin-bottom:10px;padding:0 4px}
-.settings-card{background:var(--card);border-radius:20px;overflow:hidden;border:1px solid var(--border);box-shadow:0 2px 12px rgba(0,0,0,.1)}
-.settings-danger-card{border-color:rgba(255,59,48,.2)}
+/* ══════════════════════════════════════════
+   Settings — Rediseño Premium v2
+   ══════════════════════════════════════════ */
 
-/* Perfil */
-.settings-profile-row{display:flex;align-items:center;gap:14px;padding:18px 16px}
-.settings-avatar-wrap{width:56px;height:56px;border-radius:50%;overflow:hidden;flex-shrink:0;border:2px solid var(--border)}
-.settings-profile-info{flex:1;min-width:0}
-.settings-profile-name{font-size:16px;font-weight:700;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.settings-profile-email{font-size:12px;color:var(--muted);margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.settings-signout-btn{background:rgba(255,59,48,.1);color:var(--red);border:1px solid rgba(255,59,48,.2);border-radius:12px;padding:8px 14px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;white-space:nowrap;transition:background .15s}
-.settings-signout-btn:active{background:rgba(255,59,48,.2)}
+/* Hero de perfil */
+.set-hero{
+  position:relative;overflow:hidden;
+  background:linear-gradient(160deg,#0d2246 0%,#17171f 70%);
+  padding:28px 20px 24px;
+  border-bottom:0.5px solid var(--border);
+}
+.set-hero::before{
+  content:'';position:absolute;inset:0;pointer-events:none;
+  background:
+    radial-gradient(ellipse 80% 60% at 50% -20%,rgba(10,132,255,.22) 0%,transparent 70%),
+    radial-gradient(ellipse 40% 40% at 90% 80%,rgba(88,86,214,.12) 0%,transparent 60%);
+}
+[data-dark=""] .set-hero{background:linear-gradient(160deg,#e8f0ff 0%,#F2F2F7 70%)}
+[data-dark=""] .set-hero::before{display:none}
+
+.set-avatar-row{display:flex;align-items:center;gap:16px;position:relative;z-index:1}
+.set-avatar-ring{
+  width:72px;height:72px;border-radius:50%;flex-shrink:0;
+  background:linear-gradient(135deg,#0A84FF,#5856D6);
+  padding:2.5px;
+  box-shadow:0 4px 20px rgba(10,132,255,.35);
+}
+.set-avatar-inner{
+  width:100%;height:100%;border-radius:50%;overflow:hidden;
+  background:var(--bg);
+  display:flex;align-items:center;justify-content:center;
+}
+.set-avatar-inner img{width:100%;height:100%;object-fit:cover;display:none}
+.set-avatar-placeholder{font-size:30px;line-height:1}
+.set-profile-info{flex:1;min-width:0}
+.set-profile-name{font-size:19px;font-weight:800;color:#fff;letter-spacing:-.4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+[data-dark=""] .set-profile-name{color:var(--text)}
+.set-profile-email{font-size:12px;color:rgba(255,255,255,.5);margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+[data-dark=""] .set-profile-email{color:var(--muted)}
+.set-profile-badge{
+  display:inline-flex;align-items:center;gap:4px;margin-top:7px;
+  background:rgba(10,132,255,.18);border:0.5px solid rgba(10,132,255,.3);
+  border-radius:99px;padding:3px 10px;font-size:11px;font-weight:700;
+  color:#5AC8FA;letter-spacing:.2px;
+}
+.set-signout-btn{
+  background:rgba(255,59,48,.12);color:#FF3B30;
+  border:1px solid rgba(255,59,48,.22);border-radius:13px;
+  padding:9px 15px;font-size:13px;font-weight:700;
+  cursor:pointer;font-family:inherit;white-space:nowrap;
+  transition:background .15s,transform .12s;
+  flex-shrink:0;
+}
+.set-signout-btn:active{background:rgba(255,59,48,.22);transform:scale(.95)}
 
 /* Stats */
-.settings-stats-row{display:flex;align-items:center;padding:20px 8px}
-.settings-stat-pill{flex:1;text-align:center}
-.settings-stat-divider{width:1px;height:40px;background:var(--border)}
-.settings-stat-n{font-size:30px;font-weight:800;color:var(--text);line-height:1}
-.settings-stat-l{font-size:11px;color:var(--muted);margin-top:5px}
+.set-stats{
+  display:grid;grid-template-columns:repeat(4,1fr);
+  gap:8px;padding:16px 16px 0;position:relative;z-index:1;
+}
+.set-stat{
+  background:rgba(255,255,255,.07);
+  border:0.5px solid rgba(255,255,255,.1);
+  border-radius:16px;padding:12px 6px 10px;text-align:center;
+  backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
+  transition:transform .15s;
+}
+[data-dark=""] .set-stat{background:rgba(0,0,0,.06);border-color:rgba(0,0,0,.08)}
+.set-stat:active{transform:scale(.94)}
+.set-stat-icon{font-size:18px;line-height:1;margin-bottom:5px}
+.set-stat-n{font-size:22px;font-weight:800;color:#fff;letter-spacing:-.4px;line-height:1}
+[data-dark=""] .set-stat-n{color:var(--text)}
+.set-stat-l{font-size:9px;color:rgba(255,255,255,.45);margin-top:3px;text-transform:uppercase;letter-spacing:.4px}
+[data-dark=""] .set-stat-l{color:var(--muted)}
+
+/* Body */
+.settings-body{padding:14px 14px 40px;max-width:540px;margin:0 auto}
+.settings-sec{margin-bottom:22px}
+.settings-sec-label{
+  font-size:11px;font-weight:700;color:var(--muted);
+  margin-bottom:8px;padding:0 4px;
+  text-transform:uppercase;letter-spacing:.5px;
+}
+.settings-card{
+  background:var(--card);border-radius:20px;overflow:hidden;
+  border:0.5px solid var(--border);
+  box-shadow:0 2px 16px rgba(0,0,0,.12);
+}
+.settings-danger-card{border-color:rgba(255,59,48,.25);background:rgba(255,59,48,.03)}
 
 /* Rows */
-.settings-row{display:flex;align-items:center;padding:15px 16px;border-bottom:0.5px solid var(--border);gap:14px}
+.settings-row{display:flex;align-items:center;padding:14px 16px;border-bottom:0.5px solid var(--border);gap:13px}
 .settings-row:last-child{border:none}
 .settings-tappable{cursor:pointer;transition:background .12s}
 .settings-tappable:active{background:var(--input)}
-.settings-row-icon{font-size:20px;width:36px;height:36px;display:flex;align-items:center;justify-content:center;background:var(--input);border-radius:10px;flex-shrink:0}
-.settings-row-text{flex:1}
-.settings-label{font-size:15px;font-weight:500;color:var(--text)}
-.settings-sub{font-size:12px;color:var(--muted);margin-top:2px}
-.settings-chevron{color:var(--muted);font-size:20px;font-weight:300;line-height:1}
+.settings-row-icon{
+  font-size:17px;width:36px;height:36px;flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;
+  border-radius:10px;
+}
+/* Colores por categoría de ícono */
+.sri-blue{background:rgba(10,132,255,.15);color:#0A84FF}
+.sri-green{background:rgba(52,199,89,.15);color:#34C759}
+.sri-orange{background:rgba(255,149,0,.15);color:#FF9500}
+.sri-purple{background:rgba(88,86,214,.15);color:#5856D6}
+.sri-pink{background:rgba(255,45,85,.15);color:#FF2D55}
+.sri-teal{background:rgba(90,200,250,.15);color:#5AC8FA}
+.sri-gray{background:rgba(142,142,147,.15);color:#8E8E93}
+.sri-red{background:rgba(255,59,48,.12);color:#FF3B30}
+.sri-yellow{background:rgba(255,214,10,.15);color:#FFD60A}
 
-/* Toggle */
-.settings-toggle{width:50px;height:30px;border-radius:99px;background:var(--input);position:relative;cursor:pointer;transition:background .25s;flex-shrink:0;border:1px solid var(--border)}
+.settings-row-text{flex:1;min-width:0}
+.settings-label{font-size:15px;font-weight:500;color:var(--text)}
+.settings-sub{font-size:12px;color:var(--muted);margin-top:1px}
+.settings-chevron{color:var(--muted);font-size:16px;opacity:.5;flex-shrink:0}
+
+/* Toggle iOS */
+.settings-toggle{
+  width:51px;height:31px;border-radius:99px;
+  background:var(--input);position:relative;
+  cursor:pointer;transition:background .25s;flex-shrink:0;
+  border:0.5px solid var(--border);
+}
 .settings-toggle.on{background:#34C759;border-color:#34C759}
-.settings-toggle-knob{position:absolute;top:4px;left:4px;width:20px;height:20px;border-radius:50%;background:#fff;transition:transform .25s cubic-bezier(.4,0,.2,1);box-shadow:0 2px 6px rgba(0,0,0,.3)}
+.settings-toggle-knob{
+  position:absolute;top:3px;left:3px;
+  width:23px;height:23px;border-radius:50%;
+  background:#fff;transition:transform .25s cubic-bezier(.4,0,.2,1);
+  box-shadow:0 2px 8px rgba(0,0,0,.3);
+}
 .settings-toggle.on .settings-toggle-knob{transform:translateX(20px)}
 
-/* Input */
-.settings-input{background:var(--input);border:1px solid var(--border);border-radius:12px;padding:9px 12px;font-size:14px;color:var(--text);outline:none;width:120px;text-align:right;font-family:inherit}
+/* Input inline */
+.settings-input{
+  background:var(--input);border:0.5px solid var(--border);
+  border-radius:12px;padding:8px 12px;font-size:14px;
+  color:var(--text);outline:none;width:130px;
+  text-align:right;font-family:inherit;transition:border-color .15s;
+}
 .settings-input:focus{border-color:var(--accent)}
 
+/* Valor display en rows */
+.settings-val{font-size:14px;color:var(--muted);flex-shrink:0}
+
 /* Footer */
-.settings-footer{text-align:center;padding:8px 0 12px;color:var(--muted)}
+.settings-footer{text-align:center;padding:10px 0 16px}
+.set-footer-logo{
+  width:48px;height:48px;border-radius:14px;
+  background:linear-gradient(135deg,#0A84FF22,#5856D622);
+  border:0.5px solid rgba(10,132,255,.2);
+  display:flex;align-items:center;justify-content:center;
+  font-size:24px;margin:0 auto 10px;
+}
+.set-footer-name{font-weight:800;font-size:15px;color:var(--text);margin-bottom:2px}
+.set-footer-links{display:flex;gap:4px;justify-content:center;align-items:center;margin-top:8px}
+.set-footer-link{color:var(--muted);font-size:12px;text-decoration:none;padding:4px 8px;border-radius:8px;transition:background .12s}
+.set-footer-link:active{background:var(--input)}
+.set-footer-dot{color:var(--border);font-size:10px}
+.set-version-badge{
+  display:inline-flex;align-items:center;gap:5px;
+  background:var(--card);border:0.5px solid var(--border);
+  border-radius:99px;padding:4px 12px;font-size:11px;
+  color:var(--muted);margin-top:10px;
+}
+
+/* Stats viejas — ya no se usan pero evitan romper si algo las referencia */
+.settings-profile-row,.settings-avatar-wrap,.settings-profile-info,
+.settings-profile-name,.settings-profile-email,.settings-signout-btn,
+.settings-stats-row,.settings-stat-pill,.settings-stat-divider,
+.settings-stat-n,.settings-stat-l{display:none!important}
 .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.6);backdrop-filter:blur(10px);z-index:500;display:none;align-items:flex-end;justify-content:center}
 .modal-overlay.open{display:flex;animation:fadeIn .2s}
 .modal{background:var(--card);border-radius:24px 24px 0 0;width:100%;max-width:680px;max-height:92vh;overflow-y:auto;scrollbar-width:none;position:relative}
@@ -1977,8 +2118,12 @@ if(!auth){
         <button class="view-toggle-btn active" id="viewGrid" onclick="setViewMode('grid')" title="Cuadrícula"><i class="ti ti-layout-grid" aria-hidden="true"></i></button>
         <button class="view-toggle-btn" id="viewList" onclick="setViewMode('list')" title="Lista"><i class="ti ti-list" aria-hidden="true"></i></button>
       </div>
-      <button class="tbtn" onclick="toggleDark()" id="darkBtn" title="Modo oscuro"><i class="ti ti-sun" aria-hidden="true"></i></button>
-      <button class="tbtn" onclick="toggleSortMenu()" id="sortBtn" title="Ordenar"><i class="ti ti-arrows-sort" aria-hidden="true"></i></button>
+    <div class="topbar-actions">
+      <div class="view-toggle" title="Cambiar vista">
+        <button class="view-toggle-btn active" id="viewGrid" onclick="setViewMode('grid')" title="Cuadrícula"><i class="ti ti-layout-grid" aria-hidden="true"></i></button>
+        <button class="view-toggle-btn" id="viewList" onclick="setViewMode('list')" title="Lista"><i class="ti ti-list" aria-hidden="true"></i></button>
+      </div>
+      <button class="tbtn" onclick="toggleSortMenu()" id="sortBtn" title="Ordenar y filtrar"><i class="ti ti-sliders" aria-hidden="true"></i></button>
       <button class="tbtn" onclick="goSettings()" title="Ajustes"><i class="ti ti-settings" aria-hidden="true"></i></button>
       <button class="tbtn tbtn-accent" onclick="openForm()" title="Nueva caja" style="font-size:20px"><i class="ti ti-plus" aria-hidden="true"></i></button>
       <img id="userAvatar" src="" onclick="showUserMenu()" style="width:44px;height:44px;border-radius:50%;object-fit:cover;cursor:pointer;display:none;border:2px solid rgba(255,255,255,.2)"/>
@@ -2009,6 +2154,7 @@ if(!auth){
     <button class="dh-back" onclick="goMain()" title="Volver" aria-label="Volver"><i class="ti ti-chevron-left" style="font-size:20px;pointer-events:none"></i></button>
     <div class="dh-acts">
       <button class="dh-act" id="favBtn" onclick="toggleFav()" title="Favorito" aria-label="Marcar favorito"><i class="ti ti-star" style="font-size:16px;pointer-events:none"></i></button>
+      <button class="dh-act" onclick="showQuickQR()" title="QR rápido" aria-label="Ver QR"><i class="ti ti-qrcode" style="font-size:16px;pointer-events:none"></i></button>
       <button class="dh-act" onclick="openEditForm()" title="Editar caja" aria-label="Editar caja"><i class="ti ti-pencil" style="font-size:16px;pointer-events:none"></i></button>
     </div>
     <img class="dh-img hidden" id="dHeroImg"/>
@@ -2095,67 +2241,74 @@ if(!auth){
 </div>
 
 <div id="settingsScreen" class="hidden">
+  <!-- Topbar -->
   <div class="topbar">
     <div><div class="topbar-title">Ajustes</div></div>
-    <div class="topbar-actions"><button class="tbtn" onclick="goSplash()">🏠</button></div>
+    <div class="topbar-actions"><button class="tbtn" onclick="goSplash()" title="Inicio">🏠</button></div>
   </div>
+
+  <!-- HERO: Avatar + Stats integradas -->
+  <div class="set-hero">
+    <!-- Fila de avatar -->
+    <div class="set-avatar-row">
+      <div class="set-avatar-ring">
+        <div class="set-avatar-inner">
+          <img id="settingsAvatar" src="" alt=""/>
+          <div id="settingsAvatarPlaceholder" class="set-avatar-placeholder">👤</div>
+        </div>
+      </div>
+      <div class="set-profile-info">
+        <div id="settingsUserName" class="set-profile-name">—</div>
+        <div id="settingsUserEmail" class="set-profile-email">—</div>
+        <div class="set-profile-badge">✦ BoxVision Pro</div>
+      </div>
+      <button onclick="signOutUser()" class="set-signout-btn">Salir</button>
+    </div>
+
+    <!-- Stats 4 columnas -->
+    <div class="set-stats">
+      <div class="set-stat">
+        <div class="set-stat-icon">📦</div>
+        <div class="set-stat-n" id="setTotalCajas">0</div>
+        <div class="set-stat-l">Cajas</div>
+      </div>
+      <div class="set-stat">
+        <div class="set-stat-icon">🧺</div>
+        <div class="set-stat-n" id="setTotalObj">0</div>
+        <div class="set-stat-l">Objetos</div>
+      </div>
+      <div class="set-stat">
+        <div class="set-stat-icon">✅</div>
+        <div class="set-stat-n" id="setTotalDone">0</div>
+        <div class="set-stat-l">Sacados</div>
+      </div>
+      <div class="set-stat">
+        <div class="set-stat-icon">⭐</div>
+        <div class="set-stat-n" id="setTotalFav">0</div>
+        <div class="set-stat-l">Favoritas</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- BODY -->
   <div class="settings-body">
-
-    <!-- CUENTA -->
-    <div class="settings-sec">
-      <div class="settings-sec-label">Cuenta</div>
-      <div class="settings-card">
-        <div class="settings-profile-row">
-          <div class="settings-avatar-wrap">
-            <img id="settingsAvatar" src="" style="width:100%;height:100%;border-radius:50%;object-fit:cover;display:none"/>
-            <div id="settingsAvatarPlaceholder" style="width:100%;height:100%;border-radius:50%;background:linear-gradient(135deg,#007AFF,#5856D6);display:flex;align-items:center;justify-content:center;font-size:26px">👤</div>
-          </div>
-          <div class="settings-profile-info">
-            <div id="settingsUserName" class="settings-profile-name">—</div>
-            <div id="settingsUserEmail" class="settings-profile-email">—</div>
-          </div>
-          <button onclick="signOutUser()" class="settings-signout-btn">Cerrar sesión</button>
-        </div>
-      </div>
-    </div>
-
-    <!-- RESUMEN -->
-    <div class="settings-sec">
-      <div class="settings-sec-label">Resumen</div>
-      <div class="settings-card">
-        <div class="settings-stats-row">
-          <div class="settings-stat-pill">
-            <div class="settings-stat-n" id="setTotalCajas">0</div>
-            <div class="settings-stat-l">📦 Cajas</div>
-          </div>
-          <div class="settings-stat-divider"></div>
-          <div class="settings-stat-pill">
-            <div class="settings-stat-n" id="setTotalObj">0</div>
-            <div class="settings-stat-l">🧺 Objetos</div>
-          </div>
-          <div class="settings-stat-divider"></div>
-          <div class="settings-stat-pill">
-            <div class="settings-stat-n" id="setTotalDone">0</div>
-            <div class="settings-stat-l">✅ Sacados</div>
-          </div>
-        </div>
-      </div>
-    </div>
 
     <!-- PERSONALIZACIÓN -->
     <div class="settings-sec">
       <div class="settings-sec-label">Personalización</div>
       <div class="settings-card">
+        <!-- Nombre/marca -->
         <div class="settings-row">
-          <div class="settings-row-icon">🏷️</div>
+          <div class="settings-row-icon sri-orange">🏷️</div>
           <div class="settings-row-text">
             <div class="settings-label">Nombre o marca</div>
             <div class="settings-sub">Aparece al escanear el QR</div>
           </div>
           <input class="settings-input" id="brandInput" type="text" placeholder="Ej: Familia García" oninput="saveBrand()"/>
         </div>
-        <div class="settings-row" style="border:none">
-          <div class="settings-row-icon">🌙</div>
+        <!-- Modo oscuro -->
+        <div class="settings-row">
+          <div class="settings-row-icon sri-purple">🌙</div>
           <div class="settings-row-text">
             <div class="settings-label">Modo oscuro</div>
             <div class="settings-sub">Tema visual de la app</div>
@@ -2164,31 +2317,105 @@ if(!auth){
             <div class="settings-toggle-knob" id="darkToggleKnob"></div>
           </div>
         </div>
+        <!-- Idioma (decorativo por ahora) -->
+        <div class="settings-row">
+          <div class="settings-row-icon sri-blue">🌐</div>
+          <div class="settings-row-text">
+            <div class="settings-label">Idioma</div>
+            <div class="settings-sub">Idioma de la interfaz</div>
+          </div>
+          <span class="settings-val">Español</span>
+          <span class="settings-chevron">›</span>
+        </div>
+        <!-- Notificaciones -->
+        <div class="settings-row">
+          <div class="settings-row-icon sri-green">🔔</div>
+          <div class="settings-row-text">
+            <div class="settings-label">Notificaciones</div>
+            <div class="settings-sub">Alertas de cajas urgentes</div>
+          </div>
+          <div class="settings-toggle on" id="notifToggleWrap" onclick="this.classList.toggle('on')">
+            <div class="settings-toggle-knob"></div>
+          </div>
+        </div>
+        <!-- Sonido de escaneo -->
+        <div class="settings-row">
+          <div class="settings-row-icon sri-teal">🔊</div>
+          <div class="settings-row-text">
+            <div class="settings-label">Sonido al escanear</div>
+            <div class="settings-sub">Confirmación de audio al leer QR</div>
+          </div>
+          <div class="settings-toggle on" id="soundToggleWrap" onclick="this.classList.toggle('on')">
+            <div class="settings-toggle-knob"></div>
+          </div>
+        </div>
       </div>
     </div>
 
-    <!-- AYUDA -->
+    <!-- HERRAMIENTAS -->
     <div class="settings-sec">
-      <div class="settings-sec-label">Ayuda</div>
+      <div class="settings-sec-label">Herramientas</div>
       <div class="settings-card">
         <div class="settings-row settings-tappable" onclick="_showBackups()">
-            <div class="settings-icon"><i class="ti ti-database-backup"></i></div>
-            <div class="settings-label">Mis backups</div>
-            <div class="settings-chevron"><i class="ti ti-chevron-right"></i></div>
-        </div>
-        <div class="settings-row settings-tappable" onclick="const uid=currentUser?.uid||'guest';localStorage.removeItem('cb-tutorial-done-'+uid);localStorage.removeItem('cb-tutorial-done');document.getElementById('tutorial').classList.add('active');tutStep=0;goTut(0);setTimeout(initTutSwipe,100);">
-          <div class="settings-row-icon">📖</div>
+          <div class="settings-row-icon sri-blue">💾</div>
           <div class="settings-row-text">
-            <div class="settings-label">Ver tutorial</div>
-            <div class="settings-sub">Las 7 pantallas de introducción</div>
+            <div class="settings-label">Mis backups</div>
+            <div class="settings-sub">Exporta o importa tus datos</div>
           </div>
           <span class="settings-chevron">›</span>
         </div>
-        <div class="settings-row settings-tappable" style="border:none" onclick="goMain();setTimeout(toggleAI,100)">
-          <div class="settings-row-icon">🤖</div>
+        <div class="settings-row settings-tappable" onclick="goMain();setTimeout(toggleAI,100)">
+          <div class="settings-row-icon sri-purple">🤖</div>
           <div class="settings-row-text">
-            <div class="settings-label">Abrir Box IA</div>
-            <div class="settings-sub">Tu asistente de búsqueda</div>
+            <div class="settings-label">Box IA</div>
+            <div class="settings-sub">Tu asistente inteligente</div>
+          </div>
+          <span class="settings-chevron">›</span>
+        </div>
+        <div class="settings-row settings-tappable" onclick="const uid=currentUser?.uid||'guest';localStorage.removeItem('cb-tutorial-done-'+uid);localStorage.removeItem('cb-tutorial-done');document.getElementById('tutorial').classList.add('active');tutStep=0;goTut(0);setTimeout(initTutSwipe,100);">
+          <div class="settings-row-icon sri-orange">📖</div>
+          <div class="settings-row-text">
+            <div class="settings-label">Ver tutorial</div>
+            <div class="settings-sub">Repasa las 7 pantallas de inicio</div>
+          </div>
+          <span class="settings-chevron">›</span>
+        </div>
+        <div class="settings-row settings-tappable" onclick="if(navigator.share)navigator.share({title:'BoxVision',text:'Organiza tus cajas de mudanza con IA y QR 📦',url:'https://futbol1234now-png.github.io/BoxVision/'}).catch(()=>{});else showToast('📋 Link copiado','#34C759');">
+          <div class="settings-row-icon sri-green">↗️</div>
+          <div class="settings-row-text">
+            <div class="settings-label">Compartir BoxVision</div>
+            <div class="settings-sub">Envía el link a alguien</div>
+          </div>
+          <span class="settings-chevron">›</span>
+        </div>
+        <div class="settings-row settings-tappable" onclick="window.open('mailto:theincognit40@gmail.com?subject=Feedback BoxVision','_blank')">
+          <div class="settings-row-icon sri-yellow">💬</div>
+          <div class="settings-row-text">
+            <div class="settings-label">Enviar feedback</div>
+            <div class="settings-sub">Reporta bugs o sugiere mejoras</div>
+          </div>
+          <span class="settings-chevron">›</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- PRIVACIDAD Y SEGURIDAD -->
+    <div class="settings-sec">
+      <div class="settings-sec-label">Privacidad y seguridad</div>
+      <div class="settings-card">
+        <div class="settings-row settings-tappable" onclick="window.open('mailto:theincognit40@gmail.com?subject=Política de Privacidad BoxVision','_blank')">
+          <div class="settings-row-icon sri-gray">🔒</div>
+          <div class="settings-row-text">
+            <div class="settings-label">Política de privacidad</div>
+            <div class="settings-sub">Cómo usamos tus datos</div>
+          </div>
+          <span class="settings-chevron">›</span>
+        </div>
+        <div class="settings-row settings-tappable" onclick="window.open('mailto:theincognit40@gmail.com?subject=Términos BoxVision','_blank')">
+          <div class="settings-row-icon sri-gray">📄</div>
+          <div class="settings-row-text">
+            <div class="settings-label">Términos de uso</div>
+            <div class="settings-sub">Condiciones de la aplicación</div>
           </div>
           <span class="settings-chevron">›</span>
         </div>
@@ -2199,28 +2426,41 @@ if(!auth){
     <div class="settings-sec">
       <div class="settings-sec-label">Zona de peligro</div>
       <div class="settings-card settings-danger-card">
-        <div class="settings-row settings-tappable" style="border:none" onclick="confirmDeleteAll()">
-          <div class="settings-row-icon">🗑️</div>
+        <div class="settings-row settings-tappable" onclick="confirmDeleteAll()">
+          <div class="settings-row-icon sri-red">🗑️</div>
           <div class="settings-row-text">
             <div class="settings-label" style="color:var(--red)">Borrar todos los datos</div>
             <div class="settings-sub">Elimina todas tus cajas permanentemente</div>
           </div>
           <span class="settings-chevron" style="color:var(--red)">›</span>
         </div>
+        <div class="settings-row settings-tappable" onclick="signOutUser()">
+          <div class="settings-row-icon sri-red">🚪</div>
+          <div class="settings-row-text">
+            <div class="settings-label" style="color:var(--red)">Cerrar sesión</div>
+            <div class="settings-sub">Salir de tu cuenta actual</div>
+          </div>
+          <span class="settings-chevron" style="color:var(--red)">›</span>
+        </div>
       </div>
     </div>
 
+    <!-- FOOTER -->
     <div class="settings-footer">
-      <div style="font-size:22px;margin-bottom:6px">📦</div>
-      <div style="font-weight:700;font-size:14px;color:var(--text);margin-bottom:2px">BoxVision</div>
-      <div style="font-size:12px;color:var(--muted);margin-bottom:8px">Todos los derechos reservados</div>
-      <div style="display:flex;gap:16px;justify-content:center;font-size:12px">
-        <a href="mailto:theincognit40@gmail.com" style="color:var(--muted);text-decoration:none">Privacidad</a>
-        <a href="mailto:theincognit40@gmail.com" style="color:var(--muted);text-decoration:none">Contacto</a>
-        <span style="color:var(--muted)">v1.0</span>
+      <div class="set-footer-logo">📦</div>
+      <div class="set-footer-name">BoxVision</div>
+      <div style="font-size:12px;color:var(--muted)">Organizador inteligente de mudanzas</div>
+      <div class="set-footer-links">
+        <a href="mailto:theincognit40@gmail.com" class="set-footer-link">Privacidad</a>
+        <span class="set-footer-dot">•</span>
+        <a href="mailto:theincognit40@gmail.com" class="set-footer-link">Contacto</a>
+        <span class="set-footer-dot">•</span>
+        <a href="mailto:theincognit40@gmail.com" class="set-footer-link">Soporte</a>
       </div>
+      <div class="set-version-badge">📦 BoxVision · v1.0 · © 2025</div>
     </div>
-  </div>
+
+  </div><!-- /.settings-body -->
 </div>
 
 <div id="viewer" class="hidden">
@@ -2711,15 +2951,18 @@ function goMain(){showScreen("mainScreen");renderMain();_startClock();const f=do
 function renderMain(){
   const total=boxes.reduce((s,b)=>s+b.items.length,0);
   document.getElementById("mainSub").textContent=boxes.length+" caja"+(boxes.length!==1?"s":"")+" · "+total+" objetos";
-  renderFilters();renderGrid();
+  renderFilters();renderGrid();renderGlobalProgress();
 }
 function renderFilters(){
   const tags=new Set();boxes.forEach(b=>(b.tags||[]).forEach(t=>tags.add(t)));
+  const locs=new Set();boxes.forEach(b=>{if(b.location)locs.add(b.location);});
   document.getElementById("filterRow").innerHTML=
     `<button class="pill${activeFilter==="todo"?" active":""}" onclick="setFilter('todo')">Todas</button>`+
     `<button class="pill${activeFilter==="fav"?" active":""}" onclick="setFilter('fav')">⭐ Favoritas</button>`+
     `<button class="pill${activeFilter==="red"?" active":""}" onclick="setFilter('red')">🔴 Urgentes</button>`+
-    [...tags].map(t=>`<button class="pill${activeFilter===t?" active":""}" onclick="setFilter('${esc(t)}')">${esc(t)}</button>`).join("");
+    `<button class="pill${activeFilter==="done0"?" active":""}" onclick="setFilter('done0')">📦 Sin sacar</button>`+
+    [...locs].map(l=>`<button class="pill${activeFilter==="loc:"+l?" active":""}" onclick="setFilter('loc:${esc(l)}')">📍 ${esc(l)}</button>`).join("")+
+    [...tags].map(t=>`<button class="pill${activeFilter===t?" active":""}" onclick="setFilter('${esc(t)}')">#${esc(t)}</button>`).join("");
 }
 function setFilter(f){activeFilter=f;renderMain();}
 // ── Virtual grid — soporta cajas ilimitadas ──────────────────────────────────
@@ -2732,6 +2975,8 @@ function renderGrid(){
   let filtered=boxes;
   if(activeFilter==="fav") filtered=boxes.filter(b=>b.fav);
   else if(activeFilter==="red") filtered=boxes.filter(b=>b.priority==="red");
+  else if(activeFilter==="done0") filtered=boxes.filter(b=>b.items.length===0||b.items.some(i=>!i.done));
+  else if(activeFilter.startsWith("loc:")) filtered=boxes.filter(b=>b.location===activeFilter.slice(4));
   else if(activeFilter!=="todo") filtered=boxes.filter(b=>(b.tags||[]).includes(activeFilter));
   filtered=sortBoxes(filtered);
   _gridFiltered=filtered;
@@ -2885,6 +3130,7 @@ function boxCard(b){
   return `<div class="box-card${b.priority==="red"?" urgent":""}" style="background:${cardBg}" onclick="openDetail('${b.id}')">
     ${hasPhoto?`<div style="position:absolute;inset:0;background:linear-gradient(160deg,${hexToRgba(col,.8)},${hexToRgba(col,.5)});z-index:0"></div>`:''}
     ${b.priority==="red"?'<div class="bc-urgent-dot" title="Urgente"></div>':""}
+    ${hasPhoto?`<img class="bc-thumb" src="${b.photo}" loading="lazy" alt="foto"/><span class="bc-photo-badge">📷</span>`:""}
     ${ringHtml}
     <div class="bc-inner">
       <div class="bc-top">
@@ -2986,9 +3232,20 @@ function renderItems(){
 function toggleItem(idx){
   const box=boxes.find(b=>b.id===currentBoxId);if(!box) return;
   box.items[idx].done=!box.items[idx].done;
+  // Vibración háptica suave
+  if(navigator.vibrate) navigator.vibrate(box.items[idx].done?[12,8,8]:8);
   addHistory(box,(box.items[idx].done?"Sacado":"Devuelto")+": "+box.items[idx].text);
   saveData();renderItems();renderProgress();renderHistory();generateQR(currentBoxId);
-  if(box.items[idx].done) animoToast();
+  if(box.items[idx].done){
+    animoToast();
+    // Toast con opción deshacer
+    const itemName=box.items[idx].text;
+    showToastUndo("✅ "+itemName+" sacado",()=>{
+      box.items[idx].done=false;
+      addHistory(box,"Devuelto: "+itemName);
+      saveData();renderItems();renderProgress();renderHistory();generateQR(currentBoxId);
+    });
+  }
   if(box.items.length>0&&box.items.every(i=>i.done)) setTimeout(launchConfetti,200);
 }
 function addItem(){
@@ -3224,7 +3481,30 @@ function renderPhotoArea(){
     :`<div class="photo-add"><span style="font-size:28px">📸</span><span>Agregar foto de la caja</span></div>`;
 }
 
-function generateQR(id){
+function showQuickQR(){
+  const box=boxes.find(b=>b.id===currentBoxId);if(!box) return;
+  const m=document.createElement("div");
+  m.style.cssText="position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:10010;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(14px);animation:fadeIn .2s ease";
+  m.innerHTML=`<div style="background:var(--card);border-radius:26px;padding:28px 24px;width:min(320px,90vw);text-align:center;box-shadow:0 24px 80px rgba(0,0,0,.6)">
+    <div style="font-size:18px;font-weight:800;margin-bottom:4px;letter-spacing:-.4px">${esc(box.name)}</div>
+    <div style="font-size:12px;color:var(--muted);margin-bottom:18px">${box.number?"#"+box.number+" · ":""}Escanea para ver contenido</div>
+    <div id="quickQRContainer" style="display:flex;justify-content:center;padding:10px;background:#fff;border-radius:16px;margin-bottom:18px"></div>
+    <button onclick="this.closest('[style]').remove()" style="width:100%;padding:14px;border-radius:14px;border:none;background:var(--accent);color:#fff;font-size:15px;font-weight:700;cursor:pointer;font-family:inherit">Cerrar</button>
+  </div>`;
+  document.body.appendChild(m);
+  m.onclick=ev=>{if(ev.target===m)m.remove();};
+  // Generar QR dentro del modal
+  setTimeout(()=>{
+    const el=document.getElementById("quickQRContainer");if(!el) return;
+    const payload={n:box.name,num:box.number,loc:box.location,col:box.color,
+      tags:(box.tags||[]).slice(0,5),items:box.items.slice(0,20).map(i=>({t:i.text.slice(0,40),d:i.done?1:0})),
+      date:box.date,note:(box.note||"").slice(0,100),pri:box.priority,brand:settings.brand};
+    const data=btoa(encodeURIComponent(JSON.stringify(payload)));
+    const url=location.href.split("#")[0]+"#view/"+data;
+    try{new QRCode(el,{text:url,width:200,height:200,correctLevel:QRCode.CorrectLevel.M});}catch(e){el.textContent="Error generando QR";}
+  },80);
+}
+
   const box=boxes.find(b=>b.id===id);const el=document.getElementById("detailQR");if(!box||!el) return;
   el.innerHTML='<div style="padding:20px;color:var(--muted);font-size:12px">Generando QR...</div>';
   // defer to next frame for smooth UI
@@ -3462,7 +3742,8 @@ function _runSearch(q){
     // Buscar también en nombre y ubicación de la caja
     if(box.name.toLowerCase().includes(ql)||
        (box.location||"").toLowerCase().includes(ql)||
-       (box.number||"").toLowerCase().includes(ql)){
+       (box.number||"").toLowerCase().includes(ql)||
+       (box.tags||[]).some(t=>t.toLowerCase().includes(ql))){
       hits.push({box,item:box.name,type:"box"});
       if(hits.length>=12) break outer;
     }
@@ -3557,12 +3838,14 @@ function goSettings(){
   if(tc) tc.textContent=boxes.length;
   if(to) to.textContent=boxes.reduce((s,b)=>s+b.items.length,0);
   if(td) td.textContent=boxes.reduce((s,b)=>s+b.items.filter(i=>i.done).length,0);
+  const tf=document.getElementById("setTotalFav");
+  if(tf) tf.textContent=boxes.filter(b=>b.fav).length;
   applyDark();
+  const nameEl=document.getElementById("settingsUserName");
+  const emailEl=document.getElementById("settingsUserEmail");
+  const avatarEl=document.getElementById("settingsAvatar");
+  const placeholderEl=document.getElementById("settingsAvatarPlaceholder");
   if(currentUser){
-    const nameEl=document.getElementById("settingsUserName");
-    const emailEl=document.getElementById("settingsUserEmail");
-    const avatarEl=document.getElementById("settingsAvatar");
-    const placeholderEl=document.getElementById("settingsAvatarPlaceholder");
     if(nameEl) nameEl.textContent=currentUser.displayName||"Usuario";
     if(emailEl) emailEl.textContent=currentUser.email||"";
     if(currentUser.photoURL&&avatarEl){
@@ -3570,6 +3853,9 @@ function goSettings(){
       avatarEl.style.display="block";
       if(placeholderEl) placeholderEl.style.display="none";
     }
+  } else {
+    if(nameEl) nameEl.textContent="Sin sesión";
+    if(emailEl) emailEl.textContent="Datos guardados localmente";
   }
 }
 function saveBrand(){settings.brand=document.getElementById("brandInput").value.trim();saveSettings();}
@@ -3823,6 +4109,47 @@ function showToast(msg, color){
 
 const ANIMO_MSGS=["¡Uno menos! 💪","¡Vas genial! 🚀","¡Qué crack! ✨","¡Sigue así! 🔥","¡Casi! 🎯","¡Imparable! ⚡","¡Boom! 💥","¡Eso es! 👊","¡Top! 🏆","¡La rompes! 🎸"];
 function animoToast(){const m=ANIMO_MSGS[Math.floor(Math.random()*ANIMO_MSGS.length)];showToast(m,"#34C759");}
+
+// Toast con botón deshacer (7)
+function showToastUndo(msg, onUndo){
+  // Eliminar toast anterior si existe
+  document.getElementById("toastUndo")?.remove();
+  const t=document.createElement("div");
+  t.id="toastUndo";
+  t.style.cssText=`position:fixed;bottom:32px;left:50%;transform:translateX(-50%);background:#1C1C1E;color:#fff;padding:12px 8px 12px 18px;border-radius:16px;font-size:14px;font-weight:600;z-index:9999;max-width:320px;width:max-content;display:flex;align-items:center;gap:12px;box-shadow:0 8px 32px rgba(0,0,0,.35),0 1px 0 rgba(255,255,255,.1) inset;animation:toastSpring .4s cubic-bezier(.175,.885,.32,1.275) both;backdrop-filter:blur(16px)`;
+  const span=document.createElement("span");span.textContent=msg;
+  const btn=document.createElement("button");
+  btn.textContent="Deshacer";
+  btn.style.cssText="background:rgba(255,255,255,.15);border:none;color:#fff;border-radius:10px;padding:6px 12px;font-size:13px;font-weight:700;cursor:pointer;white-space:nowrap;font-family:inherit;flex-shrink:0";
+  let undone=false;
+  btn.onclick=()=>{if(!undone){undone=true;onUndo();t.remove();}};
+  t.appendChild(span);t.appendChild(btn);
+  document.body.appendChild(t);
+  const timer=setTimeout(()=>{t.style.opacity="0";t.style.transition="opacity .3s";setTimeout(()=>t.remove(),300);},4000);
+  btn.addEventListener("click",()=>clearTimeout(timer));
+}
+
+// Barra de progreso global de mudanza (9)
+function renderGlobalProgress(){
+  let el=document.getElementById("globalProgressBar");
+  const totalObj=boxes.reduce((s,b)=>s+b.items.length,0);
+  const doneObj=boxes.reduce((s,b)=>s+b.items.filter(i=>i.done).length,0);
+  if(!totalObj){if(el)el.remove();return;}
+  const pct=Math.round(doneObj/totalObj*100);
+  if(!el){
+    el=document.createElement("div");el.id="globalProgressBar";
+    el.style.cssText="position:sticky;top:57px;z-index:99;padding:7px 14px 5px;background:var(--bg)";
+    // Insertar justo antes del search-wrap
+    const sw=document.querySelector(".search-wrap");
+    if(sw) sw.parentNode.insertBefore(el,sw);
+  }
+  el.innerHTML=`<div style="display:flex;align-items:center;gap:9px">
+    <div style="flex:1;height:5px;background:var(--border);border-radius:99px;overflow:hidden">
+      <div style="height:100%;width:${pct}%;background:${pct>=100?"#34C759":pct>=60?"#0A84FF":"#FF9500"};border-radius:99px;transition:width .5s cubic-bezier(.4,0,.2,1)"></div>
+    </div>
+    <span style="font-size:11px;font-weight:700;color:var(--muted);white-space:nowrap;letter-spacing:.2px">${doneObj}/${totalObj} sacados · ${pct}%</span>
+  </div>`;
+}
 
 
 
@@ -5255,31 +5582,34 @@ if(auth){
   })();
 
   // ── Interceptar botón "atrás" del navegador ──
-  // Evita que salga de la app o muestre el landing/splash al navegar hacia atrás
-  // Usamos dos entradas en el historial para que siempre haya algo que interceptar
-  history.replaceState({bv:'base'}, "");
-  history.pushState({bv:'app'}, "");
-
+  // Evita que salga de la app o muestre el login al navegar hacia atrás
+  history.replaceState({bv:true}, "");
   window.addEventListener("popstate", function(e){
-    // Siempre empujar de vuelta para no salir nunca
-    history.pushState({bv:'app'}, "");
-
+    // SIEMPRE interceptar el atrás — nunca dejar que el usuario vea el landing
+    // si ya inició sesión o está en proceso de auth
     const hasSession = currentUser || _lastLaunchedUid ||
       (typeof firebase !== "undefined" && firebase.auth && firebase.auth().currentUser);
 
     if(hasSession){
-      // Si hay una pantalla interior abierta, volver a main
-      const screens = ['detailScreen','roomScreen','settingsScreen'];
-      for(var i=0;i<screens.length;i++){
-        const s = document.getElementById(screens[i]);
-        if(s && !s.classList.contains("hidden")){
-          goMain();
-          return;
-        }
+      const detail = document.getElementById("detailScreen");
+      if(detail && !detail.classList.contains("hidden")){
+        history.pushState({bv:true}, "");
+        goMain();
+        return;
       }
-      // Ya estamos en main → no hacer nada (no ir al landing)
+      const room = document.getElementById("roomScreen");
+      const settings = document.getElementById("settingsScreen");
+      if((room && !room.classList.contains("hidden")) ||
+         (settings && !settings.classList.contains("hidden"))){
+        history.pushState({bv:true}, "");
+        goMain();
+        return;
+      }
+      history.pushState({bv:true}, "");
+    } else {
+      // Sin sesión: también bloquear para que no salga de la app
+      history.pushState({bv:true}, "");
     }
-    // Sin sesión: bloquear igual, no ir a ningún landing externo
   });
 
   // ── Spinner inicial mientras Firebase verifica sesión ──
@@ -5331,22 +5661,13 @@ if(auth){
     loadAll();
     setupPWA();
     initTutorial();
+    // FIX: en modo local, si hay cajas guardadas ir directo a main
     if(boxes && boxes.length > 0){
-      history.replaceState({bv:'base'}, "");
-      history.pushState({bv:'app'}, "");
+      history.replaceState(null, "", location.pathname + location.search);
       goMain();
     } else {
-      showSplash();
+      showSplash(); // primera vez sin cajas: mostrar landing
     }
-    // Bloquear atrás en modo local también
-    window.addEventListener("popstate", function(){
-      history.pushState({bv:'app'}, "");
-      const screens = ['detailScreen','roomScreen','settingsScreen'];
-      for(var i=0;i<screens.length;i++){
-        const s = document.getElementById(screens[i]);
-        if(s && !s.classList.contains("hidden")){ goMain(); return; }
-      }
-    });
   });
 }
 </script>
