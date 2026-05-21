@@ -1,0 +1,656 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="BoxVision">
+<meta name="theme-color" content="#007AFF">
+<title>BoxVision · Vista de caja</title>
+
+<!-- Open Graph / Share preview -->
+<meta property="og:title" content="BoxVision — Caja">
+<meta property="og:description" content="Escanea el QR para ver el contenido de esta caja.">
+<meta property="og:type" content="website">
+
+<style>
+  *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  :root{
+    --bg:#17171f;--card:#1e1e28;--card2:#232330;
+    --text:#FFFFFF;--muted:#8E8E93;
+    --border:rgba(255,255,255,0.08);
+    --accent:#007AFF;--red:#FF3B30;--green:#34C759;--orange:#FF9500;
+    --input:#2a2a38;--radius:16px;
+  }
+  html,body{height:100%;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','Segoe UI',sans-serif;overflow-x:hidden}
+
+  /* ── Splash de carga ── */
+  #splash{
+    position:fixed;inset:0;background:var(--bg);
+    display:flex;flex-direction:column;align-items:center;justify-content:center;
+    z-index:1000;gap:16px;transition:opacity .4s;
+  }
+  #splash.out{opacity:0;pointer-events:none}
+  .splash-logo{font-size:56px;animation:popIn .5s cubic-bezier(.175,.885,.32,1.275) both}
+  .splash-title{font-size:22px;font-weight:900;letter-spacing:-.5px}
+  .splash-sub{font-size:14px;color:var(--muted)}
+  .splash-spinner{width:24px;height:24px;border:2.5px solid rgba(255,255,255,.15);border-top-color:#007AFF;border-radius:50%;animation:spin .75s linear infinite;margin-top:8px}
+
+  /* ── Página de error ── */
+  #errorPage{display:none;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;padding:32px;text-align:center;gap:14px}
+  .err-icon{font-size:56px;animation:popIn .5s cubic-bezier(.175,.885,.32,1.275) both}
+  .err-title{font-size:22px;font-weight:800;color:var(--text)}
+  .err-sub{font-size:15px;color:var(--muted);line-height:1.6;max-width:280px}
+  .err-btn{margin-top:8px;background:var(--accent);color:#fff;border:none;border-radius:14px;padding:14px 28px;font-size:16px;font-weight:700;cursor:pointer;font-family:inherit;transition:transform .12s,opacity .12s}
+  .err-btn:active{transform:scale(.95);opacity:.85}
+
+  /* ── Header visual ── */
+  #mainView{display:none;flex-direction:column;min-height:100vh;padding-bottom:env(safe-area-inset-bottom)}
+
+  /* Topbar branding */
+  .topbar{
+    background:rgba(23,23,31,.88);border-bottom:.5px solid rgba(255,255,255,.07);
+    padding:12px 16px 12px;
+    display:flex;align-items:center;justify-content:space-between;
+    position:sticky;top:0;z-index:100;backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
+    gap:8px;
+  }
+  .topbar-brand{display:flex;align-items:center;gap:8px}
+  .topbar-logo{font-size:22px}
+  .topbar-name{font-size:17px;font-weight:800;letter-spacing:-.4px}
+  .topbar-badge{
+    font-size:10px;font-weight:700;background:rgba(0,122,255,.2);color:#007AFF;
+    border:1px solid rgba(0,122,255,.3);border-radius:6px;padding:2px 7px;
+    letter-spacing:.2px;text-transform:uppercase;
+  }
+  .topbar-tools{display:flex;gap:8px;align-items:center}
+  .tbtn{
+    background:rgba(255,255,255,.09);border:.5px solid rgba(255,255,255,.13);
+    border-radius:12px;width:40px;height:40px;display:flex;align-items:center;justify-content:center;
+    cursor:pointer;font-size:17px;color:rgba(255,255,255,.85);border:none;
+    transition:transform .15s cubic-bezier(.34,1.56,.64,1),background .15s;
+    background:rgba(255,255,255,.09);border:.5px solid rgba(255,255,255,.12);
+  }
+  .tbtn:active{transform:scale(.84);background:rgba(255,255,255,.06)}
+
+  /* ── Hero header de la caja ── */
+  .vh{position:relative;overflow:hidden;min-height:230px;display:flex;flex-direction:column;justify-content:flex-end;padding:24px 20px 22px}
+  .vh-bg{position:absolute;inset:0}
+  .vh-overlay{position:absolute;inset:0;background:linear-gradient(to bottom,rgba(0,0,0,.06),rgba(0,0,0,.65))}
+  .vh-photo{width:100%;max-height:200px;object-fit:cover;display:block}
+  .vh-brand{position:absolute;top:14px;left:14px;font-size:12px;font-weight:700;color:rgba(255,255,255,.9);z-index:10;background:rgba(0,0,0,.25);padding:4px 10px;border-radius:99px;backdrop-filter:blur(8px)}
+  .vh-tools{position:absolute;top:14px;right:14px;z-index:10;display:flex;gap:8px}
+  .vh-tool{
+    background:rgba(255,255,255,.2);border:none;border-radius:50%;width:38px;height:38px;
+    display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:17px;
+    backdrop-filter:blur(10px);color:#fff;transition:transform .12s,background .12s;
+  }
+  .vh-tool:active{transform:scale(.86);background:rgba(255,255,255,.35)}
+  .vh-tool.on{background:rgba(255,204,0,.45)}
+  .vh-icon{font-size:54px;position:relative;z-index:1;margin-bottom:8px;animation:popIn .5s cubic-bezier(.175,.885,.32,1.275) both}
+  .vh-num{font-size:12px;color:rgba(255,255,255,.7);font-weight:700;position:relative;z-index:1;letter-spacing:.3px;text-transform:uppercase}
+  .vh-name{font-size:27px;font-weight:900;color:#fff;position:relative;z-index:1;letter-spacing:-.6px;text-shadow:0 2px 12px rgba(0,0,0,.3);line-height:1.15}
+  .vh-tags{display:flex;flex-wrap:wrap;gap:7px;margin-top:10px;position:relative;z-index:1}
+  .vh-tag{font-size:12px;background:rgba(255,255,255,.18);color:#fff;padding:4px 12px;border-radius:99px;backdrop-filter:blur(6px)}
+
+  /* ── Cuerpo ── */
+  .vh-body{padding:14px 14px 0;max-width:520px;margin:0 auto;width:100%}
+
+  /* Barra de progreso */
+  .vh-prog-wrap{background:var(--card);border-radius:18px;padding:16px 18px;margin-bottom:12px;border:.5px solid var(--border);box-shadow:0 4px 16px rgba(0,0,0,.12)}
+  .vh-prog-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+  .vh-prog-label{font-size:12px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.4px}
+  .vh-prog-pct{font-size:18px;font-weight:900;color:var(--text)}
+  .vh-prog-bar{background:var(--input);border-radius:99px;height:8px;overflow:hidden;margin-bottom:8px}
+  .vh-prog-fill{height:100%;border-radius:99px;transition:width .8s cubic-bezier(.16,1,.3,1)}
+  .vh-prog-lbl{font-size:13px;color:var(--muted)}
+
+  /* Nota */
+  .vh-note{background:var(--card);border-radius:16px;padding:14px 16px;margin-bottom:12px;border:.5px solid var(--border);font-size:14px;color:var(--muted);line-height:1.6;font-style:italic}
+
+  /* Buscador */
+  .search-wrap{margin-bottom:12px}
+  .search-inner{display:flex;align-items:center;gap:8px;background:var(--card);border:.5px solid var(--border);border-radius:14px;padding:10px 14px;transition:border-color .15s}
+  .search-inner:focus-within{border-color:rgba(0,122,255,.5)}
+  .search-inner span{font-size:15px;color:var(--muted)}
+  .search-inner input{flex:1;border:none;outline:none;font-size:15px;color:var(--text);background:transparent;font-family:inherit}
+  .search-inner input::placeholder{color:var(--muted)}
+
+  /* Items */
+  .section-label{font-size:12px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px;padding:0 2px}
+  .vh-item{
+    background:var(--card);border:.5px solid var(--border);border-radius:20px;
+    padding:13px 16px;margin-bottom:10px;
+    display:flex;align-items:center;gap:12px;
+    animation:slideUp .35s both;
+    box-shadow:0 4px 16px rgba(0,0,0,.1);
+    transition:transform .12s;
+  }
+  .vh-item:active{transform:scale(.98)}
+  .vh-nbadge{width:32px;height:32px;border-radius:50%;color:#fff;font-size:12px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+  .vh-itext{font-size:15px;color:var(--text);font-weight:500;line-height:1.4}
+  .vh-itext.done{text-decoration:line-through;color:var(--muted)}
+
+  /* Stats chips */
+  .stats-row{display:flex;gap:10px;margin-bottom:12px;flex-wrap:wrap}
+  .stat-chip{
+    background:var(--card);border:.5px solid var(--border);border-radius:14px;
+    padding:12px 14px;flex:1;min-width:100px;
+    display:flex;flex-direction:column;gap:3px;
+    box-shadow:0 2px 8px rgba(0,0,0,.1);
+  }
+  .stat-chip-val{font-size:20px;font-weight:900;color:var(--text)}
+  .stat-chip-lbl{font-size:11px;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.3px}
+
+  /* Related */
+  .vh-related{background:var(--card);border-radius:16px;padding:14px 16px;margin-bottom:12px;border:.5px solid var(--border)}
+  .vh-rel-title{font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.4px;margin-bottom:10px}
+
+  /* Empty state */
+  .vh-empty{text-align:center;padding:40px 20px;color:var(--muted)}
+  .vh-empty-icon{font-size:44px;margin-bottom:12px;opacity:.7}
+  .vh-empty-text{font-size:16px;font-weight:600;color:var(--text);margin-bottom:6px}
+  .vh-empty-sub{font-size:14px}
+
+  /* Footer CTA */
+  .vh-footer{
+    margin-top:24px;padding:20px 16px 32px;
+    display:flex;flex-direction:column;align-items:center;gap:14px;
+    border-top:.5px solid var(--border);
+  }
+  .vh-footer-brand{display:flex;align-items:center;gap:8px;font-size:14px;color:var(--muted)}
+  .vh-footer-brand span:first-child{font-size:20px}
+  .vh-footer-cta{
+    background:linear-gradient(135deg,#0A84FF,#5E5CE6);
+    color:#fff;border:none;border-radius:16px;
+    padding:14px 28px;font-size:16px;font-weight:700;
+    cursor:pointer;font-family:inherit;
+    box-shadow:0 6px 20px rgba(10,132,255,.4);
+    transition:transform .15s cubic-bezier(.34,1.56,.64,1),box-shadow .15s;
+    text-decoration:none;display:inline-block;
+  }
+  .vh-footer-cta:active{transform:scale(.95);box-shadow:0 3px 10px rgba(10,132,255,.3)}
+  .vh-footer-hint{font-size:12px;color:var(--muted);text-align:center}
+
+  /* Toast */
+  .toast{
+    position:fixed;bottom:calc(24px + env(safe-area-inset-bottom));left:50%;transform:translateX(-50%) translateY(20px);
+    background:var(--card2);color:var(--text);border:.5px solid var(--border);
+    border-radius:14px;padding:12px 20px;font-size:14px;font-weight:600;
+    box-shadow:0 8px 24px rgba(0,0,0,.3);z-index:9999;opacity:0;
+    transition:opacity .25s,transform .25s cubic-bezier(.16,1,.3,1);pointer-events:none;
+    white-space:nowrap;max-width:90vw;overflow:hidden;text-overflow:ellipsis;
+  }
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+  /* Contraseña overlay */
+  #pwOverlay{
+    display:none;position:fixed;inset:0;background:rgba(0,0,0,.8);
+    z-index:500;align-items:center;justify-content:center;
+    backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+    padding:20px;
+  }
+  #pwOverlay.show{display:flex}
+  .pw-card{
+    background:var(--card);border-radius:28px;padding:32px 24px 24px;
+    width:min(340px,100%);box-shadow:0 32px 80px rgba(0,0,0,.6);
+    animation:popIn .35s cubic-bezier(.175,.885,.32,1.275) both;
+  }
+  .pw-icon-wrap{width:60px;height:60px;border-radius:20px;background:rgba(0,122,255,.12);border:.5px solid rgba(0,122,255,.25);display:flex;align-items:center;justify-content:center;margin:0 auto 16px;font-size:26px}
+  .pw-title{font-size:18px;font-weight:800;text-align:center;margin-bottom:4px}
+  .pw-sub{font-size:13px;color:var(--muted);text-align:center;margin-bottom:24px}
+  .pw-dots{display:flex;gap:14px;justify-content:center;margin-bottom:20px}
+  .pw-dot{width:13px;height:13px;border-radius:50%;border:1.5px solid rgba(255,255,255,.2);background:transparent;transition:all .15s}
+  .pw-dot.filled{background:#007AFF;border-color:#007AFF;transform:scale(1.18)}
+  .pw-dot.error{background:#FF3B30;border-color:#FF3B30}
+  .pw-input{
+    width:100%;padding:14px;border-radius:14px;border:.5px solid var(--border);
+    background:var(--input);color:var(--text);font-size:16px;outline:none;
+    font-family:inherit;margin-bottom:16px;transition:border-color .15s;
+  }
+  .pw-input:focus{border-color:#007AFF}
+  .pw-actions{display:flex;gap:10px}
+  .pw-btn{flex:1;padding:14px;border-radius:14px;font-size:15px;font-weight:700;cursor:pointer;font-family:inherit;border:none;transition:transform .12s}
+  .pw-btn:active{transform:scale(.96)}
+  .pw-cancel{background:rgba(255,255,255,.08);color:var(--text)}
+  .pw-confirm{background:#007AFF;color:#fff}
+
+  /* Animaciones */
+  @keyframes popIn{from{opacity:0;transform:scale(.7)}to{opacity:1;transform:scale(1)}}
+  @keyframes slideUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  @keyframes shake{0%,100%{transform:translateX(0)}20%,60%{transform:translateX(-8px)}40%,80%{transform:translateX(8px)}}
+</style>
+</head>
+<body>
+
+<!-- ── Splash ── -->
+<div id="splash">
+  <div class="splash-logo">📦</div>
+  <div class="splash-title">BoxVision</div>
+  <div class="splash-sub">Cargando caja...</div>
+  <div class="splash-spinner"></div>
+</div>
+
+<!-- ── Error ── -->
+<div id="errorPage" style="display:none;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;padding:32px;text-align:center;gap:14px">
+  <div class="err-icon">📭</div>
+  <div class="err-title" id="errTitle">Caja no encontrada</div>
+  <div class="err-sub" id="errSub">El código QR no contiene información válida o ha expirado.</div>
+  <a href="./index.html" class="err-btn">Abrir BoxVision</a>
+</div>
+
+<!-- ── Overlay contraseña ── -->
+<div id="pwOverlay">
+  <div class="pw-card">
+    <div class="pw-icon-wrap">🔒</div>
+    <div class="pw-title" id="pwBoxName">Caja protegida</div>
+    <div class="pw-sub">Ingresa la contraseña para ver el contenido</div>
+    <div class="pw-dots">
+      <div class="pw-dot" id="d0"></div>
+      <div class="pw-dot" id="d1"></div>
+      <div class="pw-dot" id="d2"></div>
+      <div class="pw-dot" id="d3"></div>
+    </div>
+    <input class="pw-input" type="password" id="pwInput" placeholder="Contraseña..."
+      autocomplete="off" oninput="syncDots(this.value)" onkeydown="if(event.key==='Enter')checkPw()"/>
+    <div class="pw-actions">
+      <button class="pw-btn pw-cancel" onclick="history.back()">Cancelar</button>
+      <button class="pw-btn pw-confirm" onclick="checkPw()">Entrar →</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── Vista principal ── -->
+<div id="mainView" style="display:none;flex-direction:column;min-height:100vh;padding-bottom:env(safe-area-inset-bottom)">
+
+  <!-- Topbar -->
+  <div class="topbar">
+    <div class="topbar-brand">
+      <span class="topbar-logo">📦</span>
+      <span class="topbar-name">BoxVision</span>
+      <span class="topbar-badge">Solo lectura</span>
+    </div>
+    <div class="topbar-tools">
+      <button class="tbtn" id="ttsBtn" onclick="speakItems()" title="Leer en voz alta">🔊</button>
+    </div>
+  </div>
+
+  <!-- Foto de portada -->
+  <img class="vh-photo" id="vPhoto" style="display:none"/>
+
+  <!-- Hero header -->
+  <div class="vh" id="vHeader">
+    <div class="vh-bg" id="vBg"></div>
+    <div class="vh-overlay"></div>
+    <div class="vh-brand" id="vBrand" style="display:none"></div>
+    <div class="vh-tools">
+      <!-- vacío, solo TTS está en topbar -->
+    </div>
+    <div class="vh-icon" id="vIcon">📦</div>
+    <div class="vh-num" id="vNum"></div>
+    <div class="vh-name" id="vName">Cargando...</div>
+    <div class="vh-tags" id="vTags"></div>
+  </div>
+
+  <!-- Cuerpo -->
+  <div class="vh-body">
+
+    <!-- Stats rápidas -->
+    <div class="stats-row" id="statsRow" style="display:none;margin-top:14px"></div>
+
+    <!-- Progreso de sacado -->
+    <div class="vh-prog-wrap" id="vProgWrap" style="display:none;margin-top:14px">
+      <div class="vh-prog-header">
+        <span class="vh-prog-label">Progreso de sacado</span>
+        <span class="vh-prog-pct" id="vProgPct">0%</span>
+      </div>
+      <div class="vh-prog-bar"><div class="vh-prog-fill" id="vProgFill"></div></div>
+      <div class="vh-prog-lbl" id="vProgLbl"></div>
+    </div>
+
+    <!-- Nota -->
+    <div class="vh-note" id="vNote" style="display:none;margin-top:14px"></div>
+
+    <!-- Buscador (solo si hay muchos items) -->
+    <div class="search-wrap" id="vSearchWrap" style="display:none;margin-top:14px">
+      <div class="search-inner">
+        <span>🔍</span>
+        <input type="text" id="vSearchInput" placeholder="Buscar en esta caja..." oninput="filterItems(this.value)"/>
+        <span style="cursor:pointer" onclick="document.getElementById('vSearchInput').value='';filterItems('')">✕</span>
+      </div>
+    </div>
+
+    <!-- Lista de items -->
+    <div style="margin-top:14px">
+      <div class="section-label" id="itemsLabel"></div>
+      <div id="vItems"></div>
+    </div>
+
+    <!-- Caja relacionada -->
+    <div class="vh-related" id="vRelated" style="display:none;margin-top:4px">
+      <div class="vh-rel-title">CAJA RELACIONADA</div>
+      <div id="vRelatedList"></div>
+    </div>
+
+    <!-- Footer CTA -->
+    <div class="vh-footer">
+      <div class="vh-footer-brand">
+        <span>📦</span>
+        <span>BoxVision · Vista pública</span>
+      </div>
+      <a href="./index.html" class="vh-footer-cta">Gestionar mis cajas →</a>
+      <div class="vh-footer-hint">Organiza tu mudanza con BoxVision</div>
+    </div>
+
+  </div>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<script>
+// ── Utilidades ──
+const PRI = {red:'🔴',yellow:'🟡',green:'🟢'};
+const PRI_LABEL = {red:'Urgente',yellow:'Normal',green:'Sin prisa'};
+let _box = null;
+let _items = [];
+let _speaking = false;
+
+function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+
+function hexToRgba(hex,alpha){
+  if(!hex||!hex.startsWith('#')) return hex||'#007AFF';
+  const h=hex.replace('#','');
+  const r=parseInt(h.length===3?h[0]+h[0]:h.slice(0,2),16);
+  const g=parseInt(h.length===3?h[1]+h[1]:h.slice(2,4),16);
+  const b=parseInt(h.length===3?h[2]+h[2]:h.slice(4,6),16);
+  return `rgba(${r},${g},${b},${alpha})`;
+}
+
+function getIcon(n){
+  n=(n||'').toLowerCase();
+  const m=[
+    [['adidas','nike','puma','ropa','camisa','camiseta','polo','chompa','casaca','abrigo','chaqueta','vestido','falda','blusa','pantalon','jean','short','pijama','boxer','toalla','sabana','tela'],'👕'],
+    [['zapato','zapatilla','tenis','bota','sandalia','calzado','crocs','pantufla'],'👟'],
+    [['libro','cuaderno','revista','comic','manga','novela','texto'],'📚'],
+    [['juguete','lego','muñeca','peluche','juego','xbox','playstation','nintendo','videojuego'],'🧸'],
+    [['cocina','olla','sarten','plato','vaso','taza','cubierto','cuchillo','tenedor','cuchara','bowl','tupper','licuadora','cafetera'],'🍳'],
+    [['electronico','cable','cargador','celular','telefono','laptop','computadora','tablet','auricular','audifonos','parlante','camara','control'],'📱'],
+    [['herramienta','martillo','destornillador','llave','taladro','clavo','tornillo','pintura','pincel','brocha'],'🔧'],
+    [['deporte','pelota','balon','guante','casco','bicicleta','pesa','mancuerna','yoga'],'⚽'],
+    [['documento','papel','factura','contrato','carpeta','archivo'],'📄'],
+    [['medicamento','medicina','pastilla','farmacia','botiquin','salud'],'💊'],
+    [['bano','shampoo','jabon','crema','perfume','desodorante','maquillaje','labial'],'🧴'],
+    [['bebe','nene','niño','niña','pañal','biberon'],'🍼'],
+    [['mascota','perro','gato','collar','correa'],'🐾'],
+    [['joya','anillo','aretes','pulsera','reloj'],'💍'],
+    [['bolso','cartera','mochila','maleta','bolsa','maletin'],'👜'],
+    [['navidad','año nuevo','fiesta','cumpleaños','regalo'],'🎁'],
+    [['arte','pintura','dibujo','lienzo'],'🎨'],
+    [['musica','guitarra','piano','instrumento'],'🎸'],
+  ];
+  for(const[k,e] of m) if(k.some(w=>n.includes(w))) return e;
+  return '📦';
+}
+
+function showToast(msg, dur=2800){
+  const t=document.getElementById('toast');
+  t.textContent=msg;t.classList.add('show');
+  clearTimeout(t._t);t._t=setTimeout(()=>t.classList.remove('show'),dur);
+}
+
+function playBeep(){
+  try{
+    const ctx=new(window.AudioContext||window.webkitAudioContext)();
+    const osc=ctx.createOscillator();const gain=ctx.createGain();
+    osc.connect(gain);gain.connect(ctx.destination);
+    osc.type='sine';
+    osc.frequency.setValueAtTime(1200,ctx.currentTime);
+    osc.frequency.exponentialRampToValueAtTime(900,ctx.currentTime+0.12);
+    gain.gain.setValueAtTime(0.4,ctx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001,ctx.currentTime+0.18);
+    osc.start();osc.stop(ctx.currentTime+0.18);
+    osc.onended=()=>ctx.close();
+  }catch(e){}
+}
+
+// ── Contraseña ──
+let _pendingBox = null;
+function showPwOverlay(box){
+  _pendingBox=box;
+  document.getElementById('pwBoxName').textContent=box.name||box.n||'Caja';
+  document.getElementById('pwInput').value='';
+  syncDots('');
+  document.getElementById('pwOverlay').classList.add('show');
+  setTimeout(()=>document.getElementById('pwInput').focus(),300);
+}
+function syncDots(val){
+  for(let i=0;i<4;i++){
+    const d=document.getElementById('d'+i);
+    d.className='pw-dot'+(val.length>i?' filled':'');
+  }
+}
+function checkPw(){
+  const val=document.getElementById('pwInput').value;
+  const pwd=_pendingBox.password||_pendingBox.pwd||'';
+  if(!pwd||val===pwd){
+    document.getElementById('pwOverlay').classList.remove('show');
+    renderBox(_pendingBox);
+  }else{
+    for(let i=0;i<4;i++) document.getElementById('d'+i).className='pw-dot error';
+    document.querySelector('.pw-card').style.animation='shake .35s both';
+    setTimeout(()=>{
+      document.querySelector('.pw-card').style.animation='';
+      document.getElementById('pwInput').value='';
+      syncDots('');
+    },400);
+    showToast('Contraseña incorrecta 🔒');
+  }
+}
+
+// ── Renderizar caja ──
+function renderBox(box){
+  _box=box;
+  const col=box.color||box.col||'#007AFF';
+
+  // Hero background
+  document.getElementById('vBg').style.background=`linear-gradient(135deg,${col},${hexToRgba(col,.55)})`;
+  document.documentElement.style.setProperty('--accent',col);
+
+  // Foto
+  if(box.photo){
+    const ph=document.getElementById('vPhoto');
+    ph.src=box.photo;ph.style.display='block';
+  }
+
+  // Brand
+  const br=box.brand;
+  if(br){const bel=document.getElementById('vBrand');bel.textContent='📦 '+br;bel.style.display='';}
+
+  // Icono / número / nombre
+  const name=box.name||box.n||'Caja';
+  const num=box.number||box.num;
+  const pri=box.priority||box.pri;
+  document.getElementById('vIcon').textContent=getIcon(name);
+  document.getElementById('vNum').textContent=num?`Caja #${num} ${PRI[pri]||''}`:(PRI[pri]||'');
+  document.getElementById('vName').textContent=name;
+
+  // Tags
+  const loc=box.location||box.loc;
+  const weight=box.weight||box.w;
+  const date=box.date;
+  const tags=[];
+  if(loc) tags.push('📍 '+loc);
+  if(weight) tags.push('⚖️ '+weight+'kg');
+  if(date) tags.push('📅 '+date);
+  if(pri) tags.push(PRI[pri]+' '+PRI_LABEL[pri]);
+  (box.tags||[]).forEach(t=>tags.push(t));
+  document.getElementById('vTags').innerHTML=tags.map(t=>`<span class="vh-tag">${esc(t)}</span>`).join('');
+
+  // Normalizar items
+  const rawItems=box.items||[];
+  _items=rawItems.map(i=>typeof i==='object'&&i.t?{text:i.t,done:!!i.d}:i);
+  const total=_items.length;
+  const done=_items.filter(i=>i.done).length;
+
+  // Stats chips
+  if(total>0||pri){
+    const sr=document.getElementById('statsRow');
+    sr.style.display='flex';
+    const chips=[];
+    if(total>0) chips.push(`<div class="stat-chip"><div class="stat-chip-val">${total}</div><div class="stat-chip-lbl">Objetos</div></div>`);
+    if(done>0) chips.push(`<div class="stat-chip"><div class="stat-chip-val" style="color:#34C759">${done}</div><div class="stat-chip-lbl">Sacados</div></div>`);
+    if(weight) chips.push(`<div class="stat-chip"><div class="stat-chip-val">${weight}kg</div><div class="stat-chip-lbl">Peso</div></div>`);
+    sr.innerHTML=chips.join('');
+  }
+
+  // Progreso
+  if(total>0){
+    const pct=Math.round(done/total*100);
+    document.getElementById('vProgWrap').style.display='';
+    document.getElementById('vProgFill').style.cssText=`width:${pct}%;background:${col}`;
+    document.getElementById('vProgPct').textContent=pct+'%';
+    document.getElementById('vProgLbl').textContent=`${done} sacado${done!==1?'s':''} de ${total}`;
+  }
+
+  // Nota
+  if(box.note){
+    const n=document.getElementById('vNote');
+    n.textContent='📝 '+(box.note||'');n.style.display='';
+  }
+
+  // Buscador
+  if(total>8) document.getElementById('vSearchWrap').style.display='';
+
+  // Items
+  document.getElementById('itemsLabel').textContent=total>0?`Contenido · ${total} objeto${total!==1?'s':''}`:'';
+  renderItemsList(_items,col);
+
+  // Caja relacionada
+  const rel=box.related||box.rel;
+  if(rel){
+    document.getElementById('vRelated').style.display='';
+    const relName=rel.n||rel.name||'';
+    const relCount=rel.c||rel.items||0;
+    document.getElementById('vRelatedList').innerHTML=`
+      <div style="display:flex;align-items:center;gap:10px;padding:4px 0;font-size:14px">
+        <span style="font-size:20px">${getIcon(relName)}</span>
+        <span style="flex:1;font-weight:600">${esc(relName)}</span>
+        <span style="color:var(--muted);font-size:12px">${relCount} objeto${relCount!==1?'s':''}</span>
+      </div>`;
+  }
+
+  // Mostrar vista
+  hideSplash();
+  document.getElementById('mainView').style.display='flex';
+  playBeep();
+}
+
+function renderItemsList(items, col){
+  const container=document.getElementById('vItems');
+  if(!items.length){
+    container.innerHTML=`
+      <div class="vh-empty">
+        <div class="vh-empty-icon">📭</div>
+        <div class="vh-empty-text">Caja vacía</div>
+        <div class="vh-empty-sub">No se registraron objetos en esta caja</div>
+      </div>`;
+    return;
+  }
+  container.innerHTML=items.map((it,i)=>`
+    <div class="vh-item" style="animation-delay:${i*0.04}s">
+      <div class="vh-nbadge" style="background:${col||'#007AFF'}">${_items.indexOf(it)+1}</div>
+      <div class="vh-itext${it.done?' done':''}">${esc(it.text)}</div>
+    </div>`).join('');
+}
+
+function filterItems(q){
+  if(!q.trim()){renderItemsList(_items,_box?.color||_box?.col||'#007AFF');return;}
+  const filtered=_items.filter(it=>it.text.toLowerCase().includes(q.toLowerCase()));
+  renderItemsList(filtered,_box?.color||_box?.col||'#007AFF');
+}
+
+// ── TTS ──
+function speakItems(){
+  if(!window.speechSynthesis){showToast('Tu navegador no soporta voz');return;}
+  if(_speaking){window.speechSynthesis.cancel();_speaking=false;document.getElementById('ttsBtn').classList.remove('on');return;}
+  const name=document.getElementById('vName').textContent;
+  const items=[...document.querySelectorAll('.vh-itext')].map(el=>el.textContent);
+  if(!items.length){showToast('Esta caja no tiene objetos 😅');return;}
+  const utt=new SpeechSynthesisUtterance(`Caja ${name}. Contiene: ${items.join(', ')}.`);
+  utt.lang='es-PE';utt.rate=0.9;
+  utt.onend=()=>{_speaking=false;document.getElementById('ttsBtn').classList.remove('on');};
+  window.speechSynthesis.speak(utt);
+  _speaking=true;document.getElementById('ttsBtn').classList.add('on');
+  showToast('🔊 Leyendo en voz alta...');
+}
+
+// ── Splash ──
+function hideSplash(){
+  const s=document.getElementById('splash');
+  s.classList.add('out');
+  setTimeout(()=>s.style.display='none',450);
+}
+
+function showError(title,sub){
+  hideSplash();
+  document.getElementById('errTitle').textContent=title;
+  document.getElementById('errSub').textContent=sub;
+  document.getElementById('errorPage').style.display='flex';
+}
+
+// ── Init ──
+function init(){
+  const hash=location.hash;
+  // Soporta tanto ?box=DATA como #view/DATA (compatibilidad)
+  let data=null;
+
+  if(hash.startsWith('#view/')){
+    data=hash.slice(6);
+  } else {
+    const params=new URLSearchParams(location.search);
+    data=params.get('box')||params.get('b');
+  }
+
+  if(!data){
+    showError('Sin datos de caja','Abre esta página escaneando el código QR de una caja de BoxVision.');
+    return;
+  }
+
+  let box;
+  try{
+    box=JSON.parse(decodeURIComponent(atob(data)));
+  }catch(e){
+    showError('QR inválido','No se pudo leer la información del QR. Puede estar dañado o desactualizado.');
+    return;
+  }
+
+  if(!box||(!(box.name||box.n))){
+    showError('Caja vacía','El QR no contiene información de la caja.');
+    return;
+  }
+
+  // Normalizar claves comprimidas
+  if(box.n&&!box.name){box.name=box.n;box.number=box.num;box.location=box.loc;box.color=box.col;box.priority=box.pri;box.weight=box.w;}
+
+  // Actualizar <title> y theme-color
+  document.title='📦 '+(box.name||box.n||'Caja')+' · BoxVision';
+  const col=box.color||box.col||'#007AFF';
+  document.querySelector('meta[name="theme-color"]').setAttribute('content',col);
+
+  // Contraseña
+  if(box.password||box.pwd){
+    hideSplash();
+    showPwOverlay(box);
+  }else{
+    setTimeout(()=>renderBox(box),600);
+  }
+}
+
+document.addEventListener('DOMContentLoaded',init);
+</script>
+</body>
+</html>
