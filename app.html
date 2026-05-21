@@ -167,10 +167,11 @@
 })();
 </script>
 <title>BoxVision - Organizador de Cajas Inteligente para Mudanzas con QR</title>
-<meta name="description" content="BoxVision es un organizador de cajas inteligente para mudanzas. Gestiona tus cajas, genera códigos QR, busca por contenido y organiza tu mudanza fácilmente. Gratis y sin necesidad de descargar.">
-<meta name="keywords" content="organizador de cajas, gestor de mudanzas, QR cajas, organizador mudanza, BoxVision, gestión cajas, mudanza inteligente, cajas QR">
-<meta name="author" content="BoxVision">
+<meta name="description" content="BoxVision es un organizador de cajas inteligente para mudanzas. Gestiona tus cajas, genera códigos QR, busca por contenido y organiza tu mudanza fácilmente. Gratis, sin descargas y completamente offline.">
+<meta name="keywords" content="organizador de cajas, gestor de mudanzas, QR cajas, organizador mudanza, BoxVision, gestión cajas, mudanza inteligente, cajas QR, PWA">
+<meta name="author" content="BoxVision Team">
 <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
+<meta name="color-scheme" content="dark light">
 <link rel="canonical" href="https://futbol1234now-png.github.io/BoxVision/app.html">
 <meta property="og:title" content="BoxVision - Organizador de Cajas Inteligente">
 <meta property="og:description" content="Organiza tus cajas para mudanzas con IA, genera QR y gestiona todo desde tu teléfono. Gratis y sin descargas.">
@@ -206,9 +207,9 @@
 /* BoxVision — Estilos principales */
 
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-:root{--bg:#17171f;--card:#1e1e28;--card2:#232330;--text:#FFFFFF;--muted:#8E8E93;--border:rgba(255,255,255,0.08);--accent:#0A84FF;--red:#FF3B30;--green:#34C759;--orange:#FF9500;--topbar:rgba(23,23,31,0.85);--topbarborder:rgba(255,255,255,0.07);--input:#2a2a38;--pill:#2e2e3e;--pilltext:#EBEBF5}
-[data-dark="1"]{--bg:#17171f;--card:#1e1e28;--card2:#232330;--text:#FFFFFF;--muted:#8E8E93;--border:rgba(255,255,255,0.08);--accent:#0A84FF;--red:#FF3B30;--green:#34C759;--orange:#FF9500;--topbar:rgba(23,23,31,0.85);--topbarborder:rgba(255,255,255,0.07);--input:#2a2a38;--pill:#2e2e3e;--pilltext:#EBEBF5}
-[data-dark=""]{--bg:#F2F2F7;--card:#fff;--card2:#F9F9FB;--text:#1C1C1E;--muted:#8E8E93;--border:#E5E5EA;--accent:#007AFF;--red:#FF3B30;--green:#34C759;--orange:#FF9500;--topbar:rgba(255,255,255,0.9);--topbarborder:#E5E5EA;--input:#F2F2F7;--pill:#E5E5EA;--pilltext:#3C3C43}
+:root{--bg:#17171f;--card:#1e1e28;--card2:#232330;--text:#FFFFFF;--muted:#8E8E93;--border:rgba(255,255,255,0.08);--accent:#007AFF;--accent-secondary:#5856D6;--red:#FF3B30;--green:#34C759;--orange:#FF9500;--topbar:rgba(23,23,31,0.85);--topbarborder:rgba(255,255,255,0.07);--input:#2a2a38;--pill:#2e2e3e;--pilltext:#EBEBF5;--shadow-sm:0 1px 2px rgba(0,0,0,0.05);--shadow-md:0 4px 6px rgba(0,0,0,0.1);--shadow-lg:0 10px 20px rgba(0,0,0,0.15);--radius-sm:8px;--radius-md:12px;--radius-lg:16px;--transition:all 0.2s cubic-bezier(0.32,1,0.4,1)}
+[data-dark="1"]{--bg:#17171f;--card:#1e1e28;--card2:#232330;--text:#FFFFFF;--muted:#8E8E93;--border:rgba(255,255,255,0.08);--accent:#007AFF;--accent-secondary:#5856D6;--red:#FF3B30;--green:#34C759;--orange:#FF9500;--topbar:rgba(23,23,31,0.85);--topbarborder:rgba(255,255,255,0.07);--input:#2a2a38;--pill:#2e2e3e;--pilltext:#EBEBF5}
+[data-dark=""]{--bg:#F2F2F7;--card:#fff;--card2:#F9F9FB;--text:#1C1C1E;--muted:#8E8E93;--border:#E5E5EA;--accent:#007AFF;--accent-secondary:#5856D6;--red:#FF3B30;--green:#34C759;--orange:#FF9500;--topbar:rgba(255,255,255,0.9);--topbarborder:#E5E5EA;--input:#F2F2F7;--pill:#E5E5EA;--pilltext:#3C3C43}
 body{
   font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','Segoe UI',sans-serif;
   background:var(--bg);color:var(--text);min-height:100vh;
@@ -437,7 +438,7 @@ input,button,textarea,select{font-family:inherit}
   height:46px;
   backdrop-filter:blur(16px);
   -webkit-backdrop-filter:blur(16px);
-  transition:border-color .22s, box-shadow .22s, background .22s;
+  transition:var(--transition);
   position:relative;
   overflow:hidden;
 }
@@ -2221,11 +2222,6 @@ if(!auth){
         <div class="topbar-sub" id="mainSub"></div>
       </div>
     </div>
-    <div class="topbar-actions">
-      <div class="view-toggle" title="Cambiar vista">
-        <button class="view-toggle-btn active" id="viewGrid" onclick="setViewMode('grid')" title="Cuadrícula"><i class="ti ti-layout-grid" aria-hidden="true"></i></button>
-        <button class="view-toggle-btn" id="viewList" onclick="setViewMode('list')" title="Lista"><i class="ti ti-list" aria-hidden="true"></i></button>
-      </div>
     <div class="topbar-actions">
       <div class="view-toggle" title="Cambiar vista">
         <button class="view-toggle-btn active" id="viewGrid" onclick="setViewMode('grid')" title="Cuadrícula"><i class="ti ti-layout-grid" aria-hidden="true"></i></button>
@@ -5932,17 +5928,29 @@ if(auth){
     setViewMode(_viewMode);
   });
   // También aplicar después del primer renderGrid
-  var _origRenderGrid = window.renderGrid;
-  if(typeof _origRenderGrid === 'function'){
+  // FIX: usar wrapping diferido porque renderGrid está en otro bloque de script
+  // y window.renderGrid puede no estar disponible aún en este momento.
+  var _rgPatched = false;
+  function _patchRenderGrid(){
+    if(_rgPatched) return;
+    if(typeof window.renderGrid !== 'function') return;
+    _rgPatched = true;
+    var _orig = window.renderGrid;
     window.renderGrid = function(){
-      _origRenderGrid.apply(this, arguments);
+      _orig.apply(this, arguments);
       var scroll = document.getElementById('mainScroll');
       if(scroll) scroll.classList.toggle('list-view', _viewMode === 'list');
     };
   }
-
-  // ── 4. Skeleton loading al entrar en pantalla main ───────────────────────
-  window.showGridSkeleton = function(){
+  // Intentar inmediatamente y también al cargar el DOM (por si acaso)
+  _patchRenderGrid();
+  document.addEventListener('DOMContentLoaded', function(){ _patchRenderGrid(); setViewMode(_viewMode); });
+  // Fallback: parchear en el primer goMain/renderMain
+  var _origGoMain = window.goMain;
+  window.goMain = function(){
+    _patchRenderGrid();
+    if(typeof _origGoMain === 'function') _origGoMain.apply(this, arguments);
+  };
     var scroll = document.getElementById('mainScroll');
     if(!scroll) return;
     var html = '<div class="skel-grid">';
