@@ -268,7 +268,7 @@
     var login  = document.getElementById('loginScreen');
     var main   = document.getElementById('mainScreen');
     var splash = document.getElementById('splash');
-    var loginVisible  = login  && login.style.display  !== 'none' && login.style.display !== '';
+    var loginVisible  = login  && !login.classList.contains('hidden') && login.style.display !== 'none';
     var mainVisible   = main   && !main.classList.contains('hidden');
     var splashVisible = splash && splash.classList.contains('active');
     if(!loginVisible && !mainVisible && !splashVisible){
@@ -2143,7 +2143,7 @@ try {
 if(!auth){
   document.addEventListener("DOMContentLoaded", function(){
     const ls = document.getElementById("loginScreen");
-    if(ls) ls.style.display = "none";
+    if(ls){ ls.style.display = "none"; ls.classList.add("hidden"); } // FIX
     if(typeof loadAll === "function") loadAll();
     // FIX: si hay cajas guardadas ir directo a main, no al landing
     if(typeof boxes !== "undefined" && boxes && boxes.length > 0){
@@ -3002,7 +3002,7 @@ function addSuggestion(text){
 }
 
 function toggleDark(){dark=dark?0:1;localStorage.setItem("cb-dark",dark?"1":"0");applyDark();}
-function esc(s){return String(s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");}
+function esc(s){return String(s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/'/g,"&#39;").replace(/"/g,"&quot;");}
 function rgba(h,a){const r=parseInt(h.slice(1,3),16),g=parseInt(h.slice(3,5),16),b=parseInt(h.slice(5,7),16);return `rgba(${r},${g},${b},${a})`;}
 function fmtDate(){return new Date().toLocaleDateString("es-PE",{day:"2-digit",month:"short",year:"numeric"});}
 function getIcon(n){
@@ -3082,7 +3082,7 @@ function showScreen(id){
   const el=document.getElementById(id);
   if(el){el.classList.remove("hidden");el.classList.add("active");el.style.display="";}
   // Luego ocultar las demás
-  document.querySelectorAll("#splash,#mainScreen,#detailScreen,#roomScreen,#settingsScreen,#viewer").forEach(el=>{
+  document.querySelectorAll("#splash,#loginScreen,#mainScreen,#detailScreen,#roomScreen,#settingsScreen,#viewer").forEach(el=>{
     if(el.id!==id){el.classList.add("hidden");el.classList.remove("active");el.style.display="";}
   });
 }
@@ -4078,10 +4078,18 @@ function dropBox(e,toId){
 }
 function renameRoom(id){ var r=rooms.find(function(x){return x.id===id;}); if(!r) return; _roomModalMode="rename"; _roomModalId=id; _openRoomModal("Renombrar habitación", r.name); } // FIX H
 function deleteRoom(id){
-  if(!confirm("¿Eliminar esta habitación? Las cajas asignadas pasarán a 'Sin asignar'.")) return;
-  rooms=rooms.filter(r=>r.id!==id);
-  saveRooms();renderRoom();
-  showToast("Habitación eliminada","#636366");
+  _showConfirm({
+    icon:"🗂️",
+    title:"Eliminar habitación",
+    msg:"Las cajas asignadas pasarán a <strong>Sin asignar</strong>.",
+    confirmLabel:"Eliminar",
+    confirmColor:"#FF3B30",
+    onConfirm:function(){
+      rooms=rooms.filter(function(r){return r.id!==id;});
+      saveRooms();renderRoom();
+      showToast("Habitación eliminada","#636366");
+    }
+  });
 }
 
 function goSettings(){
@@ -5281,7 +5289,16 @@ function showUserMenu(){
 }
 
 function confirmDeleteAll(){
-  if(!confirm('¿Borrar todas las cajas? Esto no se puede deshacer.')) return;
+  _showConfirm({
+    icon:"🗑️",
+    title:"Borrar todas las cajas",
+    msg:"¿Borrar todas las cajas? Esta acción <strong>no se puede deshacer</strong>.",
+    confirmLabel:"Borrar todo",
+    confirmColor:"#FF3B30",
+    onConfirm:_doDeleteAll
+  });
+}
+function _doDeleteAll(){
   // FIX #2: leer prevCount ANTES de sobreescribir localStorage a "0"
   // para poder borrar todos los chunks existentes en Firestore
   const prevCount = currentUser
@@ -5330,7 +5347,7 @@ function signOutUser(){
   } else {
     currentUser=null; boxes=[]; rooms=[];
     const ls=document.getElementById("loginScreen");
-    if(ls){ls.style.display="flex";ls.style.opacity="1";}
+    if(ls){ls.classList.remove("hidden");ls.style.display="flex";ls.style.opacity="1";} // FIX
     const lb=document.getElementById("loginBtn");
     if(lb) lb.style.display="flex";
     const ll=document.getElementById("loginLoading");
@@ -5440,7 +5457,7 @@ async function _showBackups(){
 }
 
 async function _restoreBackup(date){
-  if(!confirm("¿Restaurar el backup del "+date+"? Tus cajas actuales se reemplazarán.")) return;
+  // Note: called via showBackups modal which already has user confirmation via button click
   try{
     const doc = await db.collection("users").doc(currentUser.uid)
       .collection("backups").doc(date).get();
@@ -5772,7 +5789,7 @@ if(auth){
     const ll = document.getElementById("loginLoading");
     const le = document.getElementById("loginError");
     const av = document.getElementById("userAvatar");
-    if(ls){ ls.style.transition="none"; ls.style.display="flex"; ls.style.opacity="1"; }
+    if(ls){ ls.classList.remove("hidden"); ls.style.transition="none"; ls.style.display="flex"; ls.style.opacity="1"; } // FIX: quitar clase hidden
     if(lb){ lb.style.display="flex"; lb.style.opacity="1"; lb.style.pointerEvents=""; }
     if(ll){ ll.style.display="none"; }
     if(le){ le.style.display="none"; le.textContent=""; le.style.color="#FF3B30"; }
@@ -5789,6 +5806,7 @@ if(auth){
   function _hideLoginScreen(){
     const ls = document.getElementById("loginScreen");
     if(!ls || ls.style.display==="none") return;
+    ls.classList.add("hidden"); // FIX: clase hidden inmediata para que el timer de auto-mantenimiento no dispare 404
     ls.style.transition="opacity .25s";
     ls.style.opacity="0";
     setTimeout(()=>{ ls.style.display="none"; }, 280);
@@ -5861,7 +5879,7 @@ if(auth){
         if(cu && cu.uid){
           // Hay sesión válida cacheada → ocultar login screen de inmediato
           const ls = document.getElementById("loginScreen");
-          if(ls) ls.style.display = "none";
+          if(ls){ ls.style.display = "none"; ls.classList.add("hidden"); } // FIX: también agregar clase hidden
         }
       }
     }catch(e){}
