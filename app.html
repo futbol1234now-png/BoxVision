@@ -10,7 +10,157 @@
 <meta name="theme-color" content="#007AFF">
 <link id="pwaManifest" rel="manifest" href="./manifest.json">
 <link rel="icon" type="image/png" href="icons/logo.png">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css" id="tablerCSS" onerror="window._tablerFailed=true">
+
+<!-- TABLER ICONS - CON FALLBACKS MÚLTIPLES -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css" id="tabler-primary" onerror="loadTablerFallback(this)">
+<script>
+  window._tablerLoaded = false;
+  window._tablerFallbackAttempts = 0;
+  
+  function loadTablerFallback(primaryLink) {
+    window._tablerFallbackAttempts++;
+    console.warn('⚠️ Tabler icons fallback attempt #' + window._tablerFallbackAttempts);
+    
+    if(window._tablerFallbackAttempts === 1) {
+      // Intento 1: unpkg
+      var link = document.createElement('link');
+      link.rel = 'stylesheet';
+      link.href = 'https://unpkg.com/@tabler/icons-webfont@latest/tabler-icons.min.css';
+      link.onerror = function() { loadTablerFallback(this); };
+      link.onload = function() { window._tablerLoaded = true; console.log('✓ Tabler icons cargó desde unpkg'); };
+      document.head.appendChild(link);
+    } else if(window._tablerFallbackAttempts === 2) {
+      // Intento 2: cdnjs
+      var link = document.createElement('link');
+      link.rel = 'stylesheet';
+      link.href = 'https://cdnjs.cloudflare.com/ajax/libs/tabler-icons/1.119.0/tabler-icons.min.css';
+      link.onerror = function() { loadTablerFallback(this); };
+      link.onload = function() { window._tablerLoaded = true; console.log('✓ Tabler icons cargó desde cdnjs'); };
+      document.head.appendChild(link);
+    } else {
+      // Fallback final: usar emojis/símbolos
+      console.warn('❌ Tabler icons no disponible, usando fallback');
+      document.documentElement.setAttribute('data-no-icons', '1');
+      window._tablerFailed = true;
+    }
+  }
+  
+  // Verificar carga después de documento listo
+  if(document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', verifyTablerIcons);
+  } else {
+    verifyTablerIcons();
+  }
+  
+  function verifyTablerIcons() {
+    setTimeout(function() {
+      if(!window._tablerLoaded && document.querySelector('i.ti')) {
+        var styles = window.getComputedStyle(document.querySelector('i.ti'));
+        var ff = styles.fontFamily.toLowerCase();
+        if(ff.indexOf('tabler') === -1) {
+          console.warn('⚠️ Icons verificación falló, aplicando fallback CSS');
+          document.documentElement.setAttribute('data-icons-verified-fail', '1');
+        }
+      }
+    }, 2000);
+  }
+</script>
+
+<!-- FALLBACK CSS si iconos fallan -->
+<style>
+  /* Si no hay iconos, usar símbolos de respaldo */
+  [data-no-icons="1"] i.ti::before,
+  [data-icons-verified-fail="1"] i.ti::before {
+    content: '⬜';
+    font-size: 0.8em;
+    margin-right: 0.25em;
+  }
+  
+  /* Específicos por tipo de icono */
+  [data-no-icons="1"] i.ti-layout-grid::before,
+  [data-icons-verified-fail="1"] i.ti-layout-grid::before { content: '⊞'; }
+  
+  [data-no-icons="1"] i.ti-list::before,
+  [data-icons-verified-fail="1"] i.ti-list::before { content: '☰'; }
+  
+  [data-no-icons="1"] i.ti-search::before,
+  [data-icons-verified-fail="1"] i.ti-search::before { content: '🔍'; }
+  
+  [data-no-icons="1"] i.ti-settings::before,
+  [data-icons-verified-fail="1"] i.ti-settings::before { content: '⚙'; }
+  
+  [data-no-icons="1"] i.ti-plus::before,
+  [data-icons-verified-fail="1"] i.ti-plus::before { content: '+'; font-weight: bold; }
+  
+  [data-no-icons="1"] i.ti-trash::before,
+  [data-icons-verified-fail="1"] i.ti-trash::before { content: '🗑'; }
+  
+  [data-no-icons="1"] i.ti-pencil::before,
+  [data-icons-verified-fail="1"] i.ti-pencil::before { content: '✎'; }
+  
+  [data-no-icons="1"] i.ti-check::before,
+  [data-icons-verified-fail="1"] i.ti-check::before { content: '✓'; }
+  
+  [data-no-icons="1"] i.ti-x::before,
+  [data-icons-verified-fail="1"] i.ti-x::before { content: '✕'; }
+  
+  [data-no-icons="1"] i.ti-copy::before,
+  [data-icons-verified-fail="1"] i.ti-copy::before { content: '📋'; }
+  
+  [data-no-icons="1"] i.ti-download::before,
+  [data-icons-verified-fail="1"] i.ti-download::before { content: '⬇'; }
+  
+  [data-no-icons="1"] i.ti-heart::before,
+  [data-icons-verified-fail="1"] i.ti-heart::before { content: '♥'; }
+  
+  [data-no-icons="1"] i.ti-star::before,
+  [data-icons-verified-fail="1"] i.ti-star::before { content: '★'; }
+  
+  [data-no-icons="1"] i.ti-qrcode::before,
+  [data-icons-verified-fail="1"] i.ti-qrcode::before { content: '⧬'; }
+  
+  [data-no-icons="1"] i.ti-camera::before,
+  [data-icons-verified-fail="1"] i.ti-camera::before { content: '📷'; }
+  
+  [data-no-icons="1"] i.ti-microphone::before,
+  [data-icons-verified-fail="1"] i.ti-microphone::before { content: '🎤'; }
+  
+  [data-no-icons="1"] i.ti-chart-bar::before,
+  [data-icons-verified-fail="1"] i.ti-chart-bar::before { content: '📊'; }
+  
+  [data-no-icons="1"] i.ti-calendar::before,
+  [data-icons-verified-fail="1"] i.ti-calendar::before { content: '📅'; }
+  
+  [data-no-icons="1"] i.ti-map-pin::before,
+  [data-icons-verified-fail="1"] i.ti-map-pin::before { content: '📍'; }
+  
+  [data-no-icons="1"] i.ti-alert-circle::before,
+  [data-icons-verified-fail="1"] i.ti-alert-circle::before { content: '⚠'; }
+  
+  [data-no-icons="1"] i.ti-chevron-left::before,
+  [data-icons-verified-fail="1"] i.ti-chevron-left::before { content: '<'; }
+  
+  [data-no-icons="1"] i.ti-chevron-down::before,
+  [data-icons-verified-fail="1"] i.ti-chevron-down::before { content: '∨'; }
+  
+  [data-no-icons="1"] i.ti-notes::before,
+  [data-icons-verified-fail="1"] i.ti-notes::before { content: '📝'; }
+  
+  [data-no-icons="1"] i.ti-package::before,
+  [data-icons-verified-fail="1"] i.ti-package::before { content: '📦'; }
+  
+  [data-no-icons="1"] i.ti-home::before,
+  [data-icons-verified-fail="1"] i.ti-home::before { content: '🏠'; }
+  
+  [data-no-icons="1"] i.ti-mail::before,
+  [data-icons-verified-fail="1"] i.ti-mail::before { content: '✉'; }
+  
+  [data-no-icons="1"] i.ti-phone::before,
+  [data-icons-verified-fail="1"] i.ti-phone::before { content: '☎'; }
+  
+  [data-no-icons="1"] i.ti-brand-whatsapp::before,
+  [data-icons-verified-fail="1"] i.ti-brand-whatsapp::before { content: 'W'; font-weight: bold; }
+</style>
 
 <!-- ── Verificación de mantenimiento ── -->
 <script>
@@ -27,11 +177,11 @@
    ══════════════════════════════════════════════════════════ */
 (function(){
   var REDIRECT      = './404.html';
-  var MAX_JS_ERRORS = 4;    // errores críticos JS
-  var MAX_LOGINS    = 3;    // fallos de login
-  var MAX_FIRESTORE = 5;    // fallos de Firestore
-  var MAX_PROMISE   = 6;    // promesas rechazadas críticas
-  var LOAD_TIMEOUT  = 18000;// ms sin que la app cargue
+  var MAX_JS_ERRORS = 10;   // ⬆️ AUMENTADO: 4→10 (más tolerante)
+  var MAX_LOGINS    = 5;    // ⬆️ AUMENTADO: 3→5
+  var MAX_FIRESTORE = 8;    // ⬆️ AUMENTADO: 5→8
+  var MAX_PROMISE   = 10;   // ⬆️ AUMENTADO: 6→10 (más tolerante)
+  var LOAD_TIMEOUT  = 25000;// ⬆️ AUMENTADO: 18000→25000 (más tiempo)
   var RESET_MS      = 120000;// limpiar contadores cada 2 min
 
   var LS = {
@@ -6343,6 +6493,113 @@ if(auth){
   }
 
   console.log('🚀 Sistema de actualizaciones iniciado');
+})();
+</script>
+
+<script>
+(function(){
+  console.log('🎯 BoxVision v2.2 - Sistema de Logs Mejorado Iniciado');
+  
+  window._appLogs = [];
+  window._appStats = { errors: 0, warnings: 0, loads: 0 };
+  
+  var originalError = window.onerror;
+  
+  window.onerror = function(msg, src, line, col, err){
+    if(!msg) return false;
+    var logEntry = {
+      type: 'error',
+      msg: String(msg).substring(0,100),
+      src: src ? src.substring(Math.max(0,src.length-40)) : 'unknown',
+      line: line,
+      col: col,
+      time: new Date().toLocaleTimeString()
+    };
+    window._appLogs.push(logEntry);
+    window._appStats.errors++;
+    
+    if(window._appLogs.length % 10 === 0){
+      try{
+        localStorage.setItem('bv_logs', JSON.stringify(window._appLogs.slice(-50)));
+      }catch(e){}
+    }
+    return false;
+  };
+  
+  window.addEventListener('unhandledrejection', function(evt){
+    if(evt.reason){
+      var msg = String(evt.reason).substring(0,100);
+      window._appLogs.push({
+        type: 'unhandled',
+        msg: msg,
+        time: new Date().toLocaleTimeString()
+      });
+      window._appStats.errors++;
+    }
+  });
+  
+  window._viewLogs = function(){
+    console.clear();
+    console.table(window._appLogs);
+    console.log('📊 Estadísticas:', window._appStats);
+    console.log('📦 Total logs:', window._appLogs.length);
+  };
+  
+  window._sendFeedback = function(msg){
+    if(!msg){
+      console.error('❌ Especifica un mensaje: _sendFeedback("Tu mensaje")');
+      return;
+    }
+    var feedbacks = JSON.parse(localStorage.getItem('bv_feedbacks') || '[]');
+    feedbacks.push({
+      timestamp: new Date().toISOString(),
+      message: msg,
+      browser: navigator.userAgent.substring(0,80),
+      logs: window._appLogs.slice(-5)
+    });
+    localStorage.setItem('bv_feedbacks', JSON.stringify(feedbacks));
+    console.log('✅ Feedback guardado (#'+feedbacks.length+')');
+    console.log('💾 Exporta con: _exportFeedback()');
+  };
+  
+  window._exportFeedback = function(){
+    var feedbacks = JSON.parse(localStorage.getItem('bv_feedbacks') || '[]');
+    if(feedbacks.length === 0){
+      console.warn('⚠️ No hay feedback para exportar');
+      return;
+    }
+    var json = JSON.stringify(feedbacks, null, 2);
+    console.log('%c📋 COPIAR TODO LO SIGUIENTE Y ENVIAR A EMAIL:', 'color:green;font-size:14px;font-weight:bold');
+    console.log(json);
+    console.log('%cFin del feedback', 'color:green;font-weight:bold');
+  };
+  
+  window._clearFeedback = function(){
+    localStorage.removeItem('bv_feedbacks');
+    console.log('✓ Feedback limpiado');
+  };
+  
+  window._getHealth = function(){
+    var checks = {
+      'mainScreen': !!document.getElementById('mainScreen'),
+      'searchInput': !!document.getElementById('searchInput'),
+      'viewToggle': !!document.querySelector('.view-toggle'),
+      'topbar': !!document.querySelector('.topbar'),
+      'mainScroll': !!document.getElementById('mainScroll')
+    };
+    var ok = Object.values(checks).filter(v=>v).length;
+    console.log('%c🏥 SALUD DE LA APP:', 'color:blue;font-weight:bold');
+    console.table(checks);
+    console.log('Status: '+ok+'/5 componentes OK');
+    return ok === 5;
+  };
+  
+  console.log('%c✅ Comandos disponibles:', 'color:green;font-size:12px;font-weight:bold');
+  console.log('  _viewLogs() .......... Ver últimos 50 errores');
+  console.log('  _sendFeedback("msg") . Guardar feedback');
+  console.log('  _exportFeedback() ... Exportar para email');
+  console.log('  _clearFeedback() .... Limpiar feedback');
+  console.log('  _getHealth() ........ Ver salud de app');
 })();
 </script>
 
