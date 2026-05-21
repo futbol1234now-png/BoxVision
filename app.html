@@ -2374,12 +2374,12 @@ if(!auth){
     </div>
     <div class="topbar-actions">
       <div class="view-toggle" title="Cambiar vista">
-        <button class="view-toggle-btn active" id="viewGrid" onclick="setViewMode('grid')" title="Cuadrícula"><i class="ti ti-layout-grid" aria-hidden="true"></i></button>
-        <button class="view-toggle-btn" id="viewList" onclick="setViewMode('list')" title="Lista"><i class="ti ti-list" aria-hidden="true"></i></button>
+        <button class="view-toggle-btn active" id="viewGrid" onclick="setViewMode('grid')" title="Cuadrícula"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg></button>
+        <button class="view-toggle-btn" id="viewList" onclick="setViewMode('list')" title="Lista"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg></button>
       </div>
-      <button class="tbtn" onclick="toggleSortMenu()" id="sortBtn" title="Ordenar y filtrar"><i class="ti ti-sliders" aria-hidden="true"></i></button>
-      <button class="tbtn" onclick="goSettings()" title="Ajustes"><i class="ti ti-settings" aria-hidden="true"></i></button>
-      <button class="tbtn tbtn-accent" onclick="openForm()" title="Nueva caja" style="font-size:20px"><i class="ti ti-plus" aria-hidden="true"></i></button>
+      <button class="tbtn" onclick="toggleSortMenu()" id="sortBtn" title="Ordenar y filtrar"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 6h16M7 12h10M10 18h4"/></svg></button>
+      <button class="tbtn" onclick="goSettings()" title="Ajustes"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></button>
+      <button class="tbtn tbtn-accent" onclick="openForm()" title="Nueva caja" style="font-size:20px"><svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></button>
       <img id="userAvatar" src="" onclick="showUserMenu()" style="width:44px;height:44px;border-radius:50%;object-fit:cover;cursor:pointer;display:none;border:2px solid rgba(255,255,255,.2)"/>
     </div>
   </div>
@@ -2388,7 +2388,7 @@ if(!auth){
     <button class="pill" id="sort-priority" onclick="setSort('priority')"><i class="ti ti-alert-circle" style="font-size:13px;color:#FF3B30" aria-hidden="true"></i> Prioridad</button>
     <button class="pill" id="sort-location" onclick="setSort('location')"><i class="ti ti-map-pin" style="font-size:13px" aria-hidden="true"></i> Habitación</button>
     <button class="pill" id="sort-date" onclick="setSort('date')"><i class="ti ti-calendar" style="font-size:13px" aria-hidden="true"></i> Fecha</button>
-    <button class="pill" id="sort-name" onclick="setSort('name')"><i class="ti ti-sort-ascending-letters" style="font-size:13px" aria-hidden="true"></i> Nombre</button>
+    <button class="pill" id="sort-name" onclick="setSort('name')"><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle" aria-hidden="true"><line x1="4" y1="6" x2="11" y2="6"/><line x1="4" y1="12" x2="11" y2="12"/><line x1="4" y1="18" x2="13" y2="18"/><polyline points="15 9 18 6 21 9"/><line x1="18" y1="6" x2="18" y2="18"/></svg> Nombre</button>
     <button class="pill" id="sort-count" onclick="setSort('count')"><i class="ti ti-hash" style="font-size:13px" aria-hidden="true"></i> Objetos</button>
   </div>
   <div class="search-wrap">
@@ -2642,7 +2642,7 @@ if(!auth){
           </div>
           <span class="settings-chevron">›</span>
         </div>
-        <div class="settings-row settings-tappable" onclick="window.open('mailto:theincognit40@gmail.com?subject=Feedback BoxVision','_blank')">
+        <div class="settings-row settings-tappable" onclick="window.open('mailto:futbol1234now@gmail.com?subject=Feedback BoxVision','_blank')">
           <div class="settings-row-icon sri-yellow">💬</div>
           <div class="settings-row-text">
             <div class="settings-label">Enviar feedback</div>
@@ -2657,7 +2657,7 @@ if(!auth){
     <div class="settings-sec">
       <div class="settings-sec-label">Privacidad y seguridad</div>
       <div class="settings-card">
-        <div class="settings-row settings-tappable" onclick="window.open('mailto:theincognit40@gmail.com?subject=Política de Privacidad BoxVision','_blank')">
+        <div class="settings-row settings-tappable" onclick="window.open('mailto:futbol1234now@gmail.com?subject=Política de Privacidad BoxVision','_blank')">
           <div class="settings-row-icon sri-gray">🔒</div>
           <div class="settings-row-text">
             <div class="settings-label">Política de privacidad</div>
@@ -2665,7 +2665,7 @@ if(!auth){
           </div>
           <span class="settings-chevron">›</span>
         </div>
-        <div class="settings-row settings-tappable" onclick="window.open('mailto:theincognit40@gmail.com?subject=Términos BoxVision','_blank')">
+        <div class="settings-row settings-tappable" onclick="window.open('mailto:futbol1234now@gmail.com?subject=Términos BoxVision','_blank')">
           <div class="settings-row-icon sri-gray">📄</div>
           <div class="settings-row-text">
             <div class="settings-label">Términos de uso</div>
@@ -2705,11 +2705,11 @@ if(!auth){
       <div class="set-footer-name">BoxVision</div>
       <div style="font-size:12px;color:var(--muted)">Organizador inteligente de mudanzas</div>
       <div class="set-footer-links">
-        <a href="mailto:theincognit40@gmail.com" class="set-footer-link">Privacidad</a>
+        <a href="mailto:futbol1234now@gmail.com" class="set-footer-link">Privacidad</a>
         <span class="set-footer-dot">•</span>
-        <a href="mailto:theincognit40@gmail.com" class="set-footer-link">Contacto</a>
+        <a href="mailto:futbol1234now@gmail.com" class="set-footer-link">Contacto</a>
         <span class="set-footer-dot">•</span>
-        <a href="mailto:theincognit40@gmail.com" class="set-footer-link">Soporte</a>
+        <a href="mailto:futbol1234now@gmail.com" class="set-footer-link">Soporte</a>
       </div>
       <div class="set-version-badge">📦 BoxVision · v1.0 · © 2025</div>
     </div>
@@ -3755,7 +3755,7 @@ function showQuickQR(){
       tags:(box.tags||[]).slice(0,5),items:box.items.slice(0,20).map(i=>({t:i.text.slice(0,40),d:i.done?1:0})),
       date:box.date,note:(box.note||"").slice(0,100),pri:box.priority,brand:settings.brand};
     const data=btoa(encodeURIComponent(JSON.stringify(payload)));
-    const url=location.href.split("#")[0]+"#view/"+data;
+    const url=(location.origin+location.pathname).replace(/\/[^\/]*$/,"/")+'viewer.html#view/'+data;
     try{new QRCode(el,{text:url,width:200,height:200,correctLevel:QRCode.CorrectLevel.M});}catch(e){el.textContent="Error generando QR";}
   },80);
 }
@@ -3774,7 +3774,7 @@ function generateQR(id){
     date:box.date,note:(box.note||"").slice(0,100),pri:box.priority,w:box.weight,
     rel:relBox?{n:relBox.name,c:relBox.items.length}:null,brand:settings.brand};
   const data=btoa(encodeURIComponent(JSON.stringify(payload)));
-  const url=location.href.split("#")[0]+"#view/"+data;
+  const url=(location.origin+location.pathname).replace(/\/[^\/]*$/,"/")+'viewer.html#view/'+data;
   try{
     const qr=qrcode(0,"L");qr.addData(url);qr.make();
     const mod=qr.getModuleCount();
@@ -4116,7 +4116,27 @@ function goSettings(){
 }
 function saveBrand(){settings.brand=document.getElementById("brandInput").value.trim();saveSettings();}
 
+function playBeep(){
+  try{
+    const soundOn=document.getElementById('soundToggleWrap')?.classList.contains('on')??true;
+    if(!soundOn) return;
+    const ctx=new(window.AudioContext||window.webkitAudioContext)();
+    const osc=ctx.createOscillator();
+    const gain=ctx.createGain();
+    osc.connect(gain);gain.connect(ctx.destination);
+    osc.type='sine';
+    osc.frequency.setValueAtTime(1200,ctx.currentTime);
+    osc.frequency.exponentialRampToValueAtTime(900,ctx.currentTime+0.12);
+    gain.gain.setValueAtTime(0.4,ctx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001,ctx.currentTime+0.18);
+    osc.start(ctx.currentTime);
+    osc.stop(ctx.currentTime+0.18);
+    osc.onended=()=>ctx.close();
+  }catch(e){}
+}
+
 function showViewer(box){
+  playBeep();
   showScreen("viewer");
   const _vfab=document.getElementById("aiFab");if(_vfab) _vfab.classList.add("hidden");
   _viewerItems=[]; // clear stale data
@@ -4417,8 +4437,7 @@ function shareBoxWhatsApp(){
     items:(box.items||[]).slice(0,20).map(i=>({t:i.text.slice(0,40),d:i.done?1:0})),
     date:box.date,note:(box.note||"").slice(0,100),pri:box.priority,w:box.weight,brand:settings.brand};
   const data=btoa(encodeURIComponent(JSON.stringify(payload)));
-  const baseUrl=(location.origin+location.pathname).replace(/\/$/,"");
-  const url=baseUrl+"#view/"+data;
+  const url=(location.origin+location.pathname).replace(/\/[^\/]*$/,"/")+'viewer.html#view/'+data;
   const items=box.items.length>0?box.items.slice(0,5).map((it,i)=>`${i+1}. ${it.text}`).join("\n")+"\n":"(vacía)\n";
   const msg=`📦 *${box.name}*${box.number?" (#"+box.number+")":""}\n${box.location?"📍 "+box.location+"\n":""}\n${items}\n🔗 Ver todo: ${url}`;
   window.open("https://wa.me/?text="+encodeURIComponent(msg),"_blank");
