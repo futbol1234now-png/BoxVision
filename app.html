@@ -56,6 +56,34 @@
 })();
 </script>
 
+<!-- EmailJS — envío de feedback directo a Gmail sin servidor -->
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+<script>
+  // ── EmailJS config — reemplaza con tus claves desde emailjs.com ──────────
+  // Para activar: crea cuenta en emailjs.com (gratis), crea un servicio Gmail
+  // y una plantilla, luego pega las 3 claves aquí.
+  window.EMAILJS_PUBLIC_KEY  = 'j068SrmxqARUYifIS';
+  window.EMAILJS_SERVICE_ID  = 'service_1hm801u';
+  window.EMAILJS_TEMPLATE_ID = 'template_sh65yng';
+  // Variables disponibles en tu plantilla EmailJS:
+  // {{from_user}}  → email/nombre del usuario que envía feedback
+  // {{category}}   → bug | idea | elogio | otro
+  // {{message}}    → texto del feedback
+  // {{boxes_count}} → número de cajas del usuario
+  // {{date}}       → fecha ISO
+  // {{app_version}} → versión de la app
+  window._emailjsReady = false;
+  document.addEventListener('DOMContentLoaded', function(){
+    if(window.EMAILJS_PUBLIC_KEY && window.EMAILJS_PUBLIC_KEY !== 'TU_PUBLIC_KEY'){
+      try{
+        emailjs.init({ publicKey: window.EMAILJS_PUBLIC_KEY });
+        window._emailjsReady = true;
+        console.log('✅ EmailJS listo');
+      }catch(e){ console.warn('EmailJS init error:', e); }
+    }
+  });
+</script>
+
 <!-- TABLER ICONS - CON FALLBACKS MÚLTIPLES -->
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.24.0/tabler-icons.min.css" id="tabler-primary" onerror="loadTablerFallback(this)">
 <script>
@@ -969,112 +997,132 @@ input,button,textarea,select{font-family:inherit}
 
 /* ── Stats globales ── */
 .room-global-stats{
-  display:grid;grid-template-columns:repeat(3,1fr);gap:8px;
-  margin-bottom:16px;
+  display:grid;grid-template-columns:repeat(3,1fr);gap:10px;
+  margin-bottom:18px;
 }
 .rgs-pill{
-  background:var(--card);border:0.5px solid var(--border);
-  border-radius:16px;padding:12px 10px;text-align:center;
-  box-shadow:0 2px 8px rgba(0,0,0,.08);
+  background:var(--card);
+  border:0.5px solid rgba(255,255,255,.1);
+  border-radius:18px;padding:14px 10px 12px;text-align:center;
+  box-shadow:0 4px 16px rgba(0,0,0,.14),0 1px 0 rgba(255,255,255,.06) inset;
+  transition:transform .15s cubic-bezier(.34,1.56,.64,1);
 }
-.rgs-val{font-size:22px;font-weight:900;color:var(--text);letter-spacing:-1px;line-height:1}
-.rgs-lbl{font-size:10px;color:var(--muted);font-weight:600;margin-top:3px;text-transform:uppercase;letter-spacing:.4px}
+.rgs-pill:active{transform:scale(.95)}
+.rgs-val{font-size:24px;font-weight:900;color:var(--text);letter-spacing:-1px;line-height:1}
+.rgs-lbl{font-size:10px;color:var(--muted);font-weight:700;margin-top:4px;text-transform:uppercase;letter-spacing:.5px}
 
 /* ── Grid de habitaciones ── */
-.room-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-bottom:90px}
+.room-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin-bottom:90px}
 
-/* ── Celda de habitación ── */
+/* ── Celda de habitación — REDISEÑO PREMIUM ── */
 .room-cell{
   background:var(--card);
-  border:1.5px solid rgba(255,255,255,.08);
-  border-radius:22px;
-  min-height:140px;
+  border:1px solid rgba(255,255,255,.1);
+  border-radius:24px;
+  min-height:160px;
   padding:0;
-  transition:border-color .2s,background .2s,box-shadow .2s,transform .15s;
-  box-shadow:0 4px 20px rgba(0,0,0,.15);
+  transition:border-color .25s,background .25s,box-shadow .25s,transform .2s cubic-bezier(.34,1.56,.64,1);
+  box-shadow:
+    0 6px 28px rgba(0,0,0,.22),
+    0 1px 0 rgba(255,255,255,.07) inset;
   position:relative;overflow:hidden;
   display:flex;flex-direction:column;
   cursor:pointer;
 }
-[data-dark=""] .room-cell{border-color:rgba(0,0,0,.1);box-shadow:0 2px 12px rgba(0,0,0,.06)}
-.room-cell:active{transform:scale(.97);transition-duration:80ms}
+[data-dark=""] .room-cell{border-color:rgba(0,0,0,.12);box-shadow:0 3px 14px rgba(0,0,0,.07)}
+.room-cell:hover{
+  transform:translateY(-3px) scale(1.01);
+  box-shadow:0 12px 40px rgba(0,0,0,.3),0 1px 0 rgba(255,255,255,.1) inset;
+  border-color:rgba(255,255,255,.16);
+}
+.room-cell:active{transform:scale(.96);transition-duration:80ms}
 .room-cell.drag-over{
   border-color:var(--accent);border-style:solid;
   background:rgba(10,132,255,.07);
-  box-shadow:0 0 0 2px rgba(10,132,255,.2),0 8px 32px rgba(10,132,255,.12);
+  box-shadow:0 0 0 2px rgba(10,132,255,.3),0 10px 36px rgba(10,132,255,.15);
   transform:scale(1.02)
 }
 
 /* Header de la celda con color de habitación */
 .room-cell-header{
-  padding:12px 12px 8px;
+  padding:14px 14px 10px;
   position:relative;
   flex-shrink:0;
 }
 .room-cell-header-bg{
   position:absolute;inset:0;
-  opacity:.18;
-  border-radius:22px 22px 0 0;
+  opacity:.22;
+  border-radius:24px 24px 0 0;
 }
 .room-cell-emoji{
-  font-size:26px;line-height:1;
-  margin-bottom:4px;
+  font-size:32px;line-height:1;
+  margin-bottom:6px;
   position:relative;z-index:1;
-  filter:drop-shadow(0 2px 4px rgba(0,0,0,.2));
+  filter:drop-shadow(0 2px 8px rgba(0,0,0,.3));
 }
 .room-cell-name-row{
-  display:flex;align-items:center;justify-content:space-between;gap:4px;
+  display:flex;align-items:flex-start;justify-content:space-between;gap:6px;
   position:relative;z-index:1;
 }
 .room-cell-name{
-  font-size:13px;font-weight:800;color:var(--text);
-  letter-spacing:-.2px;
-  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+  font-size:14px;font-weight:800;color:var(--text);
+  letter-spacing:-.3px;
+  line-height:1.25;
   flex:1;
+  word-break:break-word;
 }
-.room-cell-actions{display:flex;gap:4px;flex-shrink:0}
+.room-cell-actions{display:flex;gap:5px;flex-shrink:0;margin-top:1px}
 
-/* ── Botones de acción MEJORADOS ── */
+/* ── Botones de acción MEJORADOS — pill con label ── */
 .room-cell-btn{
-  width:30px;height:30px;border-radius:10px;border:none;
-  cursor:pointer;display:flex;align-items:center;justify-content:center;
-  font-size:13px;
-  transition:background .13s,transform .13s,box-shadow .13s;
+  height:28px;
+  padding:0 10px;
+  border-radius:99px;
+  border:none;
+  cursor:pointer;
+  display:flex;align-items:center;justify-content:center;gap:4px;
+  font-size:11px;font-weight:700;
+  font-family:inherit;
+  letter-spacing:.1px;
+  transition:background .13s,transform .13s,box-shadow .13s,opacity .13s;
   -webkit-tap-highlight-color:transparent;
   position:relative;z-index:10;
+  white-space:nowrap;
 }
-.room-cell-btn:active{transform:scale(.80);box-shadow:none}
+.room-cell-btn:active{transform:scale(.84);transition-duration:60ms}
 .room-cell-btn-edit{
-  background:rgba(10,132,255,.15);
-  color:#0A84FF;
-  border:0.5px solid rgba(10,132,255,.2);
+  background:rgba(10,132,255,.18);
+  color:#4FACFE;
+  border:0.5px solid rgba(10,132,255,.28);
+  box-shadow:0 1px 6px rgba(10,132,255,.15);
 }
-.room-cell-btn-edit:hover{background:rgba(10,132,255,.25)}
+.room-cell-btn-edit:hover{background:rgba(10,132,255,.28);box-shadow:0 2px 10px rgba(10,132,255,.25)}
 .room-cell-btn-del{
-  background:rgba(255,59,48,.12);
-  color:#FF3B30;
-  border:0.5px solid rgba(255,59,48,.18);
+  background:rgba(255,59,48,.14);
+  color:#FF6B6B;
+  border:0.5px solid rgba(255,59,48,.22);
+  box-shadow:0 1px 6px rgba(255,59,48,.1);
 }
-.room-cell-btn-del:hover{background:rgba(255,59,48,.22)}
+.room-cell-btn-del:hover{background:rgba(255,59,48,.25);box-shadow:0 2px 10px rgba(255,59,48,.2)}
 .room-cell-btn-detail{
-  background:rgba(255,255,255,.08);
+  background:rgba(255,255,255,.09);
   color:var(--muted);
-  border:0.5px solid rgba(255,255,255,.1);
+  border:0.5px solid rgba(255,255,255,.13);
 }
-.room-cell-btn-detail:hover{background:rgba(255,255,255,.14);color:var(--text)}
+.room-cell-btn-detail:hover{background:rgba(255,255,255,.15);color:var(--text)}
 
 /* ── Cuerpo de la celda ── */
 .room-cell-body{
-  padding:0 12px 12px;
-  flex:1;display:flex;flex-direction:column;gap:6px;
+  padding:0 14px 14px;
+  flex:1;display:flex;flex-direction:column;gap:7px;
 }
 .room-cell-count{
-  font-size:10px;font-weight:600;color:var(--muted);
-  display:flex;align-items:center;gap:4px;
+  font-size:11px;font-weight:700;color:var(--muted);
+  display:flex;align-items:center;gap:5px;
 }
 .room-cell-count-dot{
-  width:5px;height:5px;border-radius:50%;
-  background:var(--accent);opacity:.6;
+  width:6px;height:6px;border-radius:50%;
+  background:var(--accent);opacity:.7;
 }
 
 /* ── Barra de progreso ── */
@@ -2815,12 +2863,12 @@ if(!auth){
       <i class="ti ti-chevron-right" style="font-size:16px;color:rgba(255,255,255,.25);flex-shrink:0"></i>
     </div>
   </div>
-  <button class="sp-btn" onclick="goMain()"><i class="ti ti-box" aria-hidden="true" style="font-size:18px;vertical-align:-2px;margin-right:6px"></i>Ver mis cajas</button>
+  <button class="sp-btn" onclick="goMain()"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-3px;margin-right:7px;flex-shrink:0" aria-hidden="true"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>Ver mis cajas</button>
   <div class="sp-row" style="margin-bottom:10px">
-    <button class="sp-btn2" onclick="openForm()"><i class="ti ti-plus" aria-hidden="true" style="font-size:15px;vertical-align:-2px;margin-right:5px"></i>Nueva caja</button>
-    <button class="sp-btn2" onclick="goRoom()"><i class="ti ti-layout-grid" aria-hidden="true" style="font-size:15px;vertical-align:-2px;margin-right:5px"></i>Habitaciones</button>
+    <button class="sp-btn2" onclick="openForm()"><svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" style="vertical-align:-2px;margin-right:5px;flex-shrink:0" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Nueva caja</button>
+    <button class="sp-btn2" onclick="goRoom()"><svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px;margin-right:5px;flex-shrink:0" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>Habitaciones</button>
   </div>
-  <button class="sp-btn2" onclick="goSettings()"><i class="ti ti-settings" aria-hidden="true" style="font-size:15px;vertical-align:-2px;margin-right:5px"></i>Ajustes</button>
+  <button class="sp-btn2" onclick="goSettings()"><svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px;margin-right:5px;flex-shrink:0" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>Ajustes</button>
 </div>
 
 <div id="mainScreen" class="hidden">
@@ -2938,7 +2986,7 @@ if(!auth){
       <div class="topbar-sub" id="roomTopbarSub">Arrastra cajas a cada cuarto</div>
     </div>
     <div class="topbar-actions">
-      <button class="tbtn" onclick="goSplash()" title="Inicio"><i class="ti ti-home" style="font-size:17px"></i></button>
+      <button class="tbtn" onclick="goSplash()" title="Inicio"><svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></button>
       <button onclick="addRoom()" style="
         height:38px;padding:0 16px;border-radius:12px;border:none;
         background:linear-gradient(135deg,#0A84FF,#5856D6);
@@ -2970,7 +3018,7 @@ if(!auth){
 
   <!-- FAB adicional flotante -->
   <button class="room-add-fab" onclick="addRoom()">
-    <i class="ti ti-plus" style="font-size:16px"></i> Nueva habitación
+    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" style="flex-shrink:0" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg> Nueva habitación
   </button>
 
   <!-- Modal de habitación — con emoji picker y color -->
@@ -3240,7 +3288,7 @@ if(!auth){
           <div class="settings-row-icon sri-yellow">💬</div>
           <div class="settings-row-text">
             <div class="settings-label">Enviar feedback</div>
-            <div class="settings-sub">Reporta bugs o sugiere mejoras</div>
+            <div class="settings-sub" id="feedbackStatusSub">Reporta bugs o sugiere mejoras</div>
           </div>
           <span class="settings-chevron">›</span>
         </div>
@@ -5218,9 +5266,9 @@ function renderRoom(){
   var statsEl = document.getElementById("roomGlobalStats");
   if(statsEl){
     statsEl.innerHTML=`
-      <div class="rgs-pill"><div class="rgs-val">${rooms.length}</div><div class="rgs-lbl">Cuartos</div></div>
-      <div class="rgs-pill"><div class="rgs-val">${assignedCount}/${totalBoxes}</div><div class="rgs-lbl">Asignadas</div></div>
-      <div class="rgs-pill"><div class="rgs-val">${pct}%</div><div class="rgs-lbl">Desempacado</div></div>
+      <div class="rgs-pill" style="border-top:2px solid #0A84FF"><div class="rgs-val" style="color:#0A84FF">${rooms.length}</div><div class="rgs-lbl">Cuartos</div></div>
+      <div class="rgs-pill" style="border-top:2px solid #5856D6"><div class="rgs-val" style="color:#5856D6">${assignedCount}/${totalBoxes}</div><div class="rgs-lbl">Asignadas</div></div>
+      <div class="rgs-pill" style="border-top:2px solid #34C759"><div class="rgs-val" style="color:#34C759">${pct}%</div><div class="rgs-lbl">Desempacado</div></div>
     `;
   }
 
@@ -5280,18 +5328,27 @@ function _roomCellHtml(room, boxes){
     ondrop="dropBox(event,'${room.id}')"
     onclick="_openRoomDetail('${room.id}')">
 
+    <!-- Borde superior coloreado -->
+    <div style="height:3px;background:linear-gradient(90deg,${color},${color}88);border-radius:24px 24px 0 0;flex-shrink:0"></div>
+
     <!-- Header coloreado -->
     <div class="room-cell-header">
       <div class="room-cell-header-bg" style="background:${color}"></div>
-      <div class="room-cell-emoji">${emoji}</div>
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:6px;position:relative;z-index:1">
+        <div class="room-cell-emoji">${emoji}</div>
+        <!-- Badge de progreso si hay objetos -->
+        ${totalItems>0?`<div style="background:rgba(0,0,0,.25);backdrop-filter:blur(8px);border:0.5px solid rgba(255,255,255,.15);border-radius:99px;padding:3px 8px;font-size:10px;font-weight:800;color:#fff;flex-shrink:0;margin-top:2px">${pct}%</div>`:""}
+      </div>
       <div class="room-cell-name-row">
         <div class="room-cell-name">${esc(room.name)}</div>
         <div class="room-cell-actions" onclick="event.stopPropagation()">
           <button class="room-cell-btn room-cell-btn-edit" onclick="event.stopPropagation();renameRoom('${room.id}')" title="Renombrar">
-            <i class="ti ti-pencil" style="font-size:13px"></i>
+            <svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+            Editar
           </button>
           <button class="room-cell-btn room-cell-btn-del" onclick="event.stopPropagation();deleteRoom('${room.id}')" title="Eliminar">
-            <i class="ti ti-trash" style="font-size:13px"></i>
+            <svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>
+            Borrar
           </button>
         </div>
       </div>
@@ -5301,13 +5358,12 @@ function _roomCellHtml(room, boxes){
     <div class="room-cell-body">
       <div class="room-cell-count">
         <span class="room-cell-count-dot" style="background:${color}"></span>
-        ${roomBoxes.length} caja${roomBoxes.length!==1?"s":""} · ${totalItems} objeto${totalItems!==1?"s":""}
+        ${roomBoxes.length} caja${roomBoxes.length!==1?"s":""} · ${totalItems} obj.
       </div>
       ${totalItems>0?`
         <div class="room-cell-prog">
-          <div class="room-cell-prog-fill" style="width:${pct}%;background:${color}"></div>
+          <div class="room-cell-prog-fill" style="width:${pct}%;background:linear-gradient(90deg,${color},${color}cc)"></div>
         </div>
-        <div class="room-cell-pct" style="color:${color}">${pct}%</div>
       `:""}
       <div class="room-box-chips-preview">
         ${roomBoxes.length ? chipsHtml : '<div class="room-cell-empty">Arrastra cajas aquí</div>'}
@@ -5485,6 +5541,18 @@ function goSettings(){
   _initViewModeLabel();
   _updateSyncBadge();
   _calcStorageStats();
+
+  // Estado del canal de feedback
+  const fbSub = document.getElementById('feedbackStatusSub');
+  if(fbSub){
+    if(window._emailjsReady){
+      fbSub.innerHTML = '📬 Llega directo a tu correo';
+      fbSub.style.color = '#34C759';
+    } else {
+      fbSub.textContent = 'Reporta bugs o sugiere mejoras';
+      fbSub.style.color = '';
+    }
+  }
 }
 
 // Guarda estado de toggles con persistencia
@@ -5664,15 +5732,16 @@ async function sendFeedback(){
     uid:  currentUser?.uid   || null,
     displayName: currentUser?.displayName || null,
     date: new Date().toISOString(),
-    v:    '2.4.0',
+    v:    '2.6.0',
     boxes: boxes.length,
     ua:   navigator.userAgent.substring(0, 120)
   };
 
-  let firestoreOk = false;
-  let mailtoOk    = false;
+  let firestoreOk  = false;
+  let emailjsOk    = false;
+  let mailtoOpened = false;
 
-  // ── 1. Firestore (método principal) ─────────────────────────────────────
+  // ── 1. Firestore (historial en la nube) ──────────────────────────────────
   if(db){
     try{
       await db.collection('feedback').add({
@@ -5685,17 +5754,43 @@ async function sendFeedback(){
     }
   }
 
-  // ── 2. localStorage (siempre, como historial local) ──────────────────────
+  // ── 2. localStorage (historial local siempre) ────────────────────────────
   try{
     const prev = JSON.parse(localStorage.getItem('cb-feedback-pending')||'[]');
     prev.push({ ...entry, firestoreSaved: firestoreOk });
     localStorage.setItem('cb-feedback-pending', JSON.stringify(prev.slice(-30)));
   }catch(_){}
 
-  // ── 3. mailto (respaldo si Firestore falla o no hay sesión) ─────────────
-  if(!firestoreOk){
+  // ── 3. EmailJS — envía directo a tu Gmail sin cliente de correo ──────────
+  if(window._emailjsReady &&
+     window.EMAILJS_SERVICE_ID  !== 'TU_SERVICE_ID' &&
+     window.EMAILJS_TEMPLATE_ID !== 'TU_TEMPLATE_ID'){
     try{
-      const subject = encodeURIComponent('[BoxVision ' + _feedbackCat + '] Feedback v2.4.0');
+      await emailjs.send(
+        window.EMAILJS_SERVICE_ID,
+        window.EMAILJS_TEMPLATE_ID,
+        {
+          from_user:   entry.user + (entry.displayName ? ' (' + entry.displayName + ')' : ''),
+          category:    entry.cat,
+          message:     entry.msg,
+          boxes_count: String(entry.boxes),
+          date:        new Date(entry.date).toLocaleString('es-PE'),
+          app_version: entry.v,
+          user_agent:  entry.ua.substring(0,80)
+        }
+      );
+      emailjsOk = true;
+      console.log('[Feedback] EmailJS OK ✅');
+    }catch(e){
+      console.warn('[Feedback] EmailJS falló:', e.text || e.message || e);
+    }
+  }
+
+  // ── 4. Fallback mailto — solo si EmailJS no está configurado o falló ─────
+  // Y solo si Firestore también falló (para no ser spam)
+  if(!emailjsOk && !firestoreOk){
+    try{
+      const subject = encodeURIComponent('[BoxVision ' + _feedbackCat + '] Feedback v2.6.0');
       const body    = encodeURIComponent(
         text +
         '\n\n— ' + entry.user +
@@ -5704,21 +5799,31 @@ async function sendFeedback(){
       );
       const a = document.createElement('a');
       a.href = 'mailto:futbol1234now@gmail.com?subject='+subject+'&body='+body;
+      a.target = '_blank';
       document.body.appendChild(a);
       a.click();
       document.body.removeChild(a);
-      mailtoOk = true;
+      mailtoOpened = true;
     }catch(_){}
   }
 
-  // ── 4. Resultado al usuario ──────────────────────────────────────────────
+  // ── 5. Resultado al usuario ──────────────────────────────────────────────
   btn.textContent = '✓ Enviado';
-  const msg = firestoreOk
-    ? '✅ Feedback recibido — gracias!'
-    : mailtoOk
-      ? '✅ Abriendo correo para enviar...'
-      : '📋 Feedback guardado localmente';
-  setTimeout(()=>{ closeFeedbackModal(); showToast(msg, '#34C759'); }, 700);
+  let toastMsg, toastColor;
+  if(emailjsOk){
+    toastMsg   = '📬 Feedback enviado a tu correo!';
+    toastColor = '#34C759';
+  } else if(firestoreOk){
+    toastMsg   = '✅ Feedback guardado — gracias!';
+    toastColor = '#34C759';
+  } else if(mailtoOpened){
+    toastMsg   = '📧 Abriendo cliente de correo...';
+    toastColor = '#FF9500';
+  } else {
+    toastMsg   = '📋 Feedback guardado localmente';
+    toastColor = '#8E8E93';
+  }
+  setTimeout(()=>{ closeFeedbackModal(); showToast(toastMsg, toastColor); }, 700);
 }
 
 function playBeep(){
