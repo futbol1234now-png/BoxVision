@@ -745,7 +745,7 @@ input,button,textarea,select{font-family:inherit}
   padding:2px 8px;border-radius:99px;
   letter-spacing:.3px;
 }
-.bc-icon{font-size:36px;display:block;margin:10px 0 6px;line-height:1;filter:drop-shadow(0 2px 4px rgba(0,0,0,.3))}
+/* .bc-icon definido más abajo con estilos premium — no duplicar aquí */
 /* Thumbnail flotante en tarjeta con foto */
 .bc-thumb{
   position:absolute;bottom:14px;right:14px;z-index:5;
@@ -1638,13 +1638,14 @@ input,button,textarea,select{font-family:inherit}
 }
 .main-scroll.list-view .bc-top{display:none}
 .main-scroll.list-view .bc-icon{
-  font-size:28px !important;
+  font-size:32px !important;
   margin:0 !important;
-  width:44px;height:44px;
-  display:flex !important;align-items:center;justify-content:center;
-  background:rgba(255,255,255,.12);
-  border-radius:12px;flex-shrink:0;
+  width:52px !important;height:52px !important;
+  display:flex !important;align-items:center !important;justify-content:center !important;
+  background:rgba(255,255,255,.15);
+  border-radius:14px !important;flex-shrink:0;
   filter:none !important;
+  border:1px solid rgba(255,255,255,.18);
 }
 .main-scroll.list-view .bc-text{
   flex:1;min-width:0;
@@ -2267,21 +2268,24 @@ body{
 
 /* ── Icono de caja: squircle con fondo glass ── */
 .bc-icon{
-  font-size:38px !important;
-  display:inline-flex !important;
-  align-items:center;
-  justify-content:center;
-  width:60px;height:60px;
+  font-size:44px !important;
+  display:flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  width:68px !important;
+  height:68px !important;
+  line-height:1 !important;
   background:rgba(255,255,255,.18);
   backdrop-filter:blur(12px);
   -webkit-backdrop-filter:blur(12px);
-  border-radius:18px !important;
-  margin:10px 0 8px !important;
+  border-radius:20px !important;
+  margin:10px 0 10px !important;
   box-shadow:
     0 4px 16px rgba(0,0,0,.25),
     0 1px 0 rgba(255,255,255,.3) inset;
   border:1px solid rgba(255,255,255,.2);
   filter:none !important;
+  flex-shrink:0;
 }
 
 /* ── Botones topbar: squircle con sombra ── */
@@ -2745,7 +2749,7 @@ if(!auth){
       <div id="fieldName" style="display:none;margin-bottom:12px;">
         <div class="ls-field-group">
           <div class="ls-field-row">
-            <div class="ls-field-icon"><i class="ti ti-user" aria-hidden="true"></i></div>
+            <div class="ls-field-icon"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" aria-hidden="true"/><circle cx="12" cy="7" r="4"/></svg></i></div>
             <input id="emailName" class="ls-input" type="text" placeholder="Tu nombre" autocomplete="name" maxlength="50">
           </div>
         </div>
@@ -2755,16 +2759,16 @@ if(!auth){
       <!-- Correo + Contraseña agrupados -->
       <div class="ls-field-group">
         <div class="ls-field-row">
-          <div class="ls-field-icon"><i class="ti ti-mail" aria-hidden="true"></i></div>
+          <div class="ls-field-icon"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2" aria-hidden="true"/><polyline points="2,4 12,13 22,4"/></svg></i></div>
           <input id="emailInput" class="ls-input" type="email" placeholder="Correo electrónico" autocomplete="email" maxlength="100"
             onkeydown="if(event.key==='Enter'){event.preventDefault();document.getElementById('passInput').focus()}">
         </div>
         <div class="ls-field-row">
-          <div class="ls-field-icon"><i class="ti ti-lock" aria-hidden="true"></i></div>
+          <div class="ls-field-icon"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" aria-hidden="true"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></i></div>
           <input id="passInput" class="ls-input" type="password" placeholder="Contraseña" autocomplete="current-password" maxlength="128"
             onkeydown="if(event.key==='Enter'){event.preventDefault();submitEmailForm()}">
           <button class="ls-eye-btn" onclick="togglePassVisibility()" tabindex="-1" aria-label="Mostrar contraseña">
-            <i class="ti ti-eye" id="passToggleIcon" aria-hidden="true"></i>
+            <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" aria-hidden="true"/><circle cx="12" cy="12" r="3"/></svg></i>
           </button>
         </div>
       </div>
@@ -2851,7 +2855,7 @@ if(!auth){
     </div>
   </div>
   <div class="sp-last" id="spLast" style="display:none!important">
-    <div class="sp-last-lbl"><i class="ti ti-history" style="font-size:10px;vertical-align:0px;margin-right:3px"></i>Última caja abierta</div>
+    <div class="sp-last-lbl"><svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10" style="vertical-align:0px;margin-right:3px"/><path d="M3.51 15a9 9 0 1 0 .49-4"/><polyline points="12 7 12 12 15 14"/></svg></i>Última caja abierta</div>
     <div class="sp-last-row">
       <div class="sp-last-icon-wrap">
         <div class="sp-last-icon" id="spLastIcon">📦</div>
@@ -2860,7 +2864,7 @@ if(!auth){
         <div class="sp-last-name" id="spLastName">—</div>
         <div class="sp-last-sub" id="spLastSub">—</div>
       </div>
-      <i class="ti ti-chevron-right" style="font-size:16px;color:rgba(255,255,255,.25);flex-shrink:0"></i>
+      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6" style="color:rgba(255,255,255,.25)"/></svg></i>
     </div>
   </div>
   <button class="sp-btn" onclick="goMain()"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-3px;margin-right:7px;flex-shrink:0" aria-hidden="true"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>Ver mis cajas</button>
@@ -2894,16 +2898,16 @@ if(!auth){
     </div>
   </div>
   <div id="sortMenu" class="hidden" style="position:sticky;top:57px;z-index:150;background:var(--card);border-bottom:0.5px solid var(--border);padding:10px 14px;display:flex;gap:7px;overflow-x:auto;scrollbar-width:none">
-    <button class="pill active" id="sort-default" onclick="setSort('default')"><i class="ti ti-layout-grid" style="font-size:13px" aria-hidden="true"></i> Por defecto</button>
-    <button class="pill" id="sort-priority" onclick="setSort('priority')"><i class="ti ti-alert-circle" style="font-size:13px;color:#FF3B30" aria-hidden="true"></i> Prioridad</button>
-    <button class="pill" id="sort-location" onclick="setSort('location')"><i class="ti ti-map-pin" style="font-size:13px" aria-hidden="true"></i> Habitación</button>
-    <button class="pill" id="sort-date" onclick="setSort('date')"><i class="ti ti-calendar" style="font-size:13px" aria-hidden="true"></i> Fecha</button>
+    <button class="pill active" id="sort-default" onclick="setSort('default')"><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1" aria-hidden="true"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg></i> Por defecto</button>
+    <button class="pill" id="sort-priority" onclick="setSort('priority')"><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10" style="color:#FF3B30" aria-hidden="true"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg></i> Prioridad</button>
+    <button class="pill" id="sort-location" onclick="setSort('location')"><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" aria-hidden="true"/><circle cx="12" cy="10" r="3"/></svg></i> Habitación</button>
+    <button class="pill" id="sort-date" onclick="setSort('date')"><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" aria-hidden="true"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></i> Fecha</button>
     <button class="pill" id="sort-name" onclick="setSort('name')"><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle" aria-hidden="true"><line x1="4" y1="6" x2="11" y2="6"/><line x1="4" y1="12" x2="11" y2="12"/><line x1="4" y1="18" x2="13" y2="18"/><polyline points="15 9 18 6 21 9"/><line x1="18" y1="6" x2="18" y2="18"/></svg> Nombre</button>
-    <button class="pill" id="sort-count" onclick="setSort('count')"><i class="ti ti-hash" style="font-size:13px" aria-hidden="true"></i> Objetos</button>
+    <button class="pill" id="sort-count" onclick="setSort('count')"><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="4" y1="9" x2="20" y2="9" aria-hidden="true"/><line x1="4" y1="15" x2="20" y2="15"/><line x1="10" y1="3" x2="8" y2="21"/><line x1="16" y1="3" x2="14" y2="21"/></svg></i> Objetos</button>
   </div>
   <div class="search-wrap">
     <div class="search-inner">
-      <span class="search-icon"><i class="ti ti-search"></i></span>
+      <span class="search-icon"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></i></span>
       <input id="searchInput" type="text" placeholder="Buscar en todas las cajas..." oninput="doSearch(this.value)"/>
       <span id="searchClear" class="hidden" style="font-size:14px;color:var(--muted);cursor:pointer;padding:4px;margin-right:-4px;transition:color .15s" onmouseenter="this.style.color='var(--red)'" onmouseleave="this.style.color='var(--muted)'" onclick="clearSearch()">✕</span>
     </div>
@@ -2915,11 +2919,11 @@ if(!auth){
 
 <div id="detailScreen" class="hidden">
   <div class="detail-hero" id="dHero">
-    <button class="dh-back" onclick="goMain()" title="Volver" aria-label="Volver"><i class="ti ti-chevron-left" style="font-size:20px;pointer-events:none"></i></button>
+    <button class="dh-back" onclick="goMain()" title="Volver" aria-label="Volver"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="15 18 9 12 15 6" style="pointer-events:none"/></svg></i></button>
     <div class="dh-acts">
-      <button class="dh-act" id="favBtn" onclick="toggleFav()" title="Favorito" aria-label="Marcar favorito"><i class="ti ti-star" style="font-size:16px;pointer-events:none"></i></button>
-      <button class="dh-act" onclick="showQuickQR()" title="QR rápido" aria-label="Ver QR"><i class="ti ti-qrcode" style="font-size:16px;pointer-events:none"></i></button>
-      <button class="dh-act" onclick="openEditForm()" title="Editar caja" aria-label="Editar caja"><i class="ti ti-pencil" style="font-size:16px;pointer-events:none"></i></button>
+      <button class="dh-act" id="favBtn" onclick="toggleFav()" title="Favorito" aria-label="Marcar favorito"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" style="pointer-events:none"/></svg></i></button>
+      <button class="dh-act" onclick="showQuickQR()" title="QR rápido" aria-label="Ver QR"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="6" height="6" rx="1" style="pointer-events:none"/><rect x="15" y="3" width="6" height="6" rx="1"/><rect x="3" y="15" width="6" height="6" rx="1"/><rect x="5" y="5" width="2" height="2" fill="currentColor" stroke="none"/><rect x="17" y="5" width="2" height="2" fill="currentColor" stroke="none"/><rect x="5" y="17" width="2" height="2" fill="currentColor" stroke="none"/><line x1="15" y1="15" x2="15" y2="15.01"/><line x1="18" y1="15" x2="21" y2="15"/><line x1="21" y1="18" x2="21" y2="21"/><line x1="15" y1="18" x2="18" y2="21"/></svg></i></button>
+      <button class="dh-act" onclick="openEditForm()" title="Editar caja" aria-label="Editar caja"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" style="pointer-events:none"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></i></button>
     </div>
     <img class="dh-img hidden" id="dHeroImg"/>
     <div class="dh-overlay"></div>
@@ -2930,51 +2934,51 @@ if(!auth){
   </div>
   <div class="detail-body">
     <div class="dsec" id="progSec">
-      <div class="dsec-title"><span class="dsec-title-icon dsec-icon-prog"><i class="ti ti-chart-bar"></i></span>PROGRESO DE DESEMPAQUE</div>
+      <div class="dsec-title"><span class="dsec-title-icon dsec-icon-prog"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/><line x1="2" y1="20" x2="22" y2="20"/></svg></i></span>PROGRESO DE DESEMPAQUE</div>
       <div class="prog-wrap"><div class="prog-bar"><div class="prog-fill" id="progFill"></div></div><div class="prog-lbl"><span id="progLbl"></span><span id="progPct"></span></div></div>
     </div>
     <div class="dsec">
-      <div class="dsec-title"><span class="dsec-title-icon dsec-icon-foto"><i class="ti ti-camera"></i></span>FOTO</div>
+      <div class="dsec-title"><span class="dsec-title-icon dsec-icon-foto"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg></i></span>FOTO</div>
       <div id="photoArea" onclick="triggerPhoto()"></div>
     </div>
     <div class="dsec">
-      <div class="dsec-title"><span class="dsec-title-icon dsec-icon-nota"><i class="ti ti-notes"></i></span>NOTAS</div>
+      <div class="dsec-title"><span class="dsec-title-icon dsec-icon-nota"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg></i></span>NOTAS</div>
       <textarea class="note-area" id="noteArea" placeholder="Agrega una nota… (frágil, abrir primero…)" oninput="saveNote()"></textarea>
     </div>
     <div class="dsec">
-      <div class="dsec-title" id="itemsTitle"><span class="dsec-title-icon dsec-icon-cont"><i class="ti ti-package"></i></span>CONTENIDO</div>
+      <div class="dsec-title" id="itemsTitle"><span class="dsec-title-icon dsec-icon-cont"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="16.5" y1="9.4" x2="7.5" y2="4.21"/><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg></i></span>CONTENIDO</div>
       <div id="itemsList"></div>
       <div class="add-row" id="addRow">
         <input id="addItemInput" type="text" placeholder="Agregar objeto..." onkeydown="if(event.key==='Enter')addItem()" oninput="showSuggestions(this.value)"/>
         <div class="add-row-btns">
-          <button class="add-btn2" id="micBtn" onclick="startVoice()" title="Agregar por voz" aria-label="Agregar por voz"><i class="ti ti-microphone" style="font-size:17px;pointer-events:none"></i></button>
-          <button class="add-btn2" id="scanBtn" onclick="triggerScanObj()" title="Escanear con cámara" aria-label="Escanear objeto con cámara"><i class="ti ti-camera" style="font-size:17px;pointer-events:none"></i></button>
-          <button class="add-main-btn" onclick="addItem()" title="Agregar objeto" aria-label="Agregar objeto"><i class="ti ti-plus" style="font-size:19px;pointer-events:none"></i></button>
+          <button class="add-btn2" id="micBtn" onclick="startVoice()" title="Agregar por voz" aria-label="Agregar por voz"><svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z" style="pointer-events:none"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg></i></button>
+          <button class="add-btn2" id="scanBtn" onclick="triggerScanObj()" title="Escanear con cámara" aria-label="Escanear objeto con cámara"><svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z" style="pointer-events:none"/><circle cx="12" cy="13" r="4"/></svg></i></button>
+          <button class="add-main-btn" onclick="addItem()" title="Agregar objeto" aria-label="Agregar objeto"><svg xmlns="http://www.w3.org/2000/svg" width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19" style="pointer-events:none"/><line x1="5" y1="12" x2="19" y2="12"/></svg></i></button>
         </div>
       </div>
       <input type="file" id="scanObjInput" accept="image/*" capture="environment" style="display:none!important" onchange="handleScanObj(event)"/>
       <div class="suggestions-wrap" id="suggestionsWrap"><span class="sug-label">💡</span></div>
     </div>
     <div class="dsec" id="relatedSec">
-      <div class="dsec-title"><span class="dsec-title-icon dsec-icon-rel"><i class="ti ti-link"></i></span>CAJA RELACIONADA</div>
+      <div class="dsec-title"><span class="dsec-title-icon dsec-icon-rel"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg></i></span>CAJA RELACIONADA</div>
       <div id="relatedList"></div>
     </div>
     <div class="dsec" id="historySec">
       <div class="dsec-title" style="display:flex;align-items:center;justify-content:space-between">
-        <span style="display:flex;align-items:center;gap:6px"><span class="dsec-title-icon dsec-icon-hist"><i class="ti ti-history"></i></span>HISTORIAL</span>
+        <span style="display:flex;align-items:center;gap:6px"><span class="dsec-title-icon dsec-icon-hist"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-4"/><polyline points="12 7 12 12 15 14"/></svg></i></span>HISTORIAL</span>
         <button onclick="toggleHistory()" id="histToggleBtn" style="background:none;border:none;color:var(--muted);font-size:12px;cursor:pointer;padding:2px 6px;border-radius:6px">Ocultar</button>
       </div>
       <div id="historyList"></div>
     </div>
     <div class="dsec">
-      <div class="dsec-title"><span class="dsec-title-icon dsec-icon-qr"><i class="ti ti-qrcode"></i></span>CÓDIGO QR</div>
+      <div class="dsec-title"><span class="dsec-title-icon dsec-icon-qr"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="6" height="6" rx="1"/><rect x="15" y="3" width="6" height="6" rx="1"/><rect x="3" y="15" width="6" height="6" rx="1"/><rect x="5" y="5" width="2" height="2" fill="currentColor" stroke="none"/><rect x="17" y="5" width="2" height="2" fill="currentColor" stroke="none"/><rect x="5" y="17" width="2" height="2" fill="currentColor" stroke="none"/><line x1="15" y1="15" x2="15" y2="15.01"/><line x1="18" y1="15" x2="21" y2="15"/><line x1="21" y1="18" x2="21" y2="21"/><line x1="15" y1="18" x2="18" y2="21"/></svg></i></span>CÓDIGO QR</div>
       <div class="qr-sec"><div class="qr-box" id="detailQR"></div><div class="qr-hint">Escanea con la cámara del celular</div><div style="font-size:11px;color:var(--muted);margin-top:4px" id="detailDate"></div></div>
     </div>
     <div style="margin-top:12px;display:grid;grid-template-columns:1fr 1fr;gap:8px">
-      <button onclick="exportBox()" style="padding:14px 10px;background:var(--card2);color:var(--text);border:0.5px solid var(--border);border-radius:16px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:7px;transition:transform .15s,opacity .15s" onmousedown="this.style.transform='scale(.96)'" onmouseup="this.style.transform=''" ontouchstart="this.style.transform='scale(.96)'" ontouchend="this.style.transform=''"><i class="ti ti-copy" style="font-size:16px"></i>Copiar</button>
-      <button onclick="shareBoxWhatsApp()" style="padding:14px 10px;background:#25D366;color:#fff;border:none;border-radius:16px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:7px;box-shadow:0 3px 12px rgba(37,211,102,0.3);transition:transform .15s,opacity .15s" onmousedown="this.style.transform='scale(.96)'" onmouseup="this.style.transform=''" ontouchstart="this.style.transform='scale(.96)'" ontouchend="this.style.transform=''"><i class="ti ti-brand-whatsapp" style="font-size:16px"></i>WhatsApp</button>
-      <button onclick="confirmDupBox()" style="padding:14px 10px;background:linear-gradient(135deg,#0A84FF,#5856D6);color:#fff;border:none;border-radius:16px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:7px;box-shadow:0 3px 12px rgba(10,132,255,0.3);transition:transform .15s,opacity .15s" onmousedown="this.style.transform='scale(.96)'" onmouseup="this.style.transform=''" ontouchstart="this.style.transform='scale(.96)'" ontouchend="this.style.transform=''"><i class="ti ti-copy-plus" style="font-size:16px"></i>Duplicar</button>
-      <button onclick="confirmDelBox()" style="padding:14px 10px;background:rgba(255,59,48,0.1);color:#FF3B30;border:0.5px solid rgba(255,59,48,0.25);border-radius:16px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:7px;transition:transform .15s,opacity .15s" onmousedown="this.style.transform='scale(.96)'" onmouseup="this.style.transform=''" ontouchstart="this.style.transform='scale(.96)'" ontouchend="this.style.transform=''"><i class="ti ti-trash" style="font-size:16px"></i>Eliminar</button>
+      <button onclick="exportBox()" style="padding:14px 10px;background:var(--card2);color:var(--text);border:0.5px solid var(--border);border-radius:16px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:7px;transition:transform .15s,opacity .15s" onmousedown="this.style.transform='scale(.96)'" onmouseup="this.style.transform=''" ontouchstart="this.style.transform='scale(.96)'" ontouchend="this.style.transform=''"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg></i>Copiar</button>
+      <button onclick="shareBoxWhatsApp()" style="padding:14px 10px;background:#25D366;color:#fff;border:none;border-radius:16px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:7px;box-shadow:0 3px 12px rgba(37,211,102,0.3);transition:transform .15s,opacity .15s" onmousedown="this.style.transform='scale(.96)'" onmouseup="this.style.transform=''" ontouchstart="this.style.transform='scale(.96)'" ontouchend="this.style.transform=''"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21l1.65-3.8a9 9 0 1 1 3.4 2.9L3 21"/><path d="M9 10c0 5 3.5 7.5 7.5 3.5"/></svg></i>WhatsApp</button>
+      <button onclick="confirmDupBox()" style="padding:14px 10px;background:linear-gradient(135deg,#0A84FF,#5856D6);color:#fff;border:none;border-radius:16px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:7px;box-shadow:0 3px 12px rgba(10,132,255,0.3);transition:transform .15s,opacity .15s" onmousedown="this.style.transform='scale(.96)'" onmouseup="this.style.transform=''" ontouchstart="this.style.transform='scale(.96)'" ontouchend="this.style.transform=''"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/><line x1="15" y1="12" x2="15" y2="18"/><line x1="12" y1="15" x2="18" y2="15"/></svg></i>Duplicar</button>
+      <button onclick="confirmDelBox()" style="padding:14px 10px;background:rgba(255,59,48,0.1);color:#FF3B30;border:0.5px solid rgba(255,59,48,0.25);border-radius:16px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:7px;transition:transform .15s,opacity .15s" onmousedown="this.style.transform='scale(.96)'" onmouseup="this.style.transform=''" ontouchstart="this.style.transform='scale(.96)'" ontouchend="this.style.transform=''"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg></i>Eliminar</button>
     </div>
   </div>
 
@@ -2997,7 +3001,7 @@ if(!auth){
         transition:transform .15s,box-shadow .15s;
         -webkit-tap-highlight-color:transparent;
       " onmousedown="this.style.transform='scale(.94)'" onmouseup="this.style.transform=''" ontouchstart="this.style.transform='scale(.94)'" ontouchend="this.style.transform=''">
-        <i class="ti ti-plus" style="font-size:15px"></i> Nueva
+        <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></i> Nueva
       </button>
     </div>
   </div>
@@ -3046,7 +3050,7 @@ if(!auth){
           color:var(--text);font-size:15px;font-weight:600;cursor:pointer;font-family:inherit;
           display:flex;align-items:center;justify-content:center;gap:7px;
           transition:background .13s;-webkit-tap-highlight-color:transparent;
-        "><i class="ti ti-x" style="font-size:14px"></i>Cancelar</button>
+        "><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></i>Cancelar</button>
         <button onclick="confirmRoomModal()" style="
           flex:2;padding:15px;border-radius:16px;border:none;
           background:linear-gradient(135deg,#0A84FF,#5856D6);
@@ -3054,7 +3058,7 @@ if(!auth){
           display:flex;align-items:center;justify-content:center;gap:7px;
           box-shadow:0 4px 16px rgba(10,132,255,.35);
           transition:transform .13s,opacity .13s;-webkit-tap-highlight-color:transparent;
-        " onmousedown="this.style.transform='scale(.97)'" onmouseup="this.style.transform=''"><i class="ti ti-check" style="font-size:14px"></i>Guardar</button>
+        " onmousedown="this.style.transform='scale(.97)'" onmouseup="this.style.transform=''"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg></i>Guardar</button>
       </div>
     </div>
   </div>
@@ -3065,7 +3069,7 @@ if(!auth){
       <div class="room-detail-hero-bg" id="roomDetailHeroBg"></div>
       <div class="room-detail-hero-overlay"></div>
       <button class="room-detail-back" onclick="closeRoomDetail()">
-        <i class="ti ti-chevron-left" style="font-size:20px"></i>
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg></i>
       </button>
       <div class="room-detail-emoji" id="roomDetailEmoji">🏠</div>
       <div class="room-detail-name" id="roomDetailName">Habitación</div>
@@ -3086,10 +3090,10 @@ if(!auth){
       <div id="roomDetailBoxList"></div>
       <div class="room-detail-actions">
         <button class="room-da-btn room-da-edit" id="roomDetailEditBtn">
-          <i class="ti ti-pencil" style="font-size:15px"></i> Renombrar
+          <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></i> Renombrar
         </button>
         <button class="room-da-btn room-da-delete" id="roomDetailDeleteBtn">
-          <i class="ti ti-trash" style="font-size:15px"></i> Eliminar
+          <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg></i> Eliminar
         </button>
       </div>
     </div>
@@ -3556,7 +3560,7 @@ if(!auth){
     <div class="modal-preview-noise"></div>
     <div class="modal-preview-handle" id="formHandle"></div>
     <!-- Botón cerrar visible -->
-    <button onclick="closeForm()" aria-label="Cerrar" style="position:absolute;top:14px;right:14px;z-index:10;width:32px;height:32px;border-radius:50%;background:rgba(0,0,0,.3);border:0.5px solid rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center;cursor:pointer;color:#fff;backdrop-filter:blur(8px);font-size:14px;transition:transform .15s,background .15s" onmouseenter="this.style.background='rgba(0,0,0,.5)'" onmouseleave="this.style.background='rgba(0,0,0,.3)'" ontouchstart="this.style.transform='scale(.88)'" ontouchend="this.style.transform=''"><i class="ti ti-x" style="pointer-events:none"></i></button>
+    <button onclick="closeForm()" aria-label="Cerrar" style="position:absolute;top:14px;right:14px;z-index:10;width:32px;height:32px;border-radius:50%;background:rgba(0,0,0,.3);border:0.5px solid rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center;cursor:pointer;color:#fff;backdrop-filter:blur(8px);font-size:14px;transition:transform .15s,background .15s" onmouseenter="this.style.background='rgba(0,0,0,.5)'" onmouseleave="this.style.background='rgba(0,0,0,.3)'" ontouchstart="this.style.transform='scale(.88)'" ontouchend="this.style.transform=''"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18" style="pointer-events:none"/><line x1="6" y1="6" x2="18" y2="18"/></svg></i></button>
     <div class="modal-preview-row">
       <div class="modal-preview-icon" id="formPreviewIcon">📦</div>
       <div class="modal-preview-info">
@@ -3576,7 +3580,7 @@ if(!auth){
         <div class="form-group"><label>Ubicación</label><input class="form-input" id="fLoc" type="text" placeholder="Ej: Cuarto, Garaje" oninput="updateFormPreview()"/></div>
         <div class="form-group"><label>Peso (kg)</label><input class="form-input" id="fWeight" type="number" placeholder="Ej: 5" min="0" step="0.5"/></div>
       </div>
-      <div class="form-group"><label>Contraseña <span style="font-size:10px;color:var(--muted);font-weight:400">(opcional)</span></label><div style="position:relative"><input class="form-input" id="fPassword" type="password" placeholder="Dejar vacío = sin contraseña" style="padding-right:46px"/><button type="button" aria-label="Mostrar contraseña" onclick="const i=document.getElementById('fPassword');i.type=i.type==='password'?'text':'password';this.querySelector('i').className=i.type==='password'?'ti ti-eye':'ti ti-eye-off'" style="position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;font-size:17px;cursor:pointer;padding:4px;color:var(--muted);display:flex;align-items:center;justify-content:center"><i class="ti ti-eye" aria-hidden="true"></i></button></div><div style="font-size:11px;color:var(--muted);margin-top:5px;display:flex;align-items:center;gap:4px"><i class="ti ti-info-circle" style="font-size:13px" aria-hidden="true"></i>Si agregas contraseña, se pedirá al abrir la caja</div></div>
+      <div class="form-group"><label>Contraseña <span style="font-size:10px;color:var(--muted);font-weight:400">(opcional)</span></label><div style="position:relative"><input class="form-input" id="fPassword" type="password" placeholder="Dejar vacío = sin contraseña" style="padding-right:46px"/><button type="button" aria-label="Mostrar contraseña" onclick="const i=document.getElementById('fPassword');i.type=i.type==='password'?'text':'password';this.querySelector('i').className=i.type==='password'?'ti ti-eye':'ti ti-eye-off'" style="position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;font-size:17px;cursor:pointer;padding:4px;color:var(--muted);display:flex;align-items:center;justify-content:center"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" aria-hidden="true"/><circle cx="12" cy="12" r="3"/></svg></i></button></div><div style="font-size:11px;color:var(--muted);margin-top:5px;display:flex;align-items:center;gap:4px"><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10" aria-hidden="true"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg></i>Si agregas contraseña, se pedirá al abrir la caja</div></div>
       <div class="form-group"><label>Prioridad</label>
         <div class="pri-btns">
           <button class="pri-btn" id="pri-red" onclick="setPri('red')"><span class="pri-dot" style="width:9px;height:9px;border-radius:50%;background:#FF3B30;display:inline-block;margin-bottom:3px"></span><br>Urgente</button>
@@ -3588,7 +3592,7 @@ if(!auth){
       <div class="form-group"><label>Etiquetas</label><div class="tags-box" id="tagsBox" onclick="document.getElementById('tagField').focus()"><input type="text" id="tagField" placeholder="Escribe y Enter..." onkeydown="handleTagKey(event)"/></div><div class="tag-sugs"><button class="tag-sug" onclick="addTag('mudanza')">mudanza</button><button class="tag-sug" onclick="addTag('invierno')">invierno</button><button class="tag-sug" onclick="addTag('trabajo')">trabajo</button><button class="tag-sug" onclick="addTag('cocina')">cocina</button><button class="tag-sug" onclick="addTag('ropa')">ropa</button><button class="tag-sug" onclick="addTag('libros')">libros</button></div></div>
       <div class="form-group"><label>Caja relacionada (opcional)</label><select class="rel-select" id="fRelated"><option value="">— Ninguna —</option></select></div>
     </div>
-    <div class="modal-acts"><button class="m-btn m-ghost" onclick="closeForm()"><i class="ti ti-x" style="font-size:15px;vertical-align:-2px;margin-right:5px" aria-hidden="true"></i>Cancelar</button><button class="m-btn m-primary" onclick="saveForm()"><i class="ti ti-check" style="font-size:15px;vertical-align:-2px;margin-right:5px" aria-hidden="true"></i>Guardar caja</button></div>
+    <div class="modal-acts"><button class="m-btn m-ghost" onclick="closeForm()"><svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18" style="vertical-align:-2px;margin-right:5px" aria-hidden="true"/><line x1="6" y1="6" x2="18" y2="18"/></svg></i>Cancelar</button><button class="m-btn m-primary" onclick="saveForm()"><svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12" style="vertical-align:-2px;margin-right:5px" aria-hidden="true"/></svg></i>Guardar caja</button></div>
   </div>
 </div>
 
@@ -3692,12 +3696,12 @@ if(!auth){
 
     <!-- Input contraseña -->
     <div id="pwInputWrapper">
-      <i class="ti ti-lock pw-input-icon" aria-hidden="true"></i>
+      <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" aria-hidden="true"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></i>
       <input id="pwInput" type="password" placeholder="Contraseña" autocomplete="off"
         oninput="syncPwDots(this.value)"
         onkeydown="if(event.key==='Enter')checkPassword()">
       <button id="pwEyeBtn" onclick="const i=document.getElementById('pwInput');i.type=i.type==='password'?'text':'password';this.querySelector('i').className=i.type==='password'?'ti ti-eye':'ti ti-eye-off'" tabindex="-1" aria-label="Ver contraseña">
-        <i class="ti ti-eye" aria-hidden="true"></i>
+        <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" aria-hidden="true"/><circle cx="12" cy="12" r="3"/></svg></i>
       </button>
     </div>
 
@@ -3785,8 +3789,8 @@ function applyDark(){
   if(t){t.classList.toggle("on",!!dark);}
   const dkb=document.getElementById("darkBtn");
   if(dkb) dkb.innerHTML=dark
-    ?'<i class="ti ti-sun" aria-hidden="true"></i>'
-    :'<i class="ti ti-moon" aria-hidden="true"></i>';
+    ?'<svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5" aria-hidden="true"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg></i>'
+    :'<svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" aria-hidden="true"/></svg></i>';
 }
 
 function toggleSortMenu(){
@@ -4060,6 +4064,13 @@ function _getIconLocal(n){
     [["dinero","efectivo","billetes","monedas","caja fuerte","joyas importantes","documentos importantes","valores"],"💰"],
     // ── HOGAR GENERAL ──
     [["casa","hogar","home","living","mudanza","traslado"],"🏡"],
+    // ── NOMBRES GENÉRICOS / CORTOS ──
+    [["varios","misc","miscelaneous","variado","mixto","general","otros","cosas","extra"],"🗂️"],
+    [["importante","urgente","prioritario","primero","vital"],"⭐"],
+    [["fragil","vidrio","cristal","porcelana","ceramica fina","cuidado"],"🫧"],
+    [["pesado","peso","grande","voluminoso"],"📦"],
+    [["recuerdo","foto","album","memoria","souvenir","coleccion","antigüedad","vintage"],"🖼️"],
+    [["navidad","decoracion","adorno","festivo","fiesta","cumpleanos"],"🎄"],
   ];
   for(const[k,e] of m){
     if(k.some(w=>n.includes(w.normalize("NFD").replace(/[\u0300-\u036f]/g,"")))) return e;
@@ -4068,12 +4079,15 @@ function _getIconLocal(n){
 }
 
 const _iconAICache = {};
+// IDs de cajas donde ya intentamos y fallamos — no reintentar
+const _iconFailed = new Set();
 
 async function fetchSmartIcon(box){
   const name = (box.name||"").trim();
   if(!name || box.icon) return;
+  if(_iconFailed.has(box.id)) return; // ya intentamos, no reintentar
 
-  // Si el diccionario local ya tiene respuesta, no necesitamos la IA
+  // Si el diccionario local ya tiene respuesta, usarla directamente
   const localResult = _getIconLocal(name);
   if(localResult){
     box.icon = localResult;
@@ -4082,41 +4096,69 @@ async function fetchSmartIcon(box){
     return;
   }
 
-  // Cache en memoria
+  // Cache en memoria (intentos anteriores en esta sesión)
   if(_iconAICache[name]){
     box.icon = _iconAICache[name];
     _applyIconToDOM(box);
     return;
   }
 
+  // Sin red o sin worker configurado → usar 📦 y marcar como fallido para no reintentar
+  // NOTA: La API de Anthropic no puede llamarse directamente desde el browser (bloqueo CORS).
+  // Para usar IA de íconos necesitás un proxy/worker que agregue la API key server-side.
+  // Por ahora se usa el diccionario local extendido.
+  const BOX_IA_WORKER_CONFIGURED = typeof BOX_IA_WORKER !== 'undefined' && BOX_IA_WORKER && !BOX_IA_WORKER.includes('YOUR_WORKER');
+
+  if(!BOX_IA_WORKER_CONFIGURED){
+    // Sin worker: usar emoji genérico por primera letra/tipo
+    const fallback = _getIconFallbackByLetter(name);
+    _iconAICache[name] = fallback;
+    box.icon = fallback;
+    _applyIconToDOM(box);
+    saveData();
+    return;
+  }
+
+  // Si hay worker configurado, intentar via worker (no directo a Anthropic)
   try{
-    const res = await fetch("https://api.anthropic.com/v1/messages",{
+    const res = await fetch(BOX_IA_WORKER+"/icon",{
       method:"POST",
       headers:{"Content-Type":"application/json"},
-      body: JSON.stringify({
-        model:"claude-sonnet-4-20250514",
-        max_tokens:20,
-        system:`Eres un asistente que elige el ÚNICO emoji más representativo para el nombre de una caja de mudanza.
-Reglas estrictas:
-- Responde SOLO con UN emoji. Nada más, ni texto, ni puntuación, ni espacios.
-- Si el nombre menciona una marca famosa (Adidas, Nike, Apple, Samsung, LEGO, IKEA, etc.), usa el emoji que mejor represente esa marca o categoría.
-- Si el nombre menciona una persona (papá, mamá, Juan, etc.), usa 👤.
-- Si el nombre no tiene ningún sentido claro (letras random como "cajfff", "aaa", "xxx123"), responde exactamente: 📦
-- Para cualquier palabra coherente en cualquier idioma, elige el emoji más representativo del concepto.`,
-        messages:[{role:"user",content:`Nombre de caja: "${name}"`}]
-      })
+      body: JSON.stringify({ name })
     });
+    if(!res.ok) throw new Error("worker "+res.status);
     const data = await res.json();
-    const emoji = (data?.content?.[0]?.text||"").trim();
+    const emoji = (data?.emoji||"").trim();
     if(emoji && [...emoji].length <= 4 && [...emoji].length >= 1){
       _iconAICache[name] = emoji;
       box.icon = emoji;
       _applyIconToDOM(box);
       saveData();
+      return;
     }
+    throw new Error("emoji inválido");
   }catch(e){
-    // Silencioso
+    _iconFailed.add(box.id);
+    // Usar fallback por letra
+    const fallback = _getIconFallbackByLetter(name);
+    _iconAICache[name] = fallback;
+    box.icon = fallback;
+    _applyIconToDOM(box);
+    saveData();
   }
+}
+
+// Fallback inteligente por primera letra / consonante del nombre
+function _getIconFallbackByLetter(name){
+  const n = (name||"").toLowerCase().trim();
+  if(!n) return "📦";
+  // Intentar que sea relevante: si empieza con número → 🔢
+  if(/^\d/.test(n)) return "🔢";
+  // Paleta de emojis variados para distribuir visualmente
+  const palette = ["🟦","🟧","🟩","🟥","🟨","🟪","🔶","🔷","🔸","🔹","🏷️","📌","🗂️","📋","🗃️","📁","🧩","🎁","📦","🛍️"];
+  // Usar el código del primer carácter para elegir un emoji consistente
+  const idx = n.charCodeAt(0) % palette.length;
+  return palette[idx];
 }
 
 // Aplica el nuevo emoji en todos los lugares del DOM donde aparece esta caja
@@ -4609,7 +4651,7 @@ function renderItems(){
   const box=boxes.find(b=>b.id===currentBoxId);if(!box) return;
   const col=box.color||"#007AFF",done=box.items.filter(i=>i.done).length;
   const titleEl=document.getElementById("itemsTitle");
-  if(titleEl) titleEl.innerHTML=`<span class="dsec-title-icon dsec-icon-cont"><i class="ti ti-package"></i></span>CONTENIDO (${box.items.length} obj · ${done} sacado${done!==1?"s":""})`;
+  if(titleEl) titleEl.innerHTML=`<span class="dsec-title-icon dsec-icon-cont"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="16.5" y1="9.4" x2="7.5" y2="4.21"/><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg></i></span>CONTENIDO (${box.items.length} obj · ${done} sacado${done!==1?"s":""})`;
   const addRow=document.getElementById("addRow");
   if(addRow) addRow.style.display=box.sealed?"none":"flex";
   document.getElementById("itemsList").innerHTML=box.items.length===0
@@ -4654,7 +4696,78 @@ function delItem(idx){
 function triggerScanObj(){
   const box=boxes.find(b=>b.id===currentBoxId);
   if(box&&box.sealed){showToast("🔒 Caja sellada","#FF9500");return;}
-  document.getElementById("scanObjInput").click();
+  // Mostrar mini-panel con botón de flash antes de abrir cámara
+  _showScanFlashPanel();
+}
+
+function _showScanFlashPanel(){
+  // Evitar duplicados
+  document.getElementById("scanFlashPanel")?.remove();
+  const panel=document.createElement("div");
+  panel.id="scanFlashPanel";
+  panel.style.cssText="position:fixed;inset:0;background:rgba(0,0,0,.65);z-index:10005;display:flex;align-items:flex-end;justify-content:center;backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px)";
+  panel.innerHTML=`
+    <div style="background:var(--card,#1C1C1E);border-radius:24px 24px 0 0;padding:20px 20px calc(20px + env(safe-area-inset-bottom));width:100%;max-width:480px;box-shadow:0 -8px 40px rgba(0,0,0,.5);animation:slideUp .28s cubic-bezier(.16,1,.3,1) both">
+      <div style="width:36px;height:4px;background:rgba(255,255,255,.18);border-radius:2px;margin:0 auto 18px"></div>
+      <div style="font-size:16px;font-weight:700;color:var(--text,#fff);margin-bottom:4px;text-align:center">📷 Escanear objeto</div>
+      <div style="font-size:13px;color:var(--muted,#8E8E93);text-align:center;margin-bottom:20px">Si está oscuro, enciende el flash antes de tomar la foto</div>
+      <!-- Botón flash -->
+      <button id="scanFlashBtn" onclick="toggleScanFlash()" title="Encender flash"
+        style="width:100%;padding:14px;border-radius:16px;border:none;
+               background:rgba(255,255,255,0.10);color:var(--text,#fff);
+               font-size:15px;font-weight:600;cursor:pointer;font-family:inherit;
+               display:flex;align-items:center;justify-content:center;gap:10px;
+               margin-bottom:10px;transition:background .15s,transform .1s;
+               -webkit-tap-highlight-color:transparent">
+        🔦 <span>Encender flash</span>
+      </button>
+      <!-- Botón abrir cámara -->
+      <button onclick="_launchScanCamera()" 
+        style="width:100%;padding:16px;border-radius:16px;border:none;
+               background:linear-gradient(135deg,#FF9500,#FF6B00);color:#fff;
+               font-size:16px;font-weight:700;cursor:pointer;font-family:inherit;
+               display:flex;align-items:center;justify-content:center;gap:10px;
+               box-shadow:0 4px 20px rgba(255,149,0,.35);margin-bottom:10px;
+               transition:transform .13s,opacity .13s;
+               -webkit-tap-highlight-color:transparent"
+        onmousedown="this.style.transform='scale(.97)'" onmouseup="this.style.transform=''">
+        <svg xmlns="http://www.w3.org/2000/svg" width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="pointer-events:none"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+        Abrir cámara
+      </button>
+      <!-- Cancelar -->
+      <button onclick="_closeScanFlashPanel()" 
+        style="width:100%;padding:13px;border-radius:16px;border:none;
+               background:transparent;color:var(--muted,#8E8E93);
+               font-size:15px;font-weight:600;cursor:pointer;font-family:inherit;
+               -webkit-tap-highlight-color:transparent">
+        Cancelar
+      </button>
+    </div>`;
+  // Cerrar al tocar el fondo
+  panel.addEventListener("click",function(e){if(e.target===panel)_closeScanFlashPanel();});
+  document.body.appendChild(panel);
+}
+
+function _launchScanCamera(){
+  // Apagar flash (la foto se toma con el flash nativo del SO si el user lo quiere)
+  // Mantenemos el flash encendido para iluminar antes de abrir la cámara
+  document.getElementById("scanFlashPanel")?.remove();
+  // Pequeño delay para que el panel cierre limpio
+  setTimeout(async function(){
+    // Apagar flash tras lanzar la cámara nativa (el SO toma el control)
+    if(_scanTorchOn) await _stopScanFlash();
+    document.getElementById("scanObjInput").click();
+  }, 180);
+}
+
+function _closeScanFlashPanel(){
+  const p=document.getElementById("scanFlashPanel");
+  if(p){
+    p.style.opacity="0";
+    p.style.transition="opacity .2s";
+    setTimeout(()=>p.remove(),200);
+  }
+  if(_scanTorchOn) _stopScanFlash();
 }
 
 // Rate limiting para el scan IA — evita peticiones accidentales repetidas
@@ -4666,7 +4779,7 @@ async function handleScanObj(e){
   _lastScanTime=now;
   const box=boxes.find(b=>b.id===currentBoxId); if(!box) return;
   const btn=document.getElementById("scanBtn"); if(btn){btn.classList.add("scanning");}
-  btn.innerHTML='<i class="ti ti-loader" style="font-size:17px;pointer-events:none;animation:spin 1s linear infinite"></i>'; btn.disabled=true;
+  btn.innerHTML='<svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="12" y1="2" x2="12" y2="6" style="pointer-events:none"/><line x1="12" y1="18" x2="12" y2="22"/><line x1="4.93" y1="4.93" x2="7.76" y2="7.76"/><line x1="16.24" y1="16.24" x2="19.07" y2="19.07"/><line x1="2" y1="12" x2="6" y2="12"/><line x1="18" y1="12" x2="22" y2="12"/><line x1="4.93" y1="19.07" x2="7.76" y2="16.24"/><line x1="16.24" y1="7.76" x2="19.07" y2="4.93"/></svg></i>'; btn.disabled=true;
 
   let thumb=null, b64=null;
   try{
@@ -4674,7 +4787,7 @@ async function handleScanObj(e){
     thumb=enc.thumb; b64=enc.b64;
   }catch(err){
     showToast("❌ No se pudo leer la imagen","#FF3B30");
-    btn.innerHTML='<i class="ti ti-camera" style="font-size:17px;pointer-events:none"></i>'; btn.classList.remove("scanning"); btn.disabled=false; return;
+    btn.innerHTML='<svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z" style="pointer-events:none"/><circle cx="12" cy="13" r="4"/></svg></i>'; btn.classList.remove("scanning"); btn.disabled=false; return;
   }
 
   const connected=localStorage.getItem("boxia_connected");
@@ -4748,7 +4861,7 @@ Context: ${contexto}`;
     if(!analisis) showToast("📡 Sin conexión — puedes agregar el objeto manualmente","#FF9500");
   }
 
-  btn.innerHTML='<i class="ti ti-camera" style="font-size:17px;pointer-events:none"></i>'; btn.classList.remove("scanning"); btn.disabled=false;
+  btn.innerHTML='<svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z" style="pointer-events:none"/><circle cx="12" cy="13" r="4"/></svg></i>'; btn.classList.remove("scanning"); btn.disabled=false;
   showScanResultModal(thumb, box, analisis);
 }
 
@@ -4776,10 +4889,10 @@ function showScanResultModal(thumb, box, a){
   const desc=a?.descripcion?`<div style="font-size:12px;color:var(--muted,#8E8E93);margin-top:4px">${esc(a.descripcion)}</div>`:"";
   const noIA=!a?`<div style="font-size:12px;color:#FF9500;margin-bottom:8px">📷 Foto guardada — escribe el nombre del objeto</div>`
     :(a.nombre?`<div style="font-size:12px;color:#34C759;margin-bottom:4px">✦ Box IA identificó el objeto</div>`:"");  const fragilBtn=a?.fragil&&box.priority!=="red"?`<button onclick="sugerirPrioridadFragil()" style="width:100%;margin-top:8px;padding:11px;border-radius:13px;border:1px solid rgba(255,59,48,.3);background:rgba(255,59,48,.08);color:#FF3B30;font-size:13px;font-weight:600;cursor:pointer">🫧 Marcar caja como urgente (objeto frágil)</button>`:"";
-  m.innerHTML=`<div style="background:var(--card,#1C1C1E);border-radius:24px 24px 0 0;padding:20px 20px calc(20px + env(safe-area-inset-bottom));width:100%;max-width:480px;box-shadow:0 -8px 40px rgba(0,0,0,.5);animation:slideUp .3s cubic-bezier(.16,1,.3,1) both;max-height:90vh;overflow-y:auto"><div style="width:36px;height:4px;background:rgba(255,255,255,.2);border-radius:2px;margin:0 auto 16px"></div><div style="display:flex;gap:14px;margin-bottom:14px"><img src="${thumb}" style="width:80px;height:80px;border-radius:14px;object-fit:cover;flex-shrink:0;box-shadow:0 4px 16px rgba(0,0,0,.4)"/><div style="flex:1;min-width:0"><div style="display:flex;flex-wrap:wrap;gap:5px;margin-bottom:6px">${catBadge}${fragilBadge}${cantBadge}</div>${desc}${noIA}</div></div>${tags}${nota}<div style="margin-top:14px"><div style="font-size:12px;color:var(--muted,#8E8E93);margin-bottom:6px;font-weight:600">NOMBRE DEL OBJETO</div><input id="scanNameInput" type="text" value="${esc(a?.nombre||"")}" placeholder="Ej: Cubo de Rubik" style="width:100%;box-sizing:border-box;padding:13px 14px;border-radius:13px;border:1.5px solid ${a?.nombre?"#34C759":"rgba(255,255,255,.15)"};background:rgba(255,255,255,.05);color:var(--text,#fff);font-size:16px;outline:none;font-family:inherit" onkeydown="if(event.key==='Enter')confirmScanName()" oninput="this.style.borderColor=this.value?'#34C759':'rgba(255,255,255,.15)'"/>${a?.cantidad>1?`<div style="font-size:12px;color:var(--muted,#8E8E93);margin-top:6px">💡 Se detectaron ${a.cantidad} objetos — se guarda uno a la vez.</div>`:""}</div><div style="display:flex;gap:10px;margin-top:14px"><button onclick="document.getElementById('scanNameModal').remove()" style="flex:1;padding:14px;border-radius:14px;border:none;background:rgba(255,255,255,.08);color:var(--text,#fff);font-size:15px;font-weight:600;cursor:pointer">Cancelar</button><button onclick="confirmScanName()" style="flex:2;padding:14px;border-radius:14px;border:none;background:linear-gradient(135deg,#FF9500,#FF6B00);color:#fff;font-size:15px;font-weight:700;cursor:pointer">📷 Guardar en caja</button></div>${fragilBtn}</div>`;
+  m.innerHTML=`<div style="background:var(--card,#1C1C1E);border-radius:24px 24px 0 0;padding:20px 20px calc(20px + env(safe-area-inset-bottom));width:100%;max-width:480px;box-shadow:0 -8px 40px rgba(0,0,0,.5);animation:slideUp .3s cubic-bezier(.16,1,.3,1) both;max-height:90vh;overflow-y:auto"><div style="width:36px;height:4px;background:rgba(255,255,255,.2);border-radius:2px;margin:0 auto 16px"></div><div style="display:flex;gap:14px;margin-bottom:14px"><img src="${thumb}" style="width:80px;height:80px;border-radius:14px;object-fit:cover;flex-shrink:0;box-shadow:0 4px 16px rgba(0,0,0,.4)"/><div style="flex:1;min-width:0"><div style="display:flex;flex-wrap:wrap;gap:5px;margin-bottom:6px">${catBadge}${fragilBadge}${cantBadge}</div>${desc}${noIA}</div></div>${tags}${nota}<div style="margin-top:14px"><div style="font-size:12px;color:var(--muted,#8E8E93);margin-bottom:6px;font-weight:600">NOMBRE DEL OBJETO</div><input id="scanNameInput" type="text" value="${esc(a?.nombre||"")}" placeholder="Ej: Cubo de Rubik" style="width:100%;box-sizing:border-box;padding:13px 14px;border-radius:13px;border:1.5px solid ${a?.nombre?"#34C759":"rgba(255,255,255,.15)"};background:rgba(255,255,255,.05);color:var(--text,#fff);font-size:16px;outline:none;font-family:inherit" onkeydown="if(event.key==='Enter')confirmScanName()" oninput="this.style.borderColor=this.value?'#34C759':'rgba(255,255,255,.15)'"/>${a?.cantidad>1?`<div style="font-size:12px;color:var(--muted,#8E8E93);margin-top:6px">💡 Se detectaron ${a.cantidad} objetos — se guarda uno a la vez.</div>`:""}</div><div style="display:flex;gap:10px;margin-top:14px"><button onclick="document.getElementById('scanNameModal').remove();if(typeof _stopScanFlash==='function')_stopScanFlash();" style="flex:1;padding:14px;border-radius:14px;border:none;background:rgba(255,255,255,.08);color:var(--text,#fff);font-size:15px;font-weight:600;cursor:pointer">Cancelar</button><button onclick="confirmScanName()" style="flex:2;padding:14px;border-radius:14px;border:none;background:linear-gradient(135deg,#FF9500,#FF6B00);color:#fff;font-size:15px;font-weight:700;cursor:pointer">📷 Guardar en caja</button></div>${fragilBtn}</div>`;
   document.body.appendChild(m);
   m._thumb=thumb; m._box=box; m._analisis=a;
-  m.onclick=ev=>{if(ev.target===m)m.remove();};
+  m.onclick=ev=>{if(ev.target===m){m.remove();if(typeof _stopScanFlash==="function")_stopScanFlash();}};
   setTimeout(()=>{const inp=document.getElementById("scanNameInput");if(inp){inp.focus();if(a?.nombre)inp.select();}},300);
 }
 
@@ -4799,6 +4912,8 @@ function confirmScanName(){
   addHistory(box,"📷 Escaneado: "+nombre);
   saveData();renderItems();renderProgress();renderHistory();generateQR(currentBoxId);
   m.remove();
+  // Apagar flash si quedó encendido
+  if(typeof _stopScanFlash==="function") _stopScanFlash();
   showToast("✅ "+nombre+" guardado","#34C759");
 }
 
@@ -5946,6 +6061,63 @@ async function toggleTorch(){
   }
 }
 
+// ── Flash independiente para el escaneo de objetos ──────────────────────────
+var _scanTorchStream=null, _scanTorchOn=false;
+
+async function toggleScanFlash(){
+  const btn=document.getElementById("scanFlashBtn");
+  if(!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia){
+    showToast("Flash no disponible en este navegador","#636366"); return;
+  }
+  try{
+    if(!_scanTorchOn){
+      // Pedir cámara trasera sin activar torch aún (más compatible)
+      _scanTorchStream=await navigator.mediaDevices.getUserMedia({video:{facingMode:{ideal:"environment"}}});
+      const track=_scanTorchStream.getVideoTracks()[0];
+      const caps=track.getCapabilities?track.getCapabilities():{};
+      if(!caps.torch){
+        _scanTorchStream.getTracks().forEach(t=>t.stop());
+        _scanTorchStream=null;
+        showToast("Tu celular no soporta flash desde el navegador","#636366"); return;
+      }
+      await track.applyConstraints({advanced:[{torch:true}]});
+      _scanTorchOn=true;
+      if(btn){
+        btn.textContent="🔦";
+        btn.style.background="linear-gradient(135deg,#FFD60A,#FF9500)";
+        btn.style.color="#000";
+        btn.title="Flash encendido — toca para apagar";
+      }
+      showToast("🔦 Flash encendido","#FFD60A");
+    }else{
+      await _stopScanFlash();
+      showToast("Flash apagado","#636366");
+    }
+  }catch(e){
+    showToast("No se pudo activar el flash","#FF3B30");
+    await _stopScanFlash();
+  }
+}
+
+async function _stopScanFlash(){
+  if(_scanTorchStream){
+    try{
+      const track=_scanTorchStream.getVideoTracks()[0];
+      if(track) await track.applyConstraints({advanced:[{torch:false}]}).catch(()=>{});
+    }catch(e){}
+    _scanTorchStream.getTracks().forEach(t=>t.stop());
+    _scanTorchStream=null;
+  }
+  _scanTorchOn=false;
+  const btn=document.getElementById("scanFlashBtn");
+  if(btn){
+    btn.textContent="🔦";
+    btn.style.background="rgba(255,255,255,0.10)";
+    btn.style.color="var(--text,#fff)";
+    btn.title="Encender flash";
+  }
+}
+
 function speakItems(){
   if(!window.speechSynthesis){alert("Tu navegador no soporta voz");return;}
   if(speaking){window.speechSynthesis.cancel();speaking=false;document.getElementById("ttsBtn").classList.remove("on");return;}
@@ -6493,32 +6665,32 @@ document.addEventListener("DOMContentLoaded",applySplashGradient);
       <div class="tut-bg" style="background:linear-gradient(160deg,#1a1a3e 0%,#17171f 100%)"></div>
       <div class="tut-content">
         <div class="tut-icon-wrap" style="background:rgba(10,132,255,.18);border-color:rgba(10,132,255,.3)">
-          <i class="ti ti-box" aria-hidden="true"></i>
+          <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z" aria-hidden="true"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg></i>
         </div>
         <div class="tut-title">BoxVision</div>
         <div class="tut-desc">Organiza todo lo que guardas — cajas, bodegas, almacenes y más. Encuentra cualquier objeto en segundos.</div>
         <div class="tut-demo">
           <div class="tut-demo-row">
-            <div class="tut-demo-icon-wrap"><i class="ti ti-qrcode" aria-hidden="true"></i></div>
+            <div class="tut-demo-icon-wrap"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="6" height="6" rx="1" aria-hidden="true"/><rect x="15" y="3" width="6" height="6" rx="1"/><rect x="3" y="15" width="6" height="6" rx="1"/><rect x="5" y="5" width="2" height="2" fill="currentColor" stroke="none"/><rect x="17" y="5" width="2" height="2" fill="currentColor" stroke="none"/><rect x="5" y="17" width="2" height="2" fill="currentColor" stroke="none"/><line x1="15" y1="15" x2="15" y2="15.01"/><line x1="18" y1="15" x2="21" y2="15"/><line x1="21" y1="18" x2="21" y2="21"/><line x1="15" y1="18" x2="18" y2="21"/></svg></i></div>
             <div><div class="tut-demo-text">Crea cajas con QR</div><div class="tut-demo-sub">Escanea y ve el contenido al instante</div></div>
           </div>
           <div class="tut-demo-row">
-            <div class="tut-demo-icon-wrap"><i class="ti ti-camera" aria-hidden="true"></i></div>
+            <div class="tut-demo-icon-wrap"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z" aria-hidden="true"/><circle cx="12" cy="13" r="4"/></svg></i></div>
             <div><div class="tut-demo-text">Fotografía tus objetos</div><div class="tut-demo-sub">Se guardan con imagen visual</div></div>
           </div>
           <div class="tut-demo-row">
-            <div class="tut-demo-icon-wrap"><i class="ti ti-search" aria-hidden="true"></i></div>
+            <div class="tut-demo-icon-wrap"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8" aria-hidden="true"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></i></div>
             <div><div class="tut-demo-text">Búsqueda inteligente</div><div class="tut-demo-sub">Encuentra cualquier cosa al instante</div></div>
           </div>
           <div class="tut-demo-row">
-            <div class="tut-demo-icon-wrap"><i class="ti ti-cloud" aria-hidden="true"></i></div>
+            <div class="tut-demo-icon-wrap"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z" aria-hidden="true"/></svg></i></div>
             <div><div class="tut-demo-text">Sincronizado en la nube</div><div class="tut-demo-sub">Accede desde cualquier dispositivo</div></div>
           </div>
         </div>
       </div>
       <div class="tut-bottom">
         <div class="tut-dots"><div class="tut-dot active"></div><div class="tut-dot"></div><div class="tut-dot"></div><div class="tut-dot"></div><div class="tut-dot"></div><div class="tut-dot"></div><div class="tut-dot"></div></div>
-        <button class="tut-btn" onclick="nextTut()">Empezar <i class="ti ti-arrow-right" aria-hidden="true"></i></button>
+        <button class="tut-btn" onclick="nextTut()">Empezar <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12" aria-hidden="true"/><polyline points="12 5 19 12 12 19"/></svg></i></button>
         <button class="tut-skip" onclick="finishTut()">Saltar tutorial</button>
       </div>
     </div>
@@ -6528,32 +6700,32 @@ document.addEventListener("DOMContentLoaded",applySplashGradient);
       <div class="tut-bg" style="background:linear-gradient(160deg,#1a2a1a 0%,#17171f 100%)"></div>
       <div class="tut-content">
         <div class="tut-icon-wrap" style="background:rgba(10,132,255,.18);border-color:rgba(10,132,255,.3)">
-          <i class="ti ti-plus" aria-hidden="true"></i>
+          <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19" aria-hidden="true"/><line x1="5" y1="12" x2="19" y2="12"/></svg></i>
         </div>
         <div class="tut-title">Crea tu primera caja</div>
         <div class="tut-desc">Toca el botón <strong style="color:#fff;background:rgba(10,132,255,.25);padding:2px 10px;border-radius:8px;font-size:13px">+ Nueva caja</strong> para comenzar.</div>
         <div class="tut-demo">
           <div class="tut-demo-row">
-            <div class="tut-demo-icon-wrap"><i class="ti ti-tag" aria-hidden="true"></i></div>
+            <div class="tut-demo-icon-wrap"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z" aria-hidden="true"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg></i></div>
             <div><div class="tut-demo-text">Nombre y número</div><div class="tut-demo-sub">Ej: "Cocina #1", "Ropa invierno"</div></div>
           </div>
           <div class="tut-demo-row">
-            <div class="tut-demo-icon-wrap"><i class="ti ti-palette" aria-hidden="true"></i></div>
+            <div class="tut-demo-icon-wrap"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="13.5" cy="6.5" r=".5" fill="currentColor" aria-hidden="true"/><circle cx="17.5" cy="10.5" r=".5" fill="currentColor"/><circle cx="8.5" cy="7.5" r=".5" fill="currentColor"/><circle cx="6.5" cy="12.5" r=".5" fill="currentColor"/><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 0 1 1.668-1.668h1.996c3.051 0 5.555-2.503 5.555-5.554C21.965 6.012 17.461 2 12 2z"/></svg></i></div>
             <div><div class="tut-demo-text">Color personalizado</div><div class="tut-demo-sub">Para identificarla visualmente</div></div>
           </div>
           <div class="tut-demo-row">
-            <div class="tut-demo-icon-wrap"><i class="ti ti-map-pin" aria-hidden="true"></i></div>
+            <div class="tut-demo-icon-wrap"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" aria-hidden="true"/><circle cx="12" cy="10" r="3"/></svg></i></div>
             <div><div class="tut-demo-text">Ubicación</div><div class="tut-demo-sub">Cuarto, garaje, depósito, bodega...</div></div>
           </div>
           <div class="tut-demo-row">
-            <div class="tut-demo-icon-wrap"><i class="ti ti-alert-circle" aria-hidden="true" style="color:#FF9500"></i></div>
+            <div class="tut-demo-icon-wrap"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10" style="color:#FF9500" aria-hidden="true"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg></i></div>
             <div><div class="tut-demo-text">Prioridad</div><div class="tut-demo-sub">Urgente, normal o sin prisa</div></div>
           </div>
         </div>
       </div>
       <div class="tut-bottom">
         <div class="tut-dots"><div class="tut-dot"></div><div class="tut-dot active"></div><div class="tut-dot"></div><div class="tut-dot"></div><div class="tut-dot"></div><div class="tut-dot"></div><div class="tut-dot"></div></div>
-        <button class="tut-btn" onclick="nextTut()">Siguiente <i class="ti ti-arrow-right" aria-hidden="true"></i></button>
+        <button class="tut-btn" onclick="nextTut()">Siguiente <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12" aria-hidden="true"/><polyline points="12 5 19 12 12 19"/></svg></i></button>
         <button class="tut-skip" onclick="finishTut()">Saltar</button>
       </div>
     </div>
@@ -6563,32 +6735,32 @@ document.addEventListener("DOMContentLoaded",applySplashGradient);
       <div class="tut-bg" style="background:linear-gradient(160deg,#1e1a2e 0%,#17171f 100%)"></div>
       <div class="tut-content">
         <div class="tut-icon-wrap" style="background:rgba(88,86,214,.2);border-color:rgba(88,86,214,.35)">
-          <i class="ti ti-list" aria-hidden="true"></i>
+          <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="8" y1="6" x2="21" y2="6" aria-hidden="true"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg></i>
         </div>
         <div class="tut-title">Agrega tus objetos</div>
         <div class="tut-desc">Tienes 3 formas de agregar objetos a cada caja. Usa la que más te convenga.</div>
         <div class="tut-demo">
           <div class="tut-demo-row">
-            <div class="tut-demo-icon-wrap"><i class="ti ti-pencil" aria-hidden="true"></i></div>
+            <div class="tut-demo-icon-wrap"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" aria-hidden="true"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></i></div>
             <div><div class="tut-demo-text">Escribe el nombre</div><div class="tut-demo-sub">Escribe y presiona + o Enter</div></div>
           </div>
           <div class="tut-demo-row">
-            <div class="tut-demo-icon-wrap"><i class="ti ti-microphone" aria-hidden="true"></i></div>
+            <div class="tut-demo-icon-wrap"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z" aria-hidden="true"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg></i></div>
             <div><div class="tut-demo-text">Dicta por voz</div><div class="tut-demo-sub">Toca el micrófono y habla</div></div>
           </div>
           <div class="tut-demo-row">
-            <div class="tut-demo-icon-wrap"><i class="ti ti-camera" aria-hidden="true"></i></div>
+            <div class="tut-demo-icon-wrap"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z" aria-hidden="true"/><circle cx="12" cy="13" r="4"/></svg></i></div>
             <div><div class="tut-demo-text">Fotografía el objeto</div><div class="tut-demo-sub">BoxVision lo reconoce automáticamente</div></div>
           </div>
           <div class="tut-demo-row">
-            <div class="tut-demo-icon-wrap"><i class="ti ti-circle-check" aria-hidden="true" style="color:#34C759"></i></div>
+            <div class="tut-demo-icon-wrap"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10" style="color:#34C759" aria-hidden="true"/><polyline points="9 12 11 14 15 10"/></svg></i></div>
             <div><div class="tut-demo-text">Marca como sacado</div><div class="tut-demo-sub">Toca el círculo para marcar progreso</div></div>
           </div>
         </div>
       </div>
       <div class="tut-bottom">
         <div class="tut-dots"><div class="tut-dot"></div><div class="tut-dot"></div><div class="tut-dot active"></div><div class="tut-dot"></div><div class="tut-dot"></div><div class="tut-dot"></div><div class="tut-dot"></div></div>
-        <button class="tut-btn" onclick="nextTut()">Siguiente <i class="ti ti-arrow-right" aria-hidden="true"></i></button>
+        <button class="tut-btn" onclick="nextTut()">Siguiente <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12" aria-hidden="true"/><polyline points="12 5 19 12 12 19"/></svg></i></button>
         <button class="tut-skip" onclick="finishTut()">Saltar</button>
       </div>
     </div>
@@ -6598,32 +6770,32 @@ document.addEventListener("DOMContentLoaded",applySplashGradient);
       <div class="tut-bg" style="background:linear-gradient(160deg,#1a2832 0%,#17171f 100%)"></div>
       <div class="tut-content">
         <div class="tut-icon-wrap" style="background:rgba(0,199,190,.15);border-color:rgba(0,199,190,.3)">
-          <i class="ti ti-qrcode" aria-hidden="true"></i>
+          <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="6" height="6" rx="1" aria-hidden="true"/><rect x="15" y="3" width="6" height="6" rx="1"/><rect x="3" y="15" width="6" height="6" rx="1"/><rect x="5" y="5" width="2" height="2" fill="currentColor" stroke="none"/><rect x="17" y="5" width="2" height="2" fill="currentColor" stroke="none"/><rect x="5" y="17" width="2" height="2" fill="currentColor" stroke="none"/><line x1="15" y1="15" x2="15" y2="15.01"/><line x1="18" y1="15" x2="21" y2="15"/><line x1="21" y1="18" x2="21" y2="21"/><line x1="15" y1="18" x2="18" y2="21"/></svg></i>
         </div>
         <div class="tut-title">Escanea el QR</div>
         <div class="tut-desc">Cada caja tiene su propio código QR. Pégalo en la caja física y escanéalo con cualquier celular.</div>
         <div class="tut-demo">
           <div class="tut-demo-row">
-            <div class="tut-demo-icon-wrap"><i class="ti ti-printer" aria-hidden="true"></i></div>
+            <div class="tut-demo-icon-wrap"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9" aria-hidden="true"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg></i></div>
             <div><div class="tut-demo-text">Imprime o muestra el QR</div><div class="tut-demo-sub">Desde la pantalla de la caja</div></div>
           </div>
           <div class="tut-demo-row">
-            <div class="tut-demo-icon-wrap"><i class="ti ti-device-mobile" aria-hidden="true"></i></div>
+            <div class="tut-demo-icon-wrap"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="2" aria-hidden="true"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg></i></div>
             <div><div class="tut-demo-text">Escanea con cualquier celular</div><div class="tut-demo-sub">Sin necesidad de tener la app</div></div>
           </div>
           <div class="tut-demo-row">
-            <div class="tut-demo-icon-wrap"><i class="ti ti-flashlight" aria-hidden="true"></i></div>
+            <div class="tut-demo-icon-wrap"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6c0 2-2 2-2 4v10a2 2 0 0 1-2 2h-4a2 2 0 0 1-2-2V10c0-2-2-2-2-4V2h12v4z" aria-hidden="true"/><line x1="6" y1="6" x2="18" y2="6"/><line x1="12" y1="12" x2="12" y2="12"/></svg></i></div>
             <div><div class="tut-demo-text">Linterna integrada</div><div class="tut-demo-sub">Para escanear en lugares oscuros</div></div>
           </div>
           <div class="tut-demo-row">
-            <div class="tut-demo-icon-wrap"><i class="ti ti-volume" aria-hidden="true"></i></div>
+            <div class="tut-demo-icon-wrap"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5" aria-hidden="true"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/></svg></i></div>
             <div><div class="tut-demo-text">Lee en voz alta</div><div class="tut-demo-sub">Escucha el contenido sin mirar</div></div>
           </div>
         </div>
       </div>
       <div class="tut-bottom">
         <div class="tut-dots"><div class="tut-dot"></div><div class="tut-dot"></div><div class="tut-dot"></div><div class="tut-dot active"></div><div class="tut-dot"></div><div class="tut-dot"></div><div class="tut-dot"></div></div>
-        <button class="tut-btn" onclick="nextTut()">Siguiente <i class="ti ti-arrow-right" aria-hidden="true"></i></button>
+        <button class="tut-btn" onclick="nextTut()">Siguiente <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12" aria-hidden="true"/><polyline points="12 5 19 12 12 19"/></svg></i></button>
         <button class="tut-skip" onclick="finishTut()">Saltar</button>
       </div>
     </div>
@@ -6633,32 +6805,32 @@ document.addEventListener("DOMContentLoaded",applySplashGradient);
       <div class="tut-bg" style="background:linear-gradient(160deg,#1a1e30 0%,#17171f 100%)"></div>
       <div class="tut-content">
         <div class="tut-icon-wrap" style="background:rgba(10,132,255,.18);border-color:rgba(10,132,255,.3)">
-          <i class="ti ti-search" aria-hidden="true"></i>
+          <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8" aria-hidden="true"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></i>
         </div>
         <div class="tut-title">Encuentra cualquier cosa</div>
         <div class="tut-desc">¿No recuerdas en qué caja pusiste algo? Búscalo y BoxVision te dice dónde está.</div>
         <div class="tut-demo">
           <div class="tut-demo-row">
-            <div class="tut-demo-icon-wrap"><i class="ti ti-search" aria-hidden="true"></i></div>
+            <div class="tut-demo-icon-wrap"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8" aria-hidden="true"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></i></div>
             <div><div class="tut-demo-text">Busca desde la pantalla principal</div><div class="tut-demo-sub">Escribe el nombre del objeto</div></div>
           </div>
           <div class="tut-demo-row">
-            <div class="tut-demo-icon-wrap" style="background:rgba(10,132,255,.2)"><i class="ti ti-robot" aria-hidden="true" style="color:#0A84FF"></i></div>
+            <div class="tut-demo-icon-wrap" style="background:rgba(10,132,255,.2)"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="10" rx="2" style="color:#0A84FF" aria-hidden="true"/><circle cx="12" cy="5" r="2"/><path d="M12 7v4"/><line x1="8" y1="15" x2="8" y2="15"/><line x1="16" y1="15" x2="16" y2="15"/></svg></i></div>
             <div><div class="tut-demo-text">Pregunta al asistente IA</div><div class="tut-demo-sub">Toca el botón IA y escribe lo que buscas</div></div>
           </div>
           <div class="tut-demo-row">
-            <div class="tut-demo-icon-wrap"><i class="ti ti-star" aria-hidden="true" style="color:#FFCC00"></i></div>
+            <div class="tut-demo-icon-wrap"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" style="color:#FFCC00" aria-hidden="true"/></svg></i></div>
             <div><div class="tut-demo-text">Marca favoritas</div><div class="tut-demo-sub">Las cajas más importantes siempre arriba</div></div>
           </div>
           <div class="tut-demo-row">
-            <div class="tut-demo-icon-wrap"><i class="ti ti-arrows-sort" aria-hidden="true"></i></div>
+            <div class="tut-demo-icon-wrap"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="9" x2="21" y2="9" aria-hidden="true"/><line x1="3" y1="15" x2="21" y2="15"/><polyline points="8 4 3 9 8 14"/><polyline points="16 20 21 15 16 10"/></svg></i></div>
             <div><div class="tut-demo-text">Ordena como quieras</div><div class="tut-demo-sub">Por prioridad, habitación, fecha o nombre</div></div>
           </div>
         </div>
       </div>
       <div class="tut-bottom">
         <div class="tut-dots"><div class="tut-dot"></div><div class="tut-dot"></div><div class="tut-dot"></div><div class="tut-dot"></div><div class="tut-dot active"></div><div class="tut-dot"></div><div class="tut-dot"></div></div>
-        <button class="tut-btn" onclick="nextTut()">Siguiente <i class="ti ti-arrow-right" aria-hidden="true"></i></button>
+        <button class="tut-btn" onclick="nextTut()">Siguiente <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12" aria-hidden="true"/><polyline points="12 5 19 12 12 19"/></svg></i></button>
         <button class="tut-skip" onclick="finishTut()">Saltar</button>
       </div>
     </div>
@@ -6668,32 +6840,32 @@ document.addEventListener("DOMContentLoaded",applySplashGradient);
       <div class="tut-bg" style="background:linear-gradient(160deg,#1e1a18 0%,#17171f 100%)"></div>
       <div class="tut-content">
         <div class="tut-icon-wrap" style="background:rgba(255,149,0,.15);border-color:rgba(255,149,0,.3)">
-          <i class="ti ti-lock" aria-hidden="true"></i>
+          <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" aria-hidden="true"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></i>
         </div>
         <div class="tut-title">Protege tus cajas</div>
         <div class="tut-desc">Algunas cajas merecen más privacidad. BoxVision tiene varias formas de protegerlas.</div>
         <div class="tut-demo">
           <div class="tut-demo-row">
-            <div class="tut-demo-icon-wrap"><i class="ti ti-lock-password" aria-hidden="true"></i></div>
+            <div class="tut-demo-icon-wrap"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" aria-hidden="true"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/><circle cx="12" cy="16" r="1" fill="currentColor" stroke="none"/></svg></i></div>
             <div><div class="tut-demo-text">Contraseña por caja</div><div class="tut-demo-sub">Nadie puede abrirla sin el código</div></div>
           </div>
           <div class="tut-demo-row">
-            <div class="tut-demo-icon-wrap"><i class="ti ti-lock" aria-hidden="true"></i></div>
+            <div class="tut-demo-icon-wrap"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" aria-hidden="true"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></i></div>
             <div><div class="tut-demo-text">Sellar una caja</div><div class="tut-demo-sub">Cuando terminaste de empacar</div></div>
           </div>
           <div class="tut-demo-row">
-            <div class="tut-demo-icon-wrap"><i class="ti ti-photo" aria-hidden="true"></i></div>
+            <div class="tut-demo-icon-wrap"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" aria-hidden="true"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg></i></div>
             <div><div class="tut-demo-text">Foto de portada</div><div class="tut-demo-sub">Pon una foto para identificarla rápido</div></div>
           </div>
           <div class="tut-demo-row">
-            <div class="tut-demo-icon-wrap" style="background:rgba(37,211,102,.15)"><i class="ti ti-brand-whatsapp" aria-hidden="true" style="color:#25D366"></i></div>
+            <div class="tut-demo-icon-wrap" style="background:rgba(37,211,102,.15)"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21l1.65-3.8a9 9 0 1 1 3.4 2.9L3 21" style="color:#25D366" aria-hidden="true"/><path d="M9 10c0 5 3.5 7.5 7.5 3.5"/></svg></i></div>
             <div><div class="tut-demo-text">Comparte por WhatsApp</div><div class="tut-demo-sub">Envía el contenido a quien necesites</div></div>
           </div>
         </div>
       </div>
       <div class="tut-bottom">
         <div class="tut-dots"><div class="tut-dot"></div><div class="tut-dot"></div><div class="tut-dot"></div><div class="tut-dot"></div><div class="tut-dot"></div><div class="tut-dot active"></div><div class="tut-dot"></div></div>
-        <button class="tut-btn" onclick="nextTut()">Siguiente <i class="ti ti-arrow-right" aria-hidden="true"></i></button>
+        <button class="tut-btn" onclick="nextTut()">Siguiente <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12" aria-hidden="true"/><polyline points="12 5 19 12 12 19"/></svg></i></button>
         <button class="tut-skip" onclick="finishTut()">Saltar</button>
       </div>
     </div>
@@ -6703,32 +6875,32 @@ document.addEventListener("DOMContentLoaded",applySplashGradient);
       <div class="tut-bg" style="background:linear-gradient(160deg,#17221f 0%,#17171f 100%)"></div>
       <div class="tut-content">
         <div class="tut-icon-wrap" style="background:rgba(52,199,89,.15);border-color:rgba(52,199,89,.3)">
-          <i class="ti ti-cloud" aria-hidden="true"></i>
+          <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z" aria-hidden="true"/></svg></i>
         </div>
         <div class="tut-title">Todo en tu cuenta</div>
         <div class="tut-desc">Iniciaste sesión con Google. Tus cajas están seguras en la nube y disponibles desde cualquier dispositivo.</div>
         <div class="tut-demo">
           <div class="tut-demo-row">
-            <div class="tut-demo-icon-wrap"><i class="ti ti-device-mobile" aria-hidden="true"></i></div>
+            <div class="tut-demo-icon-wrap"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="2" aria-hidden="true"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg></i></div>
             <div><div class="tut-demo-text">Accede desde cualquier celular</div><div class="tut-demo-sub">Tus cajas siempre disponibles</div></div>
           </div>
           <div class="tut-demo-row">
-            <div class="tut-demo-icon-wrap"><i class="ti ti-refresh" aria-hidden="true"></i></div>
+            <div class="tut-demo-icon-wrap"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10" aria-hidden="true"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg></i></div>
             <div><div class="tut-demo-text">Sincronización automática</div><div class="tut-demo-sub">Los cambios se guardan al instante</div></div>
           </div>
           <div class="tut-demo-row">
-            <div class="tut-demo-icon-wrap"><i class="ti ti-users" aria-hidden="true"></i></div>
+            <div class="tut-demo-icon-wrap"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" aria-hidden="true"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></i></div>
             <div><div class="tut-demo-text">Cada cuenta es independiente</div><div class="tut-demo-sub">Tu familia puede tener sus propias cajas</div></div>
           </div>
           <div class="tut-demo-row">
-            <div class="tut-demo-icon-wrap"><i class="ti ti-layout-grid" aria-hidden="true"></i></div>
+            <div class="tut-demo-icon-wrap"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1" aria-hidden="true"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg></i></div>
             <div><div class="tut-demo-text">Mapa de habitaciones</div><div class="tut-demo-sub">Organiza tus cajas por espacios</div></div>
           </div>
         </div>
       </div>
       <div class="tut-bottom">
         <div class="tut-dots"><div class="tut-dot"></div><div class="tut-dot"></div><div class="tut-dot"></div><div class="tut-dot"></div><div class="tut-dot"></div><div class="tut-dot"></div><div class="tut-dot active"></div></div>
-        <button class="tut-btn" onclick="finishTut()"><i class="ti ti-rocket" aria-hidden="true"></i> ¡Listo, empezar!</button>
+        <button class="tut-btn" onclick="finishTut()"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z" aria-hidden="true"/><path d="m12 15-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z"/><path d="M9 12H4s.55-3.03 2-4c1.62-1.08 5 0 5 0"/><path d="M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5"/></svg></i> ¡Listo, empezar!</button>
       </div>
     </div>
 
@@ -8233,7 +8405,7 @@ if(auth){
   <div class="update-notification-content">
     <div class="update-notification-left">
       <div class="update-notification-icon">
-        <i class="ti ti-cloud-download"></i>
+        <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="8 17 12 21 16 17"/><line x1="12" y1="12" x2="12" y2="21"/><path d="M20.88 18.09A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.29"/></svg></i>
       </div>
       <div class="update-notification-text">
         <div class="update-notification-title">Actualización disponible</div>
