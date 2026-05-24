@@ -3296,6 +3296,14 @@ if(!auth){
           </div>
           <span class="settings-chevron">›</span>
         </div>
+        <div class="settings-row settings-tappable" onclick="window.openChangelog&&openChangelog()">
+          <div class="settings-row-icon sri-purple">✨</div>
+          <div class="settings-row-text">
+            <div class="settings-label">Ver novedades</div>
+            <div class="settings-sub" id="settingsChangelogSub">Cargando versión…</div>
+          </div>
+          <span class="settings-chevron">›</span>
+        </div>
         <div class="settings-row settings-tappable" id="settingsUpdateRow" onclick="bvCheckUpdate()">
           <div class="settings-row-icon sri-green">🔄</div>
           <div class="settings-row-text">
@@ -5643,6 +5651,15 @@ function goSettings(){
       fbSub.textContent = 'Reporta bugs o sugiere mejoras';
       fbSub.style.color = '';
     }
+  }
+
+  // Mostrar versión actual en el label de "Ver novedades"
+  const clSub = document.getElementById('settingsChangelogSub');
+  if(clSub){
+    fetch('./config.json?_='+Date.now(),{cache:'no-store'})
+      .then(r=>r.json())
+      .then(cfg=>{ if(clSub) clSub.textContent = 'Versión '+cfg.version+' · '+cfg.released; })
+      .catch(()=>{ if(clSub) clSub.textContent = 'Ver cambios de esta versión'; });
   }
 }
 
