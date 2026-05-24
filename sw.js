@@ -1,4 +1,4 @@
-// BoxVision Service Worker v2.1
+// BoxVision Service Worker v2.2
 // ✓ Cachea archivos para funcionamiento offline
 // ✓ Detecta actualizaciones y muestra el banner al usuario
 // ✓ NO se activa solo — espera que el usuario toque "Actualizar"
