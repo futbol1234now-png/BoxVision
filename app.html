@@ -8903,10 +8903,13 @@ if(auth){
               swReg = reg;
               console.log('✅ SW registrado');
 
-              // Chequear cada 30 min si hay nueva versión
+              // Chequear inmediatamente si hay versión nueva en el servidor
+              reg.update().catch(function(){});
+
+              // Chequear cada 2 min si hay nueva versión
               setInterval(function () {
                 if (navigator.onLine) reg.update().catch(function(){});
-              }, 30 * 60 * 1000);
+              }, 2 * 60 * 1000);
 
               reg.addEventListener('updatefound', function () {
                 var nw = reg.installing;
@@ -8925,7 +8928,13 @@ if(auth){
     });
 
     navigator.serviceWorker.addEventListener('message', function (e) {
-      if (e.data && e.data.type === 'SW_ACTIVATED') showUpdateNotification();
+      if (e.data && e.data.type === 'SW_ACTIVATED') {
+        // El SW nuevo ya está activo = actualización completada
+        // Mostrar modal de novedades en vez del banner de actualizar
+        setTimeout(function(){
+          if(typeof window.openChangelog === 'function') window.openChangelog();
+        }, 600);
+      }
     });
   }
 
