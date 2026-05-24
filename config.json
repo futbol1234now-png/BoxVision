@@ -1,48 +1,12 @@
 {
-  "version": "2.6.2",
-  "released": "2025-05-23",
+  "version": "2.6.3",
+  "released": "2026-05-24",
   "changelog": [
     {
-      "type": "fix",
-      "icon": "🛡️",
-      "title": "Filtros protegidos contra inyección",
-      "desc": "Los filtros por ubicación y etiquetas ya no permiten que un nombre de caja ejecute código."
-    },
-    {
-      "type": "fix",
-      "icon": "🔑",
-      "title": "API key de Box IA se guarda correctamente",
-      "desc": "La key ahora se cifra en sessionStorage. Antes el test de conexión fallaba silenciosamente."
-    },
-    {
-      "type": "fix",
-      "icon": "💾",
-      "title": "Restaurar backup pide confirmación",
-      "desc": "Ya no reemplaza tus cajas con un solo toque. Ahora muestra un diálogo de advertencia."
-    },
-    {
-      "type": "imp",
-      "icon": "🎤",
-      "title": "Errores de micrófono en español",
-      "desc": "Los errores de voz se muestran en texto claro. Si el micrófono está denegado, el botón se desactiva."
-    },
-    {
-      "type": "imp",
-      "icon": "⚡",
-      "title": "Íconos IA sin peticiones duplicadas",
-      "desc": "Al recargar la grilla ya no se hacen varias solicitudes simultáneas para el mismo ícono."
-    },
-    {
-      "type": "fix",
-      "icon": "🔗",
-      "title": "Link de WhatsApp ya no da 404",
-      "desc": "La URL generada al compartir una caja era incorrecta cuando la app estaba en la raíz del dominio."
-    },
-    {
-      "type": "imp",
-      "icon": "🕐",
-      "title": "Reloj no consume recursos innecesarios",
-      "desc": "El intervalo del reloj se detiene al navegar a pantallas que no lo necesitan."
+      "type": "new",
+      "icon": "✨",
+      "title": "Botón Ver novedades en Ajustes",
+      "desc": "Ahora podés ver los cambios de cualquier versión desde Ajustes, sin esperar una actualización."
     }
   ]
 }
