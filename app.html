@@ -4749,13 +4749,10 @@ function _showScanFlashPanel(){
 }
 
 function _launchScanCamera(){
-  // Apagar flash (la foto se toma con el flash nativo del SO si el user lo quiere)
-  // Mantenemos el flash encendido para iluminar antes de abrir la cámara
   document.getElementById("scanFlashPanel")?.remove();
-  // Pequeño delay para que el panel cierre limpio
-  setTimeout(async function(){
-    // Apagar flash tras lanzar la cámara nativa (el SO toma el control)
-    if(_scanTorchOn) await _stopScanFlash();
+  // NO apagamos el flash — se mantiene encendido mientras el usuario toma la foto
+  // Se apagará automáticamente al confirmar, cancelar o cerrar el modal de resultado
+  setTimeout(function(){
     document.getElementById("scanObjInput").click();
   }, 180);
 }
