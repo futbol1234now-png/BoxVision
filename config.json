@@ -3,10 +3,16 @@
   "released": "2026-05-24",
   "changelog": [
     {
+      "type": "new",
+      "icon": "📷",
+      "title": "Búsqueda por foto",
+      "desc": "Sacás foto de un objeto y la IA identifica qué es y en qué caja está. Usá el ícono de cámara en la barra de búsqueda."
+    },
+    {
       "type": "imp",
       "icon": "⚡",
       "title": "Actualizaciones más rápidas",
-      "desc": "La app ahora busca versiones nuevas al abrirse y cada 2 minutos. El banner aparece mucho más rápido."
+      "desc": "La app ahora busca versiones nuevas al abrirse y cada 2 minutos."
     }
   ]
 }
