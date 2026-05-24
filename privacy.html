@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>Política de Privacidad — BoxVision</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+:root{
+  --bg:#17171f;--card:#1e1e28;--text:#FFFFFF;--muted:#8E8E93;
+  --border:rgba(255,255,255,0.08);--accent:#007AFF;--green:#34C759;
+  --topbar:rgba(23,23,31,0.88);--topbarborder:rgba(255,255,255,0.07);
+}
+body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','Segoe UI',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;}
+body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse 80% 50% at 15% 20%,rgba(10,132,255,0.07) 0%,transparent 60%),radial-gradient(ellipse 60% 40% at 85% 70%,rgba(88,86,214,0.06) 0%,transparent 60%);pointer-events:none;z-index:0;}
+
+/* Topbar */
+.topbar{position:sticky;top:0;z-index:200;background:var(--topbar);border-bottom:0.5px solid var(--topbarborder);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);padding:14px 16px 12px;display:flex;align-items:center;gap:10px;}
+.topbar-back{width:36px;height:36px;border-radius:10px;background:rgba(255,255,255,.08);border:0.5px solid rgba(255,255,255,.1);display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--accent);font-size:18px;transition:background .15s;text-decoration:none;flex-shrink:0;}
+.topbar-back:active{background:rgba(255,255,255,.14);}
+.topbar-info{flex:1;min-width:0;}
+.topbar-title{font-size:17px;font-weight:700;letter-spacing:-.3px}
+.topbar-sub{font-size:11px;color:var(--muted);margin-top:1px}
+
+/* Lang switcher */
+.lang-switcher{display:flex;background:rgba(255,255,255,.08);border:0.5px solid rgba(255,255,255,.12);border-radius:10px;overflow:hidden;flex-shrink:0;}
+.lang-btn{padding:6px 11px;font-size:12px;font-weight:700;cursor:pointer;color:var(--muted);transition:all .18s;border:none;background:transparent;letter-spacing:.3px;}
+.lang-btn.active{background:var(--accent);color:#fff;border-radius:9px;}
+
+/* Hero */
+.hero{position:relative;overflow:hidden;background:linear-gradient(135deg,#0A84FF,#5856D6 60%,#AF52DE);padding:32px 20px 28px;text-align:center;}
+.hero::after{content:'';position:absolute;inset:0;background:linear-gradient(180deg,transparent 40%,rgba(23,23,31,.6));pointer-events:none;}
+.hero-icon{font-size:52px;position:relative;z-index:1;margin-bottom:10px;line-height:1;filter:drop-shadow(0 4px 16px rgba(0,0,0,.4));}
+.hero-title{font-size:26px;font-weight:800;letter-spacing:-.5px;position:relative;z-index:1;margin-bottom:6px;}
+.hero-sub{font-size:13px;color:rgba(255,255,255,.7);position:relative;z-index:1;line-height:1.5;}
+.hero-badge{display:inline-flex;align-items:center;gap:6px;margin-top:14px;position:relative;z-index:1;background:rgba(255,255,255,.15);border:0.5px solid rgba(255,255,255,.2);backdrop-filter:blur(12px);border-radius:99px;padding:6px 14px;font-size:12px;font-weight:600;color:rgba(255,255,255,.9);}
+
+/* Body */
+.page-body{padding:0 14px 80px;max-width:680px;margin:0 auto;position:relative;z-index:1;}
+.sec{background:var(--card);border-radius:20px;margin-top:14px;overflow:hidden;border:0.5px solid var(--border);box-shadow:0 2px 12px rgba(0,0,0,.12);}
+.sec-header{display:flex;align-items:center;gap:10px;padding:16px 18px 0;margin-bottom:4px;}
+.sec-icon{width:30px;height:30px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0;}
+.sec-title{font-size:13px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.6px;}
+.sec-body{padding:10px 18px 18px;font-size:15px;line-height:1.65;color:var(--text);}
+.sec-body p{margin-bottom:12px;}.sec-body p:last-child{margin-bottom:0;}
+.sec-body ul{padding-left:18px;margin-bottom:12px;}.sec-body ul li{margin-bottom:7px;color:rgba(255,255,255,.85);}
+.sec-body strong{color:#fff;font-weight:700;}
+.highlight{background:rgba(10,132,255,.1);border:0.5px solid rgba(10,132,255,.25);border-radius:14px;padding:14px 16px;margin:12px 0;font-size:14px;line-height:1.6;color:rgba(255,255,255,.85);}
+.highlight.green{background:rgba(52,199,89,.1);border-color:rgba(52,199,89,.25);}
+.highlight.yellow{background:rgba(255,204,0,.1);border-color:rgba(255,204,0,.25);}
+.data-row{display:flex;align-items:flex-start;gap:12px;padding:12px 0;border-bottom:0.5px solid var(--border);}
+.data-row:last-child{border:none}
+.data-dot{width:8px;height:8px;border-radius:50%;background:var(--accent);flex-shrink:0;margin-top:5px;}
+.data-dot.green{background:var(--green);}.data-dot.orange{background:#FF9500;}
+.data-text{font-size:14px;line-height:1.5;color:rgba(255,255,255,.85);}.data-text strong{color:#fff;}
+.contact-row{display:flex;align-items:center;gap:12px;padding:14px 18px;border-bottom:0.5px solid var(--border);text-decoration:none;color:inherit;transition:background .12s;cursor:pointer;}
+.contact-row:last-child{border:none;}.contact-row:active{background:rgba(255,255,255,.04);}
+.contact-icon{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;}
+.contact-label{flex:1;font-size:15px;font-weight:500;}.contact-val{font-size:13px;color:var(--accent);}
+.page-footer{text-align:center;padding:32px 20px 20px;color:var(--muted);font-size:12px;line-height:1.7;}
+.page-footer a{color:var(--accent);text-decoration:none;}
+
+/* Lang content toggle */
+[data-lang]{display:none;}
+[data-lang].visible{display:block;}
+.hero-title[data-lang], .hero-sub[data-lang]{display:none;}
+.hero-title[data-lang].visible, .hero-sub[data-lang].visible{display:block;}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <a class="topbar-back" onclick="window.close()" href="javascript:history.back()">‹</a>
+  <div class="topbar-info">
+    <div class="topbar-title" data-lang="es" id="tb-title-es">Política de Privacidad</div>
+    <div class="topbar-title" data-lang="en" id="tb-title-en">Privacy Policy</div>
+    <div class="topbar-sub" data-lang="es">BoxVision · Última actualización: mayo 2026</div>
+    <div class="topbar-sub" data-lang="en">BoxVision · Last updated: May 2026</div>
+  </div>
+  <div class="lang-switcher">
+    <button class="lang-btn active" id="btn-es" onclick="setLang('es')">ES</button>
+    <button class="lang-btn" id="btn-en" onclick="setLang('en')">EN</button>
+  </div>
+</div>
+
+<div class="hero">
+  <div class="hero-icon">🔒</div>
+  <div class="hero-title" data-lang="es">Tu privacidad importa</div>
+  <div class="hero-title" data-lang="en">Your privacy matters</div>
+  <div class="hero-sub" data-lang="es">Queremos que sepas exactamente qué datos guardamos<br>y cómo los protegemos.</div>
+  <div class="hero-sub" data-lang="en">We want you to know exactly what data we store<br>and how we protect it.</div>
+  <div class="hero-badge">📅 2026</div>
+</div>
+
+<div class="page-body">
+
+  <!-- INTRO -->
+  <div class="sec">
+    <div class="sec-header">
+      <div class="sec-icon" style="background:rgba(10,132,255,.15);color:#007AFF">📋</div>
+      <div class="sec-title" data-lang="es">Resumen</div>
+      <div class="sec-title" data-lang="en">Summary</div>
+    </div>
+    <div class="sec-body">
+      <div data-lang="es">
+        <p>BoxVision es una aplicación para organizar cajas de mudanza. Esta política explica qué información recopilamos, cómo la usamos y cómo la protegemos.</p>
+        <div class="highlight green">✅ <strong>En resumen:</strong> solo guardamos lo que necesitas para que la app funcione. No vendemos tus datos, no mostramos publicidad y tú tienes control total sobre tu información.</div>
+      </div>
+      <div data-lang="en">
+        <p>BoxVision is an app for organizing moving boxes. This policy explains what information we collect, how we use it, and how we protect it.</p>
+        <div class="highlight green">✅ <strong>In short:</strong> we only store what you need for the app to work. We don't sell your data, we don't show ads, and you have full control over your information.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- DATA WE COLLECT -->
+  <div class="sec">
+    <div class="sec-header">
+      <div class="sec-icon" style="background:rgba(88,86,214,.15);color:#5856D6">📊</div>
+      <div class="sec-title" data-lang="es">Datos que recopilamos</div>
+      <div class="sec-title" data-lang="en">Data we collect</div>
+    </div>
+    <div class="sec-body">
+      <div data-lang="es">
+        <div class="data-row"><div class="data-dot"></div><div class="data-text"><strong>Cuenta de Google o email:</strong> nombre, dirección de correo y foto de perfil, únicamente para identificar tu cuenta y sincronizar tus cajas.</div></div>
+        <div class="data-row"><div class="data-dot"></div><div class="data-text"><strong>Contenido de tus cajas:</strong> nombres de cajas, objetos, ubicaciones, fotos y notas. Esta información es <em>tuya</em> y se guarda en tu cuenta.</div></div>
+        <div class="data-row"><div class="data-dot green"></div><div class="data-text"><strong>Datos técnicos mínimos:</strong> versión del navegador y sistema operativo, solo para diagnosticar errores.</div></div>
+        <div class="data-row"><div class="data-dot orange"></div><div class="data-text"><strong>Feedback voluntario:</strong> si nos enviás un comentario, guardamos ese mensaje junto con tu email.</div></div>
+      </div>
+      <div data-lang="en">
+        <div class="data-row"><div class="data-dot"></div><div class="data-text"><strong>Google account or email:</strong> name, email address and profile photo, only to identify your account and sync your boxes.</div></div>
+        <div class="data-row"><div class="data-dot"></div><div class="data-text"><strong>Box contents:</strong> box names, items, locations, photos and notes. This information is <em>yours</em> and is stored in your account.</div></div>
+        <div class="data-row"><div class="data-dot green"></div><div class="data-text"><strong>Minimal technical data:</strong> browser version and OS, only to diagnose errors if something breaks.</div></div>
+        <div class="data-row"><div class="data-dot orange"></div><div class="data-text"><strong>Voluntary feedback:</strong> if you send us a message from the app, we store that message along with your email.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- HOW WE USE IT -->
+  <div class="sec">
+    <div class="sec-header">
+      <div class="sec-icon" style="background:rgba(52,199,89,.15);color:#34C759">🎯</div>
+      <div class="sec-title" data-lang="es">Para qué usamos tus datos</div>
+      <div class="sec-title" data-lang="en">How we use your data</div>
+    </div>
+    <div class="sec-body">
+      <div data-lang="es">
+        <ul>
+          <li>Sincronizar tus cajas entre dispositivos</li>
+          <li>Permitirte acceder a tu información desde cualquier celular</li>
+          <li>Respaldos automáticos para que no pierdas nada</li>
+          <li>Responder a tu feedback si nos escribes</li>
+          <li>Mejorar la app con datos agregados y anónimos</li>
+        </ul>
+        <div class="highlight">🚫 <strong>Nunca usamos tus datos para:</strong> publicidad personalizada, perfiles de comportamiento, venta a terceros, ni ningún propósito fuera de hacer que BoxVision funcione mejor para ti.</div>
+      </div>
+      <div data-lang="en">
+        <ul>
+          <li>Sync your boxes across devices</li>
+          <li>Let you access your information from any phone</li>
+          <li>Automatic backups so you never lose anything</li>
+          <li>Reply to your feedback if you write to us</li>
+          <li>Improve the app using aggregated, anonymous data</li>
+        </ul>
+        <div class="highlight">🚫 <strong>We never use your data for:</strong> personalized advertising, behavioral profiling, selling to third parties, or any purpose other than making BoxVision work better for you.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- STORAGE & SECURITY -->
+  <div class="sec">
+    <div class="sec-header">
+      <div class="sec-icon" style="background:rgba(255,149,0,.15);color:#FF9500">☁️</div>
+      <div class="sec-title" data-lang="es">Almacenamiento y seguridad</div>
+      <div class="sec-title" data-lang="en">Storage & security</div>
+    </div>
+    <div class="sec-body">
+      <div data-lang="es">
+        <p>Tus datos se guardan en <strong>Google Firebase / Firestore</strong>, con encriptación en tránsito (HTTPS/TLS) y en reposo.</p>
+        <p>Las reglas de Firestore están configuradas para que <strong>solo tú puedas leer y escribir tus datos</strong>.</p>
+        <div class="highlight yellow">⚠️ <strong>Fotos:</strong> si compartís un código QR, quien lo escanee podrá ver el contenido de esa caja.</div>
+      </div>
+      <div data-lang="en">
+        <p>Your data is stored in <strong>Google Firebase / Firestore</strong>, with encryption in transit (HTTPS/TLS) and at rest.</p>
+        <p>Firestore security rules are configured so that <strong>only you can read and write your own data</strong>.</p>
+        <div class="highlight yellow">⚠️ <strong>Photos:</strong> if you share a QR code, anyone who scans it will be able to see the contents of that box.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- YOUR RIGHTS -->
+  <div class="sec">
+    <div class="sec-header">
+      <div class="sec-icon" style="background:rgba(175,82,222,.15);color:#AF52DE">⚖️</div>
+      <div class="sec-title" data-lang="es">Tus derechos</div>
+      <div class="sec-title" data-lang="en">Your rights</div>
+    </div>
+    <div class="sec-body">
+      <div data-lang="es">
+        <div class="data-row"><div class="data-dot"></div><div class="data-text"><strong>Acceso:</strong> podés ver todos tus datos directamente en la app.</div></div>
+        <div class="data-row"><div class="data-dot"></div><div class="data-text"><strong>Eliminación:</strong> desde Ajustes → "Borrar todos los datos" eliminás todo permanentemente, incluyendo en la nube.</div></div>
+        <div class="data-row"><div class="data-dot"></div><div class="data-text"><strong>Cierre de cuenta:</strong> si cerrás sesión y borrás tus datos, no conservamos nada tuyo.</div></div>
+        <div class="data-row"><div class="data-dot green"></div><div class="data-text"><strong>Contacto:</strong> escribinos a <strong>futbol1234now@gmail.com</strong>.</div></div>
+      </div>
+      <div data-lang="en">
+        <div class="data-row"><div class="data-dot"></div><div class="data-text"><strong>Access:</strong> you can view all your data directly in the app at any time.</div></div>
+        <div class="data-row"><div class="data-dot"></div><div class="data-text"><strong>Deletion:</strong> go to Settings → "Delete all data" to permanently erase everything, including from the cloud.</div></div>
+        <div class="data-row"><div class="data-dot"></div><div class="data-text"><strong>Account closure:</strong> if you sign out and delete your data, we retain nothing.</div></div>
+        <div class="data-row"><div class="data-dot green"></div><div class="data-text"><strong>Contact:</strong> email us at <strong>futbol1234now@gmail.com</strong>.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- COOKIES -->
+  <div class="sec">
+    <div class="sec-header">
+      <div class="sec-icon" style="background:rgba(255,59,48,.12);color:#FF3B30">🍪</div>
+      <div class="sec-title" data-lang="es">Servicios de terceros</div>
+      <div class="sec-title" data-lang="en">Third-party services</div>
+    </div>
+    <div class="sec-body">
+      <div data-lang="es">
+        <ul>
+          <li><strong>Google Firebase</strong> — autenticación y base de datos en la nube</li>
+          <li><strong>EmailJS</strong> — envío de feedback por correo (solo si lo activás)</li>
+          <li><strong>Tabler Icons</strong> — librería de íconos (sin tracking)</li>
+        </ul>
+        <p>No usamos cookies de rastreo, Google Analytics, ni píxeles de publicidad.</p>
+      </div>
+      <div data-lang="en">
+        <ul>
+          <li><strong>Google Firebase</strong> — authentication and cloud database</li>
+          <li><strong>EmailJS</strong> — feedback email delivery (only if you activate it)</li>
+          <li><strong>Tabler Icons</strong> — UI icon library (no tracking)</li>
+        </ul>
+        <p>We don't use tracking cookies, Google Analytics, or advertising pixels.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- MINORS -->
+  <div class="sec">
+    <div class="sec-header">
+      <div class="sec-icon" style="background:rgba(255,204,0,.12);color:#FFCC00">👶</div>
+      <div class="sec-title" data-lang="es">Menores de edad</div>
+      <div class="sec-title" data-lang="en">Minors</div>
+    </div>
+    <div class="sec-body">
+      <div data-lang="es"><p>BoxVision está diseñado para mayores de 13 años. Si creés que un menor ha creado una cuenta, contactanos para eliminarla.</p></div>
+      <div data-lang="en"><p>BoxVision is designed for users aged 13 and over. If you believe a minor has created an account, contact us to have it removed.</p></div>
+    </div>
+  </div>
+
+  <!-- CHANGES -->
+  <div class="sec">
+    <div class="sec-header">
+      <div class="sec-icon" style="background:rgba(255,255,255,.07);color:var(--muted)">🔄</div>
+      <div class="sec-title" data-lang="es">Cambios en esta política</div>
+      <div class="sec-title" data-lang="en">Changes to this policy</div>
+    </div>
+    <div class="sec-body">
+      <div data-lang="es"><p>Si actualizamos esta política, lo notificaremos dentro de la app. La fecha de la última actualización siempre estará visible en la parte superior de esta página.</p></div>
+      <div data-lang="en"><p>If we update this policy, we'll notify you inside the app. The date of the last update will always be visible at the top of this page.</p></div>
+    </div>
+  </div>
+
+  <!-- CONTACT -->
+  <div class="sec" style="margin-bottom:0">
+    <div class="sec-header">
+      <div class="sec-icon" style="background:rgba(10,132,255,.15);color:#007AFF">✉️</div>
+      <div class="sec-title" data-lang="es">Contacto</div>
+      <div class="sec-title" data-lang="en">Contact</div>
+    </div>
+    <a class="contact-row" href="mailto:futbol1234now@gmail.com?subject=Privacy BoxVision">
+      <div class="contact-icon" style="background:rgba(10,132,255,.15)">📧</div>
+      <div class="contact-label" data-lang="es">Escribirnos por email</div>
+      <div class="contact-label" data-lang="en">Send us an email</div>
+      <div class="contact-val">futbol1234now@gmail.com</div>
+    </a>
+  </div>
+
+  <div class="page-footer">
+    <div style="font-size:24px;margin-bottom:8px">📦</div>
+    <strong style="color:#fff;font-size:14px">BoxVision</strong><br>
+    <span data-lang="es">Organizador inteligente de mudanzas</span>
+    <span data-lang="en">Smart moving box organizer</span><br><br>
+    © 2026 BoxVision ·
+    <span data-lang="es">Todos los derechos reservados</span>
+    <span data-lang="en">All rights reserved</span><br>
+    <a href="terms.html" target="_blank" data-lang="es">Términos de uso</a>
+    <a href="terms.html" target="_blank" data-lang="en">Terms of use</a>
+    · <a href="mailto:futbol1234now@gmail.com">Contacto</a>
+  </div>
+
+</div>
+
+<script>
+function setLang(lang){
+  document.querySelectorAll('[data-lang]').forEach(el=>{
+    el.classList.toggle('visible', el.dataset.lang === lang);
+  });
+  document.getElementById('btn-es').classList.toggle('active', lang==='es');
+  document.getElementById('btn-en').classList.toggle('active', lang==='en');
+  document.documentElement.lang = lang;
+  localStorage.setItem('bv_lang', lang);
+}
+// Init
+const saved = localStorage.getItem('bv_lang') || 'es';
+setLang(saved);
+</script>
+</body>
+</html>
