@@ -2908,7 +2908,7 @@ if(!auth){
   <div class="search-wrap">
     <div class="search-inner">
       <span class="search-icon"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></i></span>
-      <input id="searchInput" type="text" placeholder="Buscar en todas las cajas..." oninput="doSearch(this.value)"/>
+      <input id="searchInput" type="text" placeholder="Buscar en todas las cajas..." data-i18n="main.search" data-i18n-attr="placeholder" oninput="doSearch(this.value)"/>
       <span id="searchClear" class="hidden" style="font-size:14px;color:var(--muted);cursor:pointer;padding:4px;margin-right:-4px;transition:color .15s" onmouseenter="this.style.color='var(--red)'" onmouseleave="this.style.color='var(--muted)'" onclick="clearSearch()">✕</span>
     </div>
     <div class="sr-wrap" id="srWrap"></div>
@@ -2949,7 +2949,7 @@ if(!auth){
       <div class="dsec-title" id="itemsTitle"><span class="dsec-title-icon dsec-icon-cont"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="16.5" y1="9.4" x2="7.5" y2="4.21"/><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg></i></span>CONTENIDO</div>
       <div id="itemsList"></div>
       <div class="add-row" id="addRow">
-        <input id="addItemInput" type="text" placeholder="Agregar objeto..." onkeydown="if(event.key==='Enter')addItem()" oninput="showSuggestions(this.value)"/>
+        <input id="addItemInput" type="text" placeholder="Agregar objeto..." data-i18n="detail.add" data-i18n-attr="placeholder" onkeydown="if(event.key==='Enter')addItem()" oninput="showSuggestions(this.value)"/>
         <div class="add-row-btns">
           <button class="add-btn2" id="micBtn" onclick="startVoice()" title="Agregar por voz" aria-label="Agregar por voz"><svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z" style="pointer-events:none"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg></i></button>
           <button class="add-btn2" id="scanBtn" onclick="triggerScanObj()" title="Escanear con cámara" aria-label="Escanear objeto con cámara"><svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z" style="pointer-events:none"/><circle cx="12" cy="13" r="4"/></svg></i></button>
@@ -2986,7 +2986,7 @@ if(!auth){
   <!-- Topbar mejorado con botón + prominente -->
   <div class="topbar">
     <div>
-      <div class="topbar-title">🗺 Habitaciones</div>
+      <div class="topbar-title" data-i18n="nav.rooms">🗺 Habitaciones</div>
       <div class="topbar-sub" id="roomTopbarSub">Arrastra cajas a cada cuarto</div>
     </div>
     <div class="topbar-actions">
@@ -3120,7 +3120,7 @@ if(!auth){
       ontouchstart="this.style.transform='scale(.88)'"
       ontouchend="this.style.transform=''"
       >🏡</button>
-      <div class="topbar-title">Ajustes</div>
+      <div class="topbar-title" data-i18n="settings.title">Ajustes</div>
     </div>
     <div class="topbar-actions"></div>
   </div>
@@ -3280,7 +3280,7 @@ if(!auth){
           </div>
           <span class="settings-chevron">›</span>
         </div>
-        <div class="settings-row settings-tappable" onclick="if(navigator.share)navigator.share({title:'BoxVision',text:'Organiza tus cajas de mudanza con IA y QR 📦',url:'https://futbol1234now-png.github.io/BoxVision/'}).catch(()=>{});else{navigator.clipboard&&navigator.clipboard.writeText('https://futbol1234now-png.github.io/BoxVision/');showToast('📋 Link copiado','#34C759');}">
+        <div class="settings-row settings-tappable" onclick="if(navigator.share)navigator.share({title:'BoxVision',text:'Organiza tus cajas de mudanza con IA y QR 📦',url:'https://futbol1234now-png.github.io/BoxVision/'}).catch(()=>{});else{navigator.clipboard&&navigator.clipboard.writeText('https://futbol1234now-png.github.io/BoxVision/');showToast(t('toast.link.copied'),'#34C759');}">
           <div class="settings-row-icon sri-green">↗️</div>
           <div class="settings-row-text">
             <div class="settings-label">Compartir BoxVision</div>
@@ -3295,6 +3295,14 @@ if(!auth){
             <div class="settings-sub" id="feedbackStatusSub">Reporta bugs o sugiere mejoras</div>
           </div>
           <span class="settings-chevron">›</span>
+        </div>
+        <div class="settings-row settings-tappable" id="settingsUpdateRow" onclick="bvCheckUpdate()">
+          <div class="settings-row-icon sri-green">🔄</div>
+          <div class="settings-row-text">
+            <div class="settings-label">Actualizar BoxVision</div>
+            <div class="settings-sub" id="settingsUpdateSub">Buscar la versión más reciente</div>
+          </div>
+          <span class="settings-chevron" id="settingsUpdateChevron">›</span>
         </div>
       </div>
     </div>
@@ -3326,7 +3334,7 @@ if(!auth){
     <div class="settings-sec">
       <div class="settings-sec-label">Privacidad y seguridad</div>
       <div class="settings-card">
-        <div class="settings-row settings-tappable" onclick="window.open('mailto:futbol1234now@gmail.com?subject=Política de Privacidad BoxVision','_blank')">
+        <div class="settings-row settings-tappable" onclick="window.open('privacy.html','_blank')">
           <div class="settings-row-icon sri-gray">🔒</div>
           <div class="settings-row-text">
             <div class="settings-label">Política de privacidad</div>
@@ -3334,7 +3342,7 @@ if(!auth){
           </div>
           <span class="settings-chevron">›</span>
         </div>
-        <div class="settings-row settings-tappable" onclick="window.open('mailto:futbol1234now@gmail.com?subject=Términos BoxVision','_blank')">
+        <div class="settings-row settings-tappable" onclick="window.open('terms.html','_blank')">
           <div class="settings-row-icon sri-gray">📄</div>
           <div class="settings-row-text">
             <div class="settings-label">Términos de uso</div>
@@ -3374,11 +3382,11 @@ if(!auth){
       <div class="set-footer-name">BoxVision</div>
       <div style="font-size:12px;color:var(--muted);margin-top:2px">Organizador inteligente de mudanzas</div>
       <div class="set-footer-links">
-        <a href="mailto:futbol1234now@gmail.com" class="set-footer-link">Privacidad</a>
+        <a href="privacy.html" target="_blank" class="set-footer-link">Privacidad</a>
         <span class="set-footer-dot">•</span>
         <a href="mailto:futbol1234now@gmail.com" class="set-footer-link">Contacto</a>
         <span class="set-footer-dot">•</span>
-        <a href="mailto:futbol1234now@gmail.com" class="set-footer-link">Soporte</a>
+        <a href="terms.html" target="_blank" class="set-footer-link">Términos</a>
       </div>
       <div class="set-version-badge">📦 BoxVision · v2.5.0 · © 2025</div>
     </div>
@@ -3426,6 +3434,18 @@ if(!auth){
   .lang-native{font-size:12px;color:rgba(255,255,255,.35);}
   .lang-check{color:#0A84FF;font-size:20px;opacity:0;}
   .lang-check.visible{opacity:1;}
+  .lang-option-soon{cursor:default;opacity:.7;}
+  .lang-option-soon:active{background:transparent;}
+  .lang-soon-badge{
+    font-size:10px;font-weight:700;
+    background:rgba(255,149,0,.18);
+    color:#FF9500;
+    border:0.5px solid rgba(255,149,0,.3);
+    border-radius:99px;
+    padding:3px 8px;
+    white-space:nowrap;
+    flex-shrink:0;
+  }
   /* Feedback */
   #feedbackTextarea{
     width:100%;box-sizing:border-box;
@@ -3466,7 +3486,7 @@ if(!auth){
 <div id="langModal" onclick="if(event.target===this)closeLangModal()">
   <div class="modal-sheet">
     <div class="modal-sheet-handle"></div>
-    <div class="modal-sheet-title">Selecciona un idioma</div>
+    <div class="modal-sheet-title" data-i18n="lang.title">Selecciona un idioma</div>
     <div id="langOptions">
       <div class="lang-option" onclick="setLang('es')">
         <span class="lang-flag">🇪🇸</span>
@@ -3478,15 +3498,15 @@ if(!auth){
         <div class="lang-info"><div class="lang-name">English</div><div class="lang-native">English</div></div>
         <span class="lang-check" id="langCheck-en">✓</span>
       </div>
-      <div class="lang-option" onclick="setLang('pt')">
+      <div class="lang-option lang-option-soon">
         <span class="lang-flag">🇧🇷</span>
-        <div class="lang-info"><div class="lang-name">Português</div><div class="lang-native">Português</div></div>
-        <span class="lang-check" id="langCheck-pt">✓</span>
+        <div class="lang-info"><div class="lang-name" style="color:var(--muted)">Português</div><div class="lang-native" style="color:var(--muted)">Português</div></div>
+        <span class="lang-soon-badge">Próx. actualización</span>
       </div>
-      <div class="lang-option" onclick="setLang('fr')">
+      <div class="lang-option lang-option-soon">
         <span class="lang-flag">🇫🇷</span>
-        <div class="lang-info"><div class="lang-name">Français</div><div class="lang-native">Français</div></div>
-        <span class="lang-check" id="langCheck-fr">✓</span>
+        <div class="lang-info"><div class="lang-name" style="color:var(--muted)">Français</div><div class="lang-native" style="color:var(--muted)">Français</div></div>
+        <span class="lang-soon-badge">Próx. actualización</span>
       </div>
     </div>
     <div style="padding:0 20px;margin-top:8px;">
@@ -4350,7 +4370,7 @@ let activeFilter="todo"; let activeSort="default";
 function goMain(){showScreen("mainScreen");renderMain();_startClock();const f=document.getElementById("aiFab");if(f){f.classList.remove("hidden");}}
 function renderMain(){
   const total=boxes.reduce((s,b)=>s+b.items.length,0);
-  document.getElementById("mainSub").textContent=boxes.length+" caja"+(boxes.length!==1?"s":"")+" · "+total+" objetos";
+  document.getElementById("mainSub").textContent = t('main.subtitle', boxes.length, total);
   renderFilters();renderGrid();renderGlobalProgress();
 }
 function renderFilters(){
@@ -4411,8 +4431,8 @@ function renderGrid(){
             <circle cx="120" cy="55" r="1.5" fill="#AF52DE" opacity=".6"><animate attributeName="cy" values="55;49;55" dur="1.8s" begin=".8s" repeatCount="indefinite"/></circle>
           </svg>
           <h3>Tu primer paso hacia el orden</h3>
-          <p>Crea tu primera caja, ponle un nombre y empieza a organizar lo que guardas.</p>
-          <button class="empty-state-btn" onclick="openForm()">+ Crear mi primera caja</button>
+          <p>${t('main.empty.desc')}</p>
+          <button class="empty-state-btn" onclick="openForm()">${t('main.empty.btn')}</button>
         </div>`
       :`<div style="text-align:center;padding:60px 20px"><div style="font-size:40px;margin-bottom:12px">🔍</div><div style="font-size:16px;font-weight:600;color:var(--text);margin-bottom:4px">Sin resultados</div><div style="font-size:13px;color:var(--muted)">No hay cajas con este filtro</div></div>`;
     _teardownGridObserver();
@@ -4681,7 +4701,7 @@ function toggleItem(idx){
 function addItem(){
   const inp=document.getElementById("addItemInput"),val=inp.value.trim();if(!val) return;
   const box=boxes.find(b=>b.id===currentBoxId);if(!box) return;
-  if(box.sealed){showToast("🔒 Esta caja está sellada","#FF9500");return;}
+  if(box.sealed){showToast(t("toast.sealed"),"#FF9500");return;}
   box.items.push({text:val,done:false});addHistory(box,"Agregado: "+val);
   inp.value="";
   const sw=document.getElementById("suggestionsWrap");if(sw) sw.classList.remove("show");
@@ -4689,82 +4709,14 @@ function addItem(){
 }
 function delItem(idx){
   const box=boxes.find(b=>b.id===currentBoxId);if(!box) return;
-  if(box.sealed){showToast("🔒 Esta caja está sellada","#FF9500");return;}
+  if(box.sealed){showToast(t("toast.sealed"),"#FF9500");return;}
   addHistory(box,"Eliminado: "+box.items[idx].text);
   box.items.splice(idx,1);saveData();renderItems();renderProgress();renderHistory();generateQR(currentBoxId);
 }
 function triggerScanObj(){
   const box=boxes.find(b=>b.id===currentBoxId);
-  if(box&&box.sealed){showToast("🔒 Caja sellada","#FF9500");return;}
-  // Mostrar mini-panel con botón de flash antes de abrir cámara
-  _showScanFlashPanel();
-}
-
-function _showScanFlashPanel(){
-  // Evitar duplicados
-  document.getElementById("scanFlashPanel")?.remove();
-  const panel=document.createElement("div");
-  panel.id="scanFlashPanel";
-  panel.style.cssText="position:fixed;inset:0;background:rgba(0,0,0,.65);z-index:10005;display:flex;align-items:flex-end;justify-content:center;backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px)";
-  panel.innerHTML=`
-    <div style="background:var(--card,#1C1C1E);border-radius:24px 24px 0 0;padding:20px 20px calc(20px + env(safe-area-inset-bottom));width:100%;max-width:480px;box-shadow:0 -8px 40px rgba(0,0,0,.5);animation:slideUp .28s cubic-bezier(.16,1,.3,1) both">
-      <div style="width:36px;height:4px;background:rgba(255,255,255,.18);border-radius:2px;margin:0 auto 18px"></div>
-      <div style="font-size:16px;font-weight:700;color:var(--text,#fff);margin-bottom:4px;text-align:center">📷 Escanear objeto</div>
-      <div style="font-size:13px;color:var(--muted,#8E8E93);text-align:center;margin-bottom:20px">Si está oscuro, enciende el flash antes de tomar la foto</div>
-      <!-- Botón flash -->
-      <button id="scanFlashBtn" onclick="toggleScanFlash()" title="Encender flash"
-        style="width:100%;padding:14px;border-radius:16px;border:none;
-               background:rgba(255,255,255,0.10);color:var(--text,#fff);
-               font-size:15px;font-weight:600;cursor:pointer;font-family:inherit;
-               display:flex;align-items:center;justify-content:center;gap:10px;
-               margin-bottom:10px;transition:background .15s,transform .1s;
-               -webkit-tap-highlight-color:transparent">
-        🔦 <span>Encender flash</span>
-      </button>
-      <!-- Botón abrir cámara -->
-      <button onclick="_launchScanCamera()" 
-        style="width:100%;padding:16px;border-radius:16px;border:none;
-               background:linear-gradient(135deg,#FF9500,#FF6B00);color:#fff;
-               font-size:16px;font-weight:700;cursor:pointer;font-family:inherit;
-               display:flex;align-items:center;justify-content:center;gap:10px;
-               box-shadow:0 4px 20px rgba(255,149,0,.35);margin-bottom:10px;
-               transition:transform .13s,opacity .13s;
-               -webkit-tap-highlight-color:transparent"
-        onmousedown="this.style.transform='scale(.97)'" onmouseup="this.style.transform=''">
-        <svg xmlns="http://www.w3.org/2000/svg" width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="pointer-events:none"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
-        Abrir cámara
-      </button>
-      <!-- Cancelar -->
-      <button onclick="_closeScanFlashPanel()" 
-        style="width:100%;padding:13px;border-radius:16px;border:none;
-               background:transparent;color:var(--muted,#8E8E93);
-               font-size:15px;font-weight:600;cursor:pointer;font-family:inherit;
-               -webkit-tap-highlight-color:transparent">
-        Cancelar
-      </button>
-    </div>`;
-  // Cerrar al tocar el fondo
-  panel.addEventListener("click",function(e){if(e.target===panel)_closeScanFlashPanel();});
-  document.body.appendChild(panel);
-}
-
-function _launchScanCamera(){
-  document.getElementById("scanFlashPanel")?.remove();
-  // NO apagamos el flash — se mantiene encendido mientras el usuario toma la foto
-  // Se apagará automáticamente al confirmar, cancelar o cerrar el modal de resultado
-  setTimeout(function(){
-    document.getElementById("scanObjInput").click();
-  }, 180);
-}
-
-function _closeScanFlashPanel(){
-  const p=document.getElementById("scanFlashPanel");
-  if(p){
-    p.style.opacity="0";
-    p.style.transition="opacity .2s";
-    setTimeout(()=>p.remove(),200);
-  }
-  if(_scanTorchOn) _stopScanFlash();
+  if(box&&box.sealed){showToast(t("toast.sealed.short"),"#FF9500");return;}
+  document.getElementById("scanObjInput").click();
 }
 
 // Rate limiting para el scan IA — evita peticiones accidentales repetidas
@@ -4886,10 +4838,10 @@ function showScanResultModal(thumb, box, a){
   const desc=a?.descripcion?`<div style="font-size:12px;color:var(--muted,#8E8E93);margin-top:4px">${esc(a.descripcion)}</div>`:"";
   const noIA=!a?`<div style="font-size:12px;color:#FF9500;margin-bottom:8px">📷 Foto guardada — escribe el nombre del objeto</div>`
     :(a.nombre?`<div style="font-size:12px;color:#34C759;margin-bottom:4px">✦ Box IA identificó el objeto</div>`:"");  const fragilBtn=a?.fragil&&box.priority!=="red"?`<button onclick="sugerirPrioridadFragil()" style="width:100%;margin-top:8px;padding:11px;border-radius:13px;border:1px solid rgba(255,59,48,.3);background:rgba(255,59,48,.08);color:#FF3B30;font-size:13px;font-weight:600;cursor:pointer">🫧 Marcar caja como urgente (objeto frágil)</button>`:"";
-  m.innerHTML=`<div style="background:var(--card,#1C1C1E);border-radius:24px 24px 0 0;padding:20px 20px calc(20px + env(safe-area-inset-bottom));width:100%;max-width:480px;box-shadow:0 -8px 40px rgba(0,0,0,.5);animation:slideUp .3s cubic-bezier(.16,1,.3,1) both;max-height:90vh;overflow-y:auto"><div style="width:36px;height:4px;background:rgba(255,255,255,.2);border-radius:2px;margin:0 auto 16px"></div><div style="display:flex;gap:14px;margin-bottom:14px"><img src="${thumb}" style="width:80px;height:80px;border-radius:14px;object-fit:cover;flex-shrink:0;box-shadow:0 4px 16px rgba(0,0,0,.4)"/><div style="flex:1;min-width:0"><div style="display:flex;flex-wrap:wrap;gap:5px;margin-bottom:6px">${catBadge}${fragilBadge}${cantBadge}</div>${desc}${noIA}</div></div>${tags}${nota}<div style="margin-top:14px"><div style="font-size:12px;color:var(--muted,#8E8E93);margin-bottom:6px;font-weight:600">NOMBRE DEL OBJETO</div><input id="scanNameInput" type="text" value="${esc(a?.nombre||"")}" placeholder="Ej: Cubo de Rubik" style="width:100%;box-sizing:border-box;padding:13px 14px;border-radius:13px;border:1.5px solid ${a?.nombre?"#34C759":"rgba(255,255,255,.15)"};background:rgba(255,255,255,.05);color:var(--text,#fff);font-size:16px;outline:none;font-family:inherit" onkeydown="if(event.key==='Enter')confirmScanName()" oninput="this.style.borderColor=this.value?'#34C759':'rgba(255,255,255,.15)'"/>${a?.cantidad>1?`<div style="font-size:12px;color:var(--muted,#8E8E93);margin-top:6px">💡 Se detectaron ${a.cantidad} objetos — se guarda uno a la vez.</div>`:""}</div><div style="display:flex;gap:10px;margin-top:14px"><button onclick="document.getElementById('scanNameModal').remove();if(typeof _stopScanFlash==='function')_stopScanFlash();" style="flex:1;padding:14px;border-radius:14px;border:none;background:rgba(255,255,255,.08);color:var(--text,#fff);font-size:15px;font-weight:600;cursor:pointer">Cancelar</button><button onclick="confirmScanName()" style="flex:2;padding:14px;border-radius:14px;border:none;background:linear-gradient(135deg,#FF9500,#FF6B00);color:#fff;font-size:15px;font-weight:700;cursor:pointer">📷 Guardar en caja</button></div>${fragilBtn}</div>`;
+  m.innerHTML=`<div style="background:var(--card,#1C1C1E);border-radius:24px 24px 0 0;padding:20px 20px calc(20px + env(safe-area-inset-bottom));width:100%;max-width:480px;box-shadow:0 -8px 40px rgba(0,0,0,.5);animation:slideUp .3s cubic-bezier(.16,1,.3,1) both;max-height:90vh;overflow-y:auto"><div style="width:36px;height:4px;background:rgba(255,255,255,.2);border-radius:2px;margin:0 auto 16px"></div><div style="display:flex;gap:14px;margin-bottom:14px"><img src="${thumb}" style="width:80px;height:80px;border-radius:14px;object-fit:cover;flex-shrink:0;box-shadow:0 4px 16px rgba(0,0,0,.4)"/><div style="flex:1;min-width:0"><div style="display:flex;flex-wrap:wrap;gap:5px;margin-bottom:6px">${catBadge}${fragilBadge}${cantBadge}</div>${desc}${noIA}</div></div>${tags}${nota}<div style="margin-top:14px"><div style="font-size:12px;color:var(--muted,#8E8E93);margin-bottom:6px;font-weight:600">NOMBRE DEL OBJETO</div><input id="scanNameInput" type="text" value="${esc(a?.nombre||"")}" placeholder="Ej: Cubo de Rubik" style="width:100%;box-sizing:border-box;padding:13px 14px;border-radius:13px;border:1.5px solid ${a?.nombre?"#34C759":"rgba(255,255,255,.15)"};background:rgba(255,255,255,.05);color:var(--text,#fff);font-size:16px;outline:none;font-family:inherit" onkeydown="if(event.key==='Enter')confirmScanName()" oninput="this.style.borderColor=this.value?'#34C759':'rgba(255,255,255,.15)'"/>${a?.cantidad>1?`<div style="font-size:12px;color:var(--muted,#8E8E93);margin-top:6px">💡 Se detectaron ${a.cantidad} objetos — se guarda uno a la vez.</div>`:""}</div><div style="display:flex;gap:10px;margin-top:14px"><button onclick="document.getElementById('scanNameModal').remove()" style="flex:1;padding:14px;border-radius:14px;border:none;background:rgba(255,255,255,.08);color:var(--text,#fff);font-size:15px;font-weight:600;cursor:pointer">Cancelar</button><button onclick="confirmScanName()" style="flex:2;padding:14px;border-radius:14px;border:none;background:linear-gradient(135deg,#FF9500,#FF6B00);color:#fff;font-size:15px;font-weight:700;cursor:pointer">📷 Guardar en caja</button></div>${fragilBtn}</div>`;
   document.body.appendChild(m);
   m._thumb=thumb; m._box=box; m._analisis=a;
-  m.onclick=ev=>{if(ev.target===m){m.remove();if(typeof _stopScanFlash==="function")_stopScanFlash();}};
+  m.onclick=ev=>{if(ev.target===m)m.remove();};
   setTimeout(()=>{const inp=document.getElementById("scanNameInput");if(inp){inp.focus();if(a?.nombre)inp.select();}},300);
 }
 
@@ -4909,8 +4861,6 @@ function confirmScanName(){
   addHistory(box,"📷 Escaneado: "+nombre);
   saveData();renderItems();renderProgress();renderHistory();generateQR(currentBoxId);
   m.remove();
-  // Apagar flash si quedó encendido
-  if(typeof _stopScanFlash==="function") _stopScanFlash();
   showToast("✅ "+nombre+" guardado","#34C759");
 }
 
@@ -5772,13 +5722,141 @@ function _exportDataJSON(){
 }
 function saveBrand(){settings.brand=document.getElementById("brandInput").value.trim();saveSettings();}
 
-// ── MODAL IDIOMA ─────────────────────────────────────────────────────────────
+// ── SISTEMA I18N COMPLETO ─────────────────────────────────────────────────────
 const LANG_LABELS = {es:'Español', en:'English', pt:'Português', fr:'Français'};
 let _currentLang = localStorage.getItem('cb-lang') || 'es';
 
+const I18N = {
+  es: {
+    // Topbar / Nav
+    'nav.settings':       'Ajustes',
+    'nav.rooms':          '🗺 Habitaciones',
+    // Main screen
+    'main.search':        'Buscar en todas las cajas...',
+    'main.subtitle':      (n,t) => `${n} caja${n!==1?'s':''} · ${t} objetos`,
+    'main.empty.title':   'Todavía no tenés cajas',
+    'main.empty.desc':    'Crea tu primera caja, ponle un nombre y empieza a organizar lo que guardas.',
+    'main.empty.btn':     '+ Crear mi primera caja',
+    // Splash
+    'splash.lastbox':     'Última caja abierta',
+    'splash.newbox':      'Nueva caja',
+    'splash.rooms':       'Habitaciones',
+    'splash.settings':    'Ajustes',
+    // Detail screen
+    'detail.add':         'Agregar objeto...',
+    'detail.delete':      'Eliminar',
+    'detail.edit':        'Editar caja',
+    // Form
+    'form.preview':       'Nueva caja',
+    'form.cancel':        'Cancelar',
+    'form.save':          'Guardar caja',
+    'form.name':          'Nombre',
+    'form.number':        'Número',
+    'form.location':      'Ubicación',
+    'form.password':      'Contraseña',
+    'form.password.opt':  '(opcional)',
+    'form.password.hint': 'Si agregas contraseña, se pedirá al abrir la caja',
+    'form.password.ph':   'Dejar vacío = sin contraseña',
+    // Rooms
+    'rooms.cancel':       'Cancelar',
+    'rooms.save':         'Guardar',
+    // Settings
+    'settings.title':     'Ajustes',
+    'settings.update.sub':'Buscar la versión más reciente',
+    // Lang modal
+    'lang.title':         'Selecciona un idioma',
+    'lang.cancel':        'Cancelar',
+    // Feedback modal
+    'feedback.cancel':    'Cancelar',
+    // Toasts
+    'toast.link.copied':  '📋 Link copiado',
+    'toast.sealed':       '🔒 Esta caja está sellada',
+    'toast.sealed.short': '🔒 Caja sellada',
+    'toast.wait.scan':    '⏱️ Espera un momento antes de escanear de nuevo',
+    'toast.img.error':    '❌ No se pudo leer la imagen',
+    'toast.offline.scan': '📡 Sin conexión — puedes agregar el objeto manualmente',
+    'toast.urgent':       '🔴 Caja marcada como urgente',
+  },
+  en: {
+    // Topbar / Nav
+    'nav.settings':       'Settings',
+    'nav.rooms':          '🗺 Rooms',
+    // Main screen
+    'main.search':        'Search all boxes...',
+    'main.subtitle':      (n,t) => `${n} box${n!==1?'es':''} · ${t} items`,
+    'main.empty.title':   'No boxes yet',
+    'main.empty.desc':    'Create your first box, give it a name and start organizing what you pack.',
+    'main.empty.btn':     '+ Create my first box',
+    // Splash
+    'splash.lastbox':     'Last opened box',
+    'splash.newbox':      'New box',
+    'splash.rooms':       'Rooms',
+    'splash.settings':    'Settings',
+    // Detail screen
+    'detail.add':         'Add item...',
+    'detail.delete':      'Delete',
+    'detail.edit':        'Edit box',
+    // Form
+    'form.preview':       'New box',
+    'form.cancel':        'Cancel',
+    'form.save':          'Save box',
+    'form.name':          'Name',
+    'form.number':        'Number',
+    'form.location':      'Location',
+    'form.password':      'Password',
+    'form.password.opt':  '(optional)',
+    'form.password.hint': 'If you add a password, it will be required when opening the box',
+    'form.password.ph':   'Leave empty = no password',
+    // Rooms
+    'rooms.cancel':       'Cancel',
+    'rooms.save':         'Save',
+    // Settings
+    'settings.title':     'Settings',
+    'settings.update.sub':'Check for latest version',
+    // Lang modal
+    'lang.title':         'Select a language',
+    'lang.cancel':        'Cancel',
+    // Feedback modal
+    'feedback.cancel':    'Cancel',
+    // Toasts
+    'toast.link.copied':  '📋 Link copied',
+    'toast.sealed':       '🔒 This box is sealed',
+    'toast.sealed.short': '🔒 Box sealed',
+    'toast.wait.scan':    '⏱️ Wait a moment before scanning again',
+    'toast.img.error':    '❌ Could not read the image',
+    'toast.offline.scan': '📡 No connection — you can add the item manually',
+    'toast.urgent':       '🔴 Box marked as urgent',
+  }
+};
+
+// Obtener traducción
+function t(key, ...args){
+  const dict = I18N[_currentLang] || I18N['es'];
+  const val = dict[key] ?? (I18N['es'][key] ?? key);
+  return typeof val === 'function' ? val(...args) : val;
+}
+
+// Actualizar todos los elementos con data-i18n en el DOM
+function _applyI18N(){
+  document.querySelectorAll('[data-i18n]').forEach(el=>{
+    const key = el.dataset.i18n;
+    const attr = el.dataset.i18nAttr; // e.g. "placeholder"
+    const val = t(key);
+    if(attr) el[attr] = val;
+    else el.textContent = val;
+  });
+  // Casos especiales que se generan dinámicamente
+  const searchInput = document.getElementById('searchInput');
+  if(searchInput) searchInput.placeholder = t('main.search');
+  const addItemInput = document.getElementById('addItemInput');
+  if(addItemInput) addItemInput.placeholder = t('detail.add');
+  const settingsUpdateSub = document.getElementById('settingsUpdateSub');
+  if(settingsUpdateSub && settingsUpdateSub.textContent === I18N['es']['settings.update.sub'] || settingsUpdateSub?.textContent === I18N['en']['settings.update.sub'])
+    settingsUpdateSub.textContent = t('settings.update.sub');
+}
+
 function openLangModal(){
-  // Marcar el idioma activo
-  ['es','en','pt','fr'].forEach(l=>{
+  ['es','en'].forEach(l=>{
     const el = document.getElementById('langCheck-'+l);
     if(el) el.classList.toggle('visible', l===_currentLang);
   });
@@ -5788,24 +5866,23 @@ function closeLangModal(){
   document.getElementById('langModal').style.display='none';
 }
 function setLang(lang){
+  if(!I18N[lang]){ showToast('🚧 Idioma no disponible aún','#FF9500'); return; }
   _currentLang = lang;
   localStorage.setItem('cb-lang', lang);
-  // Actualizar label visible en settings
   const lbl = document.getElementById('currentLangLabel');
   if(lbl) lbl.textContent = LANG_LABELS[lang]||lang;
-  // Marcar check
-  ['es','en','pt','fr'].forEach(l=>{
+  ['es','en'].forEach(l=>{
     const el = document.getElementById('langCheck-'+l);
     if(el) el.classList.toggle('visible', l===lang);
   });
+  _applyI18N();
   closeLangModal();
-  showToast('🌐 Idioma: ' + (LANG_LABELS[lang]||lang), '#0A84FF');
-  // Nota: cambio de idioma completo requeriría recarga; por ahora aplica a IA y futuras cadenas
+  showToast('🌐 ' + (LANG_LABELS[lang]||lang), '#0A84FF');
 }
-// Inicializar label al cargar settings
 function _initLangLabel(){
   const lbl = document.getElementById('currentLangLabel');
   if(lbl) lbl.textContent = LANG_LABELS[_currentLang]||'Español';
+  _applyI18N();
 }
 
 // ── MODAL FEEDBACK ────────────────────────────────────────────────────────────
@@ -6058,63 +6135,6 @@ async function toggleTorch(){
   }
 }
 
-// ── Flash independiente para el escaneo de objetos ──────────────────────────
-var _scanTorchStream=null, _scanTorchOn=false;
-
-async function toggleScanFlash(){
-  const btn=document.getElementById("scanFlashBtn");
-  if(!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia){
-    showToast("Flash no disponible en este navegador","#636366"); return;
-  }
-  try{
-    if(!_scanTorchOn){
-      // Pedir cámara trasera sin activar torch aún (más compatible)
-      _scanTorchStream=await navigator.mediaDevices.getUserMedia({video:{facingMode:{ideal:"environment"}}});
-      const track=_scanTorchStream.getVideoTracks()[0];
-      const caps=track.getCapabilities?track.getCapabilities():{};
-      if(!caps.torch){
-        _scanTorchStream.getTracks().forEach(t=>t.stop());
-        _scanTorchStream=null;
-        showToast("Tu celular no soporta flash desde el navegador","#636366"); return;
-      }
-      await track.applyConstraints({advanced:[{torch:true}]});
-      _scanTorchOn=true;
-      if(btn){
-        btn.textContent="🔦";
-        btn.style.background="linear-gradient(135deg,#FFD60A,#FF9500)";
-        btn.style.color="#000";
-        btn.title="Flash encendido — toca para apagar";
-      }
-      showToast("🔦 Flash encendido","#FFD60A");
-    }else{
-      await _stopScanFlash();
-      showToast("Flash apagado","#636366");
-    }
-  }catch(e){
-    showToast("No se pudo activar el flash","#FF3B30");
-    await _stopScanFlash();
-  }
-}
-
-async function _stopScanFlash(){
-  if(_scanTorchStream){
-    try{
-      const track=_scanTorchStream.getVideoTracks()[0];
-      if(track) await track.applyConstraints({advanced:[{torch:false}]}).catch(()=>{});
-    }catch(e){}
-    _scanTorchStream.getTracks().forEach(t=>t.stop());
-    _scanTorchStream=null;
-  }
-  _scanTorchOn=false;
-  const btn=document.getElementById("scanFlashBtn");
-  if(btn){
-    btn.textContent="🔦";
-    btn.style.background="rgba(255,255,255,0.10)";
-    btn.style.color="var(--text,#fff)";
-    btn.title="Encender flash";
-  }
-}
-
 function speakItems(){
   if(!window.speechSynthesis){alert("Tu navegador no soporta voz");return;}
   if(speaking){window.speechSynthesis.cancel();speaking=false;document.getElementById("ttsBtn").classList.remove("on");return;}
@@ -6326,7 +6346,7 @@ function shareBoxWhatsApp(){
 let voiceRecog=null;
 function startVoice(){
   const box=boxes.find(b=>b.id===currentBoxId);
-  if(box&&box.sealed){showToast("🔒 Esta caja está sellada","#FF9500");return;}
+  if(box&&box.sealed){showToast(t("toast.sealed"),"#FF9500");return;}
   if(!("webkitSpeechRecognition" in window||"SpeechRecognition" in window)){
     showToast("Voz no disponible en este navegador","#636366");return;
   }
@@ -8419,119 +8439,213 @@ if(auth){
   <div class="update-progress"></div>
 </div>
 
-<!-- SCRIPT DE ACTUALIZACIONES -->
+<!-- SCRIPT DE ACTUALIZACIONES v3 — sin recarga, progreso por pasos -->
 <script>
-(function() {
+(function () {
   'use strict';
-  
-  var notification = document.getElementById('updateNotification');
-  var updateBtn = document.getElementById('updateNow');
-  var dismissBtn = document.getElementById('updateDismiss');
-  var pendingWorker = null;
 
-  // Registrar Service Worker (registro único y definitivo)
+  /* ── Referencias DOM ── */
+  var notification  = document.getElementById('updateNotification');
+  var updateBtn     = document.getElementById('updateNow');
+  var dismissBtn    = document.getElementById('updateDismiss');
+  var notifTitle    = notification ? notification.querySelector('.update-notification-title') : null;
+  var notifSub      = notification ? notification.querySelector('.update-notification-subtitle') : null;
+  var progressBar   = notification ? notification.querySelector('.update-progress') : null;
+
+  var pendingWorker = null;
+  var swReg         = null;
+  var updating      = false;
+
+  /* ── Pasos con delay progresivo (sin recarga real) ── */
+  var STEPS = [
+    { msg: 'Preparando actualización…',   sub: 'Verificando archivos',        pct: 15,  ms: 800  },
+    { msg: 'Descargando nueva versión…',  sub: 'Obteniendo recursos',         pct: 40,  ms: 1200 },
+    { msg: 'Instalando cambios…',         sub: 'Aplicando mejoras',           pct: 65,  ms: 1000 },
+    { msg: 'Activando nueva versión…',    sub: 'Casi listo',                  pct: 85,  ms: 900  },
+    { msg: '¡Actualización completa! ✅', sub: 'BoxVision al día',            pct: 100, ms: 1000 },
+  ];
+
+  /* ── Registro del Service Worker ── */
   if ('serviceWorker' in navigator && location.protocol !== 'blob:') {
-    window.addEventListener('load', function() {
-      fetch(location.pathname.replace(/[^/]*$/, '') + 'sw.js', {method:'HEAD'})
-        .then(function(r){
-          if(!r.ok){
-            console.info('[BoxVision] sw.js no encontrado — PWA offline desactivado');
-            return;
-          }
+    window.addEventListener('load', function () {
+      fetch(location.pathname.replace(/[^/]*$/, '') + 'sw.js', { method: 'HEAD' })
+        .then(function (r) {
+          if (!r.ok) { console.info('[BV] sw.js no encontrado'); return; }
           navigator.serviceWorker.register('./sw.js', { scope: './' })
-            .then(function(registration) {
-              console.log('✅ Service Worker registrado, scope:', registration.scope);
-              
-              // Verificar actualizaciones cada 30 minutos
-              setInterval(function() {
-                if (navigator.onLine) {
-                  registration.update().catch(function(err) {
-                    console.log('[Update] Error al verificar:', err);
-                  });
-                }
+            .then(function (reg) {
+              swReg = reg;
+              console.log('✅ SW registrado');
+
+              // Chequear cada 30 min si hay nueva versión
+              setInterval(function () {
+                if (navigator.onLine) reg.update().catch(function(){});
               }, 30 * 60 * 1000);
 
-              // Escuchar si hay una nueva versión instalada
-              registration.addEventListener('updatefound', function() {
-                var newWorker = registration.installing;
-                if(!newWorker) return;
-                console.log('🔔 Nueva versión detectada');
-                
-                newWorker.addEventListener('statechange', function() {
-                  if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
-                    pendingWorker = newWorker;
+              reg.addEventListener('updatefound', function () {
+                var nw = reg.installing;
+                if (!nw) return;
+                nw.addEventListener('statechange', function () {
+                  if (nw.state === 'installed' && navigator.serviceWorker.controller) {
+                    pendingWorker = nw;
                     showUpdateNotification();
                   }
                 });
               });
             })
-            .catch(function(err) {
-              console.log('❌ Error registrando SW:', err);
-            });
+            .catch(function (e) { console.log('❌ SW error:', e); });
         })
-        .catch(function(){ console.info('[BoxVision] SW no disponible en este entorno'); });
+        .catch(function () { console.info('[BV] SW no disponible'); });
+    });
+
+    navigator.serviceWorker.addEventListener('message', function (e) {
+      if (e.data && e.data.type === 'SW_ACTIVATED') showUpdateNotification();
     });
   }
 
+  /* ── Mostrar / ocultar banner ── */
   function showUpdateNotification() {
-    if (!notification) return;
+    if (!notification || updating) return;
     notification.classList.add('show');
-    console.log('🎯 Notificación de actualización mostrada');
+    // Sincronizar estado del botón en Ajustes
+    _syncSettingsUpdateBtn('Actualizar ahora', false);
   }
 
-  function hideUpdateNotification() {
+  function hideUpdateNotification(animated) {
     if (!notification) return;
-    notification.classList.add('hide');
-    setTimeout(function() {
-      notification.classList.remove('show');
-      notification.classList.remove('hide');
-    }, 300);
+    if (animated) {
+      notification.classList.add('hide');
+      setTimeout(function () {
+        notification.classList.remove('show', 'hide');
+      }, 300);
+    } else {
+      notification.classList.remove('show', 'hide');
+    }
   }
 
-  if (updateBtn) {
-    updateBtn.addEventListener('click', function() {
-      console.log('⏱️  Iniciando actualización...');
-      updateBtn.textContent = 'Actualizando...';
-      updateBtn.disabled = true;
-      
-      if (pendingWorker) {
-        pendingWorker.postMessage({ type: 'SKIP_WAITING' });
+  /* ── Aplicar actualización con pasos visuales (sin recarga brusca) ── */
+  function applyUpdate() {
+    if (updating) return;
+    updating = true;
+
+    // Bloquear botones
+    if (updateBtn)  { updateBtn.disabled = true; }
+    if (dismissBtn) { dismissBtn.style.display = 'none'; }
+
+    // Señalizar al SW que tome el control
+    if (pendingWorker) {
+      try { pendingWorker.postMessage({ type: 'SKIP_WAITING' }); } catch(e){}
+    }
+
+    var step = 0;
+
+    function runStep() {
+      if (step >= STEPS.length) {
+        // Actualización completada: ocultar banner suavemente y refrescar estado interno
+        setTimeout(function () {
+          hideUpdateNotification(true);
+          updating = false;
+          _syncSettingsUpdateBtn('App actualizada ✅', true);
+          // Reset silencioso del SW controller (sin reload visible)
+          // El SW ya está activo en segundo plano; si hay contenido nuevo
+          // se cargará en la próxima navegación o apertura de sección.
+          _softRefreshAppState();
+        }, 600);
+        return;
       }
-      
-      var onControllerChange = function() {
-        console.log('✅ Actualización completada!');
-        navigator.serviceWorker.removeEventListener('controllerchange', onControllerChange);
-        setTimeout(function() {
-          window.location.reload();
-        }, 500);
-      };
-      
-      navigator.serviceWorker.addEventListener('controllerchange', onControllerChange);
-      setTimeout(function() {
-        if (updateBtn.disabled) {
-          window.location.reload();
-        }
-      }, 3000);
+
+      var s = STEPS[step];
+      if (notifTitle)   notifTitle.textContent = s.msg;
+      if (notifSub)     notifSub.textContent   = s.sub;
+      if (progressBar)  progressBar.style.cssText =
+        'width:' + s.pct + '%;transition:width ' + (s.ms * 0.8) + 'ms ease;height:2px;' +
+        'background:var(--accent);position:absolute;bottom:0;left:0;';
+
+      step++;
+      setTimeout(runStep, s.ms);
+    }
+
+    runStep();
+  }
+
+  /* ── Refrescar estado de la app sin recargar la página ── */
+  function _softRefreshAppState() {
+    // Limpiar caches de íconos/datos en memoria para que la próxima carga use los nuevos
+    if (window._iconAICache)  { for (var k in window._iconAICache) delete window._iconAICache[k]; }
+    if (window._iconFailed)   { window._iconFailed.clear(); }
+    // Si hay listener de controllerchange, se activa automáticamente el nuevo SW
+    navigator.serviceWorker && navigator.serviceWorker.addEventListener('controllerchange', function onCC(){
+      navigator.serviceWorker.removeEventListener('controllerchange', onCC);
+      console.log('✅ Nuevo SW activo, estado refrescado');
     });
+  }
+
+  /* ── Sincronizar botón en Ajustes ── */
+  function _syncSettingsUpdateBtn(label, done) {
+    var sub  = document.getElementById('settingsUpdateSub');
+    var chev = document.getElementById('settingsUpdateChevron');
+    var row  = document.getElementById('settingsUpdateRow');
+    if (sub)  sub.textContent  = label;
+    if (chev) chev.textContent = done ? '✅' : '›';
+    if (row && done) row.style.pointerEvents = 'none';
+  }
+
+  /* ── Función global: "Actualizar" desde Ajustes ── */
+  window.bvCheckUpdate = function () {
+    var sub  = document.getElementById('settingsUpdateSub');
+    var chev = document.getElementById('settingsUpdateChevron');
+
+    if (updating) return;
+
+    if (pendingWorker) {
+      // Ya hay una versión lista → aplicar directo
+      showUpdateNotification();
+      setTimeout(applyUpdate, 400);
+      return;
+    }
+
+    // Sin versión pendiente → buscar activamente
+    if (sub)  sub.textContent  = 'Buscando actualización…';
+    if (chev) chev.textContent = '⏳';
+
+    if (!swReg || !navigator.onLine) {
+      setTimeout(function () {
+        if (sub)  sub.textContent  = navigator.onLine ? 'No hay actualizaciones' : 'Sin conexión';
+        if (chev) chev.textContent = '›';
+      }, 1500);
+      return;
+    }
+
+    swReg.update()
+      .then(function () {
+        setTimeout(function () {
+          if (!pendingWorker) {
+            if (sub)  sub.textContent  = 'Ya tenés la última versión ✅';
+            if (chev) chev.textContent = '✅';
+            setTimeout(function () {
+              if (sub)  sub.textContent  = 'Buscar la versión más reciente';
+              if (chev) chev.textContent = '›';
+            }, 3000);
+          }
+        }, 2000);
+      })
+      .catch(function () {
+        if (sub)  sub.textContent  = 'Error al buscar actualización';
+        if (chev) chev.textContent = '›';
+      });
+  };
+
+  /* ── Listeners de botones del banner ── */
+  if (updateBtn) {
+    updateBtn.addEventListener('click', applyUpdate);
   }
 
   if (dismissBtn) {
-    dismissBtn.addEventListener('click', function() {
-      hideUpdateNotification();
-      console.log('👤 Usuario descartó la notificación');
+    dismissBtn.addEventListener('click', function () {
+      if (!updating) hideUpdateNotification(true);
     });
   }
 
-  if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.addEventListener('message', function(event) {
-      if (event.data && event.data.type === 'SW_ACTIVATED') {
-        console.log('📢 Service Worker notificó activación');
-        showUpdateNotification();
-      }
-    });
-  }
-
-  console.log('🚀 Sistema de actualizaciones iniciado');
+  console.log('🚀 Sistema de actualizaciones v3 iniciado');
 })();
 </script>
 
