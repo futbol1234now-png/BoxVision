@@ -1,12 +1,12 @@
 {
-  "version": "2.6.3",
+  "version": "2.6.4",
   "released": "2026-05-24",
   "changelog": [
     {
-      "type": "new",
-      "icon": "✨",
-      "title": "Botón Ver novedades en Ajustes",
-      "desc": "Ahora podés ver los cambios de cualquier versión desde Ajustes, sin esperar una actualización."
+      "type": "imp",
+      "icon": "⚡",
+      "title": "Actualizaciones más rápidas",
+      "desc": "La app ahora busca versiones nuevas al abrirse y cada 2 minutos. El banner aparece mucho más rápido."
     }
   ]
 }
