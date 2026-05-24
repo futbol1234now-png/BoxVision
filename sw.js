@@ -1,9 +1,8 @@
-// BoxVision Service Worker v2.0
-// Este SW:
+// BoxVision Service Worker v2.1
 // ✓ Cachea archivos para funcionamiento offline
-// ✓ Detecta actualizaciones sin borrar localStorage
-// ✓ Solo borra el cache cuando hay una nueva versión
-// ✓ Soporta skip_waiting para actualizaciones controladas
+// ✓ Detecta actualizaciones y muestra el banner al usuario
+// ✓ NO se activa solo — espera que el usuario toque "Actualizar"
+// ✓ Al activarse avisa a la app para mostrar el modal de novedades
 
 const CACHE_NAME = 'boxvision-v1.1.0';
 const URLS_TO_CACHE = [
@@ -15,23 +14,22 @@ const URLS_TO_CACHE = [
   'https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css'
 ];
 
-// 1. INSTALACIÓN: Cachear archivos básicos
+// 1. INSTALACIÓN: Cachear archivos y ESPERAR — no tomar control todavía
 self.addEventListener('install', function(event){
-  console.log('[SW] Instalando...');
+  console.log('[SW] Instalando v2.1...');
   event.waitUntil(
     caches.open(CACHE_NAME).then(function(cache){
       return cache.addAll(URLS_TO_CACHE).catch(function(err){
         console.log('[SW] Algunos archivos no se pudieron cachear:', err);
       });
-    }).then(function(){
-      self.skipWaiting(); // Tomar control inmediatamente
     })
+    // ❌ SIN skipWaiting() aquí — así el banner aparece y el usuario decide cuándo actualizar
   );
 });
 
-// 2. ACTIVACIÓN: Limpiar caches viejos (si cambió la versión)
+// 2. ACTIVACIÓN: Limpiar caches viejos y avisar a la app
 self.addEventListener('activate', function(event){
-  console.log('[SW] Activando...');
+  console.log('[SW] Activando v2.1...');
   event.waitUntil(
     caches.keys().then(function(cacheNames){
       return Promise.all(
@@ -43,12 +41,14 @@ self.addEventListener('activate', function(event){
         })
       );
     }).then(function(){
-      self.clients.claim(); // Controlar todos los clientes
-      // Notificar a la app que fue actualizada
-      return self.clients.matchAll();
+      return self.clients.claim();
+    }).then(function(){
+      // Avisar a la app que el SW nuevo ya está activo
+      // La app usa esto para abrir el modal de novedades
+      return self.clients.matchAll({ includeUncontrolled: true });
     }).then(function(clients){
       clients.forEach(function(client){
-        client.postMessage({type: 'SW_ACTIVATED'});
+        client.postMessage({ type: 'SW_ACTIVATED' });
       });
     })
   );
@@ -57,27 +57,34 @@ self.addEventListener('activate', function(event){
 // 3. FETCH: Estrategia de cache inteligente
 self.addEventListener('fetch', function(event){
   var url = event.request.url;
-  var isHtml = event.request.headers.get('accept') && event.request.headers.get('accept').includes('text/html');
+  var isHtml = event.request.headers.get('accept') &&
+               event.request.headers.get('accept').includes('text/html');
 
-  // Solo cachear GET — POST, HEAD y otros métodos no son cacheables
-  if(event.request.method !== 'GET'){
-    return;
-  }
+  // Solo cachear GET
+  if(event.request.method !== 'GET') return;
 
-  // No cachear algunas URLs
+  // No cachear estas URLs
   if(url.includes('chrome-extension') || url.includes('moz-extension') ||
      url.includes('firestore.googleapis.com') || url.includes('firebase') ||
-     url.includes('googleapis.com')){
+     url.includes('googleapis.com')) return;
+
+  // config.json: siempre de red para detectar versiones nuevas
+  if(url.includes('config.json')){
+    event.respondWith(
+      fetch(event.request, { cache: 'no-store' })
+        .catch(function(){
+          return caches.match(event.request);
+        })
+    );
     return;
   }
 
-  // Para HTML: network first (siempre trata de actualizar)
+  // HTML: network first (siempre intenta traer la versión más nueva)
   if(isHtml){
     event.respondWith(
       fetch(event.request)
         .then(function(response){
           if(response.ok){
-            // Guardar en cache si es exitoso
             var cacheCopy = response.clone();
             caches.open(CACHE_NAME).then(function(cache){
               cache.put(event.request, cacheCopy);
@@ -86,44 +93,40 @@ self.addEventListener('fetch', function(event){
           return response;
         })
         .catch(function(){
-          // Si falla, usar cache
           return caches.match(event.request);
         })
     );
-  } 
-  // Para assets (CSS, JS, imágenes): cache first
-  else {
-    event.respondWith(
-      caches.match(event.request)
-        .then(function(response){
-          return response || fetch(event.request)
-            .then(function(fetchResponse){
-              if(!fetchResponse || fetchResponse.status !== 200){
-                return fetchResponse;
-              }
-              var cacheCopy = fetchResponse.clone();
-              caches.open(CACHE_NAME).then(function(cache){
-                cache.put(event.request, cacheCopy);
-              });
-              return fetchResponse;
-            })
-            .catch(function(){
-              return new Response('Offline - archivo no disponible', {
-                status: 503,
-                statusText: 'Service Unavailable'
-              });
-            });
-        })
-    );
+    return;
   }
+
+  // Assets (CSS, imágenes, fuentes): cache first
+  event.respondWith(
+    caches.match(event.request).then(function(response){
+      return response || fetch(event.request)
+        .then(function(fetchResponse){
+          if(!fetchResponse || fetchResponse.status !== 200) return fetchResponse;
+          var cacheCopy = fetchResponse.clone();
+          caches.open(CACHE_NAME).then(function(cache){
+            cache.put(event.request, cacheCopy);
+          });
+          return fetchResponse;
+        })
+        .catch(function(){
+          return new Response('Offline - archivo no disponible', {
+            status: 503,
+            statusText: 'Service Unavailable'
+          });
+        });
+    })
+  );
 });
 
 // 4. MENSAJE: Escuchar comandos desde la app
 self.addEventListener('message', function(event){
   if(event.data && event.data.type === 'SKIP_WAITING'){
-    console.log('[SW] SKIP_WAITING recibido, tomando control...');
+    console.log('[SW] Usuario confirmó actualización, tomando control...');
     self.skipWaiting();
   }
 });
 
-console.log('[SW] Service Worker cargado y listo');
+console.log('[SW] Service Worker v2.1 cargado');
