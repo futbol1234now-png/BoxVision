@@ -702,6 +702,33 @@ input,button,textarea,select{font-family:inherit}
 }
 .sr-wrap.open{display:block;animation:srSlide .2s cubic-bezier(.34,1.2,.64,1)}
 @keyframes srSlide{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:translateY(0)}}
+
+/* Botón de búsqueda por foto */
+#searchPhotoBtn:hover,#searchPhotoBtn:active{color:var(--accent);}
+#searchPhotoBtn.scanning{color:var(--accent);animation:searchSpin .8s linear infinite;}
+@keyframes searchSpin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+
+/* Toast de búsqueda por foto */
+#searchPhotoToast{
+  position:fixed;top:50%;left:50%;transform:translate(-50%,-50%) scale(.9);
+  background:rgba(20,20,30,.96);border:0.5px solid rgba(255,255,255,.15);
+  border-radius:20px;padding:24px 28px;z-index:9999;
+  display:none;flex-direction:column;align-items:center;gap:12px;
+  backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);
+  box-shadow:0 20px 60px rgba(0,0,0,.5);
+  transition:opacity .2s,transform .2s;
+  max-width:260px;text-align:center;
+}
+#searchPhotoToast.open{display:flex;transform:translate(-50%,-50%) scale(1);opacity:1;}
+#searchPhotoToastIcon{font-size:36px;line-height:1;}
+#searchPhotoToastMsg{font-size:14px;color:rgba(255,255,255,.8);line-height:1.4;}
+#searchPhotoToastSub{font-size:12px;color:rgba(255,255,255,.4);}
+.spt-spinner{
+  width:28px;height:28px;border-radius:50%;
+  border:2.5px solid rgba(255,255,255,.15);
+  border-top-color:var(--accent);
+  animation:searchSpin .7s linear infinite;
+}
 .sr-item{
   display:flex;align-items:center;gap:12px;
   padding:12px 16px;
@@ -2910,9 +2937,19 @@ if(!auth){
       <span class="search-icon"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></i></span>
       <input id="searchInput" type="text" placeholder="Buscar en todas las cajas..." data-i18n="main.search" data-i18n-attr="placeholder" oninput="doSearch(this.value)"/>
       <span id="searchClear" class="hidden" style="font-size:14px;color:var(--muted);cursor:pointer;padding:4px;margin-right:-4px;transition:color .15s" onmouseenter="this.style.color='var(--red)'" onmouseleave="this.style.color='var(--muted)'" onclick="clearSearch()">✕</span>
+      <button id="searchPhotoBtn" onclick="triggerSearchPhoto()" title="Buscar por foto" aria-label="Buscar por foto" style="
+        background:none;border:none;cursor:pointer;padding:4px 2px 4px 6px;
+        color:var(--muted);display:flex;align-items:center;
+        transition:color .15s;flex-shrink:0;
+        border-left:1px solid rgba(255,255,255,.1);margin-left:2px;
+        -webkit-tap-highlight-color:transparent;
+      ">
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+      </button>
     </div>
     <div class="sr-wrap" id="srWrap"></div>
   </div>
+  <input type="file" id="searchPhotoInput" accept="image/*" capture="environment" style="display:none" onchange="handleSearchPhoto(event)"/>
   <div class="filter-row" id="filterRow"></div>
   <div class="main-scroll" id="mainScroll"></div>
 </div>
@@ -5270,6 +5307,132 @@ function _runSearch(q){
   wrap.classList.add("open");
 }
 function clearSearch(){document.getElementById("searchInput").value="";doSearch("");}
+
+/* ── Búsqueda por foto ────────────────────────────────────────────────── */
+function triggerSearchPhoto(){
+  const connected = localStorage.getItem("boxia_connected");
+  if(!connected){
+    showToast("Conectá Box IA en Ajustes para usar la búsqueda por foto 🤖","#FF9500",3500);
+    return;
+  }
+  document.getElementById("searchPhotoInput").click();
+}
+
+var _searchPhotoToastTimeout = null;
+function _showSearchPhotoToast(icon, msg, sub, spinner){
+  const t = document.getElementById("searchPhotoToast");
+  const ti = document.getElementById("searchPhotoToastIcon");
+  const tm = document.getElementById("searchPhotoToastMsg");
+  const ts = document.getElementById("searchPhotoToastSub");
+  if(!t) return;
+  if(spinner){
+    ti.innerHTML = '<div class="spt-spinner"></div>';
+  } else {
+    ti.textContent = icon;
+  }
+  tm.textContent = msg;
+  ts.textContent = sub || "";
+  t.classList.add("open");
+  clearTimeout(_searchPhotoToastTimeout);
+}
+function _hideSearchPhotoToast(delay){
+  _searchPhotoToastTimeout = setTimeout(function(){
+    const t = document.getElementById("searchPhotoToast");
+    if(t) t.classList.remove("open");
+  }, delay || 0);
+}
+
+async function handleSearchPhoto(e){
+  const file = e.target.files[0];
+  e.target.value = "";
+  if(!file) return;
+
+  const btn = document.getElementById("searchPhotoBtn");
+  if(btn) btn.classList.add("scanning");
+  _showSearchPhotoToast("", "Analizando imagen…", "Identificando el objeto", true);
+
+  // Redimensionar y encodear
+  let b64;
+  try{
+    const enc = await resizeAndEncode(file, 900, 92);
+    b64 = enc.b64;
+  }catch(err){
+    _hideSearchPhotoToast(0);
+    if(btn) btn.classList.remove("scanning");
+    showToast("❌ No se pudo leer la imagen","#FF3B30");
+    return;
+  }
+
+  // Pedir a Groq que describa el objeto en pocas palabras
+  const systemPrompt = `Eres un asistente de inventario. El usuario te manda una foto de un objeto.
+Respondé SOLO con el nombre del objeto en español, en 1-4 palabras, sin puntuación, sin artículos.
+Ejemplos: "auriculares Sony negros", "libro rojo tapa dura", "sartén antiadherente", "zapatos deportivos Nike".
+Sé específico: incluí color y marca si son visibles. Nada más que el nombre.`;
+
+  const modelos = ["llama-3.2-90b-vision-preview","llama-3.2-11b-vision-preview"];
+  let nombreObjeto = null;
+
+  for(const modelo of modelos){
+    try{
+      const WORKER_URL = (typeof BOX_IA_WORKER !== 'undefined' ? BOX_IA_WORKER : "") + "/chat";
+      const res = await fetch(WORKER_URL,{
+        method:"POST",
+        headers:{"Content-Type":"application/json"},
+        body:JSON.stringify({
+          model: modelo,
+          max_tokens: 20,
+          temperature: 0.1,
+          messages:[
+            {role:"system", content: systemPrompt},
+            {role:"user", content:[
+              {type:"image_url", image_url:{url:"data:image/jpeg;base64,"+b64, detail:"low"}},
+              {type:"text", text:"¿Qué objeto es este?"}
+            ]}
+          ]
+        })
+      });
+      const data = await res.json();
+      if(res.ok && data.choices?.[0]?.message?.content){
+        nombreObjeto = data.choices[0].message.content.trim()
+          .replace(/["""''*#\n]/g,"").slice(0,50);
+        if(nombreObjeto) break;
+      }
+    }catch(err){ continue; }
+  }
+
+  if(btn) btn.classList.remove("scanning");
+
+  if(!nombreObjeto){
+    _showSearchPhotoToast("❌","No se pudo identificar el objeto","Intentá con otra foto");
+    _hideSearchPhotoToast(2500);
+    return;
+  }
+
+  // Buscar en las cajas
+  _showSearchPhotoToast("🔍", "Buscando: " + nombreObjeto, "en todas tus cajas");
+
+  const input = document.getElementById("searchInput");
+  if(input){
+    input.value = nombreObjeto;
+    doSearch(nombreObjeto);
+    // Mostrar el clear button
+    const cl = document.getElementById("searchClear");
+    if(cl) cl.classList.remove("hidden");
+  }
+
+  // Contar resultados
+  setTimeout(function(){
+    const srWrap = document.getElementById("srWrap");
+    const items = srWrap ? srWrap.querySelectorAll(".sr-item") : [];
+    const hayResultados = items.length > 0;
+    if(hayResultados){
+      _showSearchPhotoToast("✅", "\"" + nombreObjeto + "\"", items.length + " caja" + (items.length===1?"":"s") + " encontrada" + (items.length===1?"":"s"));
+    } else {
+      _showSearchPhotoToast("😕", "No encontré ese objeto", "Probá con otra foto o buscá manual");
+    }
+    _hideSearchPhotoToast(2200);
+  }, 400);
+}
 
 // ═══ ROOMS v2.5 — Sistema mejorado ═══
 
@@ -8324,6 +8487,9 @@ if(auth){
     _patchRenderGrid();
     if(typeof _origGoMain === 'function') _origGoMain.apply(this, arguments);
   };
+
+  // ── 4. Skeleton inicial ───────────────────────────────────────────────────
+  document.addEventListener('DOMContentLoaded', function(){
     var scroll = document.getElementById('mainScroll');
     if(!scroll) return;
     var html = '<div class="skel-grid">';
@@ -8339,7 +8505,7 @@ if(auth){
     }
     html += '</div>';
     scroll.innerHTML = html;
-  };
+  });
 
   // ── 5. AI shimmer ────────────────────────────────────────────────────────
   var aiMessages = document.querySelector('.ai-messages');
@@ -9192,6 +9358,13 @@ if(auth){
   console.log('  _getHealth() ........ Ver salud de app');
 })();
 </script>
+
+<!-- Toast de búsqueda por foto -->
+<div id="searchPhotoToast">
+  <div id="searchPhotoToastIcon">📷</div>
+  <div id="searchPhotoToastMsg">Analizando imagen…</div>
+  <div id="searchPhotoToastSub"></div>
+</div>
 
 </body>
 </html>
