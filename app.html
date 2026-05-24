@@ -4101,11 +4101,14 @@ function _getIconLocal(n){
 const _iconAICache = {};
 // IDs de cajas donde ya intentamos y fallamos — no reintentar
 const _iconFailed = new Set();
+// IDs de cajas cuya petición de ícono IA ya está en curso — evita duplicados
+const _iconPending = new Set();
 
 async function fetchSmartIcon(box){
   const name = (box.name||"").trim();
   if(!name || box.icon) return;
   if(_iconFailed.has(box.id)) return; // ya intentamos, no reintentar
+  if(_iconPending.has(box.id)) return; // petición en vuelo, ignorar duplicado
 
   // Si el diccionario local ya tiene respuesta, usarla directamente
   const localResult = _getIconLocal(name);
@@ -4123,6 +4126,9 @@ async function fetchSmartIcon(box){
     return;
   }
 
+  // Marcar como en curso ANTES de cualquier await para bloquear duplicados
+  _iconPending.add(box.id);
+
   // Sin red o sin worker configurado → usar 📦 y marcar como fallido para no reintentar
   // NOTA: La API de Anthropic no puede llamarse directamente desde el browser (bloqueo CORS).
   // Para usar IA de íconos necesitás un proxy/worker que agregue la API key server-side.
@@ -4136,6 +4142,7 @@ async function fetchSmartIcon(box){
     box.icon = fallback;
     _applyIconToDOM(box);
     saveData();
+    _iconPending.delete(box.id);
     return;
   }
 
@@ -4154,6 +4161,7 @@ async function fetchSmartIcon(box){
       box.icon = emoji;
       _applyIconToDOM(box);
       saveData();
+      _iconPending.delete(box.id);
       return;
     }
     throw new Error("emoji inválido");
@@ -4165,6 +4173,7 @@ async function fetchSmartIcon(box){
     box.icon = fallback;
     _applyIconToDOM(box);
     saveData();
+    _iconPending.delete(box.id);
   }
 }
 
@@ -4233,6 +4242,10 @@ function showScreen(id){
   if(id !== "splash"){
     document.body.style.overflow="";
     document.body.style.height="";
+  }
+  // Detener el reloj al salir de splash y main (no tiene sentido en detail/settings/rooms)
+  if(id !== "splash" && id !== "mainScreen"){
+    _stopClock();
   }
   // Stop TTS if leaving viewer
   if(id!=="viewer"&&window.speechSynthesis&&speaking){
@@ -4367,7 +4380,13 @@ function showSplash(){
 function goSplash(){showSplash();}
 
 let activeFilter="todo"; let activeSort="default";
-function goMain(){showScreen("mainScreen");renderMain();_startClock();const f=document.getElementById("aiFab");if(f){f.classList.remove("hidden");}}
+function goMain(){showScreen("mainScreen");renderMain();_startClock();const f=document.getElementById("aiFab");if(f){f.classList.remove("hidden");}
+  // Mostrar changelog si hay versión nueva sin ver (primer arranque tras actualización)
+  if(window._changelogPending){
+    window._changelogPending=false;
+    setTimeout(function(){if(typeof window.showChangelog==='function') window.showChangelog();},700);
+  }
+}
 function renderMain(){
   const total=boxes.reduce((s,b)=>s+b.items.length,0);
   document.getElementById("mainSub").textContent = t('main.subtitle', boxes.length, total);
@@ -4376,13 +4395,23 @@ function renderMain(){
 function renderFilters(){
   const tags=new Set();boxes.forEach(b=>(b.tags||[]).forEach(t=>tags.add(t)));
   const locs=new Set();boxes.forEach(b=>{if(b.location)locs.add(b.location);});
-  document.getElementById("filterRow").innerHTML=
-    `<button class="pill${activeFilter==="todo"?" active":""}" onclick="setFilter('todo')">Todas</button>`+
-    `<button class="pill${activeFilter==="fav"?" active":""}" onclick="setFilter('fav')">⭐ Favoritas</button>`+
-    `<button class="pill${activeFilter==="red"?" active":""}" onclick="setFilter('red')">🔴 Urgentes</button>`+
-    `<button class="pill${activeFilter==="done0"?" active":""}" onclick="setFilter('done0')">📦 Sin sacar</button>`+
-    [...locs].map(l=>`<button class="pill${activeFilter==="loc:"+l?" active":""}" onclick="setFilter('loc:${esc(l)}')">📍 ${esc(l)}</button>`).join("")+
-    [...tags].map(t=>`<button class="pill${activeFilter===t?" active":""}" onclick="setFilter('${esc(t)}')">#${esc(t)}</button>`).join("");
+  const row=document.getElementById("filterRow");
+  // FIX XSS: usar data-filter + addEventListener en vez de onclick inline
+  // para evitar inyección de código en nombres de ubicaciones/tags con comillas o JS
+  const staticPills=[
+    {f:"todo",  label:"Todas"},
+    {f:"fav",   label:"⭐ Favoritas"},
+    {f:"red",   label:"🔴 Urgentes"},
+    {f:"done0", label:"📦 Sin sacar"},
+  ];
+  const locPills=[...locs].map(l=>({f:"loc:"+l, label:"📍 "+l}));
+  const tagPills=[...tags].map(t=>({f:t, label:"#"+t}));
+  const all=[...staticPills,...locPills,...tagPills];
+
+  row.innerHTML=all.map(p=>`<button class="pill${activeFilter===p.f?" active":""}" data-filter="${esc(p.f)}">${esc(p.label)}</button>`).join("");
+  row.querySelectorAll(".pill[data-filter]").forEach(btn=>{
+    btn.addEventListener("click",()=>setFilter(btn.dataset.filter));
+  });
 }
 function setFilter(f){activeFilter=f;renderMain();}
 // ── Virtual grid — soporta cajas ilimitadas ──────────────────────────────────
@@ -4702,7 +4731,7 @@ function addItem(){
   const inp=document.getElementById("addItemInput"),val=inp.value.trim();if(!val) return;
   const box=boxes.find(b=>b.id===currentBoxId);if(!box) return;
   if(box.sealed){showToast(t("toast.sealed"),"#FF9500");return;}
-  box.items.push({text:val,done:false});addHistory(box,"Agregado: "+val);
+  box.items.push({text:val,done:false,addedAt:Date.now()});addHistory(box,"Agregado: "+val);
   inp.value="";
   const sw=document.getElementById("suggestionsWrap");if(sw) sw.classList.remove("show");
   saveData();renderItems();renderProgress();renderHistory();generateQR(currentBoxId);
@@ -4857,7 +4886,7 @@ function confirmScanName(){
   const nombre=document.getElementById("scanNameInput")?.value.trim();
   if(!nombre){showToast("✏️ Escribe un nombre","#FF9500");return;}
   const box=m._box,thumb=m._thumb;
-  box.items.push({text:nombre,done:false,thumb});
+  box.items.push({text:nombre,done:false,thumb,addedAt:Date.now()});
   addHistory(box,"📷 Escaneado: "+nombre);
   saveData();renderItems();renderProgress();renderHistory();generateQR(currentBoxId);
   m.remove();
@@ -6336,7 +6365,12 @@ function shareBoxWhatsApp(){
     items:(box.items||[]).slice(0,20).map(i=>({t:i.text.slice(0,40),d:i.done?1:0})),
     date:box.date,note:(box.note||"").slice(0,100),pri:box.priority,w:box.weight,brand:settings.brand};
   const data=btoa(encodeURIComponent(JSON.stringify(payload)));
-  const url=(location.origin+location.pathname).replace(/\/[^\/]*$/,"/")+'viewer.html#view/'+data;
+  // FIX URL: calcular base robustamente — funciona en raíz y en subdirectorios de GitHub Pages
+  const pathParts=location.pathname.split("/").filter(Boolean);
+  // Si el último segmento tiene extensión (ej: index.html, app.html) quitarlo
+  if(pathParts.length && pathParts[pathParts.length-1].includes(".")) pathParts.pop();
+  const base=location.origin+(pathParts.length?"/"+pathParts.join("/"):"")+"/";
+  const url=base+'viewer.html#view/'+data;
   const items=box.items.length>0?box.items.slice(0,5).map((it,i)=>`${i+1}. ${it.text}`).join("\n")+"\n":"(vacía)\n";
   const msg=`📦 *${box.name}*${box.number?" (#"+box.number+")":""}\n${box.location?"📍 "+box.location+"\n":""}\n${items}\n🔗 Ver todo: ${url}`;
   window.open("https://wa.me/?text="+encodeURIComponent(msg),"_blank");
@@ -6367,7 +6401,23 @@ function startVoice(){
     saveData();renderItems();renderProgress();generateQR(currentBoxId);
     showToast(`🎤 ${items.length} objeto${items.length!==1?"s":""} agregado${items.length!==1?"s":""}!`,"#5856D6");
   };
-  voiceRecog.onerror=e=>{showToast("No se pudo escuchar: "+e.error,"#FF3B30");};
+  const VOICE_ERRORS={
+    "not-allowed":"Permiso de micrófono denegado. Habilitalo en la configuración del navegador.",
+    "network":"Error de red. Verificá tu conexión.",
+    "no-speech":"No se detectó voz. Intentá de nuevo.",
+    "audio-capture":"No se encontró micrófono en el dispositivo.",
+    "aborted":"Escucha cancelada.",
+    "service-not-allowed":"Servicio de voz no disponible.",
+  };
+  voiceRecog.onerror=e=>{
+    const msg=VOICE_ERRORS[e.error]||("Error de voz: "+e.error);
+    showToast(msg,"#FF3B30");
+    // Si el micrófono fue denegado permanentemente, deshabilitar el botón
+    if(e.error==="not-allowed"||e.error==="service-not-allowed"){
+      const b=document.getElementById("micBtn");
+      if(b){b.disabled=true;b.title="Permiso de micrófono denegado";b.style.opacity=".4";}
+    }
+  };
   voiceRecog.onend=()=>{const b=document.getElementById("micBtn");if(b){b.classList.remove("recording");}voiceRecog=null;}; // FIX E
   voiceRecog.start();
 }
@@ -6459,7 +6509,10 @@ async function testGroqConnection(){
 }
 
 function saveApiKey(){
-  // FIX SEGURIDAD: marcamos conexión en localStorage, sin guardar key sensible
+  // Guardar key cifrada en sessionStorage y marcar como conectado en localStorage
+  const inp = document.getElementById("aiKeyInput");
+  const key = inp ? inp.value.trim() : "";
+  if(key) _saveGroqKey(key); // sessionStorage ofuscado — no queda en texto plano
   localStorage.setItem("boxia_connected","1");
   localStorage.removeItem("boxia_skip");
   showToast("✅ Box IA conectada","#34C759");
@@ -6511,6 +6564,9 @@ function typewriterHTML(el, html){
   const CHAR_DELAY = 8; // ms per character
 
   function tick(ts){
+    // FIX: cancelar si el elemento ya no está en el DOM (panel IA cerrado durante respuesta)
+    if(!el.isConnected){ el.innerHTML = full; return; }
+
     if(!lastFrame) lastFrame = ts;
     const elapsed = ts - lastFrame;
     // Avanzar tantos caracteres como correspondan al tiempo transcurrido
@@ -7392,7 +7448,8 @@ function saveToLocalStorage(){
         try{localStorage.setItem("cb-photo-"+b.id, b.photo);}catch(e){}
         delete c.photo;
       }
-      c.items = b.items.map(i=>({text:i.text,done:i.done}));
+      // Preservar addedAt para que el merge entre dispositivos nunca pierda items
+      c.items = b.items.map(i=>({text:i.text,done:i.done,addedAt:i.addedAt||0}));
       return c;
     });
     try{
@@ -7479,20 +7536,29 @@ async function _showBackups(){
 }
 
 async function _restoreBackup(date){
-  // Note: called via showBackups modal which already has user confirmation via button click
-  try{
-    const doc = await db.collection("users").doc(currentUser.uid)
-      .collection("backups").doc(date).get();
-    if(!doc.exists){ showToast("Backup no encontrado","#FF3B30"); return; }
-    boxes = doc.data().boxes || [];
-    restoreThumbs();
-    await saveToFirestore();
-    renderMain();
-    document.querySelectorAll('[style*="inset:0"][style*="z-index:9999"]').forEach(el=>el.remove());
-    showToast("✅ Backup restaurado — "+boxes.length+" cajas","#34C759");
-  }catch(e){
-    showToast("Error al restaurar","#FF3B30");
-  }
+  // FIX: pedir confirmación explícita antes de destruir el estado actual
+  _showConfirm({
+    icon:"💾",
+    title:"Restaurar backup",
+    msg:`¿Restaurar el backup del <strong>${date}</strong>? Tus cajas actuales serán reemplazadas.`,
+    confirmLabel:"Restaurar",
+    confirmColor:"#0A84FF",
+    onConfirm: async function(){
+      try{
+        const doc = await db.collection("users").doc(currentUser.uid)
+          .collection("backups").doc(date).get();
+        if(!doc.exists){ showToast("Backup no encontrado","#FF3B30"); return; }
+        boxes = doc.data().boxes || [];
+        restoreThumbs();
+        await saveToFirestore();
+        renderMain();
+        document.querySelectorAll('[style*="inset:0"][style*="z-index:9999"]').forEach(el=>el.remove());
+        showToast("✅ Backup restaurado — "+boxes.length+" cajas","#34C759");
+      }catch(e){
+        showToast("Error al restaurar","#FF3B30");
+      }
+    }
+  });
 }
 
 // ── Backup automático diario ─────────────────────────────────────────────────
@@ -7565,7 +7631,8 @@ async function saveToFirestore(){
       const c = JSON.parse(JSON.stringify(b));
       // quitar fotos base64 del payload de Firestore (muy pesadas)
       delete c.photo;
-      c.items = b.items.map(i=>({text:i.text,done:i.done}));
+      // Preservar addedAt para que el merge entre dispositivos nunca pierda items
+      c.items = b.items.map(i=>({text:i.text,done:i.done,addedAt:i.addedAt||0}));
       return c;
     });
 
@@ -7602,6 +7669,8 @@ async function saveToFirestore(){
     localStorage.setItem("cb-rooms-"+currentUser.uid, JSON.stringify(rooms));
     localStorage.setItem("cb-updated-"+currentUser.uid, Date.now().toString());
     localStorage.setItem("cb-chunkCount-"+currentUser.uid, String(chunks.length));
+    // Confirmar que Firestore recibió los datos → limpiar dirty flag
+    _clearDirty();
     console.log(`✅ Guardado en Firestore: ${lean.length} cajas en ${chunks.length} chunk(s)`);
   }catch(e){
     console.warn("Firestore save error:", e);
@@ -7617,9 +7686,31 @@ function scheduleSave(){
   if(typeof _firestoreLoading !== "undefined" && _firestoreLoading) return;
   // PASO 1: guardar en localStorage AHORA (síncrono, 0ms)
   saveToLocalStorage();
+  // PASO 1b: marcar que hay cambios pendientes de subir a Firestore
+  // Si el proceso muere antes de que el timer dispare, al próximo arranque
+  // loadFromFirestore detecta el flag y sube los datos locales primero.
+  _markDirty();
   // PASO 2: subir a Firestore con debounce de 300ms para agrupar cambios rápidos
   clearTimeout(_saveTimer);
   _saveTimer = setTimeout(saveToFirestore, 300);
+}
+
+// ── Sistema de dirty flag ─────────────────────────────────────────────────
+// _markDirty(): indica que hay cambios locales sin confirmar en Firestore.
+// _clearDirty(): se llama cuando Firestore confirma el guardado.
+// _isDirty(): al arrancar, detecta si el proceso anterior murió sin guardar.
+function _dirtyKey(){ return currentUser ? "bv-dirty-"+currentUser.uid : null; }
+function _markDirty(){
+  const k = _dirtyKey(); if(!k) return;
+  try{ localStorage.setItem(k, Date.now().toString()); }catch(e){}
+}
+function _clearDirty(){
+  const k = _dirtyKey(); if(!k) return;
+  try{ localStorage.removeItem(k); }catch(e){}
+}
+function _isDirty(){
+  const k = _dirtyKey(); if(!k) return false;
+  try{ return !!localStorage.getItem(k); }catch(e){ return false; }
 }
 
 // Cuando el usuario sale/minimiza, cancelar timer y guardar todo de inmediato
@@ -7648,7 +7739,13 @@ function _mergeBoxes(local, remote, deletedIds=[]){
   for(const b of local){
     if(!deleted.has(b.id)) map.set(b.id, b);
   }
-  // Aplicar remotas: gana quien tenga lastModified mayor; respetar eliminadas
+  // Helper: timestamp más reciente entre los items de una caja
+  function _latestItemTs(box){
+    if(!box.items||!box.items.length) return 0;
+    return box.items.reduce((mx,i)=>Math.max(mx,i.addedAt||0),0);
+  }
+  // Aplicar remotas: gana quien tenga lastModified mayor;
+  // pero si la local tiene items más nuevos (addedAt), se fusionan los items.
   for(const rb of remote){
     if(deleted.has(rb.id)) continue; // fue eliminada → no restaurar
     const lb = map.get(rb.id);
@@ -7657,7 +7754,23 @@ function _mergeBoxes(local, remote, deletedIds=[]){
     } else {
       const remoteTs = rb.lastModified || rb.lastUsed || 0;
       const localTs  = lb.lastModified || lb.lastUsed || 0;
-      if(remoteTs > localTs) map.set(rb.id, rb);
+      if(remoteTs > localTs){
+        // La remota es más nueva en metadata — pero revisar si hay items locales más recientes
+        const localItemTs  = _latestItemTs(lb);
+        const remoteItemTs = _latestItemTs(rb);
+        if(localItemTs > remoteItemTs){
+          // Hay items locales más nuevos: fusionar — tomar remota como base + agregar items locales que faltan
+          const merged = Object.assign({}, rb);
+          const remoteTexts = new Set((rb.items||[]).map(i=>i.text));
+          const extraLocal  = (lb.items||[]).filter(i=>!remoteTexts.has(i.text));
+          merged.items = [...(rb.items||[]), ...extraLocal];
+          merged.lastModified = Math.max(localTs, remoteTs);
+          map.set(rb.id, merged);
+        } else {
+          map.set(rb.id, rb);
+        }
+      }
+      // Si local es igual o más nueva en metadata → ya está en el map, no tocar
     }
   }
   return Array.from(map.values());
@@ -7679,6 +7792,40 @@ async function loadFromFirestore(){
       restoreThumbs();
     }
   }catch(e){}
+
+  // Si el proceso anterior murió con cambios sin guardar, subirlos ANTES del merge
+  // Esto garantiza que Firestore reciba los datos locales más recientes
+  if(_isDirty() && localBoxes.length > 0){
+    console.warn("⚠️ dirty flag detectado — subiendo datos locales antes del merge");
+    try{
+      // Subida directa sin pasar por el guard de boxes vacíos
+      const leanDirty = localBoxes.map(b=>{
+        const c = JSON.parse(JSON.stringify(b));
+        delete c.photo;
+        c.items = (b.items||[]).map(i=>({text:i.text,done:i.done,addedAt:i.addedAt||0}));
+        return c;
+      });
+      const chunksDirty = _chunkBoxes(leanDirty);
+      const batchDirty  = db.batch();
+      const userRefDirty = db.collection("users").doc(currentUser.uid);
+      const _delIdsDirty = _getDeletedIds ? _getDeletedIds() : [];
+      batchDirty.set(userRefDirty,{
+        chunkCount: chunksDirty.length,
+        rooms: rooms,
+        deletedIds: _delIdsDirty,
+        updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+      },{merge:true});
+      chunksDirty.forEach((chunk,i)=>{
+        batchDirty.set(userRefDirty.collection("chunks").doc(String(i)),{boxes:chunk,idx:i});
+      });
+      await batchDirty.commit();
+      _clearDirty();
+      console.log("✅ Datos pendientes subidos a Firestore antes del merge");
+    }catch(dirtyErr){
+      console.warn("No se pudo subir dirty data:", dirtyErr);
+      // Seguir igual — el merge con addedAt protege los items
+    }
+  }
 
   // Luego traer de Firestore y hacer merge
   try{
@@ -8256,6 +8403,269 @@ if(auth){
 })();
 </script>
 
+<!-- ── MODAL DE NOVEDADES (estilo Android "Qué hay de nuevo") ── -->
+<style>
+/* ════ Changelog modal ════ */
+#changelogOverlay{
+  display:none;position:fixed;inset:0;z-index:10100;
+  background:rgba(0,0,0,.55);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);
+  align-items:flex-end;justify-content:center;
+}
+#changelogOverlay.open{ display:flex; }
+
+#changelogSheet{
+  width:100%;max-width:480px;
+  background:var(--card);
+  border-radius:28px 28px 0 0;
+  padding:0 0 calc(24px + env(safe-area-inset-bottom));
+  overflow:hidden;
+  transform:translateY(100%);
+  transition:transform .38s cubic-bezier(.32,1,.4,1);
+  box-shadow:0 -8px 40px rgba(0,0,0,.3);
+}
+#changelogOverlay.open #changelogSheet{ transform:translateY(0); }
+
+.cl-handle{
+  width:36px;height:4px;border-radius:2px;
+  background:rgba(128,128,128,.35);
+  margin:12px auto 0;
+}
+
+.cl-hero{
+  position:relative;overflow:hidden;
+  background:linear-gradient(135deg,#0A84FF 0%,#5856D6 55%,#AF52DE 100%);
+  padding:28px 24px 22px;
+  margin-bottom:0;
+}
+.cl-hero::before{
+  content:'';position:absolute;inset:0;
+  background:radial-gradient(ellipse 70% 80% at 80% 20%,rgba(255,255,255,.15) 0%,transparent 60%);
+}
+.cl-hero-icon{
+  font-size:36px;line-height:1;margin-bottom:10px;
+  filter:drop-shadow(0 3px 8px rgba(0,0,0,.3));
+  position:relative;z-index:1;
+}
+.cl-hero-title{
+  font-size:22px;font-weight:900;color:#fff;
+  letter-spacing:-.5px;line-height:1.15;
+  position:relative;z-index:1;
+}
+.cl-hero-sub{
+  font-size:13px;color:rgba(255,255,255,.65);
+  margin-top:4px;position:relative;z-index:1;
+}
+.cl-version-badge{
+  display:inline-flex;align-items:center;gap:5px;
+  background:rgba(255,255,255,.18);border:0.5px solid rgba(255,255,255,.3);
+  border-radius:99px;padding:3px 11px;
+  font-size:11px;font-weight:800;color:#fff;
+  letter-spacing:.3px;margin-top:10px;
+  position:relative;z-index:1;
+}
+
+.cl-body{
+  padding:20px 20px 8px;
+  max-height:48vh;overflow-y:auto;scrollbar-width:none;
+}
+.cl-body::-webkit-scrollbar{display:none}
+
+.cl-section-label{
+  font-size:10px;font-weight:800;color:var(--muted);
+  text-transform:uppercase;letter-spacing:1.2px;
+  margin-bottom:10px;opacity:.7;
+}
+
+.cl-item{
+  display:flex;align-items:flex-start;gap:13px;
+  padding:12px 0;
+  border-bottom:0.5px solid var(--border);
+}
+.cl-item:last-child{ border-bottom:none; }
+
+.cl-item-icon{
+  width:38px;height:38px;border-radius:10px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:18px;flex-shrink:0;
+  position:relative;overflow:hidden;
+}
+.cl-item-icon::after{
+  content:'';position:absolute;inset:0;border-radius:10px;
+  background:linear-gradient(135deg,rgba(255,255,255,.2) 0%,transparent 60%);
+}
+
+.cl-item-text{ flex:1;min-width:0; }
+.cl-item-title{
+  font-size:14px;font-weight:700;color:var(--text);
+  line-height:1.3;letter-spacing:-.2px;
+}
+.cl-item-desc{
+  font-size:12px;color:var(--muted);
+  margin-top:2px;line-height:1.5;
+}
+
+.cl-tag{
+  display:inline-block;border-radius:5px;
+  font-size:9px;font-weight:800;letter-spacing:.4px;
+  text-transform:uppercase;padding:2px 6px;margin-right:5px;
+  vertical-align:middle;
+}
+.cl-tag-fix{ background:rgba(255,59,48,.15);color:#FF453A; }
+.cl-tag-new{ background:rgba(52,199,89,.15);color:#30D158; }
+.cl-tag-imp{ background:rgba(10,132,255,.15);color:#0A84FF; }
+
+.cl-footer{
+  padding:16px 20px 0;
+}
+.cl-close-btn{
+  width:100%;padding:15px;border-radius:14px;border:none;
+  background:var(--accent);color:#fff;
+  font-size:15px;font-weight:700;font-family:inherit;
+  cursor:pointer;
+  transition:transform .12s,opacity .12s;
+  -webkit-tap-highlight-color:transparent;
+}
+.cl-close-btn:active{ transform:scale(.97);opacity:.9; }
+</style>
+
+<!-- Modal HTML -->
+<!-- El modal se construye dinámicamente desde config.json -->
+<div id="changelogOverlay" onclick="if(event.target===this)closeChangelog()">
+  <div id="changelogSheet">
+    <div class="cl-handle"></div>
+    <div class="cl-hero">
+      <div class="cl-hero-icon">📦</div>
+      <div class="cl-hero-title">BoxVision actualizado</div>
+      <div class="cl-hero-sub">Acá están los cambios de esta versión</div>
+      <div class="cl-version-badge" id="clVersionBadge">✦ cargando…</div>
+    </div>
+    <div class="cl-body" id="clBody">
+      <!-- se rellena con JS desde config.json -->
+    </div>
+    <div class="cl-footer">
+      <button class="cl-close-btn" onclick="closeChangelog()">¡Entendido!</button>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ══════════════════════════════════════════════════════
+   Sistema de changelog dinámico — lee config.json
+   Para publicar una nueva versión:
+     1. Editá config.json en GitHub (version + changelog)
+     2. Subí el app.html nuevo
+     3. Los usuarios verán el modal automáticamente
+   ══════════════════════════════════════════════════════ */
+
+(function(){
+  'use strict';
+
+  // Colores por tipo de cambio
+  var TYPE_STYLE = {
+    fix: { bg:'rgba(255,59,48,.15)',  tag:'cl-tag-fix', label:'Fix'    },
+    imp: { bg:'rgba(10,132,255,.15)', tag:'cl-tag-imp', label:'Mejora' },
+    new: { bg:'rgba(52,199,89,.15)',  tag:'cl-tag-new', label:'Nuevo'  },
+  };
+
+  // Construye el HTML del modal con los datos de config.json
+  function _buildChangelog(cfg){
+    var badge  = document.getElementById('clVersionBadge');
+    var body   = document.getElementById('clBody');
+    if(!badge || !body) return;
+
+    badge.textContent = '✦ v' + cfg.version;
+
+    var fixes = (cfg.changelog||[]).filter(function(i){ return i.type==='fix'; });
+    var imps  = (cfg.changelog||[]).filter(function(i){ return i.type!=='fix'; });
+
+    function itemHTML(item){
+      var s = TYPE_STYLE[item.type] || TYPE_STYLE.imp;
+      return '<div class="cl-item">'
+        + '<div class="cl-item-icon" style="background:'+s.bg+'">'+item.icon+'</div>'
+        + '<div class="cl-item-text">'
+        +   '<div class="cl-item-title"><span class="cl-tag '+s.tag+'">'+s.label+'</span>'+_esc(item.title)+'</div>'
+        +   '<div class="cl-item-desc">'+_esc(item.desc)+'</div>'
+        + '</div>'
+        + '</div>';
+    }
+
+    var html = '';
+    if(fixes.length){
+      html += '<div class="cl-section-label">Correcciones</div>';
+      html += fixes.map(itemHTML).join('');
+    }
+    if(imps.length){
+      html += '<div class="cl-section-label" style="margin-top:16px">Mejoras</div>';
+      html += imps.map(itemHTML).join('');
+    }
+    body.innerHTML = html;
+  }
+
+  function _esc(s){
+    return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  }
+
+  // Carga config.json con cache-bust para siempre leer la versión más nueva
+  function _fetchConfig(cb){
+    fetch('./config.json?_=' + Date.now(), { cache:'no-store' })
+      .then(function(r){ return r.json(); })
+      .then(cb)
+      .catch(function(){ cb(null); });
+  }
+
+  // Compara versión del servidor con la guardada en localStorage
+  function _checkVersion(){
+    _fetchConfig(function(cfg){
+      if(!cfg || !cfg.version) return;
+      var seen = '';
+      try{ seen = localStorage.getItem('bv_changelog_seen') || ''; }catch(e){}
+
+      if(seen !== cfg.version){
+        // Versión nueva — preparar modal y marcarlo como pendiente
+        _buildChangelog(cfg);
+        window._changelogVersion  = cfg.version;
+        window._changelogPending  = true;
+      }
+    });
+  }
+
+  // ── API pública ──────────────────────────────────────
+
+  window.openChangelog = function(){
+    var ov = document.getElementById('changelogOverlay');
+    if(!ov) return;
+    // Si el body está vacío (ej: abierto desde settings), cargar config primero
+    var body = document.getElementById('clBody');
+    if(body && !body.children.length){
+      _fetchConfig(function(cfg){ if(cfg) _buildChangelog(cfg); });
+    }
+    ov.style.display = 'flex';
+    requestAnimationFrame(function(){ requestAnimationFrame(function(){
+      ov.classList.add('open');
+    }); });
+  };
+
+  window.closeChangelog = function(){
+    var ov = document.getElementById('changelogOverlay');
+    if(!ov) return;
+    ov.classList.remove('open');
+    setTimeout(function(){ ov.style.display = 'none'; }, 400);
+    // Marcar esta versión como vista
+    try{
+      var v = window._changelogVersion || '';
+      if(v) localStorage.setItem('bv_changelog_seen', v);
+    }catch(e){}
+  };
+
+  // Alias para compatibilidad con el sistema de actualizaciones (SW)
+  window.showChangelog = window.openChangelog;
+
+  // Al cargar la página: chequear si hay versión nueva
+  document.addEventListener('DOMContentLoaded', _checkVersion);
+
+})();
+</script>
+
 <!-- ── BANNER DE ACTUALIZACIÓN (Diseño integrado con BoxVision) ── -->
 <style>
 /* Banner de actualización - Diseño nativo iOS integrado */
@@ -8540,15 +8950,16 @@ if(auth){
 
     function runStep() {
       if (step >= STEPS.length) {
-        // Actualización completada: ocultar banner suavemente y refrescar estado interno
+        // Actualización completada: ocultar banner y mostrar modal de novedades
         setTimeout(function () {
           hideUpdateNotification(true);
           updating = false;
           _syncSettingsUpdateBtn('App actualizada ✅', true);
-          // Reset silencioso del SW controller (sin reload visible)
-          // El SW ya está activo en segundo plano; si hay contenido nuevo
-          // se cargará en la próxima navegación o apertura de sección.
           _softRefreshAppState();
+          // Mostrar modal de novedades tras un breve delay (para que el banner salga primero)
+          setTimeout(function(){
+            if(typeof window.showChangelog === 'function') window.showChangelog();
+          }, 400);
         }, 600);
         return;
       }
