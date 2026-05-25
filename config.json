@@ -1,18 +1,24 @@
 {
-  "version": "2.6.4",
+  "version": "2.6.5",
   "released": "2026-05-24",
   "changelog": [
     {
-      "type": "new",
-      "icon": "📷",
-      "title": "Búsqueda por foto",
-      "desc": "Sacás foto de un objeto y la IA identifica qué es y en qué caja está. Usá el ícono de cámara en la barra de búsqueda."
+      "type": "fix",
+      "icon": "🐛",
+      "title": "Formulario de caja ya no se bloquea",
+      "desc": "Si ocurría un error al guardar una caja, el botón quedaba bloqueado y no se podía crear ninguna caja más sin recargar la app."
     },
     {
-      "type": "imp",
-      "icon": "⚡",
-      "title": "Actualizaciones más rápidas",
-      "desc": "La app ahora busca versiones nuevas al abrirse y cada 2 minutos."
+      "type": "fix",
+      "icon": "🐛",
+      "title": "Las cajas ahora se guardan sin cuenta",
+      "desc": "Los usuarios que usan la app sin iniciar sesión perdían todas sus cajas al recargar la página. Ahora se guardan correctamente en el dispositivo."
+    },
+    {
+      "type": "fix",
+      "icon": "🐛",
+      "title": "Código QR corregido",
+      "desc": "En algunos casos el enlace del código QR se generaba mal y no abría la vista de la caja correctamente."
     }
   ]
 }
