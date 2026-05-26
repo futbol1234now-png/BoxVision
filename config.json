@@ -1,24 +1,36 @@
 {
-  "version": "2.6.5",
-  "released": "2026-05-24",
+  "version": "2.6.0",
+  "released": "2026-05-26",
   "changelog": [
     {
-      "type": "fix",
-      "icon": "🐛",
-      "title": "Formulario de caja ya no se bloquea",
-      "desc": "Si ocurría un error al guardar una caja, el botón quedaba bloqueado y no se podía crear ninguna caja más sin recargar la app."
+      "type": "new",
+      "icon": "✨",
+      "title": "Modal para agregar objetos",
+      "desc": "Al agregar un objeto ahora aparece una pantalla completa con vista previa, nombre, categoría, foto y nota — igual al formulario de nueva caja."
     },
     {
-      "type": "fix",
-      "icon": "🐛",
-      "title": "Las cajas ahora se guardan sin cuenta",
-      "desc": "Los usuarios que usan la app sin iniciar sesión perdían todas sus cajas al recargar la página. Ahora se guardan correctamente en el dispositivo."
+      "type": "new",
+      "icon": "📋",
+      "title": "Detalle de objeto al tocarlo",
+      "desc": "Al tocar cualquier objeto de la lista se abre un panel con su foto, nota, fecha de agregado y opciones para marcarlo, editarlo o eliminarlo."
     },
     {
-      "type": "fix",
-      "icon": "🐛",
-      "title": "Código QR corregido",
-      "desc": "En algunos casos el enlace del código QR se generaba mal y no abría la vista de la caja correctamente."
+      "type": "imp",
+      "icon": "🎨",
+      "title": "Objetos de la lista rediseñados",
+      "desc": "Cada objeto ahora muestra su emoji automático, nombre en negrita, categoría y nota como subtítulo, y una flecha que indica que se puede tocar."
+    },
+    {
+      "type": "imp",
+      "icon": "💫",
+      "title": "Animación al agregar objetos",
+      "desc": "Los objetos nuevos aparecen con un efecto de deslizamiento suave desde arriba. Al agregar varios a la vez, entran uno por uno en cascada."
+    },
+    {
+      "type": "imp",
+      "icon": "🗑️",
+      "title": "Sección de historial eliminada",
+      "desc": "Se eliminó la sección de historial de acciones para simplificar la pantalla de cada caja."
     }
   ]
 }
