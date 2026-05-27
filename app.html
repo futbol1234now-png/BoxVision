@@ -6033,11 +6033,6 @@ function renderRelated(){
   document.getElementById("relatedList").innerHTML=`<div class="rel-item" onclick="openDetail('${rel.id}')"><span style="font-size:20px">${getIcon(rel.name, rel)}</span><span class="rel-name">${esc(rel.name)}</span><span class="rel-sub">${rel.items.length} objetos ›</span></div>`;
 }
 
-
-
-  sec.style.display="block";
-}
-
 function triggerPhoto(){document.getElementById("photoInput").click();}
 function handlePhoto(e){
   const file=e.target.files[0];if(!file||!currentBoxId) return;
@@ -8006,7 +8001,6 @@ function updateFABVisibility(){
 window.addEventListener("hashchange",()=>{route();updateFABVisibility();});
 document.addEventListener("DOMContentLoaded",applySplashGradient);
 // route() se llama desde onAuthStateChanged tras el login
-
 </script>
 
 <!-- SW moved to end of body -->
