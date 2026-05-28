@@ -2213,7 +2213,8 @@ button{-webkit-tap-highlight-color:transparent;outline:none}
   transition:transform var(--dur-fast) var(--ease-spring),
              box-shadow var(--dur-fast),
              width .3s var(--ease-spring);
-  animation:fabIn .5s .3s var(--ease-spring) both;
+  animation:fabIn .5s .3s var(--ease-spring) forwards;
+  opacity:1;
   overflow:hidden;
   white-space:nowrap;
 }
@@ -4984,6 +4985,12 @@ function showScreen(id){
   document.querySelectorAll("#splash,#loginScreen,#mainScreen,#detailScreen,#roomScreen,#settingsScreen,#viewer").forEach(el=>{
     if(el.id!==id){el.classList.add("hidden");el.classList.remove("active");el.style.display="";}
   });
+  // Mostrar u ocultar el FAB según pantalla
+  const _fabCtrl=document.getElementById("aiFab");
+  if(_fabCtrl){
+    if(id==="mainScreen"){_fabCtrl.style.display="flex";}
+    else if(id!=="splash"){_fabCtrl.style.display="none";}
+  }
 }
 
 function applySplashGradient(){
@@ -5092,7 +5099,7 @@ function showSplash(){
   document.body.style.overflow='hidden';
   document.body.style.height='100vh';
   applySplashGradient();
-  const _fab=document.getElementById('aiFab');if(_fab) _fab.classList.remove('hidden');
+  const _fab=document.getElementById('aiFab');if(_fab){_fab.classList.remove('hidden');_fab.style.display='flex';}
   const brand=settings.brand;const be=document.getElementById('splashBrand');
   if(brand){be.textContent='de '+brand;be.style.display='block';}else be.style.display='none';
   _startClock();
@@ -5101,7 +5108,7 @@ function showSplash(){
 function goSplash(){showSplash();}
 
 let activeFilter="todo"; let activeSort="default";
-function goMain(){showScreen("mainScreen");renderMain();_startClock();const f=document.getElementById("aiFab");if(f){f.classList.remove("hidden");}
+function goMain(){showScreen("mainScreen");renderMain();_startClock();const f=document.getElementById("aiFab");if(f){f.classList.remove("hidden");f.style.display="flex";}
   // Mostrar changelog si hay versión nueva sin ver (primer arranque tras actualización)
   if(window._changelogPending){
     window._changelogPending=false;
@@ -8260,7 +8267,7 @@ document.addEventListener("DOMContentLoaded",applySplashGradient);
 <!-- ═══ 3D CUBE MODAL ═══ -->
 
 <!-- ═══ AI ASSISTANT FAB ═══ -->
-<button class="ai-fab hidden" id="aiFab" onclick="toggleAI()">
+<button class="ai-fab" id="aiFab" onclick="toggleAI()" style="display:none">
   <div class="ai-dot"></div>
   <span style="font-size:17px">✦</span>
   <span class="ai-fab-label">Box IA</span>
