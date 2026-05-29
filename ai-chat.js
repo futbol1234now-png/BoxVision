@@ -273,7 +273,16 @@ function updateFABVisibility(){
   if(!fab) return;
   const hash = location.hash;
   const isViewer = hash.startsWith("#view/");
-  fab.classList.toggle("hidden", isViewer);
+  if(isViewer){
+    fab.classList.add("hidden");
+    fab.style.display = "none";
+  } else {
+    fab.classList.remove("hidden");
+    if(!aiOpen){
+      fab.style.display = "flex";
+      fab.style.opacity = "1";
+    }
+  }
 }
 
 window.addEventListener("hashchange",()=>{route();updateFABVisibility();});
