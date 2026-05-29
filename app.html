@@ -1520,58 +1520,7 @@
 
 <!-- ═══ 3D CUBE MODAL ═══ -->
 
-<!-- ═══ AI ASSISTANT FAB ═══ -->
-<button id="aiFab" onclick="toggleAI()" style="position:fixed;bottom:24px;right:20px;z-index:99999;display:flex;align-items:center;gap:8px;height:50px;padding:0 18px;border-radius:25px;background:linear-gradient(135deg,#1a1a2e,#0f3460);border:1px solid rgba(88,86,214,.5);color:#fff;font-size:16px;cursor:pointer;box-shadow:0 4px 24px rgba(88,86,214,.4);opacity:1">
-  <div style="width:8px;height:8px;background:#34C759;border-radius:50%"></div>
-  <span>✦</span>
-  <span style="font-size:13px;font-weight:700">Box IA</span>
-</button>
-
-<!-- ═══ BOX IA PANEL ═══ -->
-<div class="ai-panel" id="aiPanel">
-  <div class="ai-header">
-    <div class="ai-avatar"><span style="position:relative;z-index:1;font-size:20px;filter:drop-shadow(0 1px 4px rgba(0,0,0,.4))">✦</span></div>
-    <div class="ai-header-info">
-      <div class="ai-header-name">Box IA</div>
-      <div class="ai-header-status" id="aiStatus">Asistente inteligente</div>
-    </div>
-    <button class="ai-close" onclick="toggleAI()">✕</button>
-  </div>
-
-  <!-- Pantalla configuración API key -->
-  <div id="aiKeyScreen" style="display:none;flex:1;padding:32px 24px;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:18px">
-    <div style="font-size:56px">🔑</div>
-    <div style="font-size:20px;font-weight:800;color:#fff;letter-spacing:-.4px">Conecta Box IA</div>
-    <div style="font-size:14px;color:rgba(255,255,255,.65);line-height:1.6">Powered by <b style="color:rgba(255,255,255,.9)">Groq</b> vía Cloudflare Workers.<br>Gratis, rápido, sin exponer tu key.</div>
-    <div style="background:rgba(255,255,255,.12);border:0.5px solid rgba(255,255,255,.25);border-radius:16px;padding:14px 16px;font-size:13px;color:rgba(255,255,255,.85);line-height:1.8;text-align:left;width:100%;box-sizing:border-box;backdrop-filter:blur(10px)">
-      ✅ Tu key de Groq está guardada en el Worker<br>
-      ✅ Esta app no necesita la key directamente<br>
-      ✅ Funciona en cualquier red
-    </div>
-    <button onclick="saveApiKey()" style="width:100%;padding:15px;border-radius:14px;border:none;background:#fff;color:#007AFF;font-size:16px;font-weight:700;cursor:pointer;box-shadow:0 4px 20px rgba(0,0,0,.2);transition:transform .15s,box-shadow .15s" onmousedown="this.style.transform='scale(.97)'" onmouseup="this.style.transform=''" ontouchstart="this.style.transform='scale(.97)'" ontouchend="this.style.transform=''">🚀 Iniciar Box IA</button>
-    <button onclick="skipApiKey()" style="background:rgba(255,255,255,.12);border:0.5px solid rgba(255,255,255,.25);backdrop-filter:blur(10px);border-radius:14px;padding:11px 24px;color:rgba(255,255,255,.8);font-size:14px;font-weight:600;cursor:pointer;font-family:inherit;width:100%;transition:transform .15s" onmousedown="this.style.transform='scale(.97)'" onmouseup="this.style.transform=''" ontouchstart="this.style.transform='scale(.97)'" ontouchend="this.style.transform=''">Usar modo básico</button>
-  </div>
-
-  <div id="aiChatArea" style="display:none;flex:1;flex-direction:column;overflow:hidden">
-    <div class="ai-messages" id="aiMessages"></div>
-    <div class="ai-quick" id="aiQuick">
-      <button class="ai-quick-btn" onclick="aiAsk('¿Dónde están mis zapatos?')">🔍 Buscar objeto</button>
-      <button class="ai-quick-btn" onclick="aiAsk('¿Cuánto llevo de la mudanza y qué me falta?')">📊 Mi progreso</button>
-      <button class="ai-quick-btn" onclick="aiAsk('¿Qué cajas son urgentes y qué tienen?')">🔴 Urgentes</button>
-      <button class="ai-quick-btn" onclick="aiAsk('Dame consejos para organizar mejor mi mudanza')">💡 Consejos</button>
-      <button class="ai-quick-btn" onclick="aiAsk('¿Qué cajas están en el cuarto principal?')">🛏 Por habitación</button>
-      <button class="ai-quick-btn" onclick="aiAsk('¿Cuáles son las cajas más pesadas o con más objetos?')">⚖️ Análisis</button>
-    </div>
-    <div style="display:flex;align-items:center;justify-content:space-between;padding:4px 16px 2px">
-      <button onclick="testGroqConnection()" style="background:none;border:none;color:rgba(255,255,255,.4);font-size:11px;cursor:pointer;padding:4px;font-family:inherit;transition:color .15s" onmouseenter="this.style.color='rgba(255,255,255,.8)'" onmouseleave="this.style.color='rgba(255,255,255,.4)'">🔌 Probar conexión</button>
-      <button onclick="clearApiKey()" style="background:none;border:none;color:rgba(255,255,255,.4);font-size:11px;cursor:pointer;padding:4px;font-family:inherit;transition:color .15s" onmouseenter="this.style.color='rgba(255,255,255,.8)'" onmouseleave="this.style.color='rgba(255,255,255,.4)'">⚙️ Cambiar API key</button>
-    </div>
-    <div class="ai-input-row">
-      <input class="ai-input" id="aiInput" type="text" placeholder="Pregúntale a Box IA…" onkeydown="if(event.key==='Enter')aiSend()"/>
-      <button class="ai-send" onclick="aiSend()">↑</button>
-    </div>
-  </div>
-</div>
+<!-- ═══ 3D CUBE MODAL placeholder ═══ -->
 
 <!-- ═══ FIREBASE AUTH + FIRESTORE LOGIC ═══ -->
 <script src="app-auth.js"></script>
@@ -1661,6 +1610,59 @@
   <div id="searchPhotoToastIcon">📷</div>
   <div id="searchPhotoToastMsg">Analizando imagen…</div>
   <div id="searchPhotoToastSub"></div>
+</div>
+
+<!-- ═══ AI ASSISTANT FAB ═══ -->
+<button id="aiFab" onclick="toggleAI()" style="position:fixed;bottom:24px;right:20px;z-index:99999;display:flex;align-items:center;gap:8px;height:50px;padding:0 18px;border-radius:25px;background:linear-gradient(135deg,#1a1a2e,#0f3460);border:1px solid rgba(88,86,214,.5);color:#fff;font-size:16px;cursor:pointer;box-shadow:0 4px 24px rgba(88,86,214,.4);opacity:1">
+  <div style="width:8px;height:8px;background:#34C759;border-radius:50%"></div>
+  <span>✦</span>
+  <span style="font-size:13px;font-weight:700">Box IA</span>
+</button>
+
+<!-- ═══ BOX IA PANEL ═══ -->
+<div class="ai-panel" id="aiPanel">
+  <div class="ai-header">
+    <div class="ai-avatar"><span style="position:relative;z-index:1;font-size:20px;filter:drop-shadow(0 1px 4px rgba(0,0,0,.4))">✦</span></div>
+    <div class="ai-header-info">
+      <div class="ai-header-name">Box IA</div>
+      <div class="ai-header-status" id="aiStatus">Asistente inteligente</div>
+    </div>
+    <button class="ai-close" onclick="toggleAI()">✕</button>
+  </div>
+
+  <!-- Pantalla configuración API key -->
+  <div id="aiKeyScreen" style="display:none;flex:1;padding:32px 24px;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:18px">
+    <div style="font-size:56px">🔑</div>
+    <div style="font-size:20px;font-weight:800;color:#fff;letter-spacing:-.4px">Conecta Box IA</div>
+    <div style="font-size:14px;color:rgba(255,255,255,.65);line-height:1.6">Powered by <b style="color:rgba(255,255,255,.9)">Groq</b> vía Cloudflare Workers.<br>Gratis, rápido, sin exponer tu key.</div>
+    <div style="background:rgba(255,255,255,.12);border:0.5px solid rgba(255,255,255,.25);border-radius:16px;padding:14px 16px;font-size:13px;color:rgba(255,255,255,.85);line-height:1.8;text-align:left;width:100%;box-sizing:border-box;backdrop-filter:blur(10px)">
+      ✅ Tu key de Groq está guardada en el Worker<br>
+      ✅ Esta app no necesita la key directamente<br>
+      ✅ Funciona en cualquier red
+    </div>
+    <button onclick="saveApiKey()" style="width:100%;padding:15px;border-radius:14px;border:none;background:#fff;color:#007AFF;font-size:16px;font-weight:700;cursor:pointer;box-shadow:0 4px 20px rgba(0,0,0,.2);transition:transform .15s,box-shadow .15s" onmousedown="this.style.transform='scale(.97)'" onmouseup="this.style.transform=''" ontouchstart="this.style.transform='scale(.97)'" ontouchend="this.style.transform=''">🚀 Iniciar Box IA</button>
+    <button onclick="skipApiKey()" style="background:rgba(255,255,255,.12);border:0.5px solid rgba(255,255,255,.25);backdrop-filter:blur(10px);border-radius:14px;padding:11px 24px;color:rgba(255,255,255,.8);font-size:14px;font-weight:600;cursor:pointer;font-family:inherit;width:100%;transition:transform .15s" onmousedown="this.style.transform='scale(.97)'" onmouseup="this.style.transform=''" ontouchstart="this.style.transform='scale(.97)'" ontouchend="this.style.transform=''">Usar modo básico</button>
+  </div>
+
+  <div id="aiChatArea" style="display:none;flex:1;flex-direction:column;overflow:hidden">
+    <div class="ai-messages" id="aiMessages"></div>
+    <div class="ai-quick" id="aiQuick">
+      <button class="ai-quick-btn" onclick="aiAsk('¿Dónde están mis zapatos?')">🔍 Buscar objeto</button>
+      <button class="ai-quick-btn" onclick="aiAsk('¿Cuánto llevo de la mudanza y qué me falta?')">📊 Mi progreso</button>
+      <button class="ai-quick-btn" onclick="aiAsk('¿Qué cajas son urgentes y qué tienen?')">🔴 Urgentes</button>
+      <button class="ai-quick-btn" onclick="aiAsk('Dame consejos para organizar mejor mi mudanza')">💡 Consejos</button>
+      <button class="ai-quick-btn" onclick="aiAsk('¿Qué cajas están en el cuarto principal?')">🛏 Por habitación</button>
+      <button class="ai-quick-btn" onclick="aiAsk('¿Cuáles son las cajas más pesadas o con más objetos?')">⚖️ Análisis</button>
+    </div>
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:4px 16px 2px">
+      <button onclick="testGroqConnection()" style="background:none;border:none;color:rgba(255,255,255,.4);font-size:11px;cursor:pointer;padding:4px;font-family:inherit;transition:color .15s" onmouseenter="this.style.color='rgba(255,255,255,.8)'" onmouseleave="this.style.color='rgba(255,255,255,.4)'">🔌 Probar conexión</button>
+      <button onclick="clearApiKey()" style="background:none;border:none;color:rgba(255,255,255,.4);font-size:11px;cursor:pointer;padding:4px;font-family:inherit;transition:color .15s" onmouseenter="this.style.color='rgba(255,255,255,.8)'" onmouseleave="this.style.color='rgba(255,255,255,.4)'">⚙️ Cambiar API key</button>
+    </div>
+    <div class="ai-input-row">
+      <input class="ai-input" id="aiInput" type="text" placeholder="Pregúntale a Box IA…" onkeydown="if(event.key==='Enter')aiSend()"/>
+      <button class="ai-send" onclick="aiSend()">↑</button>
+    </div>
+  </div>
 </div>
 
 </body>
