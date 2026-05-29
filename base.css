@@ -1,0 +1,97 @@
+/* BoxVision — Variables CSS, reset, tipografía, dark/light mode */
+
+
+  /* Si no hay iconos, usar símbolos de respaldo */
+  [data-no-icons="1"] i.ti::before,
+  [data-icons-verified-fail="1"] i.ti::before {
+    content: '⬜';
+    font-size: 0.8em;
+    margin-right: 0.25em;
+  }
+  
+  /* Específicos por tipo de icono */
+  [data-no-icons="1"] i.ti-layout-grid::before,
+  [data-icons-verified-fail="1"] i.ti-layout-grid::before { content: '⊞'; }
+  
+  [data-no-icons="1"] i.ti-list::before,
+  [data-icons-verified-fail="1"] i.ti-list::before { content: '☰'; }
+  
+  [data-no-icons="1"] i.ti-search::before,
+  [data-icons-verified-fail="1"] i.ti-search::before { content: '🔍'; }
+  
+  [data-no-icons="1"] i.ti-settings::before,
+  [data-icons-verified-fail="1"] i.ti-settings::before { content: '⚙'; }
+  
+  [data-no-icons="1"] i.ti-plus::before,
+  [data-icons-verified-fail="1"] i.ti-plus::before { content: '+'; font-weight: bold; }
+  
+  [data-no-icons="1"] i.ti-trash::before,
+  [data-icons-verified-fail="1"] i.ti-trash::before { content: '🗑'; }
+  
+  [data-no-icons="1"] i.ti-pencil::before,
+  [data-icons-verified-fail="1"] i.ti-pencil::before { content: '✎'; }
+  
+  [data-no-icons="1"] i.ti-check::before,
+  [data-icons-verified-fail="1"] i.ti-check::before { content: '✓'; }
+  
+  [data-no-icons="1"] i.ti-x::before,
+  [data-icons-verified-fail="1"] i.ti-x::before { content: '✕'; }
+  
+  [data-no-icons="1"] i.ti-copy::before,
+  [data-icons-verified-fail="1"] i.ti-copy::before { content: '📋'; }
+  
+  [data-no-icons="1"] i.ti-download::before,
+  [data-icons-verified-fail="1"] i.ti-download::before { content: '⬇'; }
+  
+  [data-no-icons="1"] i.ti-heart::before,
+  [data-icons-verified-fail="1"] i.ti-heart::before { content: '♥'; }
+  
+  [data-no-icons="1"] i.ti-star::before,
+  [data-icons-verified-fail="1"] i.ti-star::before { content: '★'; }
+  
+  [data-no-icons="1"] i.ti-qrcode::before,
+  [data-icons-verified-fail="1"] i.ti-qrcode::before { content: '⧬'; }
+  
+  [data-no-icons="1"] i.ti-camera::before,
+  [data-icons-verified-fail="1"] i.ti-camera::before { content: '📷'; }
+  
+  [data-no-icons="1"] i.ti-microphone::before,
+  [data-icons-verified-fail="1"] i.ti-microphone::before { content: '🎤'; }
+  
+  [data-no-icons="1"] i.ti-chart-bar::before,
+  [data-icons-verified-fail="1"] i.ti-chart-bar::before { content: '📊'; }
+  
+  [data-no-icons="1"] i.ti-calendar::before,
+  [data-icons-verified-fail="1"] i.ti-calendar::before { content: '📅'; }
+  
+  [data-no-icons="1"] i.ti-map-pin::before,
+  [data-icons-verified-fail="1"] i.ti-map-pin::before { content: '📍'; }
+  
+  [data-no-icons="1"] i.ti-alert-circle::before,
+  [data-icons-verified-fail="1"] i.ti-alert-circle::before { content: '⚠'; }
+  
+  [data-no-icons="1"] i.ti-chevron-left::before,
+  [data-icons-verified-fail="1"] i.ti-chevron-left::before { content: '<'; }
+  
+  [data-no-icons="1"] i.ti-chevron-down::before,
+  [data-icons-verified-fail="1"] i.ti-chevron-down::before { content: '∨'; }
+  
+  [data-no-icons="1"] i.ti-notes::before,
+  [data-icons-verified-fail="1"] i.ti-notes::before { content: '📝'; }
+  
+  [data-no-icons="1"] i.ti-package::before,
+  [data-icons-verified-fail="1"] i.ti-package::before { content: '📦'; }
+  
+  [data-no-icons="1"] i.ti-home::before,
+  [data-icons-verified-fail="1"] i.ti-home::before { content: '🏠'; }
+  
+  [data-no-icons="1"] i.ti-mail::before,
+  [data-icons-verified-fail="1"] i.ti-mail::before { content: '✉'; }
+  
+  [data-no-icons="1"] i.ti-phone::before,
+  [data-icons-verified-fail="1"] i.ti-phone::before { content: '☎'; }
+  
+  [data-no-icons="1"] i.ti-brand-whatsapp::before,
+  [data-icons-verified-fail="1"] i.ti-brand-whatsapp::before { content: 'W'; font-weight: bold; }
+
+

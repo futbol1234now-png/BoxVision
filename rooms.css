@@ -1,0 +1,295 @@
+/* BoxVision — Room screen */
+
+/* ═══ ROOM SCREEN v2.5 — Premium Redesign ═══ */
+#roomScreen .main-scroll,.room-container{margin:0 auto}
+.room-container{padding:0 14px}
+
+/* ── Stats globales ── */
+.room-global-stats{
+  display:grid;grid-template-columns:repeat(3,1fr);gap:10px;
+  margin-bottom:18px;
+}
+.rgs-pill{
+  background:var(--card);
+  border:0.5px solid rgba(255,255,255,.1);
+  border-radius:18px;padding:14px 10px 12px;text-align:center;
+  box-shadow:0 4px 16px rgba(0,0,0,.14),0 1px 0 rgba(255,255,255,.06) inset;
+  transition:transform .15s cubic-bezier(.34,1.56,.64,1);
+}
+.rgs-pill:active{transform:scale(.95)}
+.rgs-val{font-size:24px;font-weight:900;color:var(--text);letter-spacing:-1px;line-height:1}
+.rgs-lbl{font-size:10px;color:var(--muted);font-weight:700;margin-top:4px;text-transform:uppercase;letter-spacing:.5px}
+
+/* ── Grid de habitaciones ── */
+.room-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin-bottom:90px}
+
+/* ── Celda de habitación — REDISEÑO PREMIUM ── */
+.room-cell{
+  background:var(--card);
+  border:1px solid rgba(255,255,255,.1);
+  border-radius:24px;
+  min-height:160px;
+  padding:0;
+  transition:border-color .25s,background .25s,box-shadow .25s,transform .2s cubic-bezier(.34,1.56,.64,1);
+  box-shadow:
+    0 6px 28px rgba(0,0,0,.22),
+    0 1px 0 rgba(255,255,255,.07) inset;
+  position:relative;overflow:hidden;
+  display:flex;flex-direction:column;
+  cursor:pointer;
+}
+[data-dark=""] .room-cell{border-color:rgba(0,0,0,.12);box-shadow:0 3px 14px rgba(0,0,0,.07)}
+.room-cell:hover{
+  transform:translateY(-3px) scale(1.01);
+  box-shadow:0 12px 40px rgba(0,0,0,.3),0 1px 0 rgba(255,255,255,.1) inset;
+  border-color:rgba(255,255,255,.16);
+}
+.room-cell:active{transform:scale(.96);transition-duration:80ms}
+.room-cell.drag-over{
+  border-color:var(--accent);border-style:solid;
+  background:rgba(10,132,255,.07);
+  box-shadow:0 0 0 2px rgba(10,132,255,.3),0 10px 36px rgba(10,132,255,.15);
+  transform:scale(1.02)
+}
+
+/* Header de la celda con color de habitación */
+.room-cell-header{
+  padding:14px 14px 10px;
+  position:relative;
+  flex-shrink:0;
+}
+.room-cell-header-bg{
+  position:absolute;inset:0;
+  opacity:.22;
+  border-radius:24px 24px 0 0;
+}
+.room-cell-emoji{
+  font-size:32px;line-height:1;
+  margin-bottom:6px;
+  position:relative;z-index:1;
+  filter:drop-shadow(0 2px 8px rgba(0,0,0,.3));
+}
+.room-cell-name-row{
+  display:flex;align-items:flex-start;justify-content:space-between;gap:6px;
+  position:relative;z-index:1;
+}
+.room-cell-name{
+  font-size:14px;font-weight:800;color:var(--text);
+  letter-spacing:-.3px;
+  line-height:1.25;
+  flex:1;
+  word-break:break-word;
+}
+.room-cell-actions{display:flex;gap:5px;flex-shrink:0;margin-top:1px}
+
+/* ── Botones de acción MEJORADOS — pill con label ── */
+.room-cell-btn{
+  height:28px;
+  padding:0 10px;
+  border-radius:99px;
+  border:none;
+  cursor:pointer;
+  display:flex;align-items:center;justify-content:center;gap:4px;
+  font-size:11px;font-weight:700;
+  font-family:inherit;
+  letter-spacing:.1px;
+  transition:background .13s,transform .13s,box-shadow .13s,opacity .13s;
+  -webkit-tap-highlight-color:transparent;
+  position:relative;z-index:10;
+  white-space:nowrap;
+}
+.room-cell-btn:active{transform:scale(.84);transition-duration:60ms}
+.room-cell-btn-edit{
+  background:rgba(10,132,255,.18);
+  color:#4FACFE;
+  border:0.5px solid rgba(10,132,255,.28);
+  box-shadow:0 1px 6px rgba(10,132,255,.15);
+}
+.room-cell-btn-edit:hover{background:rgba(10,132,255,.28);box-shadow:0 2px 10px rgba(10,132,255,.25)}
+.room-cell-btn-del{
+  background:rgba(255,59,48,.14);
+  color:#FF6B6B;
+  border:0.5px solid rgba(255,59,48,.22);
+  box-shadow:0 1px 6px rgba(255,59,48,.1);
+}
+.room-cell-btn-del:hover{background:rgba(255,59,48,.25);box-shadow:0 2px 10px rgba(255,59,48,.2)}
+.room-cell-btn-detail{
+  background:rgba(255,255,255,.09);
+  color:var(--muted);
+  border:0.5px solid rgba(255,255,255,.13);
+}
+.room-cell-btn-detail:hover{background:rgba(255,255,255,.15);color:var(--text)}
+
+/* ── Cuerpo de la celda ── */
+.room-cell-body{
+  padding:0 14px 14px;
+  flex:1;display:flex;flex-direction:column;gap:7px;
+}
+.room-cell-count{
+  font-size:11px;font-weight:700;color:var(--muted);
+  display:flex;align-items:center;gap:5px;
+}
+.room-cell-count-dot{
+  width:6px;height:6px;border-radius:50%;
+  background:var(--accent);opacity:.7;
+}
+
+/* ── Barra de progreso ── */
+.room-cell-prog{
+  background:rgba(255,255,255,.08);
+  border-radius:99px;height:4px;overflow:hidden;
+  margin-bottom:2px;
+}
+.room-cell-prog-fill{
+  height:100%;border-radius:99px;
+  transition:width .5s cubic-bezier(.4,0,.2,1);
+  background:linear-gradient(90deg,#34C759,#30D158);
+}
+.room-cell-pct{
+  font-size:9px;font-weight:700;
+  color:var(--muted);text-align:right;
+  margin-top:-2px;
+}
+
+/* ── Chips dentro de la celda ── */
+.room-box-chips-preview{
+  display:flex;flex-wrap:wrap;gap:4px;margin-top:2px;
+}
+.room-box-chip-mini{
+  background:rgba(255,255,255,.07);
+  border:0.5px solid rgba(255,255,255,.1);
+  border-radius:8px;padding:3px 7px;
+  font-size:10px;font-weight:500;color:var(--text);
+  display:flex;align-items:center;gap:4px;
+  max-width:80px;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+.room-cell-more{
+  font-size:10px;color:var(--muted);
+  padding:3px 7px;
+  background:rgba(255,255,255,.04);
+  border-radius:8px;border:0.5px dashed rgba(255,255,255,.1);
+}
+.room-cell-empty{text-align:center;padding:8px 0 2px;color:var(--muted);font-size:11px;opacity:.35;font-style:italic}
+
+/* ── Drag-and-drop chips (sin asignar) ── */
+.room-box-chip{background:var(--card2);border:0.5px solid var(--border);border-radius:14px;padding:8px 11px;margin-bottom:7px;display:flex;align-items:center;gap:9px;cursor:grab;font-size:13px;font-weight:500;user-select:none;transition:background .12s,transform .12s,box-shadow .12s;box-shadow:0 2px 8px rgba(0,0,0,.1);-webkit-tap-highlight-color:transparent}
+.room-box-chip:active{transform:scale(.95)}
+.room-box-chip:last-child{margin-bottom:0}
+.room-chip-icon{font-size:16px;flex-shrink:0}
+.room-chip-name{flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:13px;font-weight:500;color:var(--text)}
+
+/* ── Sin asignar ── */
+.unassigned{background:var(--card);border-radius:20px;padding:14px 14px 10px;margin-bottom:16px;border:0.5px solid var(--border);box-shadow:0 2px 12px rgba(0,0,0,.08)}
+.unassigned-title{font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px;display:flex;align-items:center;gap:6px}
+.unassigned-title::after{content:'';flex:1;height:0.5px;background:var(--border)}
+#unassignedChips{display:flex;flex-wrap:wrap;gap:7px}
+#unassignedChips .room-box-chip{margin-bottom:0;flex:none;max-width:160px}
+
+/* ── FAB ── */
+.room-add-fab{position:fixed;bottom:calc(24px + env(safe-area-inset-bottom));right:20px;z-index:200;height:52px;padding:0 22px;border-radius:26px;border:none;background:linear-gradient(135deg,#0A84FF,#5856D6);color:#fff;font-size:15px;font-weight:700;font-family:inherit;display:flex;align-items:center;gap:8px;cursor:pointer;box-shadow:0 6px 24px rgba(10,132,255,.45),0 2px 8px rgba(0,0,0,.2);transition:transform .2s cubic-bezier(.34,1.56,.64,1),box-shadow .2s;-webkit-tap-highlight-color:transparent}
+.room-add-fab:active{transform:scale(.93);box-shadow:0 3px 12px rgba(10,132,255,.3)}
+.room-stats-bar{display:flex;gap:8px;padding:0 16px 12px;flex-wrap:wrap}
+.room-stat-pill{display:flex;align-items:center;gap:5px;background:var(--card);border:0.5px solid var(--border);border-radius:99px;padding:5px 12px;font-size:11px;font-weight:600;color:var(--text);box-shadow:0 1px 4px rgba(0,0,0,.06)}
+
+/* ── Modal de habitación mejorado — emoji picker ── */
+.room-emoji-grid{
+  display:grid;grid-template-columns:repeat(7,1fr);gap:6px;
+  margin-bottom:16px;
+}
+.room-emoji-opt{
+  width:100%;aspect-ratio:1;border:none;border-radius:10px;
+  font-size:20px;cursor:pointer;background:var(--card2);
+  border:1.5px solid transparent;
+  transition:border-color .13s,transform .13s,background .13s;
+  display:flex;align-items:center;justify-content:center;
+  -webkit-tap-highlight-color:transparent;
+}
+.room-emoji-opt.sel{
+  border-color:var(--accent);
+  background:rgba(10,132,255,.12);
+  transform:scale(1.1);
+}
+.room-emoji-opt:active{transform:scale(.88)}
+
+/* ── Panel detalle de habitación ── */
+.room-detail-panel{
+  position:fixed;inset:0;z-index:8500;
+  background:var(--bg);
+  transform:translateX(100%);
+  transition:transform .32s cubic-bezier(.32,1,.4,1);
+  overflow-y:auto;scrollbar-width:none;
+}
+.room-detail-panel.open{transform:translateX(0)}
+.room-detail-panel::-webkit-scrollbar{display:none}
+.room-detail-hero{
+  min-height:180px;display:flex;flex-direction:column;justify-content:flex-end;
+  padding:24px 18px 20px;position:relative;overflow:hidden;
+}
+.room-detail-hero-bg{position:absolute;inset:0;opacity:.35}
+.room-detail-hero-overlay{
+  position:absolute;inset:0;
+  background:linear-gradient(to bottom,rgba(0,0,0,.05),rgba(0,0,0,.55));
+}
+.room-detail-back{
+  position:absolute;top:max(16px,env(safe-area-inset-top));left:16px;
+  width:38px;height:38px;border-radius:50%;
+  background:rgba(0,0,0,.3);backdrop-filter:blur(10px);
+  border:0.5px solid rgba(255,255,255,.2);
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;font-size:18px;color:#fff;z-index:10;
+  transition:background .15s;-webkit-tap-highlight-color:transparent;
+}
+.room-detail-back:active{background:rgba(0,0,0,.5)}
+.room-detail-emoji{font-size:48px;margin-bottom:8px;position:relative;z-index:1;filter:drop-shadow(0 3px 8px rgba(0,0,0,.3))}
+.room-detail-name{font-size:28px;font-weight:900;color:#fff;letter-spacing:-.6px;position:relative;z-index:1;text-shadow:0 2px 10px rgba(0,0,0,.3)}
+.room-detail-meta{font-size:13px;color:rgba(255,255,255,.65);position:relative;z-index:1;margin-top:4px}
+.room-detail-body{padding:16px 14px 80px}
+.room-detail-stats{
+  display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:16px;
+}
+.rds-card{
+  background:var(--card);border:0.5px solid var(--border);
+  border-radius:16px;padding:12px;text-align:center;
+}
+.rds-val{font-size:20px;font-weight:900;color:var(--text);line-height:1}
+.rds-lbl{font-size:10px;color:var(--muted);font-weight:600;margin-top:3px;text-transform:uppercase;letter-spacing:.3px}
+.room-detail-prog-card{
+  background:var(--card);border:0.5px solid var(--border);
+  border-radius:16px;padding:14px 16px;margin-bottom:12px;
+}
+.room-detail-prog-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+.room-detail-prog-title{font-size:13px;font-weight:700;color:var(--text)}
+.room-detail-prog-pct{font-size:13px;font-weight:800;color:#34C759}
+.room-detail-prog-bar{background:rgba(255,255,255,.08);border-radius:99px;height:8px;overflow:hidden}
+.room-detail-prog-fill{height:100%;border-radius:99px;background:linear-gradient(90deg,#34C759,#30D158);transition:width .6s cubic-bezier(.4,0,.2,1)}
+.room-detail-box-item{
+  background:var(--card);border:0.5px solid var(--border);
+  border-radius:16px;padding:12px 14px;margin-bottom:8px;
+  display:flex;align-items:center;gap:12px;
+  cursor:pointer;transition:background .12s;
+  -webkit-tap-highlight-color:transparent;
+}
+.room-detail-box-item:active{background:var(--card2)}
+.room-dbi-icon{font-size:24px;flex-shrink:0}
+.room-dbi-info{flex:1;min-width:0}
+.room-dbi-name{font-size:14px;font-weight:700;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.room-dbi-sub{font-size:11px;color:var(--muted);margin-top:2px}
+.room-dbi-badge{
+  padding:3px 9px;border-radius:99px;font-size:10px;font-weight:700;
+  flex-shrink:0;
+}
+.room-dbi-badge.done{background:rgba(52,199,89,.15);color:#34C759}
+.room-dbi-badge.pending{background:rgba(255,149,0,.15);color:#FF9500}
+.room-detail-actions{
+  display:flex;gap:8px;margin-top:16px;
+}
+.room-da-btn{
+  flex:1;padding:14px;border-radius:14px;border:none;
+  font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;
+  display:flex;align-items:center;justify-content:center;gap:7px;
+  transition:transform .12s,opacity .12s;-webkit-tap-highlight-color:transparent;
+}
+.room-da-btn:active{transform:scale(.96)}
+.room-da-edit{background:rgba(10,132,255,.12);color:#0A84FF;border:0.5px solid rgba(10,132,255,.18)}
+.room-da-delete{background:rgba(255,59,48,.1);color:#FF3B30;border:0.5px solid rgba(255,59,48,.15)}
