@@ -151,7 +151,7 @@ function toggleFav(){
   if(fb) fb.classList.toggle("active", box.fav);
   showToast(box.fav?"⭐ Agregada a favoritas":"☆ Quitada de favoritas", box.fav?"#FFD60A":"#8E8E93");
 }
-function toggleFavId(id){const box=boxes.find(b=>b.id===id);if(box){box.fav=!box.fav;saveData();renderGrid();}}
+// toggleFavId movida a utils.js
 
 function renderRelated(){
   const box=boxes.find(b=>b.id===currentBoxId);const sec=document.getElementById("relatedSec");
@@ -296,13 +296,6 @@ function filterViewerItems(q){
 
 
 // BUG FIX #2: helper para convertir hex a rgba (rgba() no existe nativamente en JS)
-function hexToRgba(hex, alpha){
-  if(!hex||!hex.startsWith('#')) return hex||'#007AFF';
-  const h=hex.replace('#','');
-  const r=parseInt(h.length===3?h[0]+h[0]:h.slice(0,2),16);
-  const g=parseInt(h.length===3?h[1]+h[1]:h.slice(2,4),16);
-  const b=parseInt(h.length===3?h[2]+h[2]:h.slice(4,6),16);
-  return `rgba(${r},${g},${b},${alpha})`;
-}
+// hexToRgba movida a utils.js
 
 // ═══ BOX IA — Motor con API Anthropic ═══

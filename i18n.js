@@ -108,11 +108,7 @@ const I18N = {
 };
 
 // Obtener traducción
-function t(key, ...args){
-  const dict = I18N[_currentLang] || I18N['es'];
-  const val = dict[key] ?? (I18N['es'][key] ?? key);
-  return typeof val === 'function' ? val(...args) : val;
-}
+// t movida a utils.js
 
 // Actualizar todos los elementos con data-i18n en el DOM
 function _applyI18N(){

@@ -137,3 +137,81 @@ var _currentLang = localStorage.getItem('cb-lang') || 'es';
 
 // ── Variables de ai-chat.js ──
 var AI_INTRO = "¡Hola! 👋 Soy <b>Box IA</b>, tu asistente inteligente de mudanzas.<br><br>Puedo buscar objetos en tus cajas, analizar tu progreso, darte recomendaciones para organizar mejor, y responder cualquier pregunta sobre tu mudanza. ¿En qué te ayudo?";
+
+
+// ════ Funciones helper movidas aquí para carga temprana ════
+
+// ── hexToRgba (movida a utils para carga temprana) ──
+function hexToRgba(hex, alpha){
+  if(!hex||!hex.startsWith('#')) return hex||'#007AFF';
+  const h=hex.replace('#','');
+  const r=parseInt(h.length===3?h[0]+h[0]:h.slice(0,2),16);
+  const g=parseInt(h.length===3?h[1]+h[1]:h.slice(2,4),16);
+  const b=parseInt(h.length===3?h[2]+h[2]:h.slice(4,6),16);
+  return `rgba(${r},${g},${b},${alpha})`;
+}
+
+// ── toggleFavId (movida a utils para carga temprana) ──
+function toggleFavId(id){const box=boxes.find(b=>b.id===id);if(box){box.fav=!box.fav;saveData();renderGrid();}}
+
+// ── showToast (movida a utils para carga temprana) ──
+function showToast(msg, color){
+  const t=document.createElement("div");
+  t.style.cssText=`position:fixed;bottom:32px;left:50%;transform:translateX(-50%);background:${color||"#1C1C1E"};color:#fff;padding:13px 22px;border-radius:16px;font-size:14px;font-weight:600;z-index:9999;max-width:300px;width:max-content;text-align:center;box-shadow:0 8px 32px rgba(0,0,0,.35),0 1px 0 rgba(255,255,255,.1) inset;animation:toastSpring .4s var(--ease-spring,cubic-bezier(.175,.885,.32,1.275)) both;letter-spacing:-.1px;backdrop-filter:blur(16px)`;
+  t.textContent=msg;
+  document.body.appendChild(t);
+  setTimeout(()=>{t.style.opacity="0";t.style.transition="opacity .3s";setTimeout(()=>t.remove(),300);},3500);
+}
+
+const ANIMO_MSGS=["¡Uno menos! 💪","¡Vas genial! 🚀","¡Qué crack! ✨","¡Sigue así! 🔥","¡Casi! 🎯","¡Imparable! ⚡","¡Boom! 💥","¡Eso es! 👊","¡Top! 🏆","¡La rompes! 🎸"];
+
+// ── showToastUndo (movida a utils para carga temprana) ──
+function showToastUndo(msg, onUndo){
+  // Eliminar toast anterior si existe
+  document.getElementById("toastUndo")?.remove();
+  const t=document.createElement("div");
+  t.id="toastUndo";
+  t.style.cssText=`position:fixed;bottom:32px;left:50%;transform:translateX(-50%);background:#1C1C1E;color:#fff;padding:12px 8px 12px 18px;border-radius:16px;font-size:14px;font-weight:600;z-index:9999;max-width:320px;width:max-content;display:flex;align-items:center;gap:12px;box-shadow:0 8px 32px rgba(0,0,0,.35),0 1px 0 rgba(255,255,255,.1) inset;animation:toastSpring .4s cubic-bezier(.175,.885,.32,1.275) both;backdrop-filter:blur(16px)`;
+  const span=document.createElement("span");span.textContent=msg;
+  const btn=document.createElement("button");
+  btn.textContent="Deshacer";
+  btn.style.cssText="background:rgba(255,255,255,.15);border:none;color:#fff;border-radius:10px;padding:6px 12px;font-size:13px;font-weight:700;cursor:pointer;white-space:nowrap;font-family:inherit;flex-shrink:0";
+  let undone=false;
+  btn.onclick=()=>{if(!undone){undone=true;onUndo();t.remove();}};
+  t.appendChild(span);t.appendChild(btn);
+  document.body.appendChild(t);
+  const timer=setTimeout(()=>{t.style.opacity="0";t.style.transition="opacity .3s";setTimeout(()=>t.remove(),300);},4000);
+  btn.addEventListener("click",()=>clearTimeout(timer));
+}
+
+// ── animoToast (movida a utils para carga temprana) ──
+function animoToast(){const m=ANIMO_MSGS[Math.floor(Math.random()*ANIMO_MSGS.length)];showToast(m,"#34C759");}
+
+// ── renderGlobalProgress (movida a utils para carga temprana) ──
+function renderGlobalProgress(){
+  let el=document.getElementById("globalProgressBar");
+  const totalObj=boxes.reduce((s,b)=>s+b.items.length,0);
+  const doneObj=boxes.reduce((s,b)=>s+b.items.filter(i=>i.done).length,0);
+  if(!totalObj){if(el)el.remove();return;}
+  const pct=Math.round(doneObj/totalObj*100);
+  if(!el){
+    el=document.createElement("div");el.id="globalProgressBar";
+    el.style.cssText="position:sticky;top:57px;z-index:99;padding:7px 14px 5px;background:var(--bg)";
+    // Insertar justo antes del search-wrap
+    const sw=document.querySelector(".search-wrap");
+    if(sw) sw.parentNode.insertBefore(el,sw);
+  }
+  el.innerHTML=`<div style="display:flex;align-items:center;gap:9px">
+    <div style="flex:1;height:5px;background:var(--border);border-radius:99px;overflow:hidden">
+      <div style="height:100%;width:${pct}%;background:${pct>=100?"#34C759":pct>=60?"#0A84FF":"#FF9500"};border-radius:99px;transition:width .5s cubic-bezier(.4,0,.2,1)"></div>
+    </div>
+    <span style="font-size:11px;font-weight:700;color:var(--muted);white-space:nowrap;letter-spacing:.2px">${doneObj}/${totalObj} sacados · ${pct}%</span>
+  </div>`;
+}
+
+// ── t() traducción (movida a utils) ──
+function t(key, ...args){
+  const dict = I18N[_currentLang] || I18N['es'];
+  const val = dict[key] ?? (I18N['es'][key] ?? key);
+  return typeof val === 'function' ? val(...args) : val;
+}
