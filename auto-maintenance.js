@@ -27,11 +27,9 @@
     why:  'bv_maint_reason'
   };
 
-  // Limpiar si pasaron más de 2 min (evitar bloqueo permanente por error puntual)
-  var lastT = parseInt(localStorage.getItem(LS.time)||'0');
-  if(Date.now() - lastT > RESET_MS){
-    [LS.js, LS.lg, LS.fs, LS.pr].forEach(function(k){ localStorage.removeItem(k); });
-  }
+  // Limpiar contadores siempre al inicio de cada sesión
+  // (evita que errores de la sesión anterior bloqueen la nueva)
+  [LS.js, LS.lg, LS.fs, LS.pr, LS.why].forEach(function(k){ localStorage.removeItem(k); });
 
   function bump(key, max, label){
     var n = parseInt(localStorage.getItem(key)||'0') + 1;
@@ -97,18 +95,8 @@
     bump(LS.fs, MAX_FIRESTORE, 'firestore: '+(reason||'').slice(0,60));
   };
 
-  // ── 5. Timeout: app no carga en LOAD_TIMEOUT ms ──────────
-  var _loadTimer = setTimeout(function(){
-    var login  = document.getElementById('loginScreen');
-    var main   = document.getElementById('mainScreen');
-    var splash = document.getElementById('splash');
-    var loginVisible  = login  && !login.classList.contains('hidden') && login.style.display !== 'none';
-    var mainVisible   = main   && !main.classList.contains('hidden');
-    var splashVisible = splash && splash.classList.contains('active');
-    if(!loginVisible && !mainVisible && !splashVisible){
-      go('pantalla en blanco '+LOAD_TIMEOUT+'ms');
-    }
-  }, LOAD_TIMEOUT);
+  // ── 5. Timeout: deshabilitado temporalmente durante migración ──
+  var _loadTimer = null; // setTimeout desactivado
 
   // ── 6. App cargó bien: limpiar todo ──────────────────────
   window._bvAppLoaded = function(){
