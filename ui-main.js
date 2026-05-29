@@ -1,7 +1,7 @@
 /* BoxVision — Pantalla principal: grid, filtros, tarjetas */
 
 let activeFilter="todo"; let activeSort="default";
-function goMain(){showScreen("mainScreen");renderMain();_startClock();const f=document.getElementById("aiFab");if(f){f.style.display="flex";f.style.opacity="1";}
+function goMain(){showScreen("mainScreen");renderMain();_startClock();const f=document.getElementById("aiFab");if(f){f.style.display="flex";f.style.opacity="1";f.classList.remove("hidden");}
   // Mostrar changelog si hay versión nueva sin ver (primer arranque tras actualización)
   if(window._changelogPending){
     window._changelogPending=false;
@@ -226,4 +226,3 @@ function boxCard(b){
     </div>
   </div>`;
 }
-
