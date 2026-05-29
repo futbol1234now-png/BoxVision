@@ -57,6 +57,17 @@ function showScreen(id){
   document.querySelectorAll("#splash,#loginScreen,#mainScreen,#detailScreen,#roomScreen,#settingsScreen,#viewer").forEach(el=>{
     if(el.id!==id){el.classList.add("hidden");el.classList.remove("active");el.style.display="";}
   });
+  // Manejar FAB de Box IA
+  const _fab=document.getElementById("aiFab");
+  if(_fab){
+    if(id==="viewer"||id==="splash"||id==="loginScreen"){
+      _fab.classList.add("hidden");
+    } else {
+      _fab.classList.remove("hidden");
+      _fab.style.display="flex";
+      _fab.style.opacity="1";
+    }
+  }
 }
 
 function applySplashGradient(){
@@ -172,4 +183,3 @@ function showSplash(){
   setTimeout(function(){ _renderSplashStats(true); }, 120);
 }
 function goSplash(){showSplash();}
-
