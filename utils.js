@@ -107,3 +107,12 @@ function sortBoxes(arr){
 }
 
 
+
+// ── Variables globales de módulos tardíos ──
+// Declaradas aquí para que estén disponibles desde el inicio
+let voiceRecog = null;
+let _viewerItems = [];
+let _noteTimer = null;
+let aiOpen = false;
+let aiHistory = [];
+let aiStreaming = false;
