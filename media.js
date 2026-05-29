@@ -136,7 +136,7 @@ function resizeAndEncode(file,maxPx=1024,thumbPx=96){
   });
 }
 
-let _noteTimer=null;
+// _noteTimer declarado en utils.js
 function saveNote(){
   clearTimeout(_noteTimer);
   _noteTimer=setTimeout(()=>{
@@ -238,7 +238,7 @@ function generateQR(id){
 function exportBox(){
 
 // ── Reconocimiento de voz ──
-let voiceRecog=null;
+// voiceRecog declarado en utils.js
 function startVoice(){
   const box=boxes.find(b=>b.id===currentBoxId);
   if(box&&box.sealed){showToast(t("toast.sealed"),"#FF9500");return;}
@@ -284,7 +284,7 @@ function startVoice(){
 }
 
 
-let _viewerItems=[];
+// _viewerItems declarado en utils.js
 function filterViewerItems(q){
   const col=window._viewerColor||"#007AFF";
   const filtered=q?_viewerItems.filter(it=>it.text.toLowerCase().includes(q.toLowerCase())):_viewerItems;
