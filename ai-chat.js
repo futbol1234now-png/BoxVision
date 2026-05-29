@@ -1,8 +1,8 @@
 /* BoxVision — Box IA: asistente de mudanzas con Llama 3.3 */
 
-let aiOpen = false;
-let aiHistory = [];
-let aiStreaming = false;
+// aiOpen declarado en utils.js
+// aiHistory declarado en utils.js
+// aiStreaming declarado en utils.js
 
 const AI_INTRO = "¡Hola! 👋 Soy <b>Box IA</b>, tu asistente inteligente de mudanzas.<br><br>Puedo buscar objetos en tus cajas, analizar tu progreso, darte recomendaciones para organizar mejor, y responder cualquier pregunta sobre tu mudanza. ¿En qué te ayudo?";
 
