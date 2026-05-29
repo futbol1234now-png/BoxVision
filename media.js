@@ -235,7 +235,7 @@ function generateQR(id){
   }); // end requestAnimationFrame
 }
 
-function exportBox(){
+// exportBox definida en ui-form.js
 
 // ── Reconocimiento de voz ──
 // voiceRecog declarado en utils.js

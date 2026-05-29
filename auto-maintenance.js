@@ -11,12 +11,12 @@
    ══════════════════════════════════════════════════════════ */
 (function(){
   var REDIRECT      = './404.html';
-  var MAX_JS_ERRORS = 25;   // ⬆️ AUMENTADO: 10→25 (muy tolerante con errores JS)
+  var MAX_JS_ERRORS = 999;  // temporal: desactivado durante migración
   var MAX_LOGINS    = 12;   // ⬆️ AUMENTADO: 5→12 (usuario puede reintentar varias veces)
   var MAX_FIRESTORE = 20;   // ⬆️ AUMENTADO: 8→20 (conexión inestable permitida)
-  var MAX_PROMISE   = 25;   // ⬆️ AUMENTADO: 10→25 (casi nunca redirige)
+  var MAX_PROMISE   = 999;  // temporal: desactivado durante migración
   var LOAD_TIMEOUT  = 50000;// ⬆️ AUMENTADO: 25000→50000 (espera mucho más tiempo)
-  var RESET_MS      = 300000;// limpiar contadores cada 5 min (evita bloqueos)
+  var RESET_MS      = 30000; // 30s: limpia rápido durante desarrollo
 
   var LS = {
     js:   'bv_ec_js',
