@@ -4,7 +4,7 @@
 // aiHistory declarado en utils.js
 // aiStreaming declarado en utils.js
 
-const AI_INTRO = "¡Hola! 👋 Soy <b>Box IA</b>, tu asistente inteligente de mudanzas.<br><br>Puedo buscar objetos en tus cajas, analizar tu progreso, darte recomendaciones para organizar mejor, y responder cualquier pregunta sobre tu mudanza. ¿En qué te ayudo?";
+// AI_INTRO declarado en utils.js
 
 function toggleAI(){
   aiOpen = !aiOpen;

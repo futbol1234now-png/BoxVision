@@ -3,13 +3,13 @@
 // ═══ ROOMS v2.5 — Sistema mejorado ═══
 
 // Emojis para habitaciones
-const ROOM_EMOJIS = ['🛏','🛋','🍳','🚿','📚','🚗','🌿','🏋','💼','👶','🎮','🎨','🧺','🔧','🍽','🪴','🛠','📦','🎵','🌟'];
-const ROOM_COLORS = ['#0A84FF','#5856D6','#34C759','#FF9500','#FF3B30','#AF52DE','#FF2D55','#30B0C7','#FF6B35','#00C7BE'];
+// ROOM_EMOJIS declarado en utils.js
+// ROOM_COLORS declarado en utils.js
 
-var _roomModalMode   = null; // "add" | "rename"
-var _roomModalId     = null;
-var _roomModalEmoji  = '🏠';
-var _roomDetailId    = null;
+// _roomModalMode declarado en utils.js
+// _roomModalId declarado en utils.js
+// _roomModalEmoji declarado en utils.js
+// _roomDetailId declarado en utils.js
 
 function goRoom(){
   showScreen("roomScreen");

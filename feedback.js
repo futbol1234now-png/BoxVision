@@ -1,6 +1,6 @@
 /* BoxVision — Feedback, viewer de QR, linterna, TTS */
 
-let _feedbackCat = 'bug';
+// _feedbackCat declarado en utils.js
 
 function openFeedbackModal(){
   document.getElementById('feedbackTextarea').value='';

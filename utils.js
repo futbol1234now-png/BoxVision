@@ -116,3 +116,24 @@ let _noteTimer = null;
 let aiOpen = false;
 let aiHistory = [];
 let aiStreaming = false;
+
+// ── Variables de rooms.js ──
+var ROOM_EMOJIS = ['🛏','🛋','🍳','🚿','📚','🚗','🌿','🏋','💼','👶','🎮','🎨','🧺','🔧','🍽','🪴','🛠','📦','🎵','🌟'];
+var ROOM_COLORS = ['#0A84FF','#5856D6','#34C759','#FF9500','#FF3B30','#AF52DE','#FF2D55','#30B0C7','#FF6B35','#00C7BE'];
+var _roomModalMode   = null;
+var _roomModalId     = null;
+var _roomModalEmoji  = '🏠';
+var _roomDetailId    = null;
+
+// ── Variables de tutorial.js ──
+var tutStep = 0;
+var TUT_TOTAL = 7;
+
+// ── Variables de feedback.js ──
+var _feedbackCat = 'bug';
+
+// ── Variables de i18n.js ──
+var _currentLang = localStorage.getItem('cb-lang') || 'es';
+
+// ── Variables de ai-chat.js ──
+var AI_INTRO = "¡Hola! 👋 Soy <b>Box IA</b>, tu asistente inteligente de mudanzas.<br><br>Puedo buscar objetos en tus cajas, analizar tu progreso, darte recomendaciones para organizar mejor, y responder cualquier pregunta sobre tu mudanza. ¿En qué te ayudo?";

@@ -2,7 +2,7 @@
 
 // ── SISTEMA I18N COMPLETO ─────────────────────────────────────────────────────
 const LANG_LABELS = {es:'Español', en:'English', pt:'Português', fr:'Français'};
-let _currentLang = localStorage.getItem('cb-lang') || 'es';
+// _currentLang declarado en utils.js
 
 const I18N = {
   es: {

@@ -1,8 +1,8 @@
 /* BoxVision — Tutorial de onboarding */
 
 // ═══ TUTORIAL ═══
-let tutStep=0;
-const TUT_TOTAL=7;
+// tutStep declarado en utils.js
+// TUT_TOTAL declarado en utils.js
 
 async function initTutorial(){
   const uid=currentUser?.uid||"guest";
