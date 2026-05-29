@@ -12,7 +12,7 @@ function toggleAI(){
   const fab = document.getElementById("aiFab");
   if(aiOpen){
     panel.classList.add("open");
-    fab.style.display = "none"; fab.style.opacity="1";
+    fab.style.display = "none";
     const connected = localStorage.getItem("boxia_connected");
     const skipped = localStorage.getItem("boxia_skip");
     if(!connected && !skipped){
@@ -23,7 +23,7 @@ function toggleAI(){
     }
   } else {
     panel.classList.remove("open");
-    fab.style.display = "flex"; fab.style.opacity="1";
+    fab.style.display = "flex"; fab.style.opacity = "1";
   }
 }
 
