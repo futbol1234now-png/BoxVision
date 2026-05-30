@@ -91,13 +91,37 @@
   // Intentar inmediatamente y también al cargar el DOM (por si acaso)
   _patchRenderGrid();
   document.addEventListener('DOMContentLoaded', function(){ _patchRenderGrid(); setViewMode(_viewMode); });
+  // Helper para mostrar el FAB
+  function _showFab(){
+    var _f=document.getElementById('aiFab');
+    if(_f){_f.style.display='flex';_f.style.opacity='1';_f.classList.remove('hidden');}
+  }
+
   // Fallback: parchear en el primer goMain/renderMain
   var _origGoMain = window.goMain;
   window.goMain = function(){
     _patchRenderGrid();
     if(typeof _origGoMain === 'function') _origGoMain.apply(this, arguments);
-    var _f=document.getElementById('aiFab');
-    if(_f){_f.style.display='flex';_f.style.opacity='1';}
+    _showFab();
+  };
+
+  // Mostrar FAB también al abrir detalle, habitaciones y ajustes
+  var _origOpenDetail = window.openDetail;
+  window.openDetail = function(){
+    if(typeof _origOpenDetail === 'function') _origOpenDetail.apply(this, arguments);
+    setTimeout(_showFab, 100);
+  };
+
+  var _origGoRoom = window.goRoom;
+  window.goRoom = function(){
+    if(typeof _origGoRoom === 'function') _origGoRoom.apply(this, arguments);
+    setTimeout(_showFab, 100);
+  };
+
+  var _origGoSettings = window.goSettings;
+  window.goSettings = function(){
+    if(typeof _origGoSettings === 'function') _origGoSettings.apply(this, arguments);
+    setTimeout(_showFab, 100);
   };
 
   // ── 4. Skeleton inicial ───────────────────────────────────────────────────
