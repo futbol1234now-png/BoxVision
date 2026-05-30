@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>Términos de Uso — BoxVision</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+:root{
+  --bg:#17171f;--card:#1e1e28;--text:#FFFFFF;--muted:#8E8E93;
+  --border:rgba(255,255,255,0.08);--accent:#007AFF;--green:#34C759;--red:#FF3B30;
+  --topbar:rgba(23,23,31,0.88);--topbarborder:rgba(255,255,255,0.07);
+}
+body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','Segoe UI',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;}
+body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse 80% 50% at 15% 20%,rgba(88,86,214,0.07) 0%,transparent 60%),radial-gradient(ellipse 60% 40% at 85% 70%,rgba(10,132,255,0.06) 0%,transparent 60%);pointer-events:none;z-index:0;}
+
+.topbar{position:sticky;top:0;z-index:200;background:var(--topbar);border-bottom:0.5px solid var(--topbarborder);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);padding:14px 16px 12px;display:flex;align-items:center;gap:10px;}
+.topbar-back{width:36px;height:36px;border-radius:10px;background:rgba(255,255,255,.08);border:0.5px solid rgba(255,255,255,.1);display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--accent);font-size:18px;transition:background .15s;text-decoration:none;flex-shrink:0;}
+.topbar-back:active{background:rgba(255,255,255,.14);}
+.topbar-info{flex:1;min-width:0;}
+.topbar-title{font-size:17px;font-weight:700;letter-spacing:-.3px}
+.topbar-sub{font-size:11px;color:var(--muted);margin-top:1px}
+
+.lang-switcher{display:flex;background:rgba(255,255,255,.08);border:0.5px solid rgba(255,255,255,.12);border-radius:10px;overflow:hidden;flex-shrink:0;}
+.lang-btn{padding:6px 11px;font-size:12px;font-weight:700;cursor:pointer;color:var(--muted);transition:all .18s;border:none;background:transparent;letter-spacing:.3px;}
+.lang-btn.active{background:var(--accent);color:#fff;border-radius:9px;}
+
+.hero{position:relative;overflow:hidden;background:linear-gradient(135deg,#5856D6,#AF52DE 60%,#FF2D55);padding:32px 20px 28px;text-align:center;}
+.hero::after{content:'';position:absolute;inset:0;background:linear-gradient(180deg,transparent 40%,rgba(23,23,31,.6));pointer-events:none;}
+.hero-icon{font-size:52px;position:relative;z-index:1;margin-bottom:10px;line-height:1;filter:drop-shadow(0 4px 16px rgba(0,0,0,.4));}
+.hero-title{font-size:26px;font-weight:800;letter-spacing:-.5px;position:relative;z-index:1;margin-bottom:6px;}
+.hero-sub{font-size:13px;color:rgba(255,255,255,.7);position:relative;z-index:1;line-height:1.5;}
+.hero-badge{display:inline-flex;align-items:center;gap:6px;margin-top:14px;position:relative;z-index:1;background:rgba(255,255,255,.15);border:0.5px solid rgba(255,255,255,.2);backdrop-filter:blur(12px);border-radius:99px;padding:6px 14px;font-size:12px;font-weight:600;color:rgba(255,255,255,.9);}
+
+.page-body{padding:0 14px 80px;max-width:680px;margin:0 auto;position:relative;z-index:1;}
+.sec{background:var(--card);border-radius:20px;margin-top:14px;overflow:hidden;border:0.5px solid var(--border);box-shadow:0 2px 12px rgba(0,0,0,.12);}
+.sec-header{display:flex;align-items:center;gap:10px;padding:16px 18px 0;margin-bottom:4px;}
+.sec-icon{width:30px;height:30px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0;}
+.sec-title{font-size:13px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.6px;}
+.sec-body{padding:10px 18px 18px;font-size:15px;line-height:1.65;color:var(--text);}
+.sec-body p{margin-bottom:12px;}.sec-body p:last-child{margin-bottom:0;}
+.sec-body ul{padding-left:18px;margin-bottom:12px;}.sec-body ul li{margin-bottom:7px;color:rgba(255,255,255,.85);}
+.sec-body strong{color:#fff;font-weight:700;}
+.highlight{background:rgba(10,132,255,.1);border:0.5px solid rgba(10,132,255,.25);border-radius:14px;padding:14px 16px;margin:12px 0;font-size:14px;line-height:1.6;color:rgba(255,255,255,.85);}
+.highlight.green{background:rgba(52,199,89,.1);border-color:rgba(52,199,89,.25);}
+.highlight.red{background:rgba(255,59,48,.1);border-color:rgba(255,59,48,.25);}
+.highlight.yellow{background:rgba(255,204,0,.1);border-color:rgba(255,204,0,.25);}
+.clause{padding:12px 0;border-bottom:0.5px solid var(--border);display:flex;gap:12px;align-items:flex-start;}
+.clause:last-child{border:none;}
+.clause-num{width:26px;height:26px;border-radius:8px;background:rgba(88,86,214,.2);color:#7875FF;font-size:13px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;}
+.clause-text{font-size:14px;line-height:1.6;color:rgba(255,255,255,.85);}.clause-text strong{color:#fff;}
+.contact-row{display:flex;align-items:center;gap:12px;padding:14px 18px;border-bottom:0.5px solid var(--border);text-decoration:none;color:inherit;transition:background .12s;cursor:pointer;}
+.contact-row:last-child{border:none;}.contact-row:active{background:rgba(255,255,255,.04);}
+.contact-icon{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;}
+.contact-label{flex:1;font-size:15px;font-weight:500;}.contact-val{font-size:13px;color:var(--accent);}
+.page-footer{text-align:center;padding:32px 20px 20px;color:var(--muted);font-size:12px;line-height:1.7;}
+.page-footer a{color:var(--accent);text-decoration:none;}
+
+[data-lang]{display:none;}
+[data-lang].visible{display:block;}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <a class="topbar-back" onclick="window.close()" href="javascript:history.back()">‹</a>
+  <div class="topbar-info">
+    <div class="topbar-title" data-lang="es">Términos de Uso</div>
+    <div class="topbar-title" data-lang="en">Terms of Use</div>
+    <div class="topbar-sub" data-lang="es">BoxVision · Última actualización: mayo 2026</div>
+    <div class="topbar-sub" data-lang="en">BoxVision · Last updated: May 2026</div>
+  </div>
+  <div class="lang-switcher">
+    <button class="lang-btn active" id="btn-es" onclick="setLang('es')">ES</button>
+    <button class="lang-btn" id="btn-en" onclick="setLang('en')">EN</button>
+  </div>
+</div>
+
+<div class="hero">
+  <div class="hero-icon">📄</div>
+  <div class="hero-title" data-lang="es">Condiciones de uso</div>
+  <div class="hero-title" data-lang="en">Terms of use</div>
+  <div class="hero-sub" data-lang="es">Al usar BoxVision aceptás estas condiciones.<br>Están escritas en lenguaje claro, sin letra pequeña.</div>
+  <div class="hero-sub" data-lang="en">By using BoxVision you agree to these terms.<br>Written in plain language — no fine print.</div>
+  <div class="hero-badge">📅 2026</div>
+</div>
+
+<div class="page-body">
+
+  <!-- INTRO -->
+  <div class="sec">
+    <div class="sec-header">
+      <div class="sec-icon" style="background:rgba(88,86,214,.15);color:#5856D6">👋</div>
+      <div class="sec-title" data-lang="es">Introducción</div>
+      <div class="sec-title" data-lang="en">Introduction</div>
+    </div>
+    <div class="sec-body">
+      <div data-lang="es">
+        <p>Bienvenido a <strong>BoxVision</strong>. Al acceder o usar esta aplicación, aceptás estos Términos de Uso. Si no estás de acuerdo, podés dejar de usar la app en cualquier momento.</p>
+        <div class="highlight green">✅ <strong>Lo importante:</strong> BoxVision es gratis, sin publicidad, y tus datos son tuyos.</div>
+      </div>
+      <div data-lang="en">
+        <p>Welcome to <strong>BoxVision</strong>. By accessing or using this app, you agree to these Terms of Use. If you disagree with any part, you may stop using the app at any time.</p>
+        <div class="highlight green">✅ <strong>The key point:</strong> BoxVision is free, ad-free, and your data belongs to you.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- THE SERVICE -->
+  <div class="sec">
+    <div class="sec-header">
+      <div class="sec-icon" style="background:rgba(10,132,255,.15);color:#007AFF">📦</div>
+      <div class="sec-title" data-lang="es">El servicio</div>
+      <div class="sec-title" data-lang="en">The service</div>
+    </div>
+    <div class="sec-body">
+      <div data-lang="es">
+        <p>BoxVision te permite crear cajas virtuales, listar objetos, generar QR y sincronizar datos entre dispositivos. El servicio es <strong>gratuito</strong> y puede modificarse con aviso previo.</p>
+      </div>
+      <div data-lang="en">
+        <p>BoxVision lets you create virtual boxes, list items, generate QR codes and sync data across devices. The service is <strong>free</strong> and may be modified with prior notice.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- YOUR ACCOUNT -->
+  <div class="sec">
+    <div class="sec-header">
+      <div class="sec-icon" style="background:rgba(52,199,89,.15);color:#34C759">👤</div>
+      <div class="sec-title" data-lang="es">Tu cuenta</div>
+      <div class="sec-title" data-lang="en">Your account</div>
+    </div>
+    <div class="sec-body">
+      <div data-lang="es">
+        <div class="clause"><div class="clause-num">1</div><div class="clause-text"><strong>Registro:</strong> podés registrarte con Google o email. Sos responsable de mantener tu contraseña segura.</div></div>
+        <div class="clause"><div class="clause-num">2</div><div class="clause-text"><strong>Una cuenta por persona:</strong> cada cuenta es personal. No podés usar la cuenta de otra persona sin su permiso.</div></div>
+        <div class="clause"><div class="clause-num">3</div><div class="clause-text"><strong>Edad mínima:</strong> debés tener al menos 13 años para usar BoxVision.</div></div>
+        <div class="clause"><div class="clause-num">4</div><div class="clause-text"><strong>Cierre de cuenta:</strong> podés eliminar tu cuenta desde Ajustes → "Borrar todos los datos".</div></div>
+      </div>
+      <div data-lang="en">
+        <div class="clause"><div class="clause-num">1</div><div class="clause-text"><strong>Registration:</strong> you can sign up with Google or email. You're responsible for keeping your password secure.</div></div>
+        <div class="clause"><div class="clause-num">2</div><div class="clause-text"><strong>One account per person:</strong> each account is personal. You may not use someone else's account without their explicit permission.</div></div>
+        <div class="clause"><div class="clause-num">3</div><div class="clause-text"><strong>Minimum age:</strong> you must be at least 13 years old to use BoxVision.</div></div>
+        <div class="clause"><div class="clause-num">4</div><div class="clause-text"><strong>Account closure:</strong> you can delete your account from Settings → "Delete all data".</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ACCEPTABLE USE -->
+  <div class="sec">
+    <div class="sec-header">
+      <div class="sec-icon" style="background:rgba(255,149,0,.15);color:#FF9500">✅</div>
+      <div class="sec-title" data-lang="es">Uso aceptable</div>
+      <div class="sec-title" data-lang="en">Acceptable use</div>
+    </div>
+    <div class="sec-body">
+      <div data-lang="es">
+        <p>Al usar BoxVision te comprometés a:</p>
+        <ul>
+          <li>No usar la app para actividades ilegales o fraudulentas</li>
+          <li>No intentar hackear o sobrecargar los servidores</li>
+          <li>No crear cuentas falsas ni hacerte pasar por otra persona</li>
+          <li>No subir contenido que viole derechos de terceros</li>
+        </ul>
+        <div class="highlight red">🚫 El uso abusivo puede resultar en la suspensión de tu cuenta.</div>
+      </div>
+      <div data-lang="en">
+        <p>By using BoxVision you agree to:</p>
+        <ul>
+          <li>Not use the app for illegal or fraudulent activities</li>
+          <li>Not attempt to hack or overload the servers</li>
+          <li>Not create fake accounts or impersonate others</li>
+          <li>Not upload content that infringes third-party rights</li>
+        </ul>
+        <div class="highlight red">🚫 Abusive use may result in account suspension.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- YOUR DATA -->
+  <div class="sec">
+    <div class="sec-header">
+      <div class="sec-icon" style="background:rgba(175,82,222,.15);color:#AF52DE">🗂️</div>
+      <div class="sec-title" data-lang="es">Tus datos y contenido</div>
+      <div class="sec-title" data-lang="en">Your data & content</div>
+    </div>
+    <div class="sec-body">
+      <div data-lang="es">
+        <div class="clause"><div class="clause-num">1</div><div class="clause-text"><strong>Tu contenido es tuyo:</strong> todo lo que cargás en BoxVision te pertenece. No reclamamos propiedad.</div></div>
+        <div class="clause"><div class="clause-num">2</div><div class="clause-text"><strong>Licencia de uso:</strong> nos autorizás a almacenar y procesar tu contenido solo para prestarte el servicio. Termina cuando eliminás tu cuenta.</div></div>
+        <div class="clause"><div class="clause-num">3</div><div class="clause-text"><strong>Backups:</strong> hacemos respaldos automáticos, pero recomendamos exportar datos importantes periódicamente.</div></div>
+      </div>
+      <div data-lang="en">
+        <div class="clause"><div class="clause-num">1</div><div class="clause-text"><strong>Your content is yours:</strong> everything you upload to BoxVision belongs to you. We make no ownership claims.</div></div>
+        <div class="clause"><div class="clause-num">2</div><div class="clause-text"><strong>License of use:</strong> you authorize us to store and process your content solely to provide the service. This license ends when you delete your account.</div></div>
+        <div class="clause"><div class="clause-num">3</div><div class="clause-text"><strong>Backups:</strong> we do automatic backups, but we recommend exporting important data periodically.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- LIABILITY -->
+  <div class="sec">
+    <div class="sec-header">
+      <div class="sec-icon" style="background:rgba(255,59,48,.12);color:#FF3B30">⚖️</div>
+      <div class="sec-title" data-lang="es">Limitación de responsabilidad</div>
+      <div class="sec-title" data-lang="en">Limitation of liability</div>
+    </div>
+    <div class="sec-body">
+      <div data-lang="es">
+        <p>BoxVision se provee <strong>"tal cual"</strong>. No somos responsables por pérdida de datos por fallas de conexión, daños indirectos, ni interrupciones de servicios de terceros.</p>
+        <div class="highlight yellow">💡 Recomendamos anotar el contenido de cajas importantes como respaldo adicional antes de una mudanza.</div>
+      </div>
+      <div data-lang="en">
+        <p>BoxVision is provided <strong>"as is"</strong>. We are not responsible for data loss due to connection failures, indirect damages, or third-party service outages.</p>
+        <div class="highlight yellow">💡 We recommend noting the contents of important boxes as an extra backup before moving day.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- IP -->
+  <div class="sec">
+    <div class="sec-header">
+      <div class="sec-icon" style="background:rgba(255,204,0,.12);color:#FFCC00">🎨</div>
+      <div class="sec-title" data-lang="es">Propiedad intelectual</div>
+      <div class="sec-title" data-lang="en">Intellectual property</div>
+    </div>
+    <div class="sec-body">
+      <div data-lang="es"><p>El diseño, código, íconos y nombre "BoxVision" son propiedad de sus creadores. No podés copiarlos ni distribuirlos sin autorización escrita.</p></div>
+      <div data-lang="en"><p>The design, code, icons and name "BoxVision" are the property of their creators. You may not copy or distribute them without written authorization.</p></div>
+    </div>
+  </div>
+
+  <!-- JURISDICTION -->
+  <div class="sec">
+    <div class="sec-header">
+      <div class="sec-icon" style="background:rgba(10,132,255,.12);color:#007AFF">🌎</div>
+      <div class="sec-title" data-lang="es">Jurisdicción</div>
+      <div class="sec-title" data-lang="en">Jurisdiction</div>
+    </div>
+    <div class="sec-body">
+      <div data-lang="es"><p>Estos términos se rigen por las leyes de la <strong>República del Perú</strong>. Cualquier disputa se resolverá en los tribunales de Trujillo, La Libertad.</p></div>
+      <div data-lang="en"><p>These terms are governed by the laws of the <strong>Republic of Peru</strong>. Any dispute will be resolved in the courts of Trujillo, La Libertad.</p></div>
+    </div>
+  </div>
+
+  <!-- CONTACT -->
+  <div class="sec" style="margin-bottom:0">
+    <div class="sec-header">
+      <div class="sec-icon" style="background:rgba(10,132,255,.15);color:#007AFF">✉️</div>
+      <div class="sec-title" data-lang="es">Contacto</div>
+      <div class="sec-title" data-lang="en">Contact</div>
+    </div>
+    <a class="contact-row" href="mailto:futbol1234now@gmail.com?subject=Terms BoxVision">
+      <div class="contact-icon" style="background:rgba(10,132,255,.15)">📧</div>
+      <div class="contact-label" data-lang="es">Preguntas sobre estos términos</div>
+      <div class="contact-label" data-lang="en">Questions about these terms</div>
+      <div class="contact-val">futbol1234now@gmail.com</div>
+    </a>
+  </div>
+
+  <div class="page-footer">
+    <div style="font-size:24px;margin-bottom:8px">📦</div>
+    <strong style="color:#fff;font-size:14px">BoxVision</strong><br>
+    <span data-lang="es">Organizador inteligente de mudanzas</span>
+    <span data-lang="en">Smart moving box organizer</span><br><br>
+    © 2026 BoxVision ·
+    <span data-lang="es">Todos los derechos reservados</span>
+    <span data-lang="en">All rights reserved</span><br>
+    <a href="privacy.html" target="_blank" data-lang="es">Política de privacidad</a>
+    <a href="privacy.html" target="_blank" data-lang="en">Privacy policy</a>
+    · <a href="mailto:futbol1234now@gmail.com">Contacto</a>
+  </div>
+
+</div>
+
+<script>
+function setLang(lang){
+  document.querySelectorAll('[data-lang]').forEach(el=>{
+    el.classList.toggle('visible', el.dataset.lang === lang);
+  });
+  document.getElementById('btn-es').classList.toggle('active', lang==='es');
+  document.getElementById('btn-en').classList.toggle('active', lang==='en');
+  document.documentElement.lang = lang;
+  localStorage.setItem('bv_lang', lang);
+}
+const saved = localStorage.getItem('bv_lang') || 'es';
+setLang(saved);
+</script>
+</body>
+</html>
