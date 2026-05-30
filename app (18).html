@@ -1,0 +1,1672 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Mis Cajas">
+<meta name="theme-color" content="#007AFF">
+<link id="pwaManifest" rel="manifest" href="./manifest.json">
+<link rel="icon" type="image/png" href="icons/logo.png" id="dynamicFavicon">
+<script src="init-favicon.js"></script>
+
+<!-- EmailJS — envío de feedback directo a Gmail sin servidor -->
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+<script src="init-emailjs.js"></script>
+
+<!-- TABLER ICONS - CON FALLBACKS MÚLTIPLES -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.44.0/dist/tabler-icons.min.css" id="tabler-primary" onerror="loadTablerFallback(this)">
+<script src="init-icons.js"></script>
+
+<!-- FALLBACK CSS si iconos fallan -->
+
+
+<!-- ── Verificación de mantenimiento ── -->
+<script src="auto-maintenance.js"></script>
+
+<script src="init-pwa-icons.js"></script>
+<title>BoxVision - Organizador de Cajas Inteligente para Mudanzas con QR</title>
+<meta name="description" content="BoxVision es un organizador de cajas inteligente para mudanzas. Gestiona tus cajas, genera códigos QR, busca por contenido y organiza tu mudanza fácilmente. Gratis, sin descargas y completamente offline.">
+<meta name="keywords" content="organizador de cajas, gestor de mudanzas, QR cajas, organizador mudanza, BoxVision, gestión cajas, mudanza inteligente, cajas QR, PWA">
+<meta name="author" content="BoxVision Team">
+<meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
+<meta name="color-scheme" content="dark light">
+<link rel="canonical" href="https://futbol1234now-png.github.io/BoxVision/app.html">
+<meta property="og:title" content="BoxVision - Organizador de Cajas Inteligente">
+<meta property="og:description" content="Organiza tus cajas para mudanzas con IA, genera QR y gestiona todo desde tu teléfono. Gratis y sin descargas.">
+<meta property="og:image" content="https://futbol1234now-png.github.io/BoxVision/icons/logo.png">
+<meta property="og:url" content="https://futbol1234now-png.github.io/BoxVision/app.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="BoxVision">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="BoxVision - Organizador de Cajas Inteligente">
+<meta name="twitter:description" content="Organiza tus cajas para mudanzas con IA y QR. Gratis y sin descargas.">
+<meta name="twitter:image" content="https://futbol1234now-png.github.io/BoxVision/icons/logo.png">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "BoxVision",
+  "description": "Organizador de cajas inteligente para mudanzas con QR e IA",
+  "url": "https://futbol1234now-png.github.io/BoxVision/app.html",
+  "image": "https://futbol1234now-png.github.io/BoxVision/icons/logo.png",
+  "applicationCategory": "ProductivityApplication",
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "USD"
+  },
+  "author": {
+    "@type": "Organization",
+    "name": "BoxVision"
+  }
+}
+</script>
+ 
+<!-- Firebase -->
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+<script src="icon-fallback.js"></script>
+<script src="firebase-init.js"></script>
+  <link rel="stylesheet" href="base.css">
+  <link rel="stylesheet" href="layout.css">
+  <link rel="stylesheet" href="rooms.css">
+  <link rel="stylesheet" href="settings-hero.css">
+  <link rel="stylesheet" href="modals.css">
+  <link rel="stylesheet" href="mobile.css">
+  <link rel="stylesheet" href="ai.css">
+  <link rel="stylesheet" href="components.css">
+  <link rel="stylesheet" href="changelog.css">
+</head>
+<body data-dark="1">
+
+<!-- ═══ LOGIN SCREEN v2.4 — Apple-clean redesign ═══ -->
+
+
+<div id="loginScreen" style="position:fixed;inset:0;z-index:99999;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:28px 24px 32px;overflow-y:auto;overflow-x:hidden;background:#0f0f17;">
+
+  <!-- Orbe azul sutil de fondo -->
+  <div style="position:fixed;width:560px;height:560px;top:-200px;left:50%;transform:translateX(-50%);border-radius:50%;background:radial-gradient(circle,rgba(10,132,255,0.12),transparent 68%);pointer-events:none;"></div>
+
+  <!-- ── LOGO + HEADER ── -->
+  <div style="display:flex;flex-direction:column;align-items:center;margin-bottom:36px;animation:lsLogoIn .5s cubic-bezier(.34,1.3,.64,1) both;">
+    <div style="width:76px;height:76px;border-radius:22px;background:linear-gradient(145deg,#1b2d4a,#0f1d30);border:1px solid rgba(10,132,255,0.22);display:flex;align-items:center;justify-content:center;margin-bottom:18px;box-shadow:0 12px 40px rgba(0,0,0,0.4);">
+      <span style="font-size:38px;line-height:1;">📦</span>
+    </div>
+    <div style="font-size:28px;font-weight:700;color:#fff;letter-spacing:-0.8px;line-height:1.1;margin-bottom:6px;">BoxVision</div>
+    <div style="font-size:14px;color:rgba(255,255,255,0.38);letter-spacing:.1px;">Organiza tu mudanza con IA</div>
+  </div>
+
+  <!-- ── CARD ── -->
+  <div style="width:100%;max-width:340px;animation:lsFadeUp .45s .1s cubic-bezier(.4,0,.2,1) both;">
+
+    <!-- Google -->
+    <button id="loginBtn" onclick="signInGoogle()">
+      <svg width="18" height="18" viewBox="0 0 48 48" style="flex-shrink:0"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.18 1.48-4.97 2.34-8.16 2.34-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>
+      Continuar con Google
+    </button>
+
+    <!-- Divider -->
+    <div class="ls-divider">
+      <div class="ls-divider-line"></div>
+      <div class="ls-divider-text">o con correo electrónico</div>
+      <div class="ls-divider-line"></div>
+    </div>
+
+    <!-- Tabs -->
+    <div class="ls-tabs">
+      <button id="tabSignIn" class="ls-tab active" onclick="switchEmailTab('signin')">Iniciar sesión</button>
+      <button id="tabSignUp" class="ls-tab inactive" onclick="switchEmailTab('signup')">Registrarse</button>
+    </div>
+
+    <!-- ── Formulario ── -->
+    <div id="emailForm">
+
+      <!-- Nombre (solo registro) -->
+      <div id="fieldName" style="display:none;margin-bottom:12px;">
+        <div class="ls-field-group">
+          <div class="ls-field-row">
+            <div class="ls-field-icon"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" aria-hidden="true"/><circle cx="12" cy="7" r="4"/></svg></i></div>
+            <input id="emailName" class="ls-input" type="text" placeholder="Tu nombre" autocomplete="name" maxlength="50">
+          </div>
+        </div>
+        <div id="nameError" class="ls-err"></div>
+      </div>
+
+      <!-- Correo + Contraseña agrupados -->
+      <div class="ls-field-group">
+        <div class="ls-field-row">
+          <div class="ls-field-icon"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2" aria-hidden="true"/><polyline points="2,4 12,13 22,4"/></svg></i></div>
+          <input id="emailInput" class="ls-input" type="email" placeholder="Correo electrónico" autocomplete="email" maxlength="100"
+            onkeydown="if(event.key==='Enter'){event.preventDefault();document.getElementById('passInput').focus()}">
+        </div>
+        <div class="ls-field-row">
+          <div class="ls-field-icon"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" aria-hidden="true"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></i></div>
+          <input id="passInput" class="ls-input" type="password" placeholder="Contraseña" autocomplete="current-password" maxlength="128"
+            onkeydown="if(event.key==='Enter'){event.preventDefault();submitEmailForm()}">
+          <button class="ls-eye-btn" onclick="togglePassVisibility()" tabindex="-1" aria-label="Mostrar contraseña">
+            <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" aria-hidden="true"/><circle cx="12" cy="12" r="3"/></svg></i>
+          </button>
+        </div>
+      </div>
+      <div id="emailError" class="ls-err"></div>
+      <div id="passError" class="ls-err"></div>
+
+      <!-- Botón submit -->
+      <button id="emailSubmitBtn" onclick="submitEmailForm()" style="margin-top:4px;">
+        <span id="submitBtnText">Iniciar sesión</span>
+      </button>
+
+      <!-- Olvidé contraseña -->
+      <div id="forgotWrap" style="text-align:center;margin-top:16px;display:none;">
+        <button onclick="sendPasswordReset()"
+          style="background:none;border:none;cursor:pointer;font-family:inherit;font-size:13px;color:rgba(255,255,255,0.35);padding:4px 8px;-webkit-tap-highlight-color:transparent;">
+          ¿Olvidaste tu contraseña?
+        </button>
+      </div>
+    </div>
+
+    <!-- Estado de carga -->
+    <div id="loginLoading" style="margin-top:24px;display:none;flex-direction:column;align-items:center;gap:10px;">
+      <div style="width:24px;height:24px;border-radius:50%;border:2px solid rgba(255,255,255,0.1);border-top-color:rgba(255,255,255,0.7);animation:lsSpin .7s linear infinite;"></div>
+      <div style="font-size:13px;color:rgba(255,255,255,0.35);letter-spacing:.1px;">Iniciando sesión…</div>
+    </div>
+
+    <!-- Error general -->
+    <div id="loginError" style="margin-top:12px;font-size:13px;color:#FF453A;display:none;text-align:center;line-height:1.5;"></div>
+
+  </div>
+
+  <!-- Footer -->
+  <div style="margin-top:32px;font-size:11px;color:rgba(255,255,255,0.16);letter-spacing:.2px;animation:lsFadeUp .5s .3s both ease;">
+    Tus datos se guardan de forma segura en la nube
+  </div>
+
+</div>
+
+<div class="install-banner hidden" id="installBanner">
+  <span>📲</span><span style="flex:1">Instala la app en tu celular para acceso rápido</span>
+  <button id="installBtn">Instalar</button>
+  <button style="background:none;border:none;color:rgba(255,255,255,.7);font-size:18px;cursor:pointer;margin-left:4px" onclick="document.getElementById('installBanner').classList.add('hidden')">✕</button>
+</div>
+
+<div id="splash">
+  <!-- Orbes de fondo -->
+  <div style="position:absolute;width:320px;height:320px;top:-80px;left:-60px;border-radius:50%;background:radial-gradient(circle,rgba(10,132,255,0.12),transparent 70%);pointer-events:none"></div>
+  <div style="position:absolute;width:260px;height:260px;bottom:-50px;right:-40px;border-radius:50%;background:radial-gradient(circle,rgba(88,86,214,0.1),transparent 70%);pointer-events:none"></div>
+  <div style="position:absolute;width:180px;height:180px;top:40%;left:60%;border-radius:50%;background:radial-gradient(circle,rgba(255,149,0,0.07),transparent 70%);pointer-events:none"></div>
+  <!-- Logo animado -->
+  <div class="sp-icon-wrap">
+    <div class="sp-icon-glow"></div>
+    <div class="sp-icon-ring"></div>
+    <div class="sp-icon-bg">
+      <div class="sp-icon">📦</div>
+    </div>
+  </div>
+  <div class="sp-title">BoxVision</div>
+  <div class="sp-brand" id="splashBrand"></div>
+  <div class="sp-clock" id="spClock">
+    <span class="sp-clock-time" id="spClockTime">--:--</span>
+    <span class="sp-clock-sep">·</span>
+    <span class="sp-clock-zone" id="spClockZone">--</span>
+  </div>
+  <div class="sp-sub">Todo en orden, todo a un escaneo.</div>
+  <div class="sp-stats" id="spStatsWrap">
+    <div class="sp-stat" id="spStatC">
+      <div class="sp-stat-icon">📦</div>
+      <div class="sp-stat-n" id="sp-c">—</div>
+      <div class="sp-stat-l">Cajas</div>
+      <div class="sp-stat-bar"><div class="sp-stat-bar-fill" id="sp-bar-c" style="width:0%"></div></div>
+    </div>
+    <div class="sp-stat" id="spStatO">
+      <div class="sp-stat-icon">🧺</div>
+      <div class="sp-stat-n" id="sp-o">—</div>
+      <div class="sp-stat-l">Objetos</div>
+      <div class="sp-stat-bar"><div class="sp-stat-bar-fill" id="sp-bar-o" style="width:0%;background:var(--green)"></div></div>
+    </div>
+    <div class="sp-stat" id="spStatF">
+      <div class="sp-stat-icon">⭐</div>
+      <div class="sp-stat-n" id="sp-f">—</div>
+      <div class="sp-stat-l">Favs</div>
+      <div class="sp-stat-bar"><div class="sp-stat-bar-fill" id="sp-bar-f" style="width:0%;background:var(--orange)"></div></div>
+    </div>
+  </div>
+  <div class="sp-last" id="spLast" style="display:none!important">
+    <div class="sp-last-lbl"><svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10" style="vertical-align:0px;margin-right:3px"/><path d="M3.51 15a9 9 0 1 0 .49-4"/><polyline points="12 7 12 12 15 14"/></svg></i>Última caja abierta</div>
+    <div class="sp-last-row">
+      <div class="sp-last-icon-wrap">
+        <div class="sp-last-icon" id="spLastIcon">📦</div>
+      </div>
+      <div style="flex:1;min-width:0">
+        <div class="sp-last-name" id="spLastName">—</div>
+        <div class="sp-last-sub" id="spLastSub">—</div>
+      </div>
+      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6" style="color:rgba(255,255,255,.25)"/></svg></i>
+    </div>
+  </div>
+  <button class="sp-btn" onclick="goMain()"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-3px;margin-right:7px;flex-shrink:0" aria-hidden="true"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>Ver mis cajas</button>
+  <div class="sp-row" style="margin-bottom:10px">
+    <button class="sp-btn2" onclick="openForm()"><svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" style="vertical-align:-2px;margin-right:5px;flex-shrink:0" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Nueva caja</button>
+    <button class="sp-btn2" onclick="goRoom()"><svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px;margin-right:5px;flex-shrink:0" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>Habitaciones</button>
+  </div>
+  <button class="sp-btn2" onclick="goSettings()"><svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px;margin-right:5px;flex-shrink:0" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>Ajustes</button>
+</div>
+
+<div id="mainScreen" class="hidden">
+  <div class="topbar">
+    <div style="display:flex;align-items:center;gap:10px">
+      <div>
+        <div style="display:flex;align-items:baseline;gap:8px">
+          <div class="topbar-title" style="font-size:20px;font-weight:800;letter-spacing:-.5px;cursor:pointer;" onclick="goSplash()">BoxVision</div>
+          <div id="mainClockTime" style="font-size:15px;font-weight:700;color:var(--accent);letter-spacing:-.3px;font-variant-numeric:tabular-nums;opacity:.85">--:--</div>
+        </div>
+        <div class="topbar-sub" id="mainSub"></div>
+      </div>
+    </div>
+    <div class="topbar-actions">
+      <div class="view-toggle" title="Cambiar vista">
+        <button class="view-toggle-btn active" id="viewGrid" onclick="setViewMode('grid')" title="Cuadrícula"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg></button>
+        <button class="view-toggle-btn" id="viewList" onclick="setViewMode('list')" title="Lista"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg></button>
+      </div>
+      <button class="tbtn" onclick="toggleSortMenu()" id="sortBtn" title="Ordenar y filtrar"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 6h16M7 12h10M10 18h4"/></svg></button>
+      <button class="tbtn" onclick="goSettings()" title="Ajustes"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></button>
+      <button class="tbtn tbtn-accent" onclick="openForm()" title="Nueva caja" style="font-size:20px"><svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></button>
+      <img id="userAvatar" src="" onclick="showUserMenu()" style="width:44px;height:44px;border-radius:50%;object-fit:cover;cursor:pointer;display:none;border:2px solid rgba(255,255,255,.2)"/>
+    </div>
+  </div>
+  <div id="sortMenu" class="hidden" style="position:sticky;top:57px;z-index:150;background:var(--card);border-bottom:0.5px solid var(--border);padding:10px 14px;display:flex;gap:7px;overflow-x:auto;scrollbar-width:none">
+    <button class="pill active" id="sort-default" onclick="setSort('default')"><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1" aria-hidden="true"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg></i> Por defecto</button>
+    <button class="pill" id="sort-priority" onclick="setSort('priority')"><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10" style="color:#FF3B30" aria-hidden="true"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg></i> Prioridad</button>
+    <button class="pill" id="sort-location" onclick="setSort('location')"><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" aria-hidden="true"/><circle cx="12" cy="10" r="3"/></svg></i> Habitación</button>
+    <button class="pill" id="sort-date" onclick="setSort('date')"><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" aria-hidden="true"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></i> Fecha</button>
+    <button class="pill" id="sort-name" onclick="setSort('name')"><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle" aria-hidden="true"><line x1="4" y1="6" x2="11" y2="6"/><line x1="4" y1="12" x2="11" y2="12"/><line x1="4" y1="18" x2="13" y2="18"/><polyline points="15 9 18 6 21 9"/><line x1="18" y1="6" x2="18" y2="18"/></svg> Nombre</button>
+    <button class="pill" id="sort-count" onclick="setSort('count')"><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="4" y1="9" x2="20" y2="9" aria-hidden="true"/><line x1="4" y1="15" x2="20" y2="15"/><line x1="10" y1="3" x2="8" y2="21"/><line x1="16" y1="3" x2="14" y2="21"/></svg></i> Objetos</button>
+  </div>
+  <div class="search-wrap">
+    <div class="search-inner">
+      <span class="search-icon"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></i></span>
+      <input id="searchInput" type="text" placeholder="Buscar en todas las cajas..." data-i18n="main.search" data-i18n-attr="placeholder" oninput="doSearch(this.value)"/>
+      <span id="searchClear" class="hidden" style="font-size:14px;color:var(--muted);cursor:pointer;padding:4px;margin-right:-4px;transition:color .15s" onmouseenter="this.style.color='var(--red)'" onmouseleave="this.style.color='var(--muted)'" onclick="clearSearch()">✕</span>
+      <button id="searchPhotoBtn" onclick="triggerSearchPhoto()" title="Buscar por foto" aria-label="Buscar por foto" style="
+        background:none;border:none;cursor:pointer;padding:4px 2px 4px 6px;
+        color:var(--muted);display:flex;align-items:center;
+        transition:color .15s;flex-shrink:0;
+        border-left:1px solid rgba(255,255,255,.1);margin-left:2px;
+        -webkit-tap-highlight-color:transparent;
+      ">
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+      </button>
+    </div>
+    <div class="sr-wrap" id="srWrap"></div>
+  </div>
+  <input type="file" id="searchPhotoInput" accept="image/*" style="display:none" onchange="handleSearchPhoto(event)"/>
+  <div class="filter-row" id="filterRow"></div>
+  <div class="main-scroll" id="mainScroll"></div>
+</div>
+
+<div id="detailScreen" class="hidden">
+  <div class="detail-hero" id="dHero">
+    <button class="dh-back" onclick="goMain()" title="Volver" aria-label="Volver"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="15 18 9 12 15 6" style="pointer-events:none"/></svg></i></button>
+    <div class="dh-acts">
+      <button class="dh-act" id="favBtn" onclick="toggleFav()" title="Favorito" aria-label="Marcar favorito"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" style="pointer-events:none"/></svg></i></button>
+      <button class="dh-act" onclick="showQuickQR()" title="QR rápido" aria-label="Ver QR"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="6" height="6" rx="1" style="pointer-events:none"/><rect x="15" y="3" width="6" height="6" rx="1"/><rect x="3" y="15" width="6" height="6" rx="1"/><rect x="5" y="5" width="2" height="2" fill="currentColor" stroke="none"/><rect x="17" y="5" width="2" height="2" fill="currentColor" stroke="none"/><rect x="5" y="17" width="2" height="2" fill="currentColor" stroke="none"/><line x1="15" y1="15" x2="15" y2="15.01"/><line x1="18" y1="15" x2="21" y2="15"/><line x1="21" y1="18" x2="21" y2="21"/><line x1="15" y1="18" x2="18" y2="21"/></svg></i></button>
+      <button class="dh-act" onclick="openEditForm()" title="Editar caja" aria-label="Editar caja"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" style="pointer-events:none"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></i></button>
+    </div>
+    <img class="dh-img hidden" id="dHeroImg"/>
+    <div class="dh-overlay"></div>
+    <div class="dh-icon" id="dIcon">📦</div>
+    <div class="dh-num" id="dNum"></div>
+    <div class="dh-name" id="dName">Caja</div>
+    <div class="dh-meta" id="dMeta"></div>
+  </div>
+  <div class="detail-body detail-scroll">
+    <!-- Columna principal -->
+    <div class="detail-main-col">
+    <div class="dsec" id="progSec">
+      <div class="dsec-title"><span class="dsec-title-icon dsec-icon-prog"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/><line x1="2" y1="20" x2="22" y2="20"/></svg></i></span>PROGRESO DE DESEMPAQUE</div>
+      <div class="prog-wrap"><div class="prog-bar"><div class="prog-fill" id="progFill"></div></div><div class="prog-lbl"><span id="progLbl"></span><span id="progPct"></span></div></div>
+    </div>
+    <div class="dsec">
+      <div class="dsec-title" id="itemsTitle"><span class="dsec-title-icon dsec-icon-cont"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="16.5" y1="9.4" x2="7.5" y2="4.21"/><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg></i></span>CONTENIDO</div>
+      <div id="itemsList"></div>
+      <div class="add-row" id="addRow">
+        <!-- Input principal -->
+        <div class="add-input-wrap">
+          <input id="addItemInput" type="text" placeholder="Agregar objeto..." data-i18n="detail.add" data-i18n-attr="placeholder" onkeydown="if(event.key==='Enter')openAddItemModal()" oninput="showSuggestions(this.value);_previewAddItem(this.value)" onfocus="openAddItemModal()" readonly/>
+          <button class="add-main-btn" onclick="openAddItemModal()" title="Agregar" aria-label="Agregar objeto">
+            <svg xmlns="http://www.w3.org/2000/svg" width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          </button>
+        </div>
+        <!-- Botones de método de entrada -->
+        <div class="add-methods">
+          <button class="add-method-btn" id="micBtn" onclick="startVoice()" title="Voz">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>
+            <span>Voz</span>
+          </button>
+          <button class="add-method-btn" id="scanBtn" onclick="triggerScanObj()" title="Foto IA">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+            <span>Foto IA</span>
+          </button>
+          <button class="add-method-btn" onclick="triggerAddFromGallery()" title="Galería">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+            <span>Galería</span>
+          </button>
+          <button class="add-method-btn" onclick="_showBulkAdd()" title="En masa">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+            <span>Lista</span>
+          </button>
+        </div>
+        <!-- Preview del objeto que se va a agregar -->
+        <div class="add-preview-wrap" id="addPreviewWrap" style="display:none">
+          <div class="add-preview-card" id="addPreviewCard">
+            <span class="add-preview-icon" id="addPreviewIcon">📦</span>
+            <span class="add-preview-name" id="addPreviewName"></span>
+            <span class="add-preview-hint">↵ Enter para agregar</span>
+          </div>
+        </div>
+      </div>
+      <input type="file" id="scanObjInput" accept="image/*" capture="environment" style="display:none!important" onchange="handleScanObj(event)"/>
+      <input type="file" id="galleryObjInput" accept="image/*" style="display:none!important" onchange="handleGalleryObj(event)"/>
+      <div class="suggestions-wrap" id="suggestionsWrap"><span class="sug-label">💡</span></div>
+    </div>
+    <div class="dsec" id="relatedSec">
+      <div class="dsec-title"><span class="dsec-title-icon dsec-icon-rel"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg></i></span>CAJA RELACIONADA</div>
+      <div id="relatedList"></div>
+    </div>
+
+    </div><!-- /.detail-main-col -->
+
+    <!-- Secciones mobile-only: foto, nota, QR, acciones (se ocultan en desktop donde están en el sidebar) -->
+    <div class="mobile-only-sections">
+      <div class="dsec">
+        <div class="dsec-title"><span class="dsec-title-icon dsec-icon-foto">📸</span>FOTO</div>
+        <div id="photoAreaMobile" onclick="triggerPhoto()" style="cursor:pointer"></div>
+      </div>
+      <div class="dsec">
+        <div class="dsec-title"><span class="dsec-title-icon dsec-icon-nota">📝</span>NOTAS</div>
+        <textarea class="note-area" id="noteAreaMobile" placeholder="Agrega una nota…" oninput="saveNoteMobile()"></textarea>
+      </div>
+      <div class="dsec">
+        <div class="dsec-title"><span class="dsec-title-icon dsec-icon-qr">📲</span>CÓDIGO QR</div>
+        <div class="qr-sec"><div class="qr-box" id="detailQRMobile"></div><div class="qr-hint">Escanea con la cámara del celular</div></div>
+      </div>
+      <div style="margin-top:12px;display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:0 16px">
+        <button onclick="exportBox()" style="padding:14px 10px;background:var(--card2);color:var(--text);border:0.5px solid var(--border);border-radius:16px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:7px">📋 Copiar</button>
+        <button onclick="shareBoxWhatsApp()" style="padding:14px 10px;background:#25D366;color:#fff;border:none;border-radius:16px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:7px">💬 WA</button>
+        <button onclick="confirmDupBox()" style="padding:14px 10px;background:linear-gradient(135deg,#0A84FF,#5856D6);color:#fff;border:none;border-radius:16px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:7px">⧉ Duplicar</button>
+        <button onclick="confirmDelBox()" style="padding:14px 10px;background:rgba(255,59,48,.1);color:#FF3B30;border:0.5px solid rgba(255,59,48,.25);border-radius:16px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:7px">🗑 Eliminar</button>
+      </div>
+    </div>
+
+    <!-- Sidebar solo en desktop (≥768px) -->
+    <div class="detail-sidebar">
+      <!-- Foto de la caja -->
+      <div class="detail-sidebar-card">
+        <div class="detail-sidebar-title">📸 Foto de la caja</div>
+        <div id="photoArea" onclick="triggerPhoto()" style="cursor:pointer"></div>
+      </div>
+      <!-- Notas -->
+      <div class="detail-sidebar-card">
+        <div class="detail-sidebar-title">📝 Notas</div>
+        <textarea class="note-area" id="noteArea" placeholder="Agrega una nota…" oninput="saveNote()" style="min-height:80px"></textarea>
+      </div>
+      <!-- QR -->
+      <div class="detail-sidebar-card">
+        <div class="detail-sidebar-title">📲 Código QR</div>
+        <div class="qr-sec"><div class="qr-box" id="detailQR"></div><div class="qr-hint">Escanea con el celular</div><div style="font-size:11px;color:var(--muted);margin-top:4px" id="detailDate"></div></div>
+      </div>
+      <!-- Acciones -->
+      <div class="detail-sidebar-card">
+        <div class="detail-sidebar-title">⚡ Acciones</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+          <button onclick="exportBox()" style="padding:11px 8px;background:var(--card2);color:var(--text);border:0.5px solid var(--border);border-radius:13px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:5px;transition:transform .12s" onmousedown="this.style.transform='scale(.94)'" onmouseup="this.style.transform=''">📋 Copiar</button>
+          <button onclick="shareBoxWhatsApp()" style="padding:11px 8px;background:#25D366;color:#fff;border:none;border-radius:13px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:5px;transition:transform .12s" onmousedown="this.style.transform='scale(.94)'" onmouseup="this.style.transform=''">💬 WA</button>
+          <button onclick="confirmDupBox()" style="padding:11px 8px;background:linear-gradient(135deg,#0A84FF,#5856D6);color:#fff;border:none;border-radius:13px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:5px;box-shadow:0 3px 10px rgba(10,132,255,.25);transition:transform .12s" onmousedown="this.style.transform='scale(.94)'" onmouseup="this.style.transform=''">⧉ Duplicar</button>
+          <button onclick="confirmDelBox()" style="padding:11px 8px;background:rgba(255,59,48,.1);color:#FF3B30;border:0.5px solid rgba(255,59,48,.25);border-radius:13px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:5px;transition:transform .12s" onmousedown="this.style.transform='scale(.94)'" onmouseup="this.style.transform=''">🗑 Eliminar</button>
+        </div>
+      </div>
+    </div><!-- /.detail-sidebar -->
+
+  </div><!-- /.detail-scroll -->
+
+</div><div id="roomScreen" class="hidden">
+  <!-- Topbar mejorado con botón + prominente -->
+  <div class="topbar">
+    <div>
+      <div class="topbar-title" data-i18n="nav.rooms">🗺 Habitaciones</div>
+      <div class="topbar-sub" id="roomTopbarSub">Arrastra cajas a cada cuarto</div>
+    </div>
+    <div class="topbar-actions">
+      <button class="tbtn" onclick="goSplash()" title="Inicio"><svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></button>
+      <button onclick="addRoom()" style="
+        height:38px;padding:0 16px;border-radius:12px;border:none;
+        background:linear-gradient(135deg,#0A84FF,#5856D6);
+        color:#fff;font-size:13px;font-weight:700;
+        display:flex;align-items:center;gap:6px;cursor:pointer;
+        font-family:inherit;
+        box-shadow:0 4px 14px rgba(10,132,255,.4);
+        transition:transform .15s,box-shadow .15s;
+        -webkit-tap-highlight-color:transparent;
+      " onmousedown="this.style.transform='scale(.94)'" onmouseup="this.style.transform=''" ontouchstart="this.style.transform='scale(.94)'" ontouchend="this.style.transform=''">
+        <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></i> Nueva
+      </button>
+    </div>
+  </div>
+
+  <div class="room-container" style="padding-top:8px">
+    <!-- Stats globales -->
+    <div class="room-global-stats" id="roomGlobalStats"></div>
+
+    <!-- Sin asignar -->
+    <div class="unassigned">
+      <div class="unassigned-title">📦 Sin asignar</div>
+      <div id="unassignedChips"></div>
+    </div>
+
+    <!-- Grid de habitaciones -->
+    <div class="room-grid" id="roomGrid"></div>
+  </div>
+
+  <!-- FAB adicional flotante -->
+  <button class="room-add-fab" onclick="addRoom()">
+    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" style="flex-shrink:0" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg> Nueva habitación
+  </button>
+
+  <!-- Modal de habitación — con emoji picker y color -->
+  <div id="roomModalOverlay" style="display:none;position:fixed;inset:0;z-index:8000;background:rgba(0,0,0,.55);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);align-items:flex-end;justify-content:center;padding-bottom:env(safe-area-inset-bottom,0px)" onclick="if(event.target===this)closeRoomModal()">
+    <div id="roomModalSheet" style="background:var(--card);border-radius:24px 24px 0 0;padding:22px 20px 32px;width:100%;max-width:560px;box-shadow:0 -8px 40px rgba(0,0,0,.4);transform:translateY(100%);transition:transform .32s cubic-bezier(.32,1,.4,1)">
+      <div style="width:36px;height:4px;background:rgba(255,255,255,.15);border-radius:99px;margin:0 auto 18px"></div>
+      <div id="roomModalTitle" style="font-size:19px;font-weight:800;letter-spacing:-.4px;margin-bottom:16px">Nueva habitación</div>
+
+      <!-- Nombre -->
+      <div style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.4px;margin-bottom:6px">Nombre</div>
+      <input id="roomModalInput" type="text" maxlength="50" placeholder="Ej: Cuarto principal, Garaje, Bodega…"
+        style="width:100%;background:var(--input);border:1.5px solid var(--border);border-radius:16px;padding:14px 16px;font-size:16px;color:var(--text);font-family:inherit;outline:none;box-sizing:border-box;transition:border-color .2s;margin-bottom:16px"
+        onfocus="this.style.borderColor='var(--accent)'" onblur="this.style.borderColor='var(--border)'"
+        onkeydown="if(event.key==='Enter')confirmRoomModal()"/>
+
+      <!-- Emoji picker -->
+      <div style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.4px;margin-bottom:8px">Ícono</div>
+      <div class="room-emoji-grid" id="roomEmojiGrid"></div>
+
+      <!-- Botones de acción mejorados -->
+      <div style="display:flex;gap:10px;margin-top:4px">
+        <button onclick="closeRoomModal()" style="
+          flex:1;padding:15px;border-radius:16px;
+          border:1.5px solid var(--border);background:transparent;
+          color:var(--text);font-size:15px;font-weight:600;cursor:pointer;font-family:inherit;
+          display:flex;align-items:center;justify-content:center;gap:7px;
+          transition:background .13s;-webkit-tap-highlight-color:transparent;
+        "><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></i>Cancelar</button>
+        <button onclick="confirmRoomModal()" style="
+          flex:2;padding:15px;border-radius:16px;border:none;
+          background:linear-gradient(135deg,#0A84FF,#5856D6);
+          color:#fff;font-size:15px;font-weight:700;cursor:pointer;font-family:inherit;
+          display:flex;align-items:center;justify-content:center;gap:7px;
+          box-shadow:0 4px 16px rgba(10,132,255,.35);
+          transition:transform .13s,opacity .13s;-webkit-tap-highlight-color:transparent;
+        " onmousedown="this.style.transform='scale(.97)'" onmouseup="this.style.transform=''"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg></i>Guardar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Panel detalle de habitación -->
+  <div id="roomDetailPanel" class="room-detail-panel">
+    <div class="room-detail-hero" id="roomDetailHero">
+      <div class="room-detail-hero-bg" id="roomDetailHeroBg"></div>
+      <div class="room-detail-hero-overlay"></div>
+      <button class="room-detail-back" onclick="closeRoomDetail()">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg></i>
+      </button>
+      <div class="room-detail-emoji" id="roomDetailEmoji">🏠</div>
+      <div class="room-detail-name" id="roomDetailName">Habitación</div>
+      <div class="room-detail-meta" id="roomDetailMeta">0 cajas · 0 objetos</div>
+    </div>
+    <div class="room-detail-body">
+      <div class="room-detail-stats" id="roomDetailStats"></div>
+      <div class="room-detail-prog-card" id="roomDetailProgCard">
+        <div class="room-detail-prog-header">
+          <span class="room-detail-prog-title">Progreso de desempaque</span>
+          <span class="room-detail-prog-pct" id="roomDetailProgPct">0%</span>
+        </div>
+        <div class="room-detail-prog-bar">
+          <div class="room-detail-prog-fill" id="roomDetailProgFill" style="width:0%"></div>
+        </div>
+      </div>
+      <div style="font-size:12px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px">Cajas en esta habitación</div>
+      <div id="roomDetailBoxList"></div>
+      <div class="room-detail-actions">
+        <button class="room-da-btn room-da-edit" id="roomDetailEditBtn">
+          <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></i> Renombrar
+        </button>
+        <button class="room-da-btn room-da-delete" id="roomDetailDeleteBtn">
+          <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg></i> Eliminar
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="settingsScreen" class="hidden">
+  <!-- Topbar -->
+  <div class="topbar">
+    <div style="display:flex;align-items:center;gap:10px">
+      <button onclick="goSplash()" title="Inicio" style="
+        width:38px;height:38px;border-radius:12px;
+        background:linear-gradient(145deg,rgba(10,132,255,.18),rgba(88,86,214,.12));
+        border:0.5px solid rgba(10,132,255,.25);
+        display:flex;align-items:center;justify-content:center;
+        cursor:pointer;font-size:19px;line-height:1;
+        box-shadow:0 2px 10px rgba(10,132,255,.15),0 1px 0 rgba(255,255,255,.08) inset;
+        transition:transform .18s cubic-bezier(.34,1.56,.64,1),box-shadow .18s,background .15s;
+        -webkit-tap-highlight-color:transparent;
+        flex-shrink:0;
+      "
+      onmouseenter="this.style.transform='scale(1.08)';this.style.boxShadow='0 4px 18px rgba(10,132,255,.28),0 1px 0 rgba(255,255,255,.1) inset'"
+      onmouseleave="this.style.transform='';this.style.boxShadow='0 2px 10px rgba(10,132,255,.15),0 1px 0 rgba(255,255,255,.08) inset'"
+      ontouchstart="this.style.transform='scale(.88)'"
+      ontouchend="this.style.transform=''"
+      >🏡</button>
+      <div class="topbar-title" data-i18n="settings.title">Ajustes</div>
+    </div>
+    <div class="topbar-actions"></div>
+  </div>
+
+  <!-- HERO: Avatar + Stats integradas -->
+  <div class="set-hero">
+    <!-- Fila de avatar -->
+    <div class="set-avatar-row">
+      <div class="set-avatar-ring">
+        <div class="set-avatar-inner">
+          <img id="settingsAvatar" src="" alt=""/>
+          <div id="settingsAvatarPlaceholder" class="set-avatar-placeholder">👤</div>
+        </div>
+      </div>
+      <div class="set-profile-info">
+        <div id="settingsUserName" class="set-profile-name">—</div>
+        <div id="settingsUserEmail" class="set-profile-email">—</div>
+        <!-- Badge de sincronización en tiempo real -->
+        <div class="set-sync-badge" id="setSyncBadge">
+          <span class="set-sync-dot"></span>
+          <span id="setSyncLabel">Sincronizado</span>
+        </div>
+      </div>
+      <button onclick="signOutUser()" class="set-signout-btn">Salir</button>
+    </div>
+
+    <!-- Stats 4 columnas -->
+    <div class="set-stats">
+      <div class="set-stat" onclick="goMain()" style="cursor:pointer">
+        <div class="set-stat-icon">📦</div>
+        <div class="set-stat-n" id="setTotalCajas">0</div>
+        <div class="set-stat-l">Cajas</div>
+      </div>
+      <div class="set-stat" onclick="goMain()" style="cursor:pointer">
+        <div class="set-stat-icon">🧺</div>
+        <div class="set-stat-n" id="setTotalObj">0</div>
+        <div class="set-stat-l">Objetos</div>
+      </div>
+      <div class="set-stat" onclick="goMain()" style="cursor:pointer">
+        <div class="set-stat-icon">✅</div>
+        <div class="set-stat-n" id="setTotalDone">0</div>
+        <div class="set-stat-l">Sacados</div>
+      </div>
+      <div class="set-stat" onclick="goMain();setTimeout(()=>{activeFilter='fav';renderGrid();},100)" style="cursor:pointer">
+        <div class="set-stat-icon">⭐</div>
+        <div class="set-stat-n" id="setTotalFav">0</div>
+        <div class="set-stat-l">Favoritas</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- BODY -->
+  <div class="settings-body">
+
+    <!-- PERSONALIZACIÓN -->
+    <div class="settings-sec">
+      <div class="settings-sec-label">Personalización</div>
+      <div class="settings-card">
+        <!-- Nombre/marca -->
+        <div class="settings-row">
+          <div class="settings-row-icon sri-orange">🏷️</div>
+          <div class="settings-row-text">
+            <div class="settings-label">Nombre o marca</div>
+            <div class="settings-sub">Aparece al escanear el QR</div>
+          </div>
+          <input class="settings-input" id="brandInput" type="text" placeholder="Ej: Familia García" oninput="saveBrand()"/>
+        </div>
+        <!-- Modo oscuro -->
+        <div class="settings-row settings-tappable" onclick="toggleDark()">
+          <div class="settings-row-icon sri-purple">🌙</div>
+          <div class="settings-row-text">
+            <div class="settings-label">Modo oscuro</div>
+            <div class="settings-sub">Tema visual de la app</div>
+          </div>
+          <div class="settings-toggle" id="darkToggleWrap" style="pointer-events:none">
+            <div class="settings-toggle-knob" id="darkToggleKnob"></div>
+          </div>
+        </div>
+        <!-- Idioma -->
+        <div class="settings-row settings-tappable" onclick="openLangModal()">
+          <div class="settings-row-icon sri-blue">🌐</div>
+          <div class="settings-row-text">
+            <div class="settings-label">Idioma</div>
+            <div class="settings-sub">Idioma de la interfaz</div>
+          </div>
+          <span class="settings-val" id="currentLangLabel">Español</span>
+          <span class="settings-chevron">›</span>
+        </div>
+        <!-- Notificaciones -->
+        <div class="settings-row settings-tappable" onclick="this.querySelector('.settings-toggle').classList.toggle('on');_saveSettingsToggle('notif',this.querySelector('.settings-toggle').classList.contains('on'))">
+          <div class="settings-row-icon sri-green">🔔</div>
+          <div class="settings-row-text">
+            <div class="settings-label">Notificaciones</div>
+            <div class="settings-sub">Alertas de cajas urgentes</div>
+          </div>
+          <div class="settings-toggle on" id="notifToggleWrap" style="pointer-events:none">
+            <div class="settings-toggle-knob"></div>
+          </div>
+        </div>
+        <!-- Sonido de escaneo -->
+        <div class="settings-row settings-tappable" onclick="this.querySelector('.settings-toggle').classList.toggle('on');_saveSettingsToggle('sound',this.querySelector('.settings-toggle').classList.contains('on'))">
+          <div class="settings-row-icon sri-teal">🔊</div>
+          <div class="settings-row-text">
+            <div class="settings-label">Sonido al escanear</div>
+            <div class="settings-sub">Confirmación de audio al leer QR</div>
+          </div>
+          <div class="settings-toggle on" id="soundToggleWrap" style="pointer-events:none">
+            <div class="settings-toggle-knob"></div>
+          </div>
+        </div>
+        <!-- Vista predeterminada -->
+        <div class="settings-row settings-tappable" onclick="_toggleDefaultView()">
+          <div class="settings-row-icon sri-gray">⊞</div>
+          <div class="settings-row-text">
+            <div class="settings-label">Vista de cajas</div>
+            <div class="settings-sub">Cuadrícula o lista</div>
+          </div>
+          <span class="settings-val" id="viewModeLabel">Cuadrícula</span>
+          <span class="settings-chevron">›</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- HERRAMIENTAS -->
+    <div class="settings-sec">
+      <div class="settings-sec-label">Herramientas</div>
+      <div class="settings-card">
+        <div class="settings-row settings-tappable" onclick="_showBackups()">
+          <div class="settings-row-icon sri-blue">💾</div>
+          <div class="settings-row-text">
+            <div class="settings-label">Mis backups</div>
+            <div class="settings-sub">Historial de los últimos 7 días</div>
+          </div>
+          <span class="settings-chevron">›</span>
+        </div>
+        <div class="settings-row settings-tappable" onclick="goMain();setTimeout(toggleAI,100)">
+          <div class="settings-row-icon sri-purple">🤖</div>
+          <div class="settings-row-text">
+            <div class="settings-label">Box IA</div>
+            <div class="settings-sub">Tu asistente inteligente de mudanza</div>
+          </div>
+          <span class="settings-chevron">›</span>
+        </div>
+        <div class="settings-row settings-tappable" onclick="_clearSearchHistory()">
+          <div class="settings-row-icon sri-red">🔍</div>
+          <div class="settings-row-text">
+            <div class="settings-label">Borrar historial de búsqueda</div>
+            <div class="settings-sub" id="searchHistorySub">Limpia las búsquedas recientes</div>
+          </div>
+          <span class="settings-chevron">›</span>
+        </div>
+        <div class="settings-row settings-tappable" onclick="_exportDataJSON()">
+          <div class="settings-row-icon sri-teal">📤</div>
+          <div class="settings-row-text">
+            <div class="settings-label">Exportar datos</div>
+            <div class="settings-sub">Descarga todas tus cajas en JSON</div>
+          </div>
+          <span class="settings-chevron">›</span>
+        </div>
+        <div class="settings-row settings-tappable" onclick="const uid=currentUser?.uid||'guest';localStorage.removeItem('cb-tutorial-done-'+uid);localStorage.removeItem('cb-tutorial-done');document.getElementById('tutorial').classList.add('active');tutStep=0;goTut(0);setTimeout(initTutSwipe,100);">
+          <div class="settings-row-icon sri-orange">📖</div>
+          <div class="settings-row-text">
+            <div class="settings-label">Ver tutorial</div>
+            <div class="settings-sub">Repasa las 7 pantallas de inicio</div>
+          </div>
+          <span class="settings-chevron">›</span>
+        </div>
+        <div class="settings-row settings-tappable" onclick="if(navigator.share)navigator.share({title:'BoxVision',text:'Organiza tus cajas de mudanza con IA y QR 📦',url:'https://futbol1234now-png.github.io/BoxVision/'}).catch(()=>{});else{navigator.clipboard&&navigator.clipboard.writeText('https://futbol1234now-png.github.io/BoxVision/');showToast(t('toast.link.copied'),'#34C759');}">
+          <div class="settings-row-icon sri-green">↗️</div>
+          <div class="settings-row-text">
+            <div class="settings-label">Compartir BoxVision</div>
+            <div class="settings-sub">Envía el link a un amigo o familiar</div>
+          </div>
+          <span class="settings-chevron">›</span>
+        </div>
+        <div class="settings-row settings-tappable" onclick="openFeedbackModal()">
+          <div class="settings-row-icon sri-yellow">💬</div>
+          <div class="settings-row-text">
+            <div class="settings-label">Enviar feedback</div>
+            <div class="settings-sub" id="feedbackStatusSub">Reporta bugs o sugiere mejoras</div>
+          </div>
+          <span class="settings-chevron">›</span>
+        </div>
+        <div class="settings-row settings-tappable" onclick="window.openChangelog&&openChangelog()">
+          <div class="settings-row-icon sri-purple">✨</div>
+          <div class="settings-row-text">
+            <div class="settings-label">Ver novedades</div>
+            <div class="settings-sub" id="settingsChangelogSub">Cargando versión…</div>
+          </div>
+          <span class="settings-chevron">›</span>
+        </div>
+        <div class="settings-row settings-tappable" id="settingsUpdateRow" onclick="bvCheckUpdate()">
+          <div class="settings-row-icon sri-green">🔄</div>
+          <div class="settings-row-text">
+            <div class="settings-label">Actualizar BoxVision</div>
+            <div class="settings-sub" id="settingsUpdateSub">Buscar la versión más reciente</div>
+          </div>
+          <span class="settings-chevron" id="settingsUpdateChevron">›</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ALMACENAMIENTO -->
+    <div class="settings-sec">
+      <div class="settings-sec-label">Almacenamiento</div>
+      <div class="settings-card">
+        <div class="settings-row">
+          <div class="settings-row-icon sri-blue">☁️</div>
+          <div class="settings-row-text">
+            <div class="settings-label">Uso en la nube</div>
+            <div class="settings-sub" id="storageSubLabel">Calculando...</div>
+          </div>
+          <span class="settings-val" id="storageValLabel">—</span>
+        </div>
+        <div class="settings-row">
+          <div class="settings-row-icon sri-gray">📱</div>
+          <div class="settings-row-text">
+            <div class="settings-label">Caché local</div>
+            <div class="settings-sub" id="cacheSubLabel">Calculando...</div>
+          </div>
+          <span class="settings-val" id="cacheValLabel">—</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- PRIVACIDAD Y SEGURIDAD -->
+    <div class="settings-sec">
+      <div class="settings-sec-label">Privacidad y seguridad</div>
+      <div class="settings-card">
+        <div class="settings-row settings-tappable" onclick="window.open('privacy.html','_blank')">
+          <div class="settings-row-icon sri-gray">🔒</div>
+          <div class="settings-row-text">
+            <div class="settings-label">Política de privacidad</div>
+            <div class="settings-sub">Cómo usamos tus datos</div>
+          </div>
+          <span class="settings-chevron">›</span>
+        </div>
+        <div class="settings-row settings-tappable" onclick="window.open('terms.html','_blank')">
+          <div class="settings-row-icon sri-gray">📄</div>
+          <div class="settings-row-text">
+            <div class="settings-label">Términos de uso</div>
+            <div class="settings-sub">Condiciones de la aplicación</div>
+          </div>
+          <span class="settings-chevron">›</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ZONA DE PELIGRO -->
+    <div class="settings-sec">
+      <div class="settings-sec-label">Zona de peligro</div>
+      <div class="settings-card settings-danger-card">
+        <div class="settings-row settings-tappable" onclick="confirmDeleteAll()">
+          <div class="settings-row-icon sri-red">🗑️</div>
+          <div class="settings-row-text">
+            <div class="settings-label" style="color:var(--red)">Borrar todos los datos</div>
+            <div class="settings-sub">Elimina todas tus cajas permanentemente</div>
+          </div>
+          <span class="settings-chevron" style="color:var(--red)">›</span>
+        </div>
+        <div class="settings-row settings-tappable" onclick="signOutUser()">
+          <div class="settings-row-icon sri-red">🚪</div>
+          <div class="settings-row-text">
+            <div class="settings-label" style="color:var(--red)">Cerrar sesión</div>
+            <div class="settings-sub">Salir de tu cuenta actual</div>
+          </div>
+          <span class="settings-chevron" style="color:var(--red)">›</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- FOOTER -->
+    <div class="settings-footer">
+      <div class="set-footer-logo">📦</div>
+      <div class="set-footer-name">BoxVision</div>
+      <div style="font-size:12px;color:var(--muted);margin-top:2px">Organizador inteligente de mudanzas</div>
+      <div class="set-footer-links">
+        <a href="privacy.html" target="_blank" class="set-footer-link">Privacidad</a>
+        <span class="set-footer-dot">•</span>
+        <a href="mailto:futbol1234now@gmail.com" class="set-footer-link">Contacto</a>
+        <span class="set-footer-dot">•</span>
+        <a href="terms.html" target="_blank" class="set-footer-link">Términos</a>
+      </div>
+      <div class="set-version-badge">📦 BoxVision · v2.5.0 · © 2025</div>
+    </div>
+
+  </div><!-- /.settings-body -->
+</div>
+
+<!-- ── MODAL IDIOMA ────────────────────────────────────────────────── -->
+
+
+<div id="langModal" onclick="if(event.target===this)closeLangModal()">
+  <div class="modal-sheet">
+    <div class="modal-sheet-handle"></div>
+    <div class="modal-sheet-title" data-i18n="lang.title">Selecciona un idioma</div>
+    <div id="langOptions">
+      <div class="lang-option" onclick="setLang('es')">
+        <span class="lang-flag">🇪🇸</span>
+        <div class="lang-info"><div class="lang-name">Español</div><div class="lang-native">Español</div></div>
+        <span class="lang-check" id="langCheck-es">✓</span>
+      </div>
+      <div class="lang-option" onclick="setLang('en')">
+        <span class="lang-flag">🇺🇸</span>
+        <div class="lang-info"><div class="lang-name">English</div><div class="lang-native">English</div></div>
+        <span class="lang-check" id="langCheck-en">✓</span>
+      </div>
+      <div class="lang-option lang-option-soon">
+        <span class="lang-flag">🇧🇷</span>
+        <div class="lang-info"><div class="lang-name" style="color:var(--muted)">Português</div><div class="lang-native" style="color:var(--muted)">Português</div></div>
+        <span class="lang-soon-badge">Próx. actualización</span>
+      </div>
+      <div class="lang-option lang-option-soon">
+        <span class="lang-flag">🇫🇷</span>
+        <div class="lang-info"><div class="lang-name" style="color:var(--muted)">Français</div><div class="lang-native" style="color:var(--muted)">Français</div></div>
+        <span class="lang-soon-badge">Próx. actualización</span>
+      </div>
+    </div>
+    <div style="padding:0 20px;margin-top:8px;">
+      <button onclick="closeLangModal()" style="width:100%;background:rgba(255,255,255,.07);color:rgba(255,255,255,.6);border:none;border-radius:14px;padding:14px;font-size:15px;font-weight:500;cursor:pointer;font-family:inherit;-webkit-tap-highlight-color:transparent;">Cancelar</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── MODAL FEEDBACK ──────────────────────────────────────────────── -->
+<div id="feedbackModal" onclick="if(event.target===this)closeFeedbackModal()">
+  <div class="modal-sheet">
+    <div class="modal-sheet-handle"></div>
+    <div class="modal-sheet-title">Enviar feedback</div>
+
+    <!-- Chips de categoría -->
+    <div class="feedback-chips">
+      <div class="feedback-chip selected" data-cat="bug" onclick="selectFeedbackChip(this)">🐛 Bug</div>
+      <div class="feedback-chip" data-cat="idea" onclick="selectFeedbackChip(this)">💡 Idea</div>
+      <div class="feedback-chip" data-cat="elogio" onclick="selectFeedbackChip(this)">❤️ Elogio</div>
+      <div class="feedback-chip" data-cat="otro" onclick="selectFeedbackChip(this)">💬 Otro</div>
+    </div>
+
+    <!-- Textarea -->
+    <textarea id="feedbackTextarea" placeholder="Describe el problema o tu sugerencia..."></textarea>
+
+    <!-- Botón enviar -->
+    <button id="feedbackSendBtn" onclick="sendFeedback()">Enviar</button>
+
+    <div style="padding:0 20px;margin-top:8px;">
+      <button onclick="closeFeedbackModal()" style="width:100%;background:transparent;color:rgba(255,255,255,.35);border:none;border-radius:14px;padding:12px;font-size:14px;cursor:pointer;font-family:inherit;-webkit-tap-highlight-color:transparent;">Cancelar</button>
+    </div>
+  </div>
+</div>
+
+<div id="viewer" class="hidden">
+  <img class="vh-photo hidden" id="vPhoto"/>
+  <div class="vh" id="vHeader">
+    <div class="vh-bg" id="vBg"></div>
+    <div class="vh-overlay"></div>
+    <div class="vh-brand hidden" id="vBrand"></div>
+    <div class="vh-tools">
+      <button class="vh-tool" id="torchBtn" onclick="toggleTorch()" title="Linterna">🔦</button>
+      <button class="vh-tool" id="ttsBtn" onclick="speakItems()" title="Leer en voz alta">🔊</button>
+    </div>
+    <div class="vh-icon" id="vIcon">📦</div>
+    <div class="vh-num" id="vNum"></div>
+    <div class="vh-name" id="vName">Cargando...</div>
+    <div class="vh-tags" id="vTags"></div>
+  </div>
+  <div class="vh-body">
+    <div class="vh-prog-wrap hidden" id="vProgWrap"><div class="vh-prog-bar"><div class="vh-prog-fill" id="vProgFill"></div></div><div class="vh-prog-lbl"><span id="vProgLbl"></span><span id="vProgPct"></span></div></div>
+    <div class="vh-note hidden" id="vNote"></div>
+    <div id="vSearchWrap" class="hidden" style="margin-bottom:12px">
+      <div style="display:flex;align-items:center;gap:8px;background:var(--card);border:0.5px solid var(--border);border-radius:13px;padding:9px 13px">
+        <span style="font-size:15px;color:var(--muted)">🔍</span>
+        <input id="vSearchInput" type="text" placeholder="Buscar en esta caja..." oninput="filterViewerItems(this.value)" style="flex:1;border:none;outline:none;font-size:15px;color:var(--text);background:transparent"/>
+        <span style="font-size:13px;color:var(--muted);cursor:pointer" onclick="document.getElementById('vSearchInput').value='';filterViewerItems('')">✕</span>
+      </div>
+    </div>
+    <div id="vItems"></div>
+    <div class="vh-related hidden" id="vRelated"><div class="vh-rel-title">CAJA RELACIONADA</div><div id="vRelatedList"></div></div>
+  </div>
+  <div class="vh-footer">📦 Mis Cajas · <a href="?" style="color:var(--muted)">Abrir gestor</a></div>
+</div>
+
+
+<!-- ══════════════════════════════════════════
+     MODAL AGREGAR OBJETO — estilo "Nueva caja"
+════════════════════════════════════════════ -->
+
+<!-- ══════════════════════════════════════════════════
+     BOTTOMSHEET DETALLE DE OBJETO
+════════════════════════════════════════════════════ -->
+
+
+<div id="itemDetailSheet">
+  <div class="ids-bg" onclick="closeItemDetail()"></div>
+  <div class="ids-card" id="itemDetailCard">
+    <div class="ids-header" id="idsHeader">
+      <div class="ids-handle"></div>
+      <span class="ids-big-icon" id="idsBigIcon">📦</span>
+      <img class="ids-big-photo" id="idsBigPhoto" src="" alt="" style="display:none"/>
+      <div class="ids-header-info">
+        <div class="ids-name" id="idsName">Objeto</div>
+        <div class="ids-cat" id="idsCat" style="display:none"></div>
+        <div class="ids-status-badge" id="idsBadge">⏳ Pendiente</div>
+      </div>
+      <button onclick="closeItemDetail()" style="position:absolute;top:14px;right:14px;z-index:10;width:30px;height:30px;border-radius:50%;background:rgba(0,0,0,.3);border:0.5px solid rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center;cursor:pointer;color:#fff;font-size:13px">
+        <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+
+    <div class="ids-body" id="idsBody">
+      <!-- Foto grande si tiene -->
+      <div class="ids-section" id="idsPhotoSec" style="display:none">
+        <img class="ids-photo-full" id="idsPhotoFull" src="" onclick="_zoomItemThumb(this.src)"/>
+      </div>
+      <!-- Nota -->
+      <div class="ids-section" id="idsNoteSec" style="display:none">
+        <div class="ids-sec-label">Nota</div>
+        <div class="ids-note-text" id="idsNoteText"></div>
+      </div>
+      <!-- Info extra -->
+      <div class="ids-section" id="idsInfoSec">
+        <div class="ids-sec-label">Info</div>
+        <div id="idsInfoContent" style="font-size:14px;color:var(--muted);line-height:1.8"></div>
+      </div>
+    </div>
+
+    <!-- Acciones -->
+    <div class="ids-actions">
+      <button class="ids-btn ids-btn-done" id="idsBtnDone" onclick="idsToggleDone()">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
+        <span id="idsBtnDoneTxt">Marcar sacado</span>
+      </button>
+      <button class="ids-btn ids-btn-edit" onclick="idsEdit()">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+        Editar
+      </button>
+      <button class="ids-btn ids-btn-del" onclick="idsDelete()">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/></svg>
+        Eliminar objeto
+      </button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="addItemOverlay" onclick="closeAddItemModal(event)" style="display:none;position:fixed;inset:0;z-index:500;background:rgba(0,0,0,.6);backdrop-filter:blur(10px);">
+  <div class="modal" id="addItemModal">
+
+    <!-- Preview card animada (igual que caja) -->
+    <div class="modal-preview" id="aimPreview" style="background:var(--card)">
+      <div class="modal-preview-bg" id="aimPreviewBg" style="background:linear-gradient(160deg,#007AFF,rgba(88,86,214,.75))"></div>
+      <div class="modal-preview-noise"></div>
+      <div class="modal-preview-handle"></div>
+      <!-- Botón cerrar -->
+      <button onclick="closeAddItemModal()" aria-label="Cerrar" style="position:absolute;top:14px;right:14px;z-index:10;width:32px;height:32px;border-radius:50%;background:rgba(0,0,0,.3);border:0.5px solid rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center;cursor:pointer;color:#fff;backdrop-filter:blur(8px);font-size:14px;transition:transform .15s,background .15s" onmouseenter="this.style.background='rgba(0,0,0,.5)'" onmouseleave="this.style.background='rgba(0,0,0,.3)'" ontouchstart="this.style.transform='scale(.88)'" ontouchend="this.style.transform=''">
+        <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+      <!-- Miniatura de foto (si hay) -->
+      <div id="aimPhotoPreviewWrap" style="display:none;position:absolute;top:14px;left:14px;z-index:10">
+        <img id="aimPhotoPreviewImg" style="width:52px;height:52px;border-radius:12px;object-fit:cover;border:2px solid rgba(255,255,255,.35);box-shadow:0 4px 16px rgba(0,0,0,.4)" src="" alt="foto"/>
+      </div>
+      <div class="modal-preview-row">
+        <div class="modal-preview-icon" id="aimPreviewIcon">📦</div>
+        <div class="modal-preview-info">
+          <div class="modal-preview-name" id="aimPreviewName" style="font-size:19px">Nuevo objeto</div>
+          <div class="modal-preview-meta" id="aimPreviewMeta" style="opacity:.7">Escribe el nombre abajo</div>
+          <div class="modal-preview-badge" id="aimPreviewBadge" style="display:none"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Body del formulario -->
+    <div class="modal-body">
+
+      <!-- Nombre -->
+      <div class="form-sec-label">Nombre del objeto</div>
+      <div class="form-group-ios" style="margin-bottom:12px">
+        <div class="form-ios-row">
+          <span class="form-ios-label">Nombre</span>
+          <input class="form-ios-input" id="aimName" type="text" placeholder="Ej: Lámpara de escritorio"
+            oninput="updateAimPreview()" autocomplete="off" autocorrect="off"/>
+        </div>
+        <div class="form-ios-row" id="aimCategoryRow">
+          <span class="form-ios-label">Categoría</span>
+          <input class="form-ios-input" id="aimCategory" type="text" placeholder="Ej: Electrónica, Ropa…"
+            oninput="updateAimPreview()" autocomplete="off"/>
+        </div>
+      </div>
+
+      <!-- Sugerencias rápidas de categoría -->
+      <div id="aimCatSugs" style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px">
+        <button class="tag-sug" onclick="setAimCat('🛋️ Muebles')">🛋️ Muebles</button>
+        <button class="tag-sug" onclick="setAimCat('👕 Ropa')">👕 Ropa</button>
+        <button class="tag-sug" onclick="setAimCat('📚 Libros')">📚 Libros</button>
+        <button class="tag-sug" onclick="setAimCat('🍳 Cocina')">🍳 Cocina</button>
+        <button class="tag-sug" onclick="setAimCat('🖥️ Electrónica')">🖥️ Electrónica</button>
+        <button class="tag-sug" onclick="setAimCat('🧴 Baño')">🧴 Baño</button>
+        <button class="tag-sug" onclick="setAimCat('🔧 Herramientas')">🔧 Herramientas</button>
+        <button class="tag-sug" onclick="setAimCat('🧸 Juguetes')">🧸 Juguetes</button>
+      </div>
+
+      <!-- Foto -->
+      <div class="form-sec-label">Foto (opcional)</div>
+      <div style="display:flex;gap:10px;margin-bottom:16px">
+        <button onclick="document.getElementById('aimPhotoInput').click()" style="flex:1;padding:13px;border-radius:14px;background:var(--input);border:1.5px dashed var(--border);color:var(--text);font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px">
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+          <span id="aimPhotoLabel">Agregar foto</span>
+        </button>
+        <button id="aimRemovePhotoBtn" onclick="removeAimPhoto()" style="display:none;padding:13px 16px;border-radius:14px;background:rgba(255,59,48,.12);border:none;color:#FF3B30;font-size:13px;cursor:pointer;font-weight:600">Quitar</button>
+      </div>
+      <input type="file" id="aimPhotoInput" accept="image/*" style="display:none" onchange="handleAimPhoto(event)"/>
+
+      <!-- Nota -->
+      <div class="form-sec-label">Nota (opcional)</div>
+      <div class="form-group-ios" style="margin-bottom:16px">
+        <div class="form-ios-row" style="align-items:flex-start">
+          <textarea id="aimNote" placeholder="Observaciones, estado, fragil…" rows="2"
+            style="flex:1;border:none;outline:none;background:transparent;color:var(--text);font-size:15px;font-family:inherit;padding:14px 15px 14px 0;resize:none;line-height:1.4"></textarea>
+        </div>
+      </div>
+
+    </div><!-- /modal-body -->
+
+    <div class="modal-acts">
+      <button class="m-btn m-ghost" onclick="closeAddItemModal()">Cancelar</button>
+      <button class="m-btn m-primary" onclick="saveAddItemModal()">
+        <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" style="vertical-align:-2px;margin-right:6px"><polyline points="20 6 9 17 4 12"/></svg>
+        Agregar objeto
+      </button>
+    </div>
+
+  </div><!-- /modal -->
+</div><!-- /addItemOverlay -->
+
+<div class="modal-overlay" id="modalOverlay" onclick="closeFormOutside(event)">
+  <div class="modal">
+  <!-- Preview card animada -->
+  <div class="modal-preview" id="formPreview">
+    <div class="modal-preview-bg" id="formPreviewBg"></div>
+    <div class="modal-preview-noise"></div>
+    <div class="modal-preview-handle" id="formHandle"></div>
+    <!-- Botón cerrar visible -->
+    <button onclick="closeForm()" aria-label="Cerrar" style="position:absolute;top:14px;right:14px;z-index:10;width:32px;height:32px;border-radius:50%;background:rgba(0,0,0,.3);border:0.5px solid rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center;cursor:pointer;color:#fff;backdrop-filter:blur(8px);font-size:14px;transition:transform .15s,background .15s" onmouseenter="this.style.background='rgba(0,0,0,.5)'" onmouseleave="this.style.background='rgba(0,0,0,.3)'" ontouchstart="this.style.transform='scale(.88)'" ontouchend="this.style.transform=''"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18" style="pointer-events:none"/><line x1="6" y1="6" x2="18" y2="18"/></svg></i></button>
+    <div class="modal-preview-row">
+      <div class="modal-preview-icon" id="formPreviewIcon">📦</div>
+      <div class="modal-preview-info">
+        <div class="modal-preview-name" id="formPreviewName">Nueva caja</div>
+        <div class="modal-preview-meta" id="formPreviewMeta">Sin ubicación · Sin número</div>
+        <div class="modal-preview-badge" id="formPreviewBadge">🟡 Normal</div>
+      </div>
+    </div>
+  </div>
+    <!-- Cuerpo del formulario — iOS grouped sections -->
+    <div class="modal-body">
+
+      <!-- Sección: Info básica -->
+      <div class="form-sec-label">Información básica</div>
+      <div class="form-group-ios">
+        <div class="form-ios-row">
+          <span class="form-ios-label">Nombre</span>
+          <input class="form-ios-input" id="fName" type="text" placeholder="Ej: Ropa invierno" oninput="updateFormPreview()" autocomplete="off"/>
+        </div>
+        <div class="form-ios-row">
+          <span class="form-ios-label">Número</span>
+          <input class="form-ios-input" id="fNum" type="text" placeholder="Ej: 1, A3" oninput="updateFormPreview()" autocomplete="off"/>
+        </div>
+        <div class="form-ios-row">
+          <span class="form-ios-label">Ubicación</span>
+          <input class="form-ios-input" id="fLoc" type="text" placeholder="Ej: Cuarto, Garaje" oninput="updateFormPreview()" autocomplete="off"/>
+        </div>
+        <div class="form-ios-row">
+          <span class="form-ios-label">Peso (kg)</span>
+          <input class="form-ios-input" id="fWeight" type="number" placeholder="Ej: 5" min="0" step="0.5"/>
+        </div>
+      </div>
+
+      <!-- Sección: Prioridad -->
+      <div class="form-sec-label">Prioridad</div>
+      <div class="pri-btns" style="margin-bottom:16px">
+        <button class="pri-btn" id="pri-red" onclick="setPri('red')">
+          <span class="pri-icon">🔴</span>Urgente
+        </button>
+        <button class="pri-btn sel" id="pri-yellow" onclick="setPri('yellow')">
+          <span class="pri-icon">🟡</span>Normal
+        </button>
+        <button class="pri-btn" id="pri-green" onclick="setPri('green')">
+          <span class="pri-icon">🟢</span>Sin prisa
+        </button>
+      </div>
+
+      <!-- Sección: Color -->
+      <div class="form-sec-label">Color de la caja</div>
+      <div class="colors-grid" id="colorGrid" style="margin-bottom:16px"></div>
+
+      <!-- Sección: Etiquetas -->
+      <div class="form-sec-label">Etiquetas</div>
+      <div class="tags-box" id="tagsBox" onclick="document.getElementById('tagField').focus()" style="margin-bottom:8px">
+        <input type="text" id="tagField" placeholder="Escribe y Enter..." onkeydown="handleTagKey(event)"/>
+      </div>
+      <div class="tag-sugs" style="margin-bottom:16px">
+        <button class="tag-sug" onclick="addTag('mudanza')">📦 mudanza</button>
+        <button class="tag-sug" onclick="addTag('invierno')">❄️ invierno</button>
+        <button class="tag-sug" onclick="addTag('cocina')">🍳 cocina</button>
+        <button class="tag-sug" onclick="addTag('ropa')">👕 ropa</button>
+        <button class="tag-sug" onclick="addTag('libros')">📚 libros</button>
+        <button class="tag-sug" onclick="addTag('trabajo')">💼 trabajo</button>
+      </div>
+
+      <!-- Sección: Seguridad y extras -->
+      <div class="form-sec-label">Seguridad y extras</div>
+      <div class="form-group-ios" style="margin-bottom:16px">
+        <div class="form-ios-row">
+          <span class="form-ios-label">🔒 Contraseña</span>
+          <input class="form-ios-input" id="fPassword" type="password" placeholder="Opcional — dejar vacío"/>
+        </div>
+        <div class="form-ios-row">
+          <span class="form-ios-label">🔗 Relacionada</span>
+          <select id="fRelated" style="flex:1;border:none;outline:none;background:transparent;color:var(--text);font-size:15px;font-family:inherit;padding:14px 15px 14px 10px;-webkit-appearance:none;appearance:none;cursor:pointer">
+            <option value="">— Ninguna —</option>
+          </select>
+        </div>
+      </div>
+
+    </div>
+    <div class="modal-acts">
+      <button class="m-btn m-ghost" onclick="closeForm()">Cancelar</button>
+      <button class="m-btn m-primary" onclick="saveForm()">
+        <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" style="vertical-align:-2px;margin-right:6px"><polyline points="20 6 9 17 4 12"/></svg>Guardar caja
+      </button>
+    </div>
+
+<input type="file" id="photoInput" accept="image/*" onchange="handlePhoto(event)"/>
+
+<!-- Modal contraseña — rediseño Apple-style -->
+
+
+<div id="pwOverlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:10000;align-items:center;justify-content:center;backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px)" onclick="if(event.target===this)closePwModal()">
+  <div style="background:#1c1c1e;border-radius:28px;padding:28px 22px 22px;width:min(310px,90vw);box-shadow:0 32px 80px rgba(0,0,0,.7),0 0 0 0.5px rgba(255,255,255,0.08);animation:toastSpring .35s cubic-bezier(.175,.885,.32,1.275) both">
+
+    <!-- Emoji de la caja + nombre -->
+    <div style="display:flex;flex-direction:column;align-items:center;margin-bottom:22px;gap:8px">
+      <div id="pwBoxIcon" style="width:64px;height:64px;border-radius:20px;background:rgba(255,255,255,0.07);border:0.5px solid rgba(255,255,255,0.1);display:flex;align-items:center;justify-content:center;font-size:32px;margin-bottom:2px">📦</div>
+      <div id="pwBoxName" style="font-size:16px;font-weight:700;color:#fff;text-align:center;line-height:1.2"></div>
+      <div style="font-size:12px;color:rgba(255,255,255,0.35);text-align:center">Ingresa la contraseña para continuar</div>
+    </div>
+
+    <!-- Dots indicador -->
+    <div id="pwDots" style="display:flex;gap:16px;justify-content:center;margin-bottom:20px">
+      <div class="pw-dot" id="pwd0"></div>
+      <div class="pw-dot" id="pwd1"></div>
+      <div class="pw-dot" id="pwd2"></div>
+      <div class="pw-dot" id="pwd3"></div>
+    </div>
+
+    <!-- Input contraseña -->
+    <div id="pwInputWrapper">
+      <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" aria-hidden="true"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></i>
+      <input id="pwInput" type="password" placeholder="Contraseña" autocomplete="off"
+        oninput="syncPwDots(this.value)"
+        onkeydown="if(event.key==='Enter')checkPassword()">
+      <button id="pwEyeBtn" onclick="const i=document.getElementById('pwInput');i.type=i.type==='password'?'text':'password';this.querySelector('i').className=i.type==='password'?'ti ti-eye':'ti ti-eye-off'" tabindex="-1" aria-label="Ver contraseña">
+        <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" aria-hidden="true"/><circle cx="12" cy="12" r="3"/></svg></i>
+      </button>
+    </div>
+
+    <!-- Error -->
+    <div id="pwError"></div>
+
+    <!-- Botones -->
+    <button id="pwSubmitBtn" onclick="checkPassword()">Entrar</button>
+    <button id="pwCancelBtn" onclick="closePwModal()">Cancelar</button>
+
+  </div>
+</div>
+
+
+<script src="qrcode.lib.js"></script>
+<script src="utils.js"></script>
+<script src="suggestions.js"></script>
+<script src="ai-icons.js"></script>
+<script src="pwa-splash.js"></script>
+<script src="ui-main.js"></script>
+<script src="ui-detail.js"></script>
+<script src="ui-form.js"></script>
+<script src="form-box.js"></script>
+<script src="search.js"></script>
+<script src="media.js"></script>
+<script src="rooms.js"></script>
+<script src="settings.js"></script>
+<script src="i18n.js"></script>
+<script src="feedback.js"></script>
+<script src="tutorial.js"></script>
+<script src="ui-effects.js"></script>
+<script src="ai-chat.js"></script>
+
+<!-- SW moved to end of body -->
+
+<!-- ═══ TUTORIAL ═══ -->
+<div id="tutorial">
+  <div class="tut-slides" id="tutSlides">
+
+    <!-- Slide 0: Bienvenida -->
+    <div class="tut-slide active" id="ts0">
+      <div class="tut-bg" style="background:linear-gradient(160deg,#1a1a3e 0%,#17171f 100%)"></div>
+      <div class="tut-content">
+        <div class="tut-icon-wrap" style="background:rgba(10,132,255,.18);border-color:rgba(10,132,255,.3)">
+          <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z" aria-hidden="true"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg></i>
+        </div>
+        <div class="tut-title">BoxVision</div>
+        <div class="tut-desc">Organiza todo lo que guardas — cajas, bodegas, almacenes y más. Encuentra cualquier objeto en segundos.</div>
+        <div class="tut-demo">
+          <div class="tut-demo-row">
+            <div class="tut-demo-icon-wrap"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="6" height="6" rx="1" aria-hidden="true"/><rect x="15" y="3" width="6" height="6" rx="1"/><rect x="3" y="15" width="6" height="6" rx="1"/><rect x="5" y="5" width="2" height="2" fill="currentColor" stroke="none"/><rect x="17" y="5" width="2" height="2" fill="currentColor" stroke="none"/><rect x="5" y="17" width="2" height="2" fill="currentColor" stroke="none"/><line x1="15" y1="15" x2="15" y2="15.01"/><line x1="18" y1="15" x2="21" y2="15"/><line x1="21" y1="18" x2="21" y2="21"/><line x1="15" y1="18" x2="18" y2="21"/></svg></i></div>
+            <div><div class="tut-demo-text">Crea cajas con QR</div><div class="tut-demo-sub">Escanea y ve el contenido al instante</div></div>
+          </div>
+          <div class="tut-demo-row">
+            <div class="tut-demo-icon-wrap"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z" aria-hidden="true"/><circle cx="12" cy="13" r="4"/></svg></i></div>
+            <div><div class="tut-demo-text">Fotografía tus objetos</div><div class="tut-demo-sub">Se guardan con imagen visual</div></div>
+          </div>
+          <div class="tut-demo-row">
+            <div class="tut-demo-icon-wrap"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8" aria-hidden="true"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></i></div>
+            <div><div class="tut-demo-text">Búsqueda inteligente</div><div class="tut-demo-sub">Encuentra cualquier cosa al instante</div></div>
+          </div>
+          <div class="tut-demo-row">
+            <div class="tut-demo-icon-wrap"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z" aria-hidden="true"/></svg></i></div>
+            <div><div class="tut-demo-text">Sincronizado en la nube</div><div class="tut-demo-sub">Accede desde cualquier dispositivo</div></div>
+          </div>
+        </div>
+      </div>
+      <div class="tut-bottom">
+        <div class="tut-dots"><div class="tut-dot active"></div><div class="tut-dot"></div><div class="tut-dot"></div><div class="tut-dot"></div><div class="tut-dot"></div><div class="tut-dot"></div><div class="tut-dot"></div></div>
+        <button class="tut-btn" onclick="nextTut()">Empezar <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12" aria-hidden="true"/><polyline points="12 5 19 12 12 19"/></svg></i></button>
+        <button class="tut-skip" onclick="finishTut()">Saltar tutorial</button>
+      </div>
+    </div>
+
+    <!-- Slide 1: Crea una caja -->
+    <div class="tut-slide next" id="ts1">
+      <div class="tut-bg" style="background:linear-gradient(160deg,#1a2a1a 0%,#17171f 100%)"></div>
+      <div class="tut-content">
+        <div class="tut-icon-wrap" style="background:rgba(10,132,255,.18);border-color:rgba(10,132,255,.3)">
+          <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19" aria-hidden="true"/><line x1="5" y1="12" x2="19" y2="12"/></svg></i>
+        </div>
+        <div class="tut-title">Crea tu primera caja</div>
+        <div class="tut-desc">Toca el botón <strong style="color:#fff;background:rgba(10,132,255,.25);padding:2px 10px;border-radius:8px;font-size:13px">+ Nueva caja</strong> para comenzar.</div>
+        <div class="tut-demo">
+          <div class="tut-demo-row">
+            <div class="tut-demo-icon-wrap"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z" aria-hidden="true"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg></i></div>
+            <div><div class="tut-demo-text">Nombre y número</div><div class="tut-demo-sub">Ej: "Cocina #1", "Ropa invierno"</div></div>
+          </div>
+          <div class="tut-demo-row">
+            <div class="tut-demo-icon-wrap"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="13.5" cy="6.5" r=".5" fill="currentColor" aria-hidden="true"/><circle cx="17.5" cy="10.5" r=".5" fill="currentColor"/><circle cx="8.5" cy="7.5" r=".5" fill="currentColor"/><circle cx="6.5" cy="12.5" r=".5" fill="currentColor"/><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 0 1 1.668-1.668h1.996c3.051 0 5.555-2.503 5.555-5.554C21.965 6.012 17.461 2 12 2z"/></svg></i></div>
+            <div><div class="tut-demo-text">Color personalizado</div><div class="tut-demo-sub">Para identificarla visualmente</div></div>
+          </div>
+          <div class="tut-demo-row">
+            <div class="tut-demo-icon-wrap"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" aria-hidden="true"/><circle cx="12" cy="10" r="3"/></svg></i></div>
+            <div><div class="tut-demo-text">Ubicación</div><div class="tut-demo-sub">Cuarto, garaje, depósito, bodega...</div></div>
+          </div>
+          <div class="tut-demo-row">
+            <div class="tut-demo-icon-wrap"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10" style="color:#FF9500" aria-hidden="true"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg></i></div>
+            <div><div class="tut-demo-text">Prioridad</div><div class="tut-demo-sub">Urgente, normal o sin prisa</div></div>
+          </div>
+        </div>
+      </div>
+      <div class="tut-bottom">
+        <div class="tut-dots"><div class="tut-dot"></div><div class="tut-dot active"></div><div class="tut-dot"></div><div class="tut-dot"></div><div class="tut-dot"></div><div class="tut-dot"></div><div class="tut-dot"></div></div>
+        <button class="tut-btn" onclick="nextTut()">Siguiente <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12" aria-hidden="true"/><polyline points="12 5 19 12 12 19"/></svg></i></button>
+        <button class="tut-skip" onclick="finishTut()">Saltar</button>
+      </div>
+    </div>
+
+    <!-- Slide 2: Agrega objetos -->
+    <div class="tut-slide next" id="ts2">
+      <div class="tut-bg" style="background:linear-gradient(160deg,#1e1a2e 0%,#17171f 100%)"></div>
+      <div class="tut-content">
+        <div class="tut-icon-wrap" style="background:rgba(88,86,214,.2);border-color:rgba(88,86,214,.35)">
+          <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="8" y1="6" x2="21" y2="6" aria-hidden="true"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg></i>
+        </div>
+        <div class="tut-title">Agrega tus objetos</div>
+        <div class="tut-desc">Tienes 3 formas de agregar objetos a cada caja. Usa la que más te convenga.</div>
+        <div class="tut-demo">
+          <div class="tut-demo-row">
+            <div class="tut-demo-icon-wrap"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" aria-hidden="true"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></i></div>
+            <div><div class="tut-demo-text">Escribe el nombre</div><div class="tut-demo-sub">Escribe y presiona + o Enter</div></div>
+          </div>
+          <div class="tut-demo-row">
+            <div class="tut-demo-icon-wrap"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z" aria-hidden="true"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg></i></div>
+            <div><div class="tut-demo-text">Dicta por voz</div><div class="tut-demo-sub">Toca el micrófono y habla</div></div>
+          </div>
+          <div class="tut-demo-row">
+            <div class="tut-demo-icon-wrap"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z" aria-hidden="true"/><circle cx="12" cy="13" r="4"/></svg></i></div>
+            <div><div class="tut-demo-text">Fotografía el objeto</div><div class="tut-demo-sub">BoxVision lo reconoce automáticamente</div></div>
+          </div>
+          <div class="tut-demo-row">
+            <div class="tut-demo-icon-wrap"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10" style="color:#34C759" aria-hidden="true"/><polyline points="9 12 11 14 15 10"/></svg></i></div>
+            <div><div class="tut-demo-text">Marca como sacado</div><div class="tut-demo-sub">Toca el círculo para marcar progreso</div></div>
+          </div>
+        </div>
+      </div>
+      <div class="tut-bottom">
+        <div class="tut-dots"><div class="tut-dot"></div><div class="tut-dot"></div><div class="tut-dot active"></div><div class="tut-dot"></div><div class="tut-dot"></div><div class="tut-dot"></div><div class="tut-dot"></div></div>
+        <button class="tut-btn" onclick="nextTut()">Siguiente <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12" aria-hidden="true"/><polyline points="12 5 19 12 12 19"/></svg></i></button>
+        <button class="tut-skip" onclick="finishTut()">Saltar</button>
+      </div>
+    </div>
+
+    <!-- Slide 3: QR -->
+    <div class="tut-slide next" id="ts3">
+      <div class="tut-bg" style="background:linear-gradient(160deg,#1a2832 0%,#17171f 100%)"></div>
+      <div class="tut-content">
+        <div class="tut-icon-wrap" style="background:rgba(0,199,190,.15);border-color:rgba(0,199,190,.3)">
+          <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="6" height="6" rx="1" aria-hidden="true"/><rect x="15" y="3" width="6" height="6" rx="1"/><rect x="3" y="15" width="6" height="6" rx="1"/><rect x="5" y="5" width="2" height="2" fill="currentColor" stroke="none"/><rect x="17" y="5" width="2" height="2" fill="currentColor" stroke="none"/><rect x="5" y="17" width="2" height="2" fill="currentColor" stroke="none"/><line x1="15" y1="15" x2="15" y2="15.01"/><line x1="18" y1="15" x2="21" y2="15"/><line x1="21" y1="18" x2="21" y2="21"/><line x1="15" y1="18" x2="18" y2="21"/></svg></i>
+        </div>
+        <div class="tut-title">Escanea el QR</div>
+        <div class="tut-desc">Cada caja tiene su propio código QR. Pégalo en la caja física y escanéalo con cualquier celular.</div>
+        <div class="tut-demo">
+          <div class="tut-demo-row">
+            <div class="tut-demo-icon-wrap"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9" aria-hidden="true"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg></i></div>
+            <div><div class="tut-demo-text">Imprime o muestra el QR</div><div class="tut-demo-sub">Desde la pantalla de la caja</div></div>
+          </div>
+          <div class="tut-demo-row">
+            <div class="tut-demo-icon-wrap"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="2" aria-hidden="true"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg></i></div>
+            <div><div class="tut-demo-text">Escanea con cualquier celular</div><div class="tut-demo-sub">Sin necesidad de tener la app</div></div>
+          </div>
+          <div class="tut-demo-row">
+            <div class="tut-demo-icon-wrap"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6c0 2-2 2-2 4v10a2 2 0 0 1-2 2h-4a2 2 0 0 1-2-2V10c0-2-2-2-2-4V2h12v4z" aria-hidden="true"/><line x1="6" y1="6" x2="18" y2="6"/><line x1="12" y1="12" x2="12" y2="12"/></svg></i></div>
+            <div><div class="tut-demo-text">Linterna integrada</div><div class="tut-demo-sub">Para escanear en lugares oscuros</div></div>
+          </div>
+          <div class="tut-demo-row">
+            <div class="tut-demo-icon-wrap"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5" aria-hidden="true"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/></svg></i></div>
+            <div><div class="tut-demo-text">Lee en voz alta</div><div class="tut-demo-sub">Escucha el contenido sin mirar</div></div>
+          </div>
+        </div>
+      </div>
+      <div class="tut-bottom">
+        <div class="tut-dots"><div class="tut-dot"></div><div class="tut-dot"></div><div class="tut-dot"></div><div class="tut-dot active"></div><div class="tut-dot"></div><div class="tut-dot"></div><div class="tut-dot"></div></div>
+        <button class="tut-btn" onclick="nextTut()">Siguiente <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12" aria-hidden="true"/><polyline points="12 5 19 12 12 19"/></svg></i></button>
+        <button class="tut-skip" onclick="finishTut()">Saltar</button>
+      </div>
+    </div>
+
+    <!-- Slide 4: Buscar -->
+    <div class="tut-slide next" id="ts4">
+      <div class="tut-bg" style="background:linear-gradient(160deg,#1a1e30 0%,#17171f 100%)"></div>
+      <div class="tut-content">
+        <div class="tut-icon-wrap" style="background:rgba(10,132,255,.18);border-color:rgba(10,132,255,.3)">
+          <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8" aria-hidden="true"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></i>
+        </div>
+        <div class="tut-title">Encuentra cualquier cosa</div>
+        <div class="tut-desc">¿No recuerdas en qué caja pusiste algo? Búscalo y BoxVision te dice dónde está.</div>
+        <div class="tut-demo">
+          <div class="tut-demo-row">
+            <div class="tut-demo-icon-wrap"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8" aria-hidden="true"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></i></div>
+            <div><div class="tut-demo-text">Busca desde la pantalla principal</div><div class="tut-demo-sub">Escribe el nombre del objeto</div></div>
+          </div>
+          <div class="tut-demo-row">
+            <div class="tut-demo-icon-wrap" style="background:rgba(10,132,255,.2)"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="10" rx="2" style="color:#0A84FF" aria-hidden="true"/><circle cx="12" cy="5" r="2"/><path d="M12 7v4"/><line x1="8" y1="15" x2="8" y2="15"/><line x1="16" y1="15" x2="16" y2="15"/></svg></i></div>
+            <div><div class="tut-demo-text">Pregunta al asistente IA</div><div class="tut-demo-sub">Toca el botón IA y escribe lo que buscas</div></div>
+          </div>
+          <div class="tut-demo-row">
+            <div class="tut-demo-icon-wrap"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" style="color:#FFCC00" aria-hidden="true"/></svg></i></div>
+            <div><div class="tut-demo-text">Marca favoritas</div><div class="tut-demo-sub">Las cajas más importantes siempre arriba</div></div>
+          </div>
+          <div class="tut-demo-row">
+            <div class="tut-demo-icon-wrap"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="9" x2="21" y2="9" aria-hidden="true"/><line x1="3" y1="15" x2="21" y2="15"/><polyline points="8 4 3 9 8 14"/><polyline points="16 20 21 15 16 10"/></svg></i></div>
+            <div><div class="tut-demo-text">Ordena como quieras</div><div class="tut-demo-sub">Por prioridad, habitación, fecha o nombre</div></div>
+          </div>
+        </div>
+      </div>
+      <div class="tut-bottom">
+        <div class="tut-dots"><div class="tut-dot"></div><div class="tut-dot"></div><div class="tut-dot"></div><div class="tut-dot"></div><div class="tut-dot active"></div><div class="tut-dot"></div><div class="tut-dot"></div></div>
+        <button class="tut-btn" onclick="nextTut()">Siguiente <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12" aria-hidden="true"/><polyline points="12 5 19 12 12 19"/></svg></i></button>
+        <button class="tut-skip" onclick="finishTut()">Saltar</button>
+      </div>
+    </div>
+
+    <!-- Slide 5: Seguridad -->
+    <div class="tut-slide next" id="ts5">
+      <div class="tut-bg" style="background:linear-gradient(160deg,#1e1a18 0%,#17171f 100%)"></div>
+      <div class="tut-content">
+        <div class="tut-icon-wrap" style="background:rgba(255,149,0,.15);border-color:rgba(255,149,0,.3)">
+          <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" aria-hidden="true"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></i>
+        </div>
+        <div class="tut-title">Protege tus cajas</div>
+        <div class="tut-desc">Algunas cajas merecen más privacidad. BoxVision tiene varias formas de protegerlas.</div>
+        <div class="tut-demo">
+          <div class="tut-demo-row">
+            <div class="tut-demo-icon-wrap"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" aria-hidden="true"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/><circle cx="12" cy="16" r="1" fill="currentColor" stroke="none"/></svg></i></div>
+            <div><div class="tut-demo-text">Contraseña por caja</div><div class="tut-demo-sub">Nadie puede abrirla sin el código</div></div>
+          </div>
+          <div class="tut-demo-row">
+            <div class="tut-demo-icon-wrap"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" aria-hidden="true"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></i></div>
+            <div><div class="tut-demo-text">Sellar una caja</div><div class="tut-demo-sub">Cuando terminaste de empacar</div></div>
+          </div>
+          <div class="tut-demo-row">
+            <div class="tut-demo-icon-wrap"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" aria-hidden="true"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg></i></div>
+            <div><div class="tut-demo-text">Foto de portada</div><div class="tut-demo-sub">Pon una foto para identificarla rápido</div></div>
+          </div>
+          <div class="tut-demo-row">
+            <div class="tut-demo-icon-wrap" style="background:rgba(37,211,102,.15)"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21l1.65-3.8a9 9 0 1 1 3.4 2.9L3 21" style="color:#25D366" aria-hidden="true"/><path d="M9 10c0 5 3.5 7.5 7.5 3.5"/></svg></i></div>
+            <div><div class="tut-demo-text">Comparte por WhatsApp</div><div class="tut-demo-sub">Envía el contenido a quien necesites</div></div>
+          </div>
+        </div>
+      </div>
+      <div class="tut-bottom">
+        <div class="tut-dots"><div class="tut-dot"></div><div class="tut-dot"></div><div class="tut-dot"></div><div class="tut-dot"></div><div class="tut-dot"></div><div class="tut-dot active"></div><div class="tut-dot"></div></div>
+        <button class="tut-btn" onclick="nextTut()">Siguiente <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12" aria-hidden="true"/><polyline points="12 5 19 12 12 19"/></svg></i></button>
+        <button class="tut-skip" onclick="finishTut()">Saltar</button>
+      </div>
+    </div>
+
+    <!-- Slide 6: Cuenta -->
+    <div class="tut-slide next" id="ts6">
+      <div class="tut-bg" style="background:linear-gradient(160deg,#17221f 0%,#17171f 100%)"></div>
+      <div class="tut-content">
+        <div class="tut-icon-wrap" style="background:rgba(52,199,89,.15);border-color:rgba(52,199,89,.3)">
+          <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z" aria-hidden="true"/></svg></i>
+        </div>
+        <div class="tut-title">Todo en tu cuenta</div>
+        <div class="tut-desc">Iniciaste sesión con Google. Tus cajas están seguras en la nube y disponibles desde cualquier dispositivo.</div>
+        <div class="tut-demo">
+          <div class="tut-demo-row">
+            <div class="tut-demo-icon-wrap"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="2" aria-hidden="true"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg></i></div>
+            <div><div class="tut-demo-text">Accede desde cualquier celular</div><div class="tut-demo-sub">Tus cajas siempre disponibles</div></div>
+          </div>
+          <div class="tut-demo-row">
+            <div class="tut-demo-icon-wrap"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10" aria-hidden="true"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg></i></div>
+            <div><div class="tut-demo-text">Sincronización automática</div><div class="tut-demo-sub">Los cambios se guardan al instante</div></div>
+          </div>
+          <div class="tut-demo-row">
+            <div class="tut-demo-icon-wrap"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" aria-hidden="true"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></i></div>
+            <div><div class="tut-demo-text">Cada cuenta es independiente</div><div class="tut-demo-sub">Tu familia puede tener sus propias cajas</div></div>
+          </div>
+          <div class="tut-demo-row">
+            <div class="tut-demo-icon-wrap"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1" aria-hidden="true"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg></i></div>
+            <div><div class="tut-demo-text">Mapa de habitaciones</div><div class="tut-demo-sub">Organiza tus cajas por espacios</div></div>
+          </div>
+        </div>
+      </div>
+      <div class="tut-bottom">
+        <div class="tut-dots"><div class="tut-dot"></div><div class="tut-dot"></div><div class="tut-dot"></div><div class="tut-dot"></div><div class="tut-dot"></div><div class="tut-dot"></div><div class="tut-dot active"></div></div>
+        <button class="tut-btn" onclick="finishTut()"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z" aria-hidden="true"/><path d="m12 15-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z"/><path d="M9 12H4s.55-3.03 2-4c1.62-1.08 5 0 5 0"/><path d="M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5"/></svg></i> ¡Listo, empezar!</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+
+<!-- ═══ 3D CUBE MODAL ═══ -->
+
+
+<!-- ═══ FIREBASE AUTH + FIRESTORE LOGIC ═══ -->
+<script src="app-auth.js"></script>
+
+<!-- SERVICE WORKER + OFFLINE DETECTOR -->
+<!-- Se coloca al final del body para que todas las variables estén definidas -->
+<script src="service-worker-init.js"></script>
+
+<!-- ══ MEJORAS UX: Swipe-to-close modal + Splash skeleton + Fixes ══ -->
+<script src="ux-improvements.js"></script>
+
+<!-- ── Banner offline / online ── -->
+<div id="offlineBanner" style="
+  position:fixed;bottom:80px;left:50%;transform:translateX(-50%);
+  z-index:9000;
+  background:rgba(30,30,40,.95);border:0.5px solid rgba(255,255,255,.12);
+  backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);
+  border-radius:99px;padding:9px 18px;
+  display:none;align-items:center;gap:8px;
+  font-size:13px;font-weight:600;color:#fff;
+  box-shadow:0 8px 32px rgba(0,0,0,.4);
+  transition:opacity .3s,transform .3s;
+  white-space:nowrap;
+">
+  <span id="offlineDot" style="width:8px;height:8px;border-radius:50%;background:#FF3B30;flex-shrink:0;display:block"></span>
+  <span id="offlineMsg">Sin conexión — modo local activo</span>
+</div>
+<script src="offline-banner.js"></script>
+
+<!-- ── MODAL DE NOVEDADES (estilo Android "Qué hay de nuevo") ── -->
+
+
+<!-- Modal HTML -->
+<!-- El modal se construye dinámicamente desde config.json -->
+<div id="changelogOverlay" onclick="if(event.target===this)closeChangelog()">
+  <div id="changelogSheet">
+    <div class="cl-handle"></div>
+    <div class="cl-hero">
+      <div class="cl-hero-icon">📦</div>
+      <div class="cl-hero-title">BoxVision actualizado</div>
+      <div class="cl-hero-sub">Acá están los cambios de esta versión</div>
+      <div class="cl-version-badge" id="clVersionBadge">✦ cargando…</div>
+    </div>
+    <div class="cl-body" id="clBody">
+      <!-- se rellena con JS desde config.json -->
+    </div>
+    <div class="cl-footer">
+      <button class="cl-close-btn" onclick="closeChangelog()">¡Entendido!</button>
+    </div>
+  </div>
+</div>
+
+<script src="changelog.js"></script>
+
+<!-- ── BANNER DE ACTUALIZACIÓN (Diseño integrado con BoxVision) ── -->
+
+
+<!-- Notificación de actualización -->
+<div id="updateNotification">
+  <div class="update-notification-content">
+    <div class="update-notification-left">
+      <div class="update-notification-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="8 17 12 21 16 17"/><line x1="12" y1="12" x2="12" y2="21"/><path d="M20.88 18.09A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.29"/></svg></i>
+      </div>
+      <div class="update-notification-text">
+        <div class="update-notification-title">Actualización disponible</div>
+        <div class="update-notification-subtitle">Nueva versión lista</div>
+      </div>
+    </div>
+    <div class="update-notification-actions">
+      <button class="update-btn-dismiss" id="updateDismiss" title="Descartar">✕</button>
+      <button class="update-btn-action" id="updateNow">
+        <span>Actualizar</span>
+      </button>
+    </div>
+  </div>
+  <div class="update-progress"></div>
+</div>
+
+<!-- SCRIPT DE ACTUALIZACIONES v3 — sin recarga, progreso por pasos -->
+<script src="update-system.js"></script>
+
+<script src="logger.js"></script>
+
+<!-- Toast de búsqueda por foto -->
+<div id="searchPhotoToast">
+  <div id="searchPhotoToastIcon">📷</div>
+  <div id="searchPhotoToastMsg">Analizando imagen…</div>
+  <div id="searchPhotoToastSub"></div>
+</div>
+
+
+
+</div><!-- /modalOverlay -->
+
+<!-- ═══ AI ASSISTANT FAB ═══ -->
+<button id="aiFab" onclick="toggleAI()" style="position:fixed;bottom:24px;right:20px;z-index:99999;display:flex;align-items:center;gap:8px;height:50px;padding:0 18px;border-radius:25px;background:linear-gradient(135deg,#1a1a2e,#0f3460);border:1px solid rgba(88,86,214,.5);color:#fff;font-size:16px;cursor:pointer;box-shadow:0 4px 24px rgba(88,86,214,.4);opacity:1">
+  <div style="width:8px;height:8px;background:#34C759;border-radius:50%"></div>
+  <span>✦</span>
+  <span style="font-size:13px;font-weight:700">Box IA</span>
+</button>
+
+<!-- ═══ BOX IA PANEL ═══ -->
+<div class="ai-panel" id="aiPanel">
+  <div class="ai-header">
+    <div class="ai-avatar"><span style="position:relative;z-index:1;font-size:20px;filter:drop-shadow(0 1px 4px rgba(0,0,0,.4))">✦</span></div>
+    <div class="ai-header-info">
+      <div class="ai-header-name">Box IA</div>
+      <div class="ai-header-status" id="aiStatus">Asistente inteligente</div>
+    </div>
+    <button class="ai-close" onclick="toggleAI()">✕</button>
+  </div>
+
+  <!-- Pantalla configuración API key -->
+  <div id="aiKeyScreen" style="display:none;flex:1;padding:32px 24px;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:18px">
+    <div style="font-size:56px">🔑</div>
+    <div style="font-size:20px;font-weight:800;color:#fff;letter-spacing:-.4px">Conecta Box IA</div>
+    <div style="font-size:14px;color:rgba(255,255,255,.65);line-height:1.6">Powered by <b style="color:rgba(255,255,255,.9)">Groq</b> vía Cloudflare Workers.<br>Gratis, rápido, sin exponer tu key.</div>
+    <div style="background:rgba(255,255,255,.12);border:0.5px solid rgba(255,255,255,.25);border-radius:16px;padding:14px 16px;font-size:13px;color:rgba(255,255,255,.85);line-height:1.8;text-align:left;width:100%;box-sizing:border-box;backdrop-filter:blur(10px)">
+      ✅ Tu key de Groq está guardada en el Worker<br>
+      ✅ Esta app no necesita la key directamente<br>
+      ✅ Funciona en cualquier red
+    </div>
+    <button onclick="saveApiKey()" style="width:100%;padding:15px;border-radius:14px;border:none;background:#fff;color:#007AFF;font-size:16px;font-weight:700;cursor:pointer;box-shadow:0 4px 20px rgba(0,0,0,.2);transition:transform .15s,box-shadow .15s" onmousedown="this.style.transform='scale(.97)'" onmouseup="this.style.transform=''" ontouchstart="this.style.transform='scale(.97)'" ontouchend="this.style.transform=''">🚀 Iniciar Box IA</button>
+    <button onclick="skipApiKey()" style="background:rgba(255,255,255,.12);border:0.5px solid rgba(255,255,255,.25);backdrop-filter:blur(10px);border-radius:14px;padding:11px 24px;color:rgba(255,255,255,.8);font-size:14px;font-weight:600;cursor:pointer;font-family:inherit;width:100%;transition:transform .15s" onmousedown="this.style.transform='scale(.97)'" onmouseup="this.style.transform=''" ontouchstart="this.style.transform='scale(.97)'" ontouchend="this.style.transform=''">Usar modo básico</button>
+  </div>
+
+  <div id="aiChatArea" style="display:none;flex:1;flex-direction:column;overflow:hidden">
+    <div class="ai-messages" id="aiMessages"></div>
+    <div class="ai-quick" id="aiQuick">
+      <button class="ai-quick-btn" onclick="aiAsk('¿Dónde están mis zapatos?')">🔍 Buscar objeto</button>
+      <button class="ai-quick-btn" onclick="aiAsk('¿Cuánto llevo de la mudanza y qué me falta?')">📊 Mi progreso</button>
+      <button class="ai-quick-btn" onclick="aiAsk('¿Qué cajas son urgentes y qué tienen?')">🔴 Urgentes</button>
+      <button class="ai-quick-btn" onclick="aiAsk('Dame consejos para organizar mejor mi mudanza')">💡 Consejos</button>
+      <button class="ai-quick-btn" onclick="aiAsk('¿Qué cajas están en el cuarto principal?')">🛏 Por habitación</button>
+      <button class="ai-quick-btn" onclick="aiAsk('¿Cuáles son las cajas más pesadas o con más objetos?')">⚖️ Análisis</button>
+    </div>
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:4px 16px 2px">
+      <button onclick="testGroqConnection()" style="background:none;border:none;color:rgba(255,255,255,.4);font-size:11px;cursor:pointer;padding:4px;font-family:inherit;transition:color .15s" onmouseenter="this.style.color='rgba(255,255,255,.8)'" onmouseleave="this.style.color='rgba(255,255,255,.4)'">🔌 Probar conexión</button>
+      <button onclick="clearApiKey()" style="background:none;border:none;color:rgba(255,255,255,.4);font-size:11px;cursor:pointer;padding:4px;font-family:inherit;transition:color .15s" onmouseenter="this.style.color='rgba(255,255,255,.8)'" onmouseleave="this.style.color='rgba(255,255,255,.4)'">⚙️ Cambiar API key</button>
+    </div>
+    <div class="ai-input-row">
+      <input class="ai-input" id="aiInput" type="text" placeholder="Pregúntale a Box IA…" onkeydown="if(event.key==='Enter')aiSend()"/>
+      <button class="ai-send" onclick="aiSend()">↑</button>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>
