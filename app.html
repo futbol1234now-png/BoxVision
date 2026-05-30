@@ -2195,7 +2195,7 @@ button{-webkit-tap-highlight-color:transparent;outline:none}
   transition:transform var(--dur-fast) var(--ease-spring),
              box-shadow var(--dur-fast),
              width .3s var(--ease-spring);
-  animation:fabIn .5s .3s var(--ease-spring) both;
+  animation:fabIn .5s .3s var(--ease-spring) forwards;
   overflow:hidden;
   white-space:nowrap;
 }
@@ -2205,6 +2205,9 @@ button{-webkit-tap-highlight-color:transparent;outline:none}
 }
 @keyframes fabIn{from{transform:scale(0) translateY(20px);opacity:0}to{transform:scale(1) translateY(0);opacity:1}}
 
+/* FAB visible solo cuando mainScreen está activo */
+#aiFab { display: none; }
+#mainScreen:not(.hidden) #aiFab { display: flex; }
 
 .ai-fab:hover{
   transform:translateY(-2px) scale(1.03);
@@ -3168,6 +3171,11 @@ if(!auth){
   <input type="file" id="searchPhotoInput" accept="image/*" style="display:none" onchange="handleSearchPhoto(event)"/>
   <div class="filter-row" id="filterRow"></div>
   <div class="main-scroll" id="mainScroll"></div>
+  <button class="ai-fab" id="aiFab" onclick="toggleAI()">
+    <div class="ai-dot"></div>
+    <span style="font-size:17px">✦</span>
+    <span class="ai-fab-label">Box IA</span>
+  </button>
 </div>
 
 <div id="detailScreen" class="hidden">
@@ -4757,11 +4765,13 @@ function showScreen(id){
   document.querySelectorAll("#splash,#loginScreen,#mainScreen,#detailScreen,#roomScreen,#settingsScreen,#viewer").forEach(el=>{
     if(el.id!==id){el.classList.add("hidden");el.classList.remove("active");el.style.display="";}
   });
+  // Marcar pantalla activa en body para CSS
+  document.body.setAttribute("data-screen", id);
   // Mostrar FAB solo en mainScreen
   const _fab=document.getElementById("aiFab");
   if(_fab){
-    if(id==="mainScreen"){_fab.style.display="flex";_fab.classList.remove("hidden");}
-    else if(id!=="mainScreen"&&!document.getElementById("modalOverlay")?.classList.contains("open")){_fab.style.display="none";}
+    if(id==="mainScreen"){_fab.style.removeProperty("display");_fab.classList.remove("hidden");}
+    else{_fab.style.display="none";}
   }
 }
 
@@ -4879,7 +4889,9 @@ function showSplash(){
 function goSplash(){showSplash();}
 
 let activeFilter="todo"; let activeSort="default";
-function goMain(){showScreen("mainScreen");renderMain();_startClock();const f=document.getElementById("aiFab");if(f){f.classList.remove("hidden");f.style.display="flex";}
+function goMain(){showScreen("mainScreen");renderMain();_startClock();
+  const f=document.getElementById("aiFab");
+  if(f){f.classList.remove("hidden");f.style.removeProperty("display");}
   // Mostrar changelog si hay versión nueva sin ver (primer arranque tras actualización)
   if(window._changelogPending){
     window._changelogPending=false;
@@ -7766,13 +7778,6 @@ document.addEventListener("DOMContentLoaded",applySplashGradient);
 
 <!-- ═══ 3D CUBE MODAL ═══ -->
 
-<!-- ═══ AI ASSISTANT FAB ═══ -->
-<button class="ai-fab" id="aiFab" onclick="toggleAI()">
-  <div class="ai-dot"></div>
-  <span style="font-size:17px">✦</span>
-  <span class="ai-fab-label">Box IA</span>
-</button>
-
 <!-- ═══ BOX IA PANEL ═══ -->
 <div class="ai-panel" id="aiPanel">
   <div class="ai-header">
@@ -9093,11 +9098,13 @@ if(auth){
   _patchRenderGrid();
   document.addEventListener('DOMContentLoaded', function(){ _patchRenderGrid(); setViewMode(_viewMode); });
   // Fallback: parchear en el primer goMain/renderMain
-  var _origGoMain = window.goMain;
-  window.goMain = function(){
-    _patchRenderGrid();
-    if(typeof _origGoMain === 'function') _origGoMain.apply(this, arguments);
-  };
+  document.addEventListener('DOMContentLoaded', function(){
+    var _origGoMain = window.goMain;
+    window.goMain = function(){
+      _patchRenderGrid();
+      if(typeof _origGoMain === 'function') _origGoMain.apply(this, arguments);
+    };
+  });
 
   // ── 4. Skeleton inicial ───────────────────────────────────────────────────
   document.addEventListener('DOMContentLoaded', function(){
@@ -9869,17 +9876,26 @@ if(auth){
   function ensureFabVisible(){
     var fab = document.getElementById('aiFab');
     var main = document.getElementById('mainScreen');
-    if(!fab) return;
-    if(main && (main.classList.contains('active') || main.style.display !== 'none')){
+    if(!fab || !main) return;
+    var mainVisible = main.classList.contains('active') && !main.classList.contains('hidden');
+    if(mainVisible){
+      fab.style.setProperty('display','flex','important');
+      fab.style.setProperty('visibility','visible','important');
+      fab.style.setProperty('opacity','1','important');
       fab.classList.remove('hidden');
+    } else {
+      fab.style.display = 'none';
     }
   }
-  document.addEventListener('DOMContentLoaded', function(){
-    setTimeout(ensureFabVisible, 500);
-    setTimeout(ensureFabVisible, 1500);
-    setTimeout(ensureFabVisible, 3000);
-  });
-  document.addEventListener('click', function(){ setTimeout(ensureFabVisible, 200); });
+  // Correr repetidamente hasta que la app cargue
+  var attempts = 0;
+  var interval = setInterval(function(){
+    ensureFabVisible();
+    attempts++;
+    if(attempts > 20) clearInterval(interval);
+  }, 500);
+  // Y en cada click por si cambia de pantalla
+  document.addEventListener('click', function(){ setTimeout(ensureFabVisible, 300); });
 })();
 </script>
 
