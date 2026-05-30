@@ -1616,7 +1616,7 @@
 </div><!-- /modalOverlay -->
 
 <!-- ═══ AI ASSISTANT FAB ═══ -->
-<button id="aiFab" onclick="toggleAI()" style="position:fixed;bottom:24px;right:20px;z-index:99999;display:flex;align-items:center;gap:8px;height:50px;padding:0 18px;border-radius:25px;background:linear-gradient(135deg,#1a1a2e,#0f3460);border:1px solid rgba(88,86,214,.5);color:#fff;font-size:16px;cursor:pointer;box-shadow:0 4px 24px rgba(88,86,214,.4);opacity:1">
+<button id="aiFab" onclick="toggleAI()" style="position:fixed;bottom:24px;right:20px;z-index:99999;display:none;align-items:center;gap:8px;height:50px;padding:0 18px;border-radius:25px;background:linear-gradient(135deg,#1a1a2e,#0f3460);border:1px solid rgba(88,86,214,.5);color:#fff;font-size:16px;cursor:pointer;box-shadow:0 4px 24px rgba(88,86,214,.4);opacity:1">
   <div style="width:8px;height:8px;background:#34C759;border-radius:50%"></div>
   <span>✦</span>
   <span style="font-size:13px;font-weight:700">Box IA</span>
@@ -1667,6 +1667,31 @@
     </div>
   </div>
 </div>
+
+<!-- ── Mostrar FAB después del login ── -->
+<script>
+(function(){
+  function _showFab(){
+    var f = document.getElementById('aiFab');
+    if(!f) return;
+    var loginScreen = document.getElementById('loginScreen');
+    var isLogin = loginScreen && loginScreen.style.display !== 'none' && !loginScreen.classList.contains('hidden');
+    if(isLogin) return;
+    f.style.display = 'flex';
+    f.style.opacity = '1';
+    f.classList.remove('hidden');
+  }
+  var _fabTimer = setInterval(function(){
+    var loginScreen = document.getElementById('loginScreen');
+    var isLogin = loginScreen && loginScreen.style.display !== 'none' && !loginScreen.classList.contains('hidden');
+    if(!isLogin){
+      _showFab();
+      clearInterval(_fabTimer);
+    }
+  }, 500);
+  window._showFab = _showFab;
+})();
+</script>
 
 </body>
 </html>
