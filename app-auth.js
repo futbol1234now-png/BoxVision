@@ -985,6 +985,8 @@ if(auth){
     // Ocultar login e ir a la app
     _hideLoginScreen();
     goMain();
+    // Mostrar FAB tras login
+    setTimeout(function(){var _f=document.getElementById('aiFab');if(_f){_f.style.display='flex';_f.style.opacity='1';_f.classList.remove('hidden');}},200);
     // Notificar al sistema de auto-mantenimiento que cargó bien
     if(typeof window._bvAppLoaded === 'function') window._bvAppLoaded();
 
