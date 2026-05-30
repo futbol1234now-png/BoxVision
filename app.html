@@ -9002,6 +9002,7 @@ if(auth){
     if(typeof window._bvAppLoaded === 'function') window._bvAppLoaded();
     document.dispatchEvent(new Event('appReady'));
     // FIX: en modo local, si hay cajas guardadas ir directo a main
+    if(boxes && boxes.length > 0){
       history.replaceState(null, "", location.pathname + location.search);
       goMain();
     } else {
