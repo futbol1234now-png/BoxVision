@@ -1668,5 +1668,50 @@
   </div>
 </div>
 
+<script>
+// ── FIX: Mostrar FAB en todas las pantallas excepto login/splash/viewer ──
+(function(){
+  var _fabShown = false;
+  function _showFab(){
+    var f = document.getElementById('aiFab');
+    if(!f) return;
+    f.style.display = 'flex';
+    f.style.opacity = '1';
+    f.classList.remove('hidden');
+    _fabShown = true;
+  }
+  function _hideFab(){
+    var f = document.getElementById('aiFab');
+    if(!f) return;
+    f.style.display = 'none';
+    f.classList.add('hidden');
+  }
+  // Exponer globalmente
+  window._showFab = _showFab;
+  window._hideFab = _hideFab;
+
+  // Parchear showScreen para controlar el FAB
+  window.addEventListener('load', function(){
+    var _origShowScreen = window.showScreen;
+    if(typeof _origShowScreen === 'function'){
+      window.showScreen = function(id){
+        _origShowScreen.apply(this, arguments);
+        if(id === 'viewer' || id === 'splash' || id === 'loginScreen'){
+          _hideFab();
+        } else {
+          setTimeout(_showFab, 100);
+        }
+      };
+    }
+    // Mostrar FAB si ya estamos logueados
+    setTimeout(function(){
+      var login = document.getElementById('loginScreen');
+      var isHidden = !login || login.style.display === 'none' || login.classList.contains('hidden');
+      if(isHidden) _showFab();
+    }, 1000);
+  });
+})();
+</script>
+
 </body>
 </html>
