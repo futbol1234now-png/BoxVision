@@ -1,11 +1,15 @@
 /* BoxVision — Formulario crear/editar caja */
 
+function _hideFab(){const f=document.getElementById("aiFab");if(f){f.style.display="none";f.classList.add("hidden");}}
+function _showFabForm(){const f=document.getElementById("aiFab");if(f){f.style.display="flex";f.style.opacity="1";f.classList.remove("hidden");}}
+
 function openForm(){
   formMode="new";editingBoxId=null;currentTags=[];selectedColor=COLORS[5];selectedPri="yellow";
   ["fName","fNum","fLoc","fWeight","fPassword"].forEach(id=>document.getElementById(id).value="");
   buildColorGrid();renderTagChips();updatePriBtns();populateRelatedSelect(null);
   updateFormPreview();
   document.getElementById("modalOverlay").classList.add("open");
+  _hideFab();
   setTimeout(()=>document.getElementById("fName").focus(),100);
 }
 function openEditForm(){
@@ -19,8 +23,9 @@ function openEditForm(){
   buildColorGrid();renderTagChips();updatePriBtns();populateRelatedSelect(box.related);
   updateFormPreview();
   document.getElementById("modalOverlay").classList.add("open");
+  _hideFab();
 }
-function closeForm(){document.getElementById("modalOverlay").classList.remove("open");}
+function closeForm(){document.getElementById("modalOverlay").classList.remove("open");_showFabForm();}
 function closeFormOutside(e){if(e.target===document.getElementById("modalOverlay")) closeForm();}
 function populateRelatedSelect(cur){
   document.getElementById("fRelated").innerHTML='<option value="">— Ninguna —</option>'+
@@ -103,4 +108,3 @@ function saveForm(){
     showToast("❌ Error al guardar, intenta de nuevo","#FF3B30");
   }
 }
-
