@@ -85,7 +85,7 @@
 </script>
 
 <!-- TABLER ICONS - CON FALLBACKS MÚLTIPLES -->
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.24.0/tabler-icons.min.css" id="tabler-primary" onerror="loadTablerFallback(this)">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.30.0/dist/tabler-icons.min.css" id="tabler-primary" onerror="loadTablerFallback(this)">
 <script>
   window._tablerLoaded = false;
   window._tablerFallbackAttempts = 0;
@@ -98,7 +98,7 @@
       // Intento 1: unpkg
       var link = document.createElement('link');
       link.rel = 'stylesheet';
-      link.href = 'https://unpkg.com/@tabler/icons-webfont@latest/tabler-icons.min.css';
+      link.href = 'https://unpkg.com/@tabler/icons-webfont@3.30.0/dist/tabler-icons.min.css';
       link.onerror = function() { loadTablerFallback(this); };
       link.onload = function() { window._tablerLoaded = true; console.log('✓ Tabler icons cargó desde unpkg'); };
       document.head.appendChild(link);
