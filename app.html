@@ -8,7 +8,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Mis Cajas">
 <meta name="theme-color" content="#007AFF">
-<link id="pwaManifest" rel="manifest">
+<link id="pwaManifest" rel="manifest" href="./manifest.json">
 <link rel="icon" type="image/png" href="icons/logo.png" id="dynamicFavicon">
 <script>
 (function(){
@@ -18,37 +18,32 @@
     const img = new Image();
     img.crossOrigin = "anonymous";
     img.onload = function(){
-      try {
-        const size = 64;
-        const c = document.createElement("canvas");
-        c.width = c.height = size;
-        const ctx = c.getContext("2d");
-        // Dibuja sobre fondo negro temporal para poder leer pixels reales
-        ctx.drawImage(img, 0, 0, size, size);
-        const data = ctx.getImageData(0, 0, size, size);
-        const d = data.data;
-        // Por cada pixel: si es oscuro (suma RGB < umbral) → transparente
-        // Preserva pixeles claros/dorados (el ícono de la caja)
-        for(let i = 0; i < d.length; i += 4){
-          const r = d[i], g = d[i+1], b = d[i+2];
-          // Oscuridad = inverso del máximo canal
-          const brightness = Math.max(r, g, b);
-          if(brightness < 80){
-            // Pixel muy oscuro → completamente transparente
-            d[i+3] = 0;
-          } else if(brightness < 140){
-            // Zona intermedia → semi-transparente (suaviza bordes)
-            d[i+3] = Math.round((brightness - 80) / 60 * 255);
-          }
-          // Pixel claro → opaco (se mantiene)
+      const size = 64;
+      const c = document.createElement("canvas");
+      c.width = c.height = size;
+      const ctx = c.getContext("2d");
+      // Dibuja sobre fondo negro temporal para poder leer pixels reales
+      ctx.drawImage(img, 0, 0, size, size);
+      const data = ctx.getImageData(0, 0, size, size);
+      const d = data.data;
+      // Por cada pixel: si es oscuro (suma RGB < umbral) → transparente
+      // Preserva pixeles claros/dorados (el ícono de la caja)
+      for(let i = 0; i < d.length; i += 4){
+        const r = d[i], g = d[i+1], b = d[i+2];
+        // Oscuridad = inverso del máximo canal
+        const brightness = Math.max(r, g, b);
+        if(brightness < 80){
+          // Pixel muy oscuro → completamente transparente
+          d[i+3] = 0;
+        } else if(brightness < 140){
+          // Zona intermedia → semi-transparente (suaviza bordes)
+          d[i+3] = Math.round((brightness - 80) / 60 * 255);
         }
-        ctx.putImageData(data, 0, 0);
-        const favicon = document.getElementById("dynamicFavicon");
-        if(favicon) favicon.href = c.toDataURL("image/png");
-      } catch(e) {
-        // Canvas contaminado (CORS) o error de seguridad — se mantiene el favicon original
-        console.info('favicon: usando imagen original (CORS)', e.message);
+        // Pixel claro → opaco (se mantiene)
       }
+      ctx.putImageData(data, 0, 0);
+      const favicon = document.getElementById("dynamicFavicon");
+      if(favicon) favicon.href = c.toDataURL("image/png");
     };
     img.onerror = function(){ /* si falla, queda el favicon original */ };
     img.src = "icons/logo.png";
@@ -67,12 +62,9 @@
   // ── EmailJS config — reemplaza con tus claves desde emailjs.com ──────────
   // Para activar: crea cuenta en emailjs.com (gratis), crea un servicio Gmail
   // y una plantilla, luego pega las 3 claves aquí.
-  // ⚠️  SEGURIDAD: NO coloques claves reales aquí — son visibles para cualquier usuario.
-  // Genera nuevas claves en emailjs.com y cárgalas desde una variable de entorno
-  // o un endpoint propio. Las claves anteriores han sido removidas por seguridad.
-  window.EMAILJS_PUBLIC_KEY  = 'TU_PUBLIC_KEY';
-  window.EMAILJS_SERVICE_ID  = 'TU_SERVICE_ID';
-  window.EMAILJS_TEMPLATE_ID = 'TU_TEMPLATE_ID';
+  window.EMAILJS_PUBLIC_KEY  = 'j068SrmxqARUYifIS';
+  window.EMAILJS_SERVICE_ID  = 'service_1hm801u';
+  window.EMAILJS_TEMPLATE_ID = 'template_sh65yng';
   // Variables disponibles en tu plantilla EmailJS:
   // {{from_user}}  → email/nombre del usuario que envía feedback
   // {{category}}   → bug | idea | elogio | otro
@@ -93,7 +85,7 @@
 </script>
 
 <!-- TABLER ICONS - CON FALLBACKS MÚLTIPLES -->
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.30.0/dist/tabler-icons.min.css" id="tabler-primary" onload="window._tablerLoaded=true;console.log('✓ Tabler icons cargó desde jsdelivr')" onerror="loadTablerFallback(this)">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.24.0/tabler-icons.min.css" id="tabler-primary" onerror="loadTablerFallback(this)">
 <script>
   window._tablerLoaded = false;
   window._tablerFallbackAttempts = 0;
@@ -106,7 +98,7 @@
       // Intento 1: unpkg
       var link = document.createElement('link');
       link.rel = 'stylesheet';
-      link.href = 'https://unpkg.com/@tabler/icons-webfont@3.30.0/dist/tabler-icons.min.css';
+      link.href = 'https://unpkg.com/@tabler/icons-webfont@latest/tabler-icons.min.css';
       link.onerror = function() { loadTablerFallback(this); };
       link.onload = function() { window._tablerLoaded = true; console.log('✓ Tabler icons cargó desde unpkg'); };
       document.head.appendChild(link);
@@ -134,22 +126,16 @@
   }
   
   function verifyTablerIcons() {
-    // Esperar 4s: tiempo suficiente para que la app renderice y los íconos sean visibles
     setTimeout(function() {
-      // Si ya cargó correctamente, no hacer nada
-      if(window._tablerLoaded || window._tablerFailed) return;
-      // Buscar un ícono que esté efectivamente visible en el DOM
-      var tiEl = document.querySelector('i.ti:not([style*="display:none"])');
-      if(!tiEl) return; // no hay íconos visibles todavía — no marcar como fallido
-      var styles = window.getComputedStyle(tiEl);
-      var ff = styles.fontFamily.toLowerCase();
-      if(ff.indexOf('tabler') === -1) {
-        console.warn('⚠️ Icons verificación falló, aplicando fallback CSS');
-        document.documentElement.setAttribute('data-icons-verified-fail', '1');
-      } else {
-        window._tablerLoaded = true; // marcar como cargado aunque onload no haya disparado
+      if(!window._tablerLoaded && document.querySelector('i.ti')) {
+        var styles = window.getComputedStyle(document.querySelector('i.ti'));
+        var ff = styles.fontFamily.toLowerCase();
+        if(ff.indexOf('tabler') === -1) {
+          console.warn('⚠️ Icons verificación falló, aplicando fallback CSS');
+          document.documentElement.setAttribute('data-icons-verified-fail', '1');
+        }
       }
-    }, 4000);
+    }, 2000);
   }
 </script>
 
@@ -753,38 +739,6 @@ input,button,textarea,select{font-family:inherit}
 .sr-item:hover{background:var(--card2)}
 .sr-item:last-child{border:none}
 .sr-none{padding:20px;text-align:center;color:var(--muted);font-size:14px}
-
-/* ── Botón búsqueda IA en barra de búsqueda ── */
-#aiSearchBtn{
-  display:flex;
-  align-items:center;gap:8px;
-  margin:8px 0 0;
-  padding:11px 14px;
-  background:linear-gradient(135deg,rgba(10,132,255,.18),rgba(88,86,214,.15));
-  border:1px solid rgba(10,132,255,.35);
-  border-radius:14px;
-  cursor:pointer;
-  font-size:13px;font-weight:600;
-  color:#0A84FF;
-  width:100%;
-  font-family:inherit;
-  text-align:left;
-  transition:background .15s,transform .1s;
-  -webkit-tap-highlight-color:transparent;
-  animation:srSlide .2s cubic-bezier(.34,1.2,.64,1);
-}
-#aiSearchBtn:active{transform:scale(.98);background:linear-gradient(135deg,rgba(10,132,255,.26),rgba(88,86,214,.22));}
-.ai-search-icon{
-  width:26px;height:26px;border-radius:8px;
-  background:linear-gradient(135deg,#0A84FF,#5856D6);
-  display:flex;align-items:center;justify-content:center;
-  flex-shrink:0;font-size:13px;
-  box-shadow:0 2px 8px rgba(10,132,255,.35);
-}
-.ai-search-text{flex:1;min-width:0}
-.ai-search-label{font-size:13px;font-weight:700;color:#0A84FF}
-.ai-search-preview{font-size:11px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:200px;margin-top:1px}
-.ai-search-arrow{font-size:14px;color:rgba(10,132,255,.5);flex-shrink:0}
 .filter-row{display:flex;gap:7px;overflow-x:auto;padding:6px 14px 10px;scrollbar-width:none}
 .filter-row::-webkit-scrollbar{display:none}
 .pill{flex-shrink:0;display:inline-flex;align-items:center;gap:5px;background:var(--pill);color:var(--pilltext);border:0.5px solid transparent;border-radius:99px;padding:7px 14px;font-size:13px;font-weight:500;cursor:pointer;white-space:nowrap;transition:background .15s,color .15s,border-color .15s;-webkit-tap-highlight-color:transparent}
@@ -2224,7 +2178,7 @@ button{-webkit-tap-highlight-color:transparent;outline:none}
 
 /* ── AI ASSISTANT ── */
 .ai-fab{
-  position:fixed;bottom:24px;right:20px;z-index:600;
+  position:fixed;bottom:24px;right:20px;z-index:400;
   width:auto;height:50px;
   border-radius:25px;
   padding:0 18px 0 14px;
@@ -2232,7 +2186,7 @@ button{-webkit-tap-highlight-color:transparent;outline:none}
   background:linear-gradient(135deg,#1a1a2e 0%,#16213e 50%,#0f3460 100%);
   border:1px solid rgba(88,86,214,.35);
   cursor:pointer;
-  align-items:center;justify-content:center;
+  display:flex;align-items:center;justify-content:center;
   font-size:18px;
   box-shadow:
     0 4px 24px rgba(88,86,214,.35),
@@ -2241,6 +2195,7 @@ button{-webkit-tap-highlight-color:transparent;outline:none}
   transition:transform var(--dur-fast) var(--ease-spring),
              box-shadow var(--dur-fast),
              width .3s var(--ease-spring);
+  animation:fabIn .5s .3s var(--ease-spring) both;
   overflow:hidden;
   white-space:nowrap;
 }
@@ -2249,15 +2204,6 @@ button{-webkit-tap-highlight-color:transparent;outline:none}
   letter-spacing:-.2px;opacity:.9;
 }
 @keyframes fabIn{from{transform:scale(0) translateY(20px);opacity:0}to{transform:scale(1) translateY(0);opacity:1}}
-
-/* FAB: visible por defecto, oculto solo en splash/login/viewer/modal */
-#aiFab { display: flex !important; }
-body[data-screen="splash"] #aiFab,
-body[data-screen="loginScreen"] #aiFab,
-body[data-screen="viewer"] #aiFab { display: none !important; }
-body.modal-open #aiFab { display: none !important; }
-#aiFab.ai-fab-hidden { display: none !important; }
-
 .ai-fab:hover{
   transform:translateY(-2px) scale(1.03);
   box-shadow:0 8px 36px rgba(88,86,214,.5),0 1px 0 rgba(255,255,255,.12) inset;
@@ -2897,7 +2843,7 @@ if(!auth){
 }
 </script>
 </head>
-<body data-dark="1" data-screen="loginScreen">
+<body data-dark="1">
 
 <!-- ═══ LOGIN SCREEN v2.4 — Apple-clean redesign ═══ -->
 <style>
@@ -3044,7 +2990,7 @@ if(!auth){
       <div id="fieldName" style="display:none;margin-bottom:12px;">
         <div class="ls-field-group">
           <div class="ls-field-row">
-            <div class="ls-field-icon"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" aria-hidden="true"/><circle cx="12" cy="7" r="4"/></svg></div>
+            <div class="ls-field-icon"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" aria-hidden="true"/><circle cx="12" cy="7" r="4"/></svg></i></div>
             <input id="emailName" class="ls-input" type="text" placeholder="Tu nombre" autocomplete="name" maxlength="50">
           </div>
         </div>
@@ -3054,16 +3000,16 @@ if(!auth){
       <!-- Correo + Contraseña agrupados -->
       <div class="ls-field-group">
         <div class="ls-field-row">
-          <div class="ls-field-icon"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2" aria-hidden="true"/><polyline points="2,4 12,13 22,4"/></svg></div>
+          <div class="ls-field-icon"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2" aria-hidden="true"/><polyline points="2,4 12,13 22,4"/></svg></i></div>
           <input id="emailInput" class="ls-input" type="email" placeholder="Correo electrónico" autocomplete="email" maxlength="100"
             onkeydown="if(event.key==='Enter'){event.preventDefault();document.getElementById('passInput').focus()}">
         </div>
         <div class="ls-field-row">
-          <div class="ls-field-icon"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" aria-hidden="true"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div>
+          <div class="ls-field-icon"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" aria-hidden="true"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></i></div>
           <input id="passInput" class="ls-input" type="password" placeholder="Contraseña" autocomplete="current-password" maxlength="128"
             onkeydown="if(event.key==='Enter'){event.preventDefault();submitEmailForm()}">
           <button class="ls-eye-btn" onclick="togglePassVisibility()" tabindex="-1" aria-label="Mostrar contraseña">
-            <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" aria-hidden="true"/><circle cx="12" cy="12" r="3"/></svg>
+            <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" aria-hidden="true"/><circle cx="12" cy="12" r="3"/></svg></i>
           </button>
         </div>
       </div>
@@ -3150,7 +3096,7 @@ if(!auth){
     </div>
   </div>
   <div class="sp-last" id="spLast" style="display:none!important">
-    <div class="sp-last-lbl"><svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10" style="vertical-align:0px;margin-right:3px"/><path d="M3.51 15a9 9 0 1 0 .49-4"/><polyline points="12 7 12 12 15 14"/></svg>Última caja abierta</div>
+    <div class="sp-last-lbl"><svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10" style="vertical-align:0px;margin-right:3px"/><path d="M3.51 15a9 9 0 1 0 .49-4"/><polyline points="12 7 12 12 15 14"/></svg></i>Última caja abierta</div>
     <div class="sp-last-row">
       <div class="sp-last-icon-wrap">
         <div class="sp-last-icon" id="spLastIcon">📦</div>
@@ -3159,7 +3105,7 @@ if(!auth){
         <div class="sp-last-name" id="spLastName">—</div>
         <div class="sp-last-sub" id="spLastSub">—</div>
       </div>
-      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6" style="color:rgba(255,255,255,.25)"/></svg>
+      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6" style="color:rgba(255,255,255,.25)"/></svg></i>
     </div>
   </div>
   <button class="sp-btn" onclick="goMain()"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-3px;margin-right:7px;flex-shrink:0" aria-hidden="true"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>Ver mis cajas</button>
@@ -3193,16 +3139,16 @@ if(!auth){
     </div>
   </div>
   <div id="sortMenu" class="hidden" style="position:sticky;top:57px;z-index:150;background:var(--card);border-bottom:0.5px solid var(--border);padding:10px 14px;display:flex;gap:7px;overflow-x:auto;scrollbar-width:none">
-    <button class="pill active" id="sort-default" onclick="setSort('default')"><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1" aria-hidden="true"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg> Por defecto</button>
-    <button class="pill" id="sort-priority" onclick="setSort('priority')"><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10" style="color:#FF3B30" aria-hidden="true"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg> Prioridad</button>
-    <button class="pill" id="sort-location" onclick="setSort('location')"><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" aria-hidden="true"/><circle cx="12" cy="10" r="3"/></svg> Habitación</button>
-    <button class="pill" id="sort-date" onclick="setSort('date')"><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" aria-hidden="true"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg> Fecha</button>
+    <button class="pill active" id="sort-default" onclick="setSort('default')"><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1" aria-hidden="true"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg></i> Por defecto</button>
+    <button class="pill" id="sort-priority" onclick="setSort('priority')"><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10" style="color:#FF3B30" aria-hidden="true"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg></i> Prioridad</button>
+    <button class="pill" id="sort-location" onclick="setSort('location')"><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" aria-hidden="true"/><circle cx="12" cy="10" r="3"/></svg></i> Habitación</button>
+    <button class="pill" id="sort-date" onclick="setSort('date')"><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" aria-hidden="true"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></i> Fecha</button>
     <button class="pill" id="sort-name" onclick="setSort('name')"><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle" aria-hidden="true"><line x1="4" y1="6" x2="11" y2="6"/><line x1="4" y1="12" x2="11" y2="12"/><line x1="4" y1="18" x2="13" y2="18"/><polyline points="15 9 18 6 21 9"/><line x1="18" y1="6" x2="18" y2="18"/></svg> Nombre</button>
-    <button class="pill" id="sort-count" onclick="setSort('count')"><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="4" y1="9" x2="20" y2="9" aria-hidden="true"/><line x1="4" y1="15" x2="20" y2="15"/><line x1="10" y1="3" x2="8" y2="21"/><line x1="16" y1="3" x2="14" y2="21"/></svg> Objetos</button>
+    <button class="pill" id="sort-count" onclick="setSort('count')"><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="4" y1="9" x2="20" y2="9" aria-hidden="true"/><line x1="4" y1="15" x2="20" y2="15"/><line x1="10" y1="3" x2="8" y2="21"/><line x1="16" y1="3" x2="14" y2="21"/></svg></i> Objetos</button>
   </div>
   <div class="search-wrap">
     <div class="search-inner">
-      <span class="search-icon"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></span>
+      <span class="search-icon"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></i></span>
       <input id="searchInput" type="text" placeholder="Buscar en todas las cajas..." data-i18n="main.search" data-i18n-attr="placeholder" oninput="doSearch(this.value)"/>
       <span id="searchClear" class="hidden" style="font-size:14px;color:var(--muted);cursor:pointer;padding:4px;margin-right:-4px;transition:color .15s" onmouseenter="this.style.color='var(--red)'" onmouseleave="this.style.color='var(--muted)'" onclick="clearSearch()">✕</span>
       <button id="searchPhotoBtn" onclick="triggerSearchPhoto()" title="Buscar por foto" aria-label="Buscar por foto" style="
@@ -3216,14 +3162,6 @@ if(!auth){
       </button>
     </div>
     <div class="sr-wrap" id="srWrap"></div>
-    <button id="aiSearchBtn" onclick="_aiSearchFromBar()" aria-label="Preguntar a Box IA">
-      <div class="ai-search-icon">✦</div>
-      <div class="ai-search-text">
-        <div class="ai-search-label">Preguntar a Box IA</div>
-        <div class="ai-search-preview" id="aiSearchPreview">¿En qué caja está algo?</div>
-      </div>
-      <div class="ai-search-arrow">→</div>
-    </button>
   </div>
   <input type="file" id="searchPhotoInput" accept="image/*" style="display:none" onchange="handleSearchPhoto(event)"/>
   <div class="filter-row" id="filterRow"></div>
@@ -3232,11 +3170,11 @@ if(!auth){
 
 <div id="detailScreen" class="hidden">
   <div class="detail-hero" id="dHero">
-    <button class="dh-back" onclick="goMain()" title="Volver" aria-label="Volver"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="15 18 9 12 15 6" style="pointer-events:none"/></svg></button>
+    <button class="dh-back" onclick="goMain()" title="Volver" aria-label="Volver"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="15 18 9 12 15 6" style="pointer-events:none"/></svg></i></button>
     <div class="dh-acts">
-      <button class="dh-act" id="favBtn" onclick="toggleFav()" title="Favorito" aria-label="Marcar favorito"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" style="pointer-events:none"/></svg></button>
-      <button class="dh-act" onclick="showQuickQR()" title="QR rápido" aria-label="Ver QR"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="6" height="6" rx="1" style="pointer-events:none"/><rect x="15" y="3" width="6" height="6" rx="1"/><rect x="3" y="15" width="6" height="6" rx="1"/><rect x="5" y="5" width="2" height="2" fill="currentColor" stroke="none"/><rect x="17" y="5" width="2" height="2" fill="currentColor" stroke="none"/><rect x="5" y="17" width="2" height="2" fill="currentColor" stroke="none"/><line x1="15" y1="15" x2="15" y2="15.01"/><line x1="18" y1="15" x2="21" y2="15"/><line x1="21" y1="18" x2="21" y2="21"/><line x1="15" y1="18" x2="18" y2="21"/></svg></button>
-      <button class="dh-act" onclick="openEditForm()" title="Editar caja" aria-label="Editar caja"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" style="pointer-events:none"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>
+      <button class="dh-act" id="favBtn" onclick="toggleFav()" title="Favorito" aria-label="Marcar favorito"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" style="pointer-events:none"/></svg></i></button>
+      <button class="dh-act" onclick="showQuickQR()" title="QR rápido" aria-label="Ver QR"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="6" height="6" rx="1" style="pointer-events:none"/><rect x="15" y="3" width="6" height="6" rx="1"/><rect x="3" y="15" width="6" height="6" rx="1"/><rect x="5" y="5" width="2" height="2" fill="currentColor" stroke="none"/><rect x="17" y="5" width="2" height="2" fill="currentColor" stroke="none"/><rect x="5" y="17" width="2" height="2" fill="currentColor" stroke="none"/><line x1="15" y1="15" x2="15" y2="15.01"/><line x1="18" y1="15" x2="21" y2="15"/><line x1="21" y1="18" x2="21" y2="21"/><line x1="15" y1="18" x2="18" y2="21"/></svg></i></button>
+      <button class="dh-act" onclick="openEditForm()" title="Editar caja" aria-label="Editar caja"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" style="pointer-events:none"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></i></button>
     </div>
     <img class="dh-img hidden" id="dHeroImg"/>
     <div class="dh-overlay"></div>
@@ -3249,11 +3187,11 @@ if(!auth){
     <!-- Columna principal -->
     <div class="detail-main-col">
     <div class="dsec" id="progSec">
-      <div class="dsec-title"><span class="dsec-title-icon dsec-icon-prog"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/><line x1="2" y1="20" x2="22" y2="20"/></svg></span>PROGRESO DE DESEMPAQUE</div>
+      <div class="dsec-title"><span class="dsec-title-icon dsec-icon-prog"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/><line x1="2" y1="20" x2="22" y2="20"/></svg></i></span>PROGRESO DE DESEMPAQUE</div>
       <div class="prog-wrap"><div class="prog-bar"><div class="prog-fill" id="progFill"></div></div><div class="prog-lbl"><span id="progLbl"></span><span id="progPct"></span></div></div>
     </div>
     <div class="dsec">
-      <div class="dsec-title" id="itemsTitle"><span class="dsec-title-icon dsec-icon-cont"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="16.5" y1="9.4" x2="7.5" y2="4.21"/><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg></span>CONTENIDO</div>
+      <div class="dsec-title" id="itemsTitle"><span class="dsec-title-icon dsec-icon-cont"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="16.5" y1="9.4" x2="7.5" y2="4.21"/><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg></i></span>CONTENIDO</div>
       <div id="itemsList"></div>
       <div class="add-row" id="addRow">
         <!-- Input principal -->
@@ -3296,12 +3234,12 @@ if(!auth){
       <div class="suggestions-wrap" id="suggestionsWrap"><span class="sug-label">💡</span></div>
     </div>
     <div class="dsec" id="relatedSec">
-      <div class="dsec-title"><span class="dsec-title-icon dsec-icon-rel"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg></span>CAJA RELACIONADA</div>
+      <div class="dsec-title"><span class="dsec-title-icon dsec-icon-rel"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg></i></span>CAJA RELACIONADA</div>
       <div id="relatedList"></div>
     </div>
     <div class="dsec" id="historySec">
       <div class="dsec-title" style="display:flex;align-items:center;justify-content:space-between">
-        <span style="display:flex;align-items:center;gap:6px"><span class="dsec-title-icon dsec-icon-hist"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-4"/><polyline points="12 7 12 12 15 14"/></svg></span>HISTORIAL</span>
+        <span style="display:flex;align-items:center;gap:6px"><span class="dsec-title-icon dsec-icon-hist"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-4"/><polyline points="12 7 12 12 15 14"/></svg></i></span>HISTORIAL</span>
         <div style="display:flex;gap:4px">
           <button onclick="_clearBoxHistory()" style="background:rgba(255,59,48,.1);border:none;color:#FF3B30;font-size:11px;font-weight:600;cursor:pointer;padding:3px 8px;border-radius:7px;font-family:inherit" title="Borrar historial de esta caja">Borrar</button>
           <button onclick="toggleHistory()" id="histToggleBtn" style="background:none;border:none;color:var(--muted);font-size:12px;cursor:pointer;padding:2px 6px;border-radius:6px">Ocultar</button>
@@ -3383,7 +3321,7 @@ if(!auth){
         transition:transform .15s,box-shadow .15s;
         -webkit-tap-highlight-color:transparent;
       " onmousedown="this.style.transform='scale(.94)'" onmouseup="this.style.transform=''" ontouchstart="this.style.transform='scale(.94)'" ontouchend="this.style.transform=''">
-        <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg> Nueva
+        <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></i> Nueva
       </button>
     </div>
   </div>
@@ -3432,7 +3370,7 @@ if(!auth){
           color:var(--text);font-size:15px;font-weight:600;cursor:pointer;font-family:inherit;
           display:flex;align-items:center;justify-content:center;gap:7px;
           transition:background .13s;-webkit-tap-highlight-color:transparent;
-        "><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>Cancelar</button>
+        "><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></i>Cancelar</button>
         <button onclick="confirmRoomModal()" style="
           flex:2;padding:15px;border-radius:16px;border:none;
           background:linear-gradient(135deg,#0A84FF,#5856D6);
@@ -3440,7 +3378,7 @@ if(!auth){
           display:flex;align-items:center;justify-content:center;gap:7px;
           box-shadow:0 4px 16px rgba(10,132,255,.35);
           transition:transform .13s,opacity .13s;-webkit-tap-highlight-color:transparent;
-        " onmousedown="this.style.transform='scale(.97)'" onmouseup="this.style.transform=''"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>Guardar</button>
+        " onmousedown="this.style.transform='scale(.97)'" onmouseup="this.style.transform=''"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg></i>Guardar</button>
       </div>
     </div>
   </div>
@@ -3451,7 +3389,7 @@ if(!auth){
       <div class="room-detail-hero-bg" id="roomDetailHeroBg"></div>
       <div class="room-detail-hero-overlay"></div>
       <button class="room-detail-back" onclick="closeRoomDetail()">
-        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg></i>
       </button>
       <div class="room-detail-emoji" id="roomDetailEmoji">🏠</div>
       <div class="room-detail-name" id="roomDetailName">Habitación</div>
@@ -3472,10 +3410,10 @@ if(!auth){
       <div id="roomDetailBoxList"></div>
       <div class="room-detail-actions">
         <button class="room-da-btn room-da-edit" id="roomDetailEditBtn">
-          <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg> Renombrar
+          <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></i> Renombrar
         </button>
         <button class="room-da-btn room-da-delete" id="roomDetailDeleteBtn">
-          <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg> Eliminar
+          <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg></i> Eliminar
         </button>
       </div>
     </div>
@@ -3978,7 +3916,7 @@ if(!auth){
     <div class="modal-preview-noise"></div>
     <div class="modal-preview-handle" id="formHandle"></div>
     <!-- Botón cerrar visible -->
-    <button onclick="closeForm()" aria-label="Cerrar" style="position:absolute;top:14px;right:14px;z-index:10;width:32px;height:32px;border-radius:50%;background:rgba(0,0,0,.3);border:0.5px solid rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center;cursor:pointer;color:#fff;backdrop-filter:blur(8px);font-size:14px;transition:transform .15s,background .15s" onmouseenter="this.style.background='rgba(0,0,0,.5)'" onmouseleave="this.style.background='rgba(0,0,0,.3)'" ontouchstart="this.style.transform='scale(.88)'" ontouchend="this.style.transform=''"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18" style="pointer-events:none"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+    <button onclick="closeForm()" aria-label="Cerrar" style="position:absolute;top:14px;right:14px;z-index:10;width:32px;height:32px;border-radius:50%;background:rgba(0,0,0,.3);border:0.5px solid rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center;cursor:pointer;color:#fff;backdrop-filter:blur(8px);font-size:14px;transition:transform .15s,background .15s" onmouseenter="this.style.background='rgba(0,0,0,.5)'" onmouseleave="this.style.background='rgba(0,0,0,.3)'" ontouchstart="this.style.transform='scale(.88)'" ontouchend="this.style.transform=''"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18" style="pointer-events:none"/><line x1="6" y1="6" x2="18" y2="18"/></svg></i></button>
     <div class="modal-preview-row">
       <div class="modal-preview-icon" id="formPreviewIcon">📦</div>
       <div class="modal-preview-info">
@@ -4069,6 +4007,122 @@ if(!auth){
 
 <input type="file" id="photoInput" accept="image/*" onchange="handlePhoto(event)"/>
 
+<!-- Modal contraseña — rediseño Apple-style -->
+<style>
+  @keyframes pwShake{0%,100%{transform:translateX(0)}20%{transform:translateX(-8px)}40%{transform:translateX(8px)}60%{transform:translateX(-5px)}80%{transform:translateX(5px)}}
+  #pwOverlay .pw-dot{
+    width:12px;height:12px;border-radius:50%;
+    border:1.5px solid rgba(255,255,255,0.25);
+    background:transparent;
+    transition:background .15s,border-color .15s,transform .15s;
+  }
+  #pwOverlay .pw-dot.filled{
+    background:#0A84FF;
+    border-color:#0A84FF;
+    transform:scale(1.15);
+  }
+  #pwOverlay .pw-dot.error{
+    background:#FF453A;
+    border-color:#FF453A;
+  }
+  #pwInputWrapper{
+    position:relative;
+    margin-bottom:14px;
+  }
+  #pwInputWrapper .pw-input-icon{
+    position:absolute;left:14px;top:50%;transform:translateY(-50%);
+    color:rgba(255,255,255,0.25);font-size:16px;pointer-events:none;
+  }
+  #pwInput{
+    width:100%;box-sizing:border-box;
+    padding:14px 44px 14px 42px;
+    border-radius:14px;
+    border:0.5px solid rgba(255,255,255,0.1);
+    background:rgba(255,255,255,0.07);
+    color:#fff;font-size:16px;
+    outline:none;
+    font-family:inherit;
+    letter-spacing:2px;
+    transition:border-color .18s,background .18s;
+  }
+  #pwInput:focus{
+    border-color:rgba(10,132,255,0.6);
+    background:rgba(255,255,255,0.1);
+  }
+  #pwInput::placeholder{letter-spacing:0;color:rgba(255,255,255,0.25);}
+  #pwEyeBtn{
+    position:absolute;right:12px;top:50%;transform:translateY(-50%);
+    background:none;border:none;cursor:pointer;
+    color:rgba(255,255,255,0.28);font-size:17px;
+    padding:6px;display:flex;align-items:center;
+    -webkit-tap-highlight-color:transparent;
+  }
+  #pwSubmitBtn{
+    width:100%;background:#0A84FF;color:#fff;
+    border:none;border-radius:14px;
+    padding:15px;font-size:15px;font-weight:600;
+    cursor:pointer;font-family:inherit;
+    transition:opacity .13s,transform .13s;
+    -webkit-tap-highlight-color:transparent;
+    letter-spacing:.1px;
+  }
+  #pwSubmitBtn:active{opacity:.85;transform:scale(.98);}
+  #pwCancelBtn{
+    width:100%;background:rgba(255,255,255,0.07);color:rgba(255,255,255,0.6);
+    border:none;border-radius:14px;
+    padding:14px;font-size:15px;font-weight:500;
+    cursor:pointer;font-family:inherit;
+    transition:background .15s;
+    -webkit-tap-highlight-color:transparent;
+    margin-top:8px;
+  }
+  #pwCancelBtn:active{background:rgba(255,255,255,0.12);}
+  #pwError{
+    font-size:12px;color:#FF453A;
+    text-align:center;margin-bottom:10px;
+    min-height:16px;
+    transition:opacity .2s;
+  }
+</style>
+
+<div id="pwOverlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:10000;align-items:center;justify-content:center;backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px)" onclick="if(event.target===this)closePwModal()">
+  <div style="background:#1c1c1e;border-radius:28px;padding:28px 22px 22px;width:min(310px,90vw);box-shadow:0 32px 80px rgba(0,0,0,.7),0 0 0 0.5px rgba(255,255,255,0.08);animation:toastSpring .35s cubic-bezier(.175,.885,.32,1.275) both">
+
+    <!-- Emoji de la caja + nombre -->
+    <div style="display:flex;flex-direction:column;align-items:center;margin-bottom:22px;gap:8px">
+      <div id="pwBoxIcon" style="width:64px;height:64px;border-radius:20px;background:rgba(255,255,255,0.07);border:0.5px solid rgba(255,255,255,0.1);display:flex;align-items:center;justify-content:center;font-size:32px;margin-bottom:2px">📦</div>
+      <div id="pwBoxName" style="font-size:16px;font-weight:700;color:#fff;text-align:center;line-height:1.2"></div>
+      <div style="font-size:12px;color:rgba(255,255,255,0.35);text-align:center">Ingresa la contraseña para continuar</div>
+    </div>
+
+    <!-- Dots indicador -->
+    <div id="pwDots" style="display:flex;gap:16px;justify-content:center;margin-bottom:20px">
+      <div class="pw-dot" id="pwd0"></div>
+      <div class="pw-dot" id="pwd1"></div>
+      <div class="pw-dot" id="pwd2"></div>
+      <div class="pw-dot" id="pwd3"></div>
+    </div>
+
+    <!-- Input contraseña -->
+    <div id="pwInputWrapper">
+      <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" aria-hidden="true"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></i>
+      <input id="pwInput" type="password" placeholder="Contraseña" autocomplete="off"
+        oninput="syncPwDots(this.value)"
+        onkeydown="if(event.key==='Enter')checkPassword()">
+      <button id="pwEyeBtn" onclick="const i=document.getElementById('pwInput');i.type=i.type==='password'?'text':'password';this.querySelector('i').className=i.type==='password'?'ti ti-eye':'ti ti-eye-off'" tabindex="-1" aria-label="Ver contraseña">
+        <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" aria-hidden="true"/><circle cx="12" cy="12" r="3"/></svg></i>
+      </button>
+    </div>
+
+    <!-- Error -->
+    <div id="pwError"></div>
+
+    <!-- Botones -->
+    <button id="pwSubmitBtn" onclick="checkPassword()">Entrar</button>
+    <button id="pwCancelBtn" onclick="closePwModal()">Cancelar</button>
+
+  </div>
+</div>
 
 
 <script>var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],f={},c=function(t,r){o=function(t){for(var r=new Array(t),e=0;e<t;e+=1){r[e]=new Array(t);for(var n=0;n<t;n+=1)r[e][n]=null}return r}(i=4*e+17),l(0,0),l(i-7,0),l(0,i-7),s(),h(),d(t,r),e>=7&&v(t),null==a&&(a=p(e,n,u)),w(a,r)},l=function(t,r){for(var e=-1;e<=7;e+=1)if(!(t+e<=-1||i<=t+e))for(var n=-1;n<=7;n+=1)r+n<=-1||i<=r+n||(o[t+e][r+n]=0<=e&&e<=6&&(0==n||6==n)||0<=n&&n<=6&&(0==e||6==e)||2<=e&&e<=4&&2<=n&&n<=4)},h=function(){for(var t=8;t<i-8;t+=1)null==o[t][6]&&(o[t][6]=t%2==0);for(var r=8;r<i-8;r+=1)null==o[6][r]&&(o[6][r]=r%2==0)},s=function(){for(var t=B.getPatternPosition(e),r=0;r<t.length;r+=1)for(var n=0;n<t.length;n+=1){var i=t[r],a=t[n];if(null==o[i][a])for(var u=-2;u<=2;u+=1)for(var f=-2;f<=2;f+=1)o[i+u][a+f]=-2==u||2==u||-2==f||2==f||0==u&&0==f}},v=function(t){for(var r=B.getBCHTypeNumber(e),n=0;n<18;n+=1){var a=!t&&1==(r>>n&1);o[Math.floor(n/3)][n%3+i-8-3]=a}for(n=0;n<18;n+=1){a=!t&&1==(r>>n&1);o[n%3+i-8-3][Math.floor(n/3)]=a}},d=function(t,r){for(var e=n<<3|r,a=B.getBCHTypeInfo(e),u=0;u<15;u+=1){var f=!t&&1==(a>>u&1);u<6?o[u][8]=f:u<8?o[u+1][8]=f:o[i-15+u][8]=f}for(u=0;u<15;u+=1){f=!t&&1==(a>>u&1);u<8?o[8][i-u-1]=f:u<9?o[8][15-u-1+1]=f:o[8][15-u-1]=f}o[i-8][8]=!t},w=function(t,r){for(var e=-1,n=i-1,a=7,u=0,f=B.getMaskFunction(r),c=i-1;c>0;c-=2)for(6==c&&(c-=1);;){for(var g=0;g<2;g+=1)if(null==o[n][c-g]){var l=!1;u<t.length&&(l=1==(t[u]>>>a&1)),f(n,c-g)&&(l=!l),o[n][c-g]=l,-1==(a-=1)&&(u+=1,a=7)}if((n+=e)<0||i<=n){n-=e,e=-e;break}}},p=function(t,r,e){for(var n=A.getRSBlocks(t,r),o=b(),i=0;i<e.length;i+=1){var a=e[i];o.put(a.getMode(),4),o.put(a.getLength(),B.getLengthInBits(a.getMode(),t)),a.write(o)}var u=0;for(i=0;i<n.length;i+=1)u+=n[i].dataCount;if(o.getLengthInBits()>8*u)throw"code length overflow. ("+o.getLengthInBits()+">"+8*u+")";for(o.getLengthInBits()+4<=8*u&&o.put(0,4);o.getLengthInBits()%8!=0;)o.putBit(!1);for(;!(o.getLengthInBits()>=8*u||(o.put(236,8),o.getLengthInBits()>=8*u));)o.put(17,8);return function(t,r){for(var e=0,n=0,o=0,i=new Array(r.length),a=new Array(r.length),u=0;u<r.length;u+=1){var f=r[u].dataCount,c=r[u].totalCount-f;n=Math.max(n,f),o=Math.max(o,c),i[u]=new Array(f);for(var g=0;g<i[u].length;g+=1)i[u][g]=255&t.getBuffer()[g+e];e+=f;var l=B.getErrorCorrectPolynomial(c),h=k(i[u],l.getLength()-1).mod(l);for(a[u]=new Array(l.getLength()-1),g=0;g<a[u].length;g+=1){var s=g+h.getLength()-a[u].length;a[u][g]=s>=0?h.getAt(s):0}}var v=0;for(g=0;g<r.length;g+=1)v+=r[g].totalCount;var d=new Array(v),w=0;for(g=0;g<n;g+=1)for(u=0;u<r.length;u+=1)g<i[u].length&&(d[w]=i[u][g],w+=1);for(g=0;g<o;g+=1)for(u=0;u<r.length;u+=1)g<a[u].length&&(d[w]=a[u][g],w+=1);return d}(o,n)};f.addData=function(t,r){var e=null;switch(r=r||"Byte"){case"Numeric":e=M(t);break;case"Alphanumeric":e=x(t);break;case"Byte":e=m(t);break;case"Kanji":e=L(t);break;default:throw"mode:"+r}u.push(e),a=null},f.isDark=function(t,r){if(t<0||i<=t||r<0||i<=r)throw t+","+r;return o[t][r]},f.getModuleCount=function(){return i},f.make=function(){if(e<1){for(var t=1;t<40;t++){for(var r=A.getRSBlocks(t,n),o=b(),i=0;i<u.length;i++){var a=u[i];o.put(a.getMode(),4),o.put(a.getLength(),B.getLengthInBits(a.getMode(),t)),a.write(o)}var g=0;for(i=0;i<r.length;i++)g+=r[i].dataCount;if(o.getLengthInBits()<=8*g)break}e=t}c(!1,function(){for(var t=0,r=0,e=0;e<8;e+=1){c(!0,e);var n=B.getLostPoint(f);(0==e||t>n)&&(t=n,r=e)}return r}())},f.createTableTag=function(t,r){t=t||2;var e="";e+='<table style="',e+=" border-width: 0px; border-style: none;",e+=" border-collapse: collapse;",e+=" padding: 0px; margin: "+(r=void 0===r?4*t:r)+"px;",e+='">',e+="<tbody>";for(var n=0;n<f.getModuleCount();n+=1){e+="<tr>";for(var o=0;o<f.getModuleCount();o+=1)e+='<td style="',e+=" border-width: 0px; border-style: none;",e+=" border-collapse: collapse;",e+=" padding: 0px; margin: 0px;",e+=" width: "+t+"px;",e+=" height: "+t+"px;",e+=" background-color: ",e+=f.isDark(n,o)?"#000000":"#ffffff",e+=";",e+='"/>';e+="</tr>"}return e+="</tbody>",e+="</table>"},f.createSvgTag=function(t,r,e,n){var o={};"object"==typeof arguments[0]&&(t=(o=arguments[0]).cellSize,r=o.margin,e=o.alt,n=o.title),t=t||2,r=void 0===r?4*t:r,(e="string"==typeof e?{text:e}:e||{}).text=e.text||null,e.id=e.text?e.id||"qrcode-description":null,(n="string"==typeof n?{text:n}:n||{}).text=n.text||null,n.id=n.text?n.id||"qrcode-title":null;var i,a,u,c,g=f.getModuleCount()*t+2*r,l="";for(c="l"+t+",0 0,"+t+" -"+t+",0 0,-"+t+"z ",l+='<svg version="1.1" xmlns="http://www.w3.org/2000/svg"',l+=o.scalable?"":' width="'+g+'px" height="'+g+'px"',l+=' viewBox="0 0 '+g+" "+g+'" ',l+=' preserveAspectRatio="xMinYMin meet"',l+=n.text||e.text?' role="img" aria-labelledby="'+y([n.id,e.id].join(" ").trim())+'"':"",l+=">",l+=n.text?'<title id="'+y(n.id)+'">'+y(n.text)+"</title>":"",l+=e.text?'<description id="'+y(e.id)+'">'+y(e.text)+"</description>":"",l+='<rect width="100%" height="100%" fill="white" cx="0" cy="0"/>',l+='<path d="',a=0;a<f.getModuleCount();a+=1)for(u=a*t+r,i=0;i<f.getModuleCount();i+=1)f.isDark(a,i)&&(l+="M"+(i*t+r)+","+u+c);return l+='" stroke="transparent" fill="black"/>',l+="</svg>"},f.createDataURL=function(t,r){t=t||2,r=void 0===r?4*t:r;var e=f.getModuleCount()*t+2*r,n=r,o=e-r;return I(e,e,function(r,e){if(n<=r&&r<o&&n<=e&&e<o){var i=Math.floor((r-n)/t),a=Math.floor((e-n)/t);return f.isDark(a,i)?0:1}return 1})},f.createImgTag=function(t,r,e){t=t||2,r=void 0===r?4*t:r;var n=f.getModuleCount()*t+2*r,o="";return o+="<img",o+=' src="',o+=f.createDataURL(t,r),o+='"',o+=' width="',o+=n,o+='"',o+=' height="',o+=n,o+='"',e&&(o+=' alt="',o+=y(e),o+='"'),o+="/>"};var y=function(t){for(var r="",e=0;e<t.length;e+=1){var n=t.charAt(e);switch(n){case"<":r+="&lt;";break;case">":r+="&gt;";break;case"&":r+="&amp;";break;case'"':r+="&quot;";break;default:r+=n}}return r};return f.createASCII=function(t,r){if((t=t||1)<2)return function(t){t=void 0===t?2:t;var r,e,n,o,i,a=1*f.getModuleCount()+2*t,u=t,c=a-t,g={"██":"█","█ ":"▀"," █":"▄","  ":" "},l={"██":"▀","█ ":"▀"," █":" ","  ":" "},h="";for(r=0;r<a;r+=2){for(n=Math.floor((r-u)/1),o=Math.floor((r+1-u)/1),e=0;e<a;e+=1)i="█",u<=e&&e<c&&u<=r&&r<c&&f.isDark(n,Math.floor((e-u)/1))&&(i=" "),u<=e&&e<c&&u<=r+1&&r+1<c&&f.isDark(o,Math.floor((e-u)/1))?i+=" ":i+="█",h+=t<1&&r+1>=c?l[i]:g[i];h+="\n"}return a%2&&t>0?h.substring(0,h.length-a-1)+Array(a+1).join("▀"):h.substring(0,h.length-1)}(r);t-=1,r=void 0===r?2*t:r;var e,n,o,i,a=f.getModuleCount()*t+2*r,u=r,c=a-r,g=Array(t+1).join("██"),l=Array(t+1).join("  "),h="",s="";for(e=0;e<a;e+=1){for(o=Math.floor((e-u)/t),s="",n=0;n<a;n+=1)i=1,u<=n&&n<c&&u<=e&&e<c&&f.isDark(o,Math.floor((n-u)/t))&&(i=0),s+=i?g:l;for(o=0;o<t;o+=1)h+=s+"\n"}return h.substring(0,h.length-1)},f.renderTo2dContext=function(t,r){r=r||2;for(var e=f.getModuleCount(),n=0;n<e;n++)for(var o=0;o<e;o++)t.fillStyle=f.isDark(n,o)?"black":"white",t.fillRect(o*r,n*r,r,r)},f};t.stringToBytes=(t.stringToBytesFuncs={default:function(t){for(var r=[],e=0;e<t.length;e+=1){var n=t.charCodeAt(e);r.push(255&n)}return r}}).default,t.createStringToBytes=function(t,r){var e=function(){for(var e=S(t),n=function(){var t=e.read();if(-1==t)throw"eof";return t},o=0,i={};;){var a=e.read();if(-1==a)break;var u=n(),f=n()<<8|n();i[String.fromCharCode(a<<8|u)]=f,o+=1}if(o!=r)throw o+" != "+r;return i}(),n="?".charCodeAt(0);return function(t){for(var r=[],o=0;o<t.length;o+=1){var i=t.charCodeAt(o);if(i<128)r.push(i);else{var a=e[t.charAt(o)];"number"==typeof a?(255&a)==a?r.push(a):(r.push(a>>>8),r.push(255&a)):r.push(n)}}return r}};var r,e,n,o,i,a=1,u=2,f=4,c=8,g={L:1,M:0,Q:3,H:2},l=0,h=1,s=2,v=3,d=4,w=5,p=6,y=7,B=(r=[[],[6,18],[6,22],[6,26],[6,30],[6,34],[6,22,38],[6,24,42],[6,26,46],[6,28,50],[6,30,54],[6,32,58],[6,34,62],[6,26,46,66],[6,26,48,70],[6,26,50,74],[6,30,54,78],[6,30,56,82],[6,30,58,86],[6,34,62,90],[6,28,50,72,94],[6,26,50,74,98],[6,30,54,78,102],[6,28,54,80,106],[6,32,58,84,110],[6,30,58,86,114],[6,34,62,90,118],[6,26,50,74,98,122],[6,30,54,78,102,126],[6,26,52,78,104,130],[6,30,56,82,108,134],[6,34,60,86,112,138],[6,30,58,86,114,142],[6,34,62,90,118,146],[6,30,54,78,102,126,150],[6,24,50,76,102,128,154],[6,28,54,80,106,132,158],[6,32,58,84,110,136,162],[6,26,54,82,110,138,166],[6,30,58,86,114,142,170]],e=1335,n=7973,i=function(t){for(var r=0;0!=t;)r+=1,t>>>=1;return r},(o={}).getBCHTypeInfo=function(t){for(var r=t<<10;i(r)-i(e)>=0;)r^=e<<i(r)-i(e);return 21522^(t<<10|r)},o.getBCHTypeNumber=function(t){for(var r=t<<12;i(r)-i(n)>=0;)r^=n<<i(r)-i(n);return t<<12|r},o.getPatternPosition=function(t){return r[t-1]},o.getMaskFunction=function(t){switch(t){case l:return function(t,r){return(t+r)%2==0};case h:return function(t,r){return t%2==0};case s:return function(t,r){return r%3==0};case v:return function(t,r){return(t+r)%3==0};case d:return function(t,r){return(Math.floor(t/2)+Math.floor(r/3))%2==0};case w:return function(t,r){return t*r%2+t*r%3==0};case p:return function(t,r){return(t*r%2+t*r%3)%2==0};case y:return function(t,r){return(t*r%3+(t+r)%2)%2==0};default:throw"bad maskPattern:"+t}},o.getErrorCorrectPolynomial=function(t){for(var r=k([1],0),e=0;e<t;e+=1)r=r.multiply(k([1,C.gexp(e)],0));return r},o.getLengthInBits=function(t,r){if(1<=r&&r<10)switch(t){case a:return 10;case u:return 9;case f:case c:return 8;default:throw"mode:"+t}else if(r<27)switch(t){case a:return 12;case u:return 11;case f:return 16;case c:return 10;default:throw"mode:"+t}else{if(!(r<41))throw"type:"+r;switch(t){case a:return 14;case u:return 13;case f:return 16;case c:return 12;default:throw"mode:"+t}}},o.getLostPoint=function(t){for(var r=t.getModuleCount(),e=0,n=0;n<r;n+=1)for(var o=0;o<r;o+=1){for(var i=0,a=t.isDark(n,o),u=-1;u<=1;u+=1)if(!(n+u<0||r<=n+u))for(var f=-1;f<=1;f+=1)o+f<0||r<=o+f||0==u&&0==f||a==t.isDark(n+u,o+f)&&(i+=1);i>5&&(e+=3+i-5)}for(n=0;n<r-1;n+=1)for(o=0;o<r-1;o+=1){var c=0;t.isDark(n,o)&&(c+=1),t.isDark(n+1,o)&&(c+=1),t.isDark(n,o+1)&&(c+=1),t.isDark(n+1,o+1)&&(c+=1),0!=c&&4!=c||(e+=3)}for(n=0;n<r;n+=1)for(o=0;o<r-6;o+=1)t.isDark(n,o)&&!t.isDark(n,o+1)&&t.isDark(n,o+2)&&t.isDark(n,o+3)&&t.isDark(n,o+4)&&!t.isDark(n,o+5)&&t.isDark(n,o+6)&&(e+=40);for(o=0;o<r;o+=1)for(n=0;n<r-6;n+=1)t.isDark(n,o)&&!t.isDark(n+1,o)&&t.isDark(n+2,o)&&t.isDark(n+3,o)&&t.isDark(n+4,o)&&!t.isDark(n+5,o)&&t.isDark(n+6,o)&&(e+=40);var g=0;for(o=0;o<r;o+=1)for(n=0;n<r;n+=1)t.isDark(n,o)&&(g+=1);return e+=Math.abs(100*g/r/r-50)/5*10},o),C=function(){for(var t=new Array(256),r=new Array(256),e=0;e<8;e+=1)t[e]=1<<e;for(e=8;e<256;e+=1)t[e]=t[e-4]^t[e-5]^t[e-6]^t[e-8];for(e=0;e<255;e+=1)r[t[e]]=e;var n={glog:function(t){if(t<1)throw"glog("+t+")";return r[t]},gexp:function(r){for(;r<0;)r+=255;for(;r>=256;)r-=255;return t[r]}};return n}();function k(t,r){if(void 0===t.length)throw t.length+"/"+r;var e=function(){for(var e=0;e<t.length&&0==t[e];)e+=1;for(var n=new Array(t.length-e+r),o=0;o<t.length-e;o+=1)n[o]=t[o+e];return n}(),n={getAt:function(t){return e[t]},getLength:function(){return e.length},multiply:function(t){for(var r=new Array(n.getLength()+t.getLength()-1),e=0;e<n.getLength();e+=1)for(var o=0;o<t.getLength();o+=1)r[e+o]^=C.gexp(C.glog(n.getAt(e))+C.glog(t.getAt(o)));return k(r,0)},mod:function(t){if(n.getLength()-t.getLength()<0)return n;for(var r=C.glog(n.getAt(0))-C.glog(t.getAt(0)),e=new Array(n.getLength()),o=0;o<n.getLength();o+=1)e[o]=n.getAt(o);for(o=0;o<t.getLength();o+=1)e[o]^=C.gexp(C.glog(t.getAt(o))+r);return k(e,0).mod(t)}};return n}var A=function(){var t=[[1,26,19],[1,26,16],[1,26,13],[1,26,9],[1,44,34],[1,44,28],[1,44,22],[1,44,16],[1,70,55],[1,70,44],[2,35,17],[2,35,13],[1,100,80],[2,50,32],[2,50,24],[4,25,9],[1,134,108],[2,67,43],[2,33,15,2,34,16],[2,33,11,2,34,12],[2,86,68],[4,43,27],[4,43,19],[4,43,15],[2,98,78],[4,49,31],[2,32,14,4,33,15],[4,39,13,1,40,14],[2,121,97],[2,60,38,2,61,39],[4,40,18,2,41,19],[4,40,14,2,41,15],[2,146,116],[3,58,36,2,59,37],[4,36,16,4,37,17],[4,36,12,4,37,13],[2,86,68,2,87,69],[4,69,43,1,70,44],[6,43,19,2,44,20],[6,43,15,2,44,16],[4,101,81],[1,80,50,4,81,51],[4,50,22,4,51,23],[3,36,12,8,37,13],[2,116,92,2,117,93],[6,58,36,2,59,37],[4,46,20,6,47,21],[7,42,14,4,43,15],[4,133,107],[8,59,37,1,60,38],[8,44,20,4,45,21],[12,33,11,4,34,12],[3,145,115,1,146,116],[4,64,40,5,65,41],[11,36,16,5,37,17],[11,36,12,5,37,13],[5,109,87,1,110,88],[5,65,41,5,66,42],[5,54,24,7,55,25],[11,36,12,7,37,13],[5,122,98,1,123,99],[7,73,45,3,74,46],[15,43,19,2,44,20],[3,45,15,13,46,16],[1,135,107,5,136,108],[10,74,46,1,75,47],[1,50,22,15,51,23],[2,42,14,17,43,15],[5,150,120,1,151,121],[9,69,43,4,70,44],[17,50,22,1,51,23],[2,42,14,19,43,15],[3,141,113,4,142,114],[3,70,44,11,71,45],[17,47,21,4,48,22],[9,39,13,16,40,14],[3,135,107,5,136,108],[3,67,41,13,68,42],[15,54,24,5,55,25],[15,43,15,10,44,16],[4,144,116,4,145,117],[17,68,42],[17,50,22,6,51,23],[19,46,16,6,47,17],[2,139,111,7,140,112],[17,74,46],[7,54,24,16,55,25],[34,37,13],[4,151,121,5,152,122],[4,75,47,14,76,48],[11,54,24,14,55,25],[16,45,15,14,46,16],[6,147,117,4,148,118],[6,73,45,14,74,46],[11,54,24,16,55,25],[30,46,16,2,47,17],[8,132,106,4,133,107],[8,75,47,13,76,48],[7,54,24,22,55,25],[22,45,15,13,46,16],[10,142,114,2,143,115],[19,74,46,4,75,47],[28,50,22,6,51,23],[33,46,16,4,47,17],[8,152,122,4,153,123],[22,73,45,3,74,46],[8,53,23,26,54,24],[12,45,15,28,46,16],[3,147,117,10,148,118],[3,73,45,23,74,46],[4,54,24,31,55,25],[11,45,15,31,46,16],[7,146,116,7,147,117],[21,73,45,7,74,46],[1,53,23,37,54,24],[19,45,15,26,46,16],[5,145,115,10,146,116],[19,75,47,10,76,48],[15,54,24,25,55,25],[23,45,15,25,46,16],[13,145,115,3,146,116],[2,74,46,29,75,47],[42,54,24,1,55,25],[23,45,15,28,46,16],[17,145,115],[10,74,46,23,75,47],[10,54,24,35,55,25],[19,45,15,35,46,16],[17,145,115,1,146,116],[14,74,46,21,75,47],[29,54,24,19,55,25],[11,45,15,46,46,16],[13,145,115,6,146,116],[14,74,46,23,75,47],[44,54,24,7,55,25],[59,46,16,1,47,17],[12,151,121,7,152,122],[12,75,47,26,76,48],[39,54,24,14,55,25],[22,45,15,41,46,16],[6,151,121,14,152,122],[6,75,47,34,76,48],[46,54,24,10,55,25],[2,45,15,64,46,16],[17,152,122,4,153,123],[29,74,46,14,75,47],[49,54,24,10,55,25],[24,45,15,46,46,16],[4,152,122,18,153,123],[13,74,46,32,75,47],[48,54,24,14,55,25],[42,45,15,32,46,16],[20,147,117,4,148,118],[40,75,47,7,76,48],[43,54,24,22,55,25],[10,45,15,67,46,16],[19,148,118,6,149,119],[18,75,47,31,76,48],[34,54,24,34,55,25],[20,45,15,61,46,16]],r=function(t,r){var e={};return e.totalCount=t,e.dataCount=r,e},e={};return e.getRSBlocks=function(e,n){var o=function(r,e){switch(e){case g.L:return t[4*(r-1)+0];case g.M:return t[4*(r-1)+1];case g.Q:return t[4*(r-1)+2];case g.H:return t[4*(r-1)+3];default:return}}(e,n);if(void 0===o)throw"bad rs block @ typeNumber:"+e+"/errorCorrectionLevel:"+n;for(var i=o.length/3,a=[],u=0;u<i;u+=1)for(var f=o[3*u+0],c=o[3*u+1],l=o[3*u+2],h=0;h<f;h+=1)a.push(r(c,l));return a},e}(),b=function(){var t=[],r=0,e={getBuffer:function(){return t},getAt:function(r){var e=Math.floor(r/8);return 1==(t[e]>>>7-r%8&1)},put:function(t,r){for(var n=0;n<r;n+=1)e.putBit(1==(t>>>r-n-1&1))},getLengthInBits:function(){return r},putBit:function(e){var n=Math.floor(r/8);t.length<=n&&t.push(0),e&&(t[n]|=128>>>r%8),r+=1}};return e},M=function(t){var r=a,e=t,n={getMode:function(){return r},getLength:function(t){return e.length},write:function(t){for(var r=e,n=0;n+2<r.length;)t.put(o(r.substring(n,n+3)),10),n+=3;n<r.length&&(r.length-n==1?t.put(o(r.substring(n,n+1)),4):r.length-n==2&&t.put(o(r.substring(n,n+2)),7))}},o=function(t){for(var r=0,e=0;e<t.length;e+=1)r=10*r+i(t.charAt(e));return r},i=function(t){if("0"<=t&&t<="9")return t.charCodeAt(0)-"0".charCodeAt(0);throw"illegal char :"+t};return n},x=function(t){var r=u,e=t,n={getMode:function(){return r},getLength:function(t){return e.length},write:function(t){for(var r=e,n=0;n+1<r.length;)t.put(45*o(r.charAt(n))+o(r.charAt(n+1)),11),n+=2;n<r.length&&t.put(o(r.charAt(n)),6)}},o=function(t){if("0"<=t&&t<="9")return t.charCodeAt(0)-"0".charCodeAt(0);if("A"<=t&&t<="Z")return t.charCodeAt(0)-"A".charCodeAt(0)+10;switch(t){case" ":return 36;case"$":return 37;case"%":return 38;case"*":return 39;case"+":return 40;case"-":return 41;case".":return 42;case"/":return 43;case":":return 44;default:throw"illegal char :"+t}};return n},m=function(r){var e=f,n=t.stringToBytes(r),o={getMode:function(){return e},getLength:function(t){return n.length},write:function(t){for(var r=0;r<n.length;r+=1)t.put(n[r],8)}};return o},L=function(r){var e=c,n=t.stringToBytesFuncs.SJIS;if(!n)throw"sjis not supported.";!function(){var t=n("友");if(2!=t.length||38726!=(t[0]<<8|t[1]))throw"sjis not supported."}();var o=n(r),i={getMode:function(){return e},getLength:function(t){return~~(o.length/2)},write:function(t){for(var r=o,e=0;e+1<r.length;){var n=(255&r[e])<<8|255&r[e+1];if(33088<=n&&n<=40956)n-=33088;else{if(!(57408<=n&&n<=60351))throw"illegal char at "+(e+1)+"/"+n;n-=49472}n=192*(n>>>8&255)+(255&n),t.put(n,13),e+=2}if(e<r.length)throw"illegal char at "+(e+1)}};return i},D=function(){var t=[],r={writeByte:function(r){t.push(255&r)},writeShort:function(t){r.writeByte(t),r.writeByte(t>>>8)},writeBytes:function(t,e,n){e=e||0,n=n||t.length;for(var o=0;o<n;o+=1)r.writeByte(t[o+e])},writeString:function(t){for(var e=0;e<t.length;e+=1)r.writeByte(t.charCodeAt(e))},toByteArray:function(){return t},toString:function(){var r="";r+="[";for(var e=0;e<t.length;e+=1)e>0&&(r+=","),r+=t[e];return r+="]"}};return r},S=function(t){var r=t,e=0,n=0,o=0,i={read:function(){for(;o<8;){if(e>=r.length){if(0==o)return-1;throw"unexpected end of file./"+o}var t=r.charAt(e);if(e+=1,"="==t)return o=0,-1;t.match(/^\s$/)||(n=n<<6|a(t.charCodeAt(0)),o+=6)}var i=n>>>o-8&255;return o-=8,i}},a=function(t){if(65<=t&&t<=90)return t-65;if(97<=t&&t<=122)return t-97+26;if(48<=t&&t<=57)return t-48+52;if(43==t)return 62;if(47==t)return 63;throw"c:"+t};return i},I=function(t,r,e){for(var n=function(t,r){var e=t,n=r,o=new Array(t*r),i={setPixel:function(t,r,n){o[r*e+t]=n},write:function(t){t.writeString("GIF87a"),t.writeShort(e),t.writeShort(n),t.writeByte(128),t.writeByte(0),t.writeByte(0),t.writeByte(0),t.writeByte(0),t.writeByte(0),t.writeByte(255),t.writeByte(255),t.writeByte(255),t.writeString(","),t.writeShort(0),t.writeShort(0),t.writeShort(e),t.writeShort(n),t.writeByte(0);var r=a(2);t.writeByte(2);for(var o=0;r.length-o>255;)t.writeByte(255),t.writeBytes(r,o,255),o+=255;t.writeByte(r.length-o),t.writeBytes(r,o,r.length-o),t.writeByte(0),t.writeString(";")}},a=function(t){for(var r=1<<t,e=1+(1<<t),n=t+1,i=u(),a=0;a<r;a+=1)i.add(String.fromCharCode(a));i.add(String.fromCharCode(r)),i.add(String.fromCharCode(e));var f,c,g,l=D(),h=(f=l,c=0,g=0,{write:function(t,r){if(t>>>r!=0)throw"length over";for(;c+r>=8;)f.writeByte(255&(t<<c|g)),r-=8-c,t>>>=8-c,g=0,c=0;g|=t<<c,c+=r},flush:function(){c>0&&f.writeByte(g)}});h.write(r,n);var s=0,v=String.fromCharCode(o[s]);for(s+=1;s<o.length;){var d=String.fromCharCode(o[s]);s+=1,i.contains(v+d)?v+=d:(h.write(i.indexOf(v),n),i.size()<4095&&(i.size()==1<<n&&(n+=1),i.add(v+d)),v=d)}return h.write(i.indexOf(v),n),h.write(e,n),h.flush(),l.toByteArray()},u=function(){var t={},r=0,e={add:function(n){if(e.contains(n))throw"dup key:"+n;t[n]=r,r+=1},size:function(){return r},indexOf:function(r){return t[r]},contains:function(r){return void 0!==t[r]}};return e};return i}(t,r),o=0;o<r;o+=1)for(var i=0;i<t;i+=1)n.setPixel(i,o,e(i,o));var a=D();n.write(a);for(var u=function(){var t=0,r=0,e=0,n="",o={},i=function(t){n+=String.fromCharCode(a(63&t))},a=function(t){if(t<0);else{if(t<26)return 65+t;if(t<52)return t-26+97;if(t<62)return t-52+48;if(62==t)return 43;if(63==t)return 47}throw"n:"+t};return o.writeByte=function(n){for(t=t<<8|255&n,r+=8,e+=1;r>=6;)i(t>>>r-6),r-=6},o.flush=function(){if(r>0&&(i(t<<6-r),t=0,r=0),e%3!=0)for(var o=3-e%3,a=0;a<o;a+=1)n+="="},o.toString=function(){return n},o}(),f=a.toByteArray(),c=0;c<f.length;c+=1)u.writeByte(f[c]);return u.flush(),"data:image/gif;base64,"+u};return t}();qrcode.stringToBytesFuncs["UTF-8"]=function(t){return function(t){for(var r=[],e=0;e<t.length;e++){var n=t.charCodeAt(e);n<128?r.push(n):n<2048?r.push(192|n>>6,128|63&n):n<55296||n>=57344?r.push(224|n>>12,128|n>>6&63,128|63&n):(e++,n=65536+((1023&n)<<10|1023&t.charCodeAt(e)),r.push(240|n>>18,128|n>>12&63,128|n>>6&63,128|63&n))}return r}(t)},function(t){"function"==typeof define&&define.amd?define([],t):"object"==typeof exports&&(module.exports=t())}(function(){return qrcode});</script>
@@ -4076,71 +4130,11 @@ if(!auth){
 /* BoxVision — JavaScript principal */
 
 // Sync PIN dots on pw modal input
-// ── Sistema PIN / Contraseña ──
-var _pwPinValue = '';
-var _pwPinMode = true; // true = teclado PIN, false = texto
-
 function syncPwDots(val){
-  // compatibilidad con modo texto
-  for(var i=0;i<6;i++){
+  for(var i=0;i<4;i++){
     var d=document.getElementById('pwd'+i);
     if(d) d.classList.toggle('filled', i < val.length);
   }
-}
-
-function pwKey(digit){
-  if(_pwPinValue.length >= 6) return;
-  _pwPinValue += digit;
-  syncPwDots(_pwPinValue);
-  if(_pwPinValue.length >= 4){
-    // auto-submit si la contraseña guardada tiene exactamente ese largo
-    var box = boxes.find(function(b){return b.id===(window._pwTargetId||window._pwBoxId);});
-    if(box && box.password && box.password.length === _pwPinValue.length){
-      setTimeout(checkPassword, 120);
-    }
-  }
-}
-
-function pwDel(){
-  _pwPinValue = _pwPinValue.slice(0,-1);
-  syncPwDots(_pwPinValue);
-  document.getElementById('pwError').textContent='';
-}
-
-function pwSwitchMode(){
-  _pwPinMode = !_pwPinMode;
-  _pwPinValue = '';
-  document.getElementById('pwError').textContent='';
-  if(document.getElementById('pwErrorText')) document.getElementById('pwErrorText').textContent='';
-  document.getElementById('pwPinMode').style.display = _pwPinMode ? '' : 'none';
-  document.getElementById('pwTextMode').style.display = _pwPinMode ? 'none' : '';
-  syncPwDots('');
-  if(!_pwPinMode) setTimeout(function(){document.getElementById('pwInput').focus();},100);
-}
-
-function openPwModal(box){
-  window._pwBoxId = box.id;
-  window._pwTargetId = box.id; // FIX: checkPassword() lee _pwTargetId, no _pwBoxId
-  _pwPinValue = '';
-  _pwPinMode = true;
-  document.getElementById('pwPinMode').style.display = '';
-  document.getElementById('pwTextMode').style.display = 'none';
-  syncPwDots('');
-  document.getElementById('pwError').textContent='';
-  if(document.getElementById('pwErrorText')) document.getElementById('pwErrorText').textContent='';
-  // Mostrar ícono y nombre
-  var iconEl = document.getElementById('pwBoxIcon');
-  var nameEl = document.getElementById('pwBoxName');
-  if(iconEl) iconEl.textContent = box.icon || '📦';
-  if(nameEl) nameEl.textContent = box.name || '';
-  // Ajustar dots según largo de contraseña
-  var pwLen = (box.password||'').length;
-  var dotsCount = pwLen <= 4 ? 4 : Math.min(pwLen, 6);
-  for(var i=0;i<6;i++){
-    var d=document.getElementById('pwd'+i);
-    if(d) d.style.display = i < dotsCount ? '' : 'none';
-  }
-  document.getElementById('pwOverlay').style.display='flex';
 }
 
 const COLORS=["#FF3B30","#FF9500","#FFCC00","#34C759","#00C7BE","#007AFF","#5856D6","#AF52DE","#FF2D55","#636366"];
@@ -4204,8 +4198,8 @@ function applyDark(){
   if(t){t.classList.toggle("on",!!dark);}
   const dkb=document.getElementById("darkBtn");
   if(dkb) dkb.innerHTML=dark
-    ?'<svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5" aria-hidden="true"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>'
-    :'<svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" aria-hidden="true"/></svg>';
+    ?'<svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5" aria-hidden="true"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg></i>'
+    :'<svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" aria-hidden="true"/></svg></i>';
 }
 
 function toggleSortMenu(){
@@ -4761,17 +4755,6 @@ function showScreen(id){
   document.querySelectorAll("#splash,#loginScreen,#mainScreen,#detailScreen,#roomScreen,#settingsScreen,#viewer").forEach(el=>{
     if(el.id!==id){el.classList.add("hidden");el.classList.remove("active");el.style.display="";}
   });
-  // Marcar pantalla activa en body para CSS
-  document.body.setAttribute("data-screen", id);
-  // FAB visibility es manejado 100% por CSS via data-screen (ver .ai-fab CSS)
-  // Solo cerrar el panel si salimos de una pantalla principal
-  const _aipanel=document.getElementById("aiPanel");
-  const _fabHiddenScreens=["splash","loginScreen","viewer"];
-  if(_fabHiddenScreens.includes(id)){
-    if(_aipanel){_aipanel.classList.remove("open");if(typeof aiOpen!=="undefined")aiOpen=false;}
-  } else {
-    if(typeof aiOpen!=="undefined"&&aiOpen){aiOpen=false;if(_aipanel)_aipanel.classList.remove("open");}
-  }
 }
 
 function applySplashGradient(){
@@ -4880,6 +4863,7 @@ function showSplash(){
   document.body.style.overflow='hidden';
   document.body.style.height='100vh';
   applySplashGradient();
+  const _fab=document.getElementById('aiFab');if(_fab) _fab.classList.remove('hidden');
   const brand=settings.brand;const be=document.getElementById('splashBrand');
   if(brand){be.textContent='de '+brand;be.style.display='block';}else be.style.display='none';
   _startClock();
@@ -4888,10 +4872,7 @@ function showSplash(){
 function goSplash(){showSplash();}
 
 let activeFilter="todo"; let activeSort="default";
-function goMain(){showScreen("mainScreen");renderMain();_startClock();
-  // FAB: dejar que CSS via data-screen y modal-open lo controle
-  var _f=document.getElementById("aiFab");
-  if(_f){_f.style.removeProperty("display");_f.classList.remove("hidden");_f.classList.remove("ai-fab-hidden");}
+function goMain(){showScreen("mainScreen");renderMain();_startClock();const f=document.getElementById("aiFab");if(f){f.classList.remove("hidden");}
   // Mostrar changelog si hay versión nueva sin ver (primer arranque tras actualización)
   if(window._changelogPending){
     window._changelogPending=false;
@@ -5120,44 +5101,52 @@ function boxCard(b){
 function openDetail(id){
   const box=boxes.find(b=>b.id===id);if(!box) return;
   if(box.password){
+    const ov=document.getElementById("pwOverlay");
+    document.getElementById("pwBoxName").textContent=box.name;
+    document.getElementById("pwBoxIcon").textContent=getIcon(box.name, box);
+    document.getElementById("pwInput").value="";
+    syncPwDots("");
+    const errEl=document.getElementById("pwError");if(errEl)errEl.textContent="";
+    ov.style.display="flex";
     window._pwTargetId=id;
-    openPwModal(box);
+    setTimeout(()=>document.getElementById("pwInput").focus(),120);
     return;
   }
   _doOpenDetail(id);
 }
-function closePwModal(){document.getElementById("pwOverlay").style.display="none";window._pwTargetId=null;window._pwBoxId=null;_pwPinValue='';}
+function closePwModal(){document.getElementById("pwOverlay").style.display="none";window._pwTargetId=null;}
 function checkPassword(){
   const id=window._pwTargetId;
   const box=boxes.find(b=>b.id===id);
   if(!box) return;
-  // Obtener valor: modo PIN o modo texto
-  const entered = _pwPinMode ? _pwPinValue : (document.getElementById("pwInput")||{}).value||'';
-  const errId = _pwPinMode ? 'pwError' : 'pwErrorText';
-  const errEl = document.getElementById(errId);
+  const entered=document.getElementById("pwInput").value;
+  const errEl=document.getElementById("pwError");
 
+  // Tiempo constante para evitar timing attacks (siempre esperar al menos 200ms)
   const t0=Date.now();
   const proceed=()=>{
     const elapsed=Date.now()-t0;
+    const wait=Math.max(0,200-elapsed);
     setTimeout(()=>{
       if(entered===box.password){
         document.getElementById("pwOverlay").style.display="none";
-        _pwPinValue='';
         _doOpenDetail(id);
       }else{
-        _pwPinValue='';
-        syncPwDots('');
-        if(!_pwPinMode){const inp=document.getElementById('pwInput');if(inp)inp.value='';}
-        // Error en dots
-        for(let i=0;i<6;i++){
+        const input=document.getElementById("pwInput");
+        input.value="";
+        syncPwDots("");
+        for(let i=0;i<4;i++){
           const d=document.getElementById("pwd"+i);
-          if(d&&d.style.display!=='none'){d.classList.add("error");setTimeout(()=>d.classList.remove("error"),600);}
+          if(d){d.classList.add("error");setTimeout(()=>d.classList.remove("error"),600);}
         }
+        input.style.animation="none";
+        requestAnimationFrame(()=>{input.style.animation="pwShake .4s ease";});
         if(errEl) errEl.textContent="Contraseña incorrecta";
         setTimeout(()=>{if(errEl)errEl.textContent="";},2500);
+        setTimeout(()=>input.focus(),50);
         if(navigator.vibrate) navigator.vibrate([60,30,60]);
       }
-    }, Math.max(0,200-elapsed));
+    }, wait);
   };
   proceed();
 }
@@ -5202,10 +5191,9 @@ function renderProgress(){
 
 function renderItems(){
   const box=boxes.find(b=>b.id===currentBoxId);if(!box) return;
-  requestAnimationFrame(()=>{
   const col=box.color||"#007AFF",done=box.items.filter(i=>i.done).length;
   const titleEl=document.getElementById("itemsTitle");
-  if(titleEl) titleEl.innerHTML=`<span class="dsec-title-icon dsec-icon-cont"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="16.5" y1="9.4" x2="7.5" y2="4.21"/><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg></span>CONTENIDO (${box.items.length} obj · ${done} sacado${done!==1?"s":""})`;
+  if(titleEl) titleEl.innerHTML=`<span class="dsec-title-icon dsec-icon-cont"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="16.5" y1="9.4" x2="7.5" y2="4.21"/><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg></i></span>CONTENIDO (${box.items.length} obj · ${done} sacado${done!==1?"s":""})`;
   const addRow=document.getElementById("addRow");
   if(addRow) addRow.style.display=box.sealed?"none":"flex";
   document.getElementById("itemsList").innerHTML=box.items.length===0
@@ -5219,7 +5207,6 @@ function renderItems(){
       <div class="i-txt${it.done?" done":""}">${esc(it.text)}</div>
       <button class="i-del" onclick="delItem(${i})">✕</button>
     </div>`).join("");
-  }); // end rAF
 }
 
 function toggleItem(idx){
@@ -5280,7 +5267,7 @@ async function handleScanObj(e){
   _lastScanTime=now;
   const box=boxes.find(b=>b.id===currentBoxId); if(!box) return;
   const btn=document.getElementById("scanBtn"); if(btn){btn.classList.add("scanning");}
-  btn.innerHTML='<svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="12" y1="2" x2="12" y2="6" style="pointer-events:none"/><line x1="12" y1="18" x2="12" y2="22"/><line x1="4.93" y1="4.93" x2="7.76" y2="7.76"/><line x1="16.24" y1="16.24" x2="19.07" y2="19.07"/><line x1="2" y1="12" x2="6" y2="12"/><line x1="18" y1="12" x2="22" y2="12"/><line x1="4.93" y1="19.07" x2="7.76" y2="16.24"/><line x1="16.24" y1="7.76" x2="19.07" y2="4.93"/></svg>'; btn.disabled=true;
+  btn.innerHTML='<svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="12" y1="2" x2="12" y2="6" style="pointer-events:none"/><line x1="12" y1="18" x2="12" y2="22"/><line x1="4.93" y1="4.93" x2="7.76" y2="7.76"/><line x1="16.24" y1="16.24" x2="19.07" y2="19.07"/><line x1="2" y1="12" x2="6" y2="12"/><line x1="18" y1="12" x2="22" y2="12"/><line x1="4.93" y1="19.07" x2="7.76" y2="16.24"/><line x1="16.24" y1="7.76" x2="19.07" y2="4.93"/></svg></i>'; btn.disabled=true;
 
   let thumb=null, b64=null;
   try{
@@ -5288,7 +5275,7 @@ async function handleScanObj(e){
     thumb=enc.thumb; b64=enc.b64;
   }catch(err){
     showToast("❌ No se pudo leer la imagen","#FF3B30");
-    btn.innerHTML='<svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z" style="pointer-events:none"/><circle cx="12" cy="13" r="4"/></svg>'; btn.classList.remove("scanning"); btn.disabled=false; return;
+    btn.innerHTML='<svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z" style="pointer-events:none"/><circle cx="12" cy="13" r="4"/></svg></i>'; btn.classList.remove("scanning"); btn.disabled=false; return;
   }
 
   const connected=localStorage.getItem("boxia_connected");
@@ -5362,7 +5349,7 @@ Context: ${contexto}`;
     if(!analisis) showToast("📡 Sin conexión — puedes agregar el objeto manualmente","#FF9500");
   }
 
-  btn.innerHTML='<svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z" style="pointer-events:none"/><circle cx="12" cy="13" r="4"/></svg>'; btn.classList.remove("scanning"); btn.disabled=false;
+  btn.innerHTML='<svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z" style="pointer-events:none"/><circle cx="12" cy="13" r="4"/></svg></i>'; btn.classList.remove("scanning"); btn.disabled=false;
   showScanResultModal(thumb, box, analisis);
 }
 
@@ -5561,47 +5548,30 @@ function renderPhotoArea(){
 function showQuickQR(){
   const box=boxes.find(b=>b.id===currentBoxId);if(!box) return;
   const m=document.createElement("div");
-  m.id="quickQROverlay";
   m.style.cssText="position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:10010;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(14px);animation:fadeIn .2s ease";
   m.innerHTML=`<div style="background:var(--card);border-radius:26px;padding:28px 24px;width:min(320px,90vw);text-align:center;box-shadow:0 24px 80px rgba(0,0,0,.6)">
     <div style="font-size:18px;font-weight:800;margin-bottom:4px;letter-spacing:-.4px">${esc(box.name)}</div>
     <div style="font-size:12px;color:var(--muted);margin-bottom:18px">${box.number?"#"+box.number+" · ":""}Escanea para ver contenido</div>
     <div id="quickQRContainer" style="display:flex;justify-content:center;padding:10px;background:#fff;border-radius:16px;margin-bottom:18px"></div>
-    <button onclick="document.getElementById('quickQROverlay').remove()" style="width:100%;padding:14px;border-radius:14px;border:none;background:var(--accent);color:#fff;font-size:15px;font-weight:700;cursor:pointer;font-family:inherit">Cerrar</button>
+    <button onclick="this.closest('[style]').remove()" style="width:100%;padding:14px;border-radius:14px;border:none;background:var(--accent);color:#fff;font-size:15px;font-weight:700;cursor:pointer;font-family:inherit">Cerrar</button>
   </div>`;
   document.body.appendChild(m);
   m.onclick=ev=>{if(ev.target===m)m.remove();};
-  // Generar QR usando qrcode (minúscula) — misma librería que el resto de la app
+  // Generar QR dentro del modal
   setTimeout(()=>{
     const el=document.getElementById("quickQRContainer");if(!el) return;
     const payload={n:box.name,num:box.number,loc:box.location,col:box.color,
       tags:(box.tags||[]).slice(0,5),items:box.items.slice(0,20).map(i=>({t:i.text.slice(0,40),d:i.done?1:0})),
       date:box.date,note:(box.note||"").slice(0,100),pri:box.priority,brand:settings.brand};
     const data=btoa(encodeURIComponent(JSON.stringify(payload)));
+    // FIX BUG #3: evitar doble slash cuando pathname termina en "/"
     const _qrBase=(location.origin+location.pathname).replace(/\/[^\/]*$/,"/").replace(/([^:])\/\//g,"$1/");
     const url=_qrBase+'viewer.html#view/'+data;
-    try{
-      const qr=qrcode(0,"M");qr.addData(url);qr.make();
-      const mod=qr.getModuleCount();
-      const cv=document.createElement("canvas");
-      const size=200;cv.width=cv.height=size;cv.style.width=size+"px";cv.style.height=size+"px";
-      const ctx=cv.getContext("2d");
-      ctx.fillStyle="#ffffff";ctx.fillRect(0,0,size,size);
-      const cell=Math.floor((size-16)/mod);
-      const offset=Math.round((size-cell*mod)/2);
-      ctx.fillStyle="#000000";
-      for(let r=0;r<mod;r++) for(let c=0;c<mod;c++) if(qr.isDark(r,c)) ctx.fillRect(offset+c*cell,offset+r*cell,cell,cell);
-      el.appendChild(cv);
-    }catch(e){el.textContent="Error generando QR: "+e.message;}
+    try{new QRCode(el,{text:url,width:200,height:200,correctLevel:QRCode.CorrectLevel.M});}catch(e){el.textContent="Error generando QR";}
   },80);
 }
 
-let _qrTimer=null;
 function generateQR(id){
-  clearTimeout(_qrTimer);
-  _qrTimer=setTimeout(()=>_generateQRNow(id),400);
-}
-function _generateQRNow(id){
   const box=boxes.find(b=>b.id===id);const el=document.getElementById("detailQR");if(!box||!el) return;
   el.innerHTML='<div style="padding:20px;color:var(--muted);font-size:12px">Generando QR...</div>';
   // defer to next frame for smooth UI
@@ -5739,7 +5709,6 @@ function openForm(){
   buildColorGrid();renderTagChips();updatePriBtns();populateRelatedSelect(null);
   updateFormPreview();
   document.getElementById("modalOverlay").classList.add("open");
-  document.body.classList.add("modal-open");
   setTimeout(()=>document.getElementById("fName").focus(),100);
 }
 function openEditForm(){
@@ -5753,9 +5722,8 @@ function openEditForm(){
   buildColorGrid();renderTagChips();updatePriBtns();populateRelatedSelect(box.related);
   updateFormPreview();
   document.getElementById("modalOverlay").classList.add("open");
-  document.body.classList.add("modal-open");
 }
-function closeForm(){document.getElementById("modalOverlay").classList.remove("open");document.body.classList.remove("modal-open");var _f=document.getElementById("aiFab");if(_f) _f.style.removeProperty("display");}
+function closeForm(){document.getElementById("modalOverlay").classList.remove("open");}
 function closeFormOutside(e){if(e.target===document.getElementById("modalOverlay")) closeForm();}
 function populateRelatedSelect(cur){
   document.getElementById("fRelated").innerHTML='<option value="">— Ninguna —</option>'+
@@ -5844,14 +5812,7 @@ let _searchTimer=null;
 function doSearch(q){
   document.getElementById("searchClear").classList.toggle("hidden",!q);
   clearTimeout(_searchTimer);
-  if(!q.trim()){
-    document.getElementById("srWrap").classList.remove("open");
-    var prev=document.getElementById("aiSearchPreview");
-    if(prev) prev.textContent="¿En qué caja está algo?";
-    return;
-  }
-  // Mostrar/ocultar botón búsqueda IA según el tipo de consulta
-  if(typeof _updateAISearchBtn === "function") _updateAISearchBtn(q);
+  if(!q.trim()){document.getElementById("srWrap").classList.remove("open");return;}
   // Debounce: esperar 180ms antes de buscar (evita buscar en cada tecla)
   _searchTimer=setTimeout(()=>_runSearch(q),180);
 }
@@ -5885,24 +5846,7 @@ function _runSearch(q){
           ${h.type==="item"?` → ${esc(h.item)}`:'<span style="font-size:11px;color:var(--muted)"> · caja</span>'}
         </div>
       </div>`).join("")
-    :`<div class="sr-none" style="padding:16px">
-        <div style="font-size:13px;color:var(--muted);margin-bottom:12px">No se encontró <b>${esc(q)}</b> en tus cajas</div>
-        <button onclick="_aiSearchFromBar()" style="
-          width:100%;display:flex;align-items:center;gap:10px;
-          padding:12px 14px;border-radius:14px;border:none;cursor:pointer;
-          background:linear-gradient(135deg,rgba(10,132,255,.18),rgba(88,86,214,.15));
-          border:1px solid rgba(10,132,255,.35);font-family:inherit;
-          text-align:left;transition:background .15s;
-        " onmouseenter="this.style.background='linear-gradient(135deg,rgba(10,132,255,.26),rgba(88,86,214,.22))'"
-           onmouseleave="this.style.background='linear-gradient(135deg,rgba(10,132,255,.18),rgba(88,86,214,.15))'">
-          <div style="width:30px;height:30px;border-radius:9px;background:linear-gradient(135deg,#0A84FF,#5856D6);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:14px;box-shadow:0 2px 8px rgba(10,132,255,.35)">✦</div>
-          <div style="flex:1;min-width:0">
-            <div style="font-size:13px;font-weight:700;color:#0A84FF">Preguntarle a Box IA</div>
-            <div style="font-size:11px;color:var(--muted);margin-top:1px">Busca entre todas tus cajas con IA</div>
-          </div>
-          <div style="font-size:14px;color:rgba(10,132,255,.5)">→</div>
-        </button>
-      </div>`;
+    :`<div class="sr-none">No se encontró "${esc(q)}"</div>`;
   wrap.classList.add("open");
 }
 function clearSearch(){document.getElementById("searchInput").value="";doSearch("");}
@@ -6896,7 +6840,7 @@ function playBeep(){
 function showViewer(box){
   playBeep();
   showScreen("viewer");
-  // FAB oculto en viewer — manejado por showScreen()
+  const _vfab=document.getElementById("aiFab");if(_vfab) _vfab.classList.add("hidden");
   _viewerItems=[]; // clear stale data
   window._viewerColor="#007AFF";
   const vsi=document.getElementById("vSearchInput");if(vsi) vsi.value="";
@@ -7164,13 +7108,10 @@ function showToastUndo(msg, onUndo){
 }
 
 // Barra de progreso global de mudanza (9)
-let _gpCache={total:-1,done:-1};
 function renderGlobalProgress(){
   let el=document.getElementById("globalProgressBar");
   const totalObj=boxes.reduce((s,b)=>s+b.items.length,0);
   const doneObj=boxes.reduce((s,b)=>s+b.items.filter(i=>i.done).length,0);
-  if(el&&_gpCache.total===totalObj&&_gpCache.done===doneObj) return;
-  _gpCache={total:totalObj,done:doneObj};
   if(!totalObj){if(el)el.remove();return;}
   const pct=Math.round(doneObj/totalObj*100);
   if(!el){
@@ -7290,7 +7231,7 @@ function toggleAI(){
   const fab = document.getElementById("aiFab");
   if(aiOpen){
     panel.classList.add("open");
-    fab.classList.add("ai-fab-hidden");
+    fab.style.display = "none";
     const connected = localStorage.getItem("boxia_connected");
     const skipped = localStorage.getItem("boxia_skip");
     if(!connected && !skipped){
@@ -7301,8 +7242,7 @@ function toggleAI(){
     }
   } else {
     panel.classList.remove("open");
-    fab.classList.remove("ai-fab-hidden");
-    fab.style.setProperty("display","flex","important");
+    fab.style.display = "flex";
   }
 }
 
@@ -7343,22 +7283,13 @@ async function testGroqConnection(){
 }
 
 function saveApiKey(){
+  // Guardar key cifrada en sessionStorage y marcar como conectado en localStorage
   const inp = document.getElementById("aiKeyInput");
   const key = inp ? inp.value.trim() : "";
-  if(!key){
-    showToast("⚠️ Pega tu API key de Groq primero","#FF9500");
-    if(inp) inp.focus();
-    return;
-  }
-  if(!key.startsWith("gsk_") && !key.startsWith("gsk-")){
-    showToast("⚠️ La key de Groq empieza con gsk_","#FF9500");
-    if(inp) inp.focus();
-    return;
-  }
-  _saveGroqKey(key);
+  if(key) _saveGroqKey(key); // sessionStorage ofuscado — no queda en texto plano
   localStorage.setItem("boxia_connected","1");
   localStorage.removeItem("boxia_skip");
-  showToast("✅ Box IA conectada con Groq","#34C759");
+  showToast("✅ Box IA conectada","#34C759");
   showAIChat();
 }
 
@@ -7490,33 +7421,17 @@ async function aiAsk(q){
   inp.disabled = true;
   aiShowTyping();
 
-  const apiKey = _getGroqKey();
-
-  // Sin API key: responder localmente
-  if(!apiKey){
-    aiHideTyping();
-    const localReply = aiRespondLocal(q);
-    aiAddMsg("bot", localReply, true);
-    aiStreaming = false;
-    inp.disabled = false;
-    setTimeout(()=>inp.focus(), 100);
-    return;
-  }
-
   try {
-    // Llamada directa a Groq sin Worker intermedio
-    const res = await fetch("https://api.groq.com/openai/v1/chat/completions",{
+    const WORKER_AI_URL = BOX_IA_WORKER + "/chat";
+    const res = await fetch(WORKER_AI_URL,{
       method:"POST",
-      headers:{
-        "Content-Type":"application/json",
-        "Authorization":"Bearer " + apiKey
-      },
+      headers:{"Content-Type":"application/json"},
       body:JSON.stringify({
         model:"llama-3.3-70b-versatile",
         max_tokens:1000,
         messages:[
           {role:"system", content:`Eres Box IA, asistente experto en mudanzas y organización de cajas. Responde siempre en español (Perú). Usa HTML básico para formato: <b>, <br>. Sin markdown con asteriscos. Sé conciso, útil y empático. Cuando busques objetos revisa todas las cajas. Puedes dar consejos de organización y anticipar necesidades del usuario.\n\n${buildContextSnapshot()}`},
-          ...aiHistory.slice(-20).map(m=>({role:m.role, content:m.content}))
+          ...aiHistory.slice(-20).map(m=>({role:m.role, content:m.content})) // FIX C: max 20 msgs
         ]
       })
     });
@@ -7533,14 +7448,16 @@ async function aiAsk(q){
     aiHideTyping();
     const errMsg = String(e?.message||e);
     console.error("Box IA error:", errMsg);
-    if(errMsg.includes("401")||errMsg.includes("invalid_api_key")||errMsg.includes("Unauthorized")){
+    if(e.message === "no_key"){
+      aiAddMsg("bot","⚙️ <b>Worker no configurado.</b><br>Revisa la URL del Worker en la app.");
+    } else if(errMsg.includes("401")||errMsg.includes("invalid_api_key")||errMsg.includes("Unauthorized")){
       aiAddMsg("bot","🔑 <b>API key inválida o expirada.</b><br>Toca <i>⚙️ Cambiar API key</i> para actualizarla.");
+    } else if(errMsg.includes("Failed to fetch")||errMsg.includes("NetworkError")||errMsg.includes("CORS")){
+      aiAddMsg("bot","🌐 <b>Error de red.</b><br>Verifica tu conexión a internet e intenta de nuevo.");
     } else if(errMsg.includes("429")||errMsg.includes("rate_limit")){
       aiAddMsg("bot","⏳ <b>Demasiadas consultas.</b><br>Espera unos segundos e intenta de nuevo.");
     } else {
-      // Cualquier otro error: responder localmente
-      const localReply = aiRespondLocal(q);
-      aiAddMsg("bot", localReply, true);
+      aiAddMsg("bot",`⚠️ <b>Error:</b> ${errMsg.slice(0,120)}<br><br>Intenta de nuevo o verifica tu key en ⚙️`);
     }
   } finally {
     aiStreaming = false;
@@ -7566,85 +7483,16 @@ function aiRespondLocal(q){
     const u=boxes.filter(b=>b.priority==="red");
     return u.length?`<b>${u.length} caja${u.length!==1?"s":""} urgente${u.length!==1?"s":""}</b>:<br><br>`+u.map(b=>`🔴 <b>${esc(b.name)}</b>${b.location?" — "+b.location:""}`).join("<br>"):"Sin cajas urgentes 🟡";
   }
-  // Fallback general: buscar cualquier término en todas las cajas
-  const words = ql.replace(/[¿?¡!]/g,"").trim().split(/\s+/).filter(w=>w.length>2);
-  if(words.length){
-    const hits=[];
-    boxes.forEach(b=>{
-      words.forEach(w=>{
-        b.items.forEach(it=>{ if(it.text.toLowerCase().includes(w) && !hits.find(h=>h.it===it)) hits.push({b,it}); });
-        if((b.name.toLowerCase().includes(w)||(b.location||"").toLowerCase().includes(w)) && !hits.find(h=>h.b===b&&h.type==="box")) hits.push({b,it:{text:b.name},type:"box"});
-      });
-    });
-    if(hits.length) return `Encontré <b>${hits.length}</b> resultado${hits.length!==1?"s":""}:<br><br>`+hits.slice(0,6).map(h=>`📦 <b>${esc(h.b.name)}</b>${h.b.location?" — "+h.b.location:""}<br>→ ${esc(h.it.text)}${h.it.done?" ✅":""}`).join("<br>");
-    return `No encontré nada relacionado con "<b>${esc(q)}</b>" en tus cajas 🔍<br><br><span style="color:var(--muted);font-size:12px">Conecta Box IA con una API key para respuestas más inteligentes.</span>`;
-  }
-  return `Hola 👋 Puedo ayudarte a encontrar objetos en tus cajas.<br>Escribe lo que buscas, por ejemplo: <b>"¿dónde están mis libros?"</b>`;
+  return `⚠️ Sin conexión con Box IA.<br>Intenta de nuevo en un momento.`;
 }
 
-// ── Búsqueda IA desde la barra de búsqueda ──────────────────────────────────
-// Detecta si el query parece una pregunta/búsqueda natural (no un filtro corto)
-function _isNaturalQuery(q){
-  if(!q || q.length < 3) return false;
-  const lower = q.toLowerCase().trim();
-  // Palabras clave de búsqueda inteligente
-  const triggers = [
-    "dond","busca","busco","encontr","tengo","está","están","dónde","cuál","cuáles",
-    "cuánto","cuántas","cuántos","qué caja","necesito","urgente","falta","lista",
-    "ayuda","recomienda","organiza","ordena","prioridad","próximo","primero",
-    "cuándo","total","valor","peso","precio","cuánto vale","llevo","progreso",
-    "resumen","todas las","todas mis","mis cajas","habitación","cuarto",
-    "mudanza","desempacar","sacar","abierta","sellada","favorita"
-  ];
-  if(triggers.some(t => lower.includes(t))) return true;
-  // Si tiene más de 4 palabras, probablemente es una pregunta natural
-  if(q.trim().split(/\s+/).length >= 4) return true;
-  // Si termina con "?" es pregunta
-  if(q.trim().endsWith("?")) return true;
-  return false;
-}
-
-// Actualiza el subtítulo del botón según lo que hay escrito — nunca lo oculta
-function _updateAISearchBtn(q){
-  const preview = document.getElementById("aiSearchPreview");
-  if(!preview) return;
-  if(q && q.trim().length >= 1){
-    preview.textContent = '"' + q.trim() + '"';
-  } else {
-    preview.textContent = '¿En qué caja está algo?';
-  }
-}
-
-// Acción al pulsar el botón IA en la barra de búsqueda
-function _aiSearchFromBar(){
-  const inp = document.getElementById("searchInput");
-  const q = inp ? inp.value.trim() : "";
-  // Abrir panel IA siempre
-  aiOpen = false;
-  toggleAI();
-  // Si hay texto escrito, enviarlo automaticamente
-  if(q){
-    setTimeout(function(){
-      const aiInp = document.getElementById("aiInput");
-      if(aiInp){
-        aiInp.value = q;
-        aiAsk(q);
-      }
-    }, 420);
-  } else {
-    // Sin texto: solo abrir el panel con el foco en el input
-    setTimeout(function(){
-      const aiInp = document.getElementById("aiInput");
-      if(aiInp) aiInp.focus();
-    }, 420);
-  }
-}
-
-// FAB visibility manejado por CSS via data-screen — solo quitar clase hidden residual
+// Show FAB only in main screens (not viewer/tutorial)
 function updateFABVisibility(){
   const fab = document.getElementById("aiFab");
   if(!fab) return;
-  fab.classList.remove("hidden");
+  const hash = location.hash;
+  const isViewer = hash.startsWith("#view/");
+  fab.classList.toggle("hidden", isViewer);
 }
 
 window.addEventListener("hashchange",()=>{route();updateFABVisibility();});
@@ -7664,32 +7512,32 @@ document.addEventListener("DOMContentLoaded",applySplashGradient);
       <div class="tut-bg" style="background:linear-gradient(160deg,#1a1a3e 0%,#17171f 100%)"></div>
       <div class="tut-content">
         <div class="tut-icon-wrap" style="background:rgba(10,132,255,.18);border-color:rgba(10,132,255,.3)">
-          <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z" aria-hidden="true"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
+          <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z" aria-hidden="true"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg></i>
         </div>
         <div class="tut-title">BoxVision</div>
         <div class="tut-desc">Organiza todo lo que guardas — cajas, bodegas, almacenes y más. Encuentra cualquier objeto en segundos.</div>
         <div class="tut-demo">
           <div class="tut-demo-row">
-            <div class="tut-demo-icon-wrap"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="6" height="6" rx="1" aria-hidden="true"/><rect x="15" y="3" width="6" height="6" rx="1"/><rect x="3" y="15" width="6" height="6" rx="1"/><rect x="5" y="5" width="2" height="2" fill="currentColor" stroke="none"/><rect x="17" y="5" width="2" height="2" fill="currentColor" stroke="none"/><rect x="5" y="17" width="2" height="2" fill="currentColor" stroke="none"/><line x1="15" y1="15" x2="15" y2="15.01"/><line x1="18" y1="15" x2="21" y2="15"/><line x1="21" y1="18" x2="21" y2="21"/><line x1="15" y1="18" x2="18" y2="21"/></svg></div>
+            <div class="tut-demo-icon-wrap"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="6" height="6" rx="1" aria-hidden="true"/><rect x="15" y="3" width="6" height="6" rx="1"/><rect x="3" y="15" width="6" height="6" rx="1"/><rect x="5" y="5" width="2" height="2" fill="currentColor" stroke="none"/><rect x="17" y="5" width="2" height="2" fill="currentColor" stroke="none"/><rect x="5" y="17" width="2" height="2" fill="currentColor" stroke="none"/><line x1="15" y1="15" x2="15" y2="15.01"/><line x1="18" y1="15" x2="21" y2="15"/><line x1="21" y1="18" x2="21" y2="21"/><line x1="15" y1="18" x2="18" y2="21"/></svg></i></div>
             <div><div class="tut-demo-text">Crea cajas con QR</div><div class="tut-demo-sub">Escanea y ve el contenido al instante</div></div>
           </div>
           <div class="tut-demo-row">
-            <div class="tut-demo-icon-wrap"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z" aria-hidden="true"/><circle cx="12" cy="13" r="4"/></svg></div>
+            <div class="tut-demo-icon-wrap"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z" aria-hidden="true"/><circle cx="12" cy="13" r="4"/></svg></i></div>
             <div><div class="tut-demo-text">Fotografía tus objetos</div><div class="tut-demo-sub">Se guardan con imagen visual</div></div>
           </div>
           <div class="tut-demo-row">
-            <div class="tut-demo-icon-wrap"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8" aria-hidden="true"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></div>
+            <div class="tut-demo-icon-wrap"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8" aria-hidden="true"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></i></div>
             <div><div class="tut-demo-text">Búsqueda inteligente</div><div class="tut-demo-sub">Encuentra cualquier cosa al instante</div></div>
           </div>
           <div class="tut-demo-row">
-            <div class="tut-demo-icon-wrap"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z" aria-hidden="true"/></svg></div>
+            <div class="tut-demo-icon-wrap"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z" aria-hidden="true"/></svg></i></div>
             <div><div class="tut-demo-text">Sincronizado en la nube</div><div class="tut-demo-sub">Accede desde cualquier dispositivo</div></div>
           </div>
         </div>
       </div>
       <div class="tut-bottom">
         <div class="tut-dots"><div class="tut-dot active"></div><div class="tut-dot"></div><div class="tut-dot"></div><div class="tut-dot"></div><div class="tut-dot"></div><div class="tut-dot"></div><div class="tut-dot"></div></div>
-        <button class="tut-btn" onclick="nextTut()">Empezar <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12" aria-hidden="true"/><polyline points="12 5 19 12 12 19"/></svg></button>
+        <button class="tut-btn" onclick="nextTut()">Empezar <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12" aria-hidden="true"/><polyline points="12 5 19 12 12 19"/></svg></i></button>
         <button class="tut-skip" onclick="finishTut()">Saltar tutorial</button>
       </div>
     </div>
@@ -7699,32 +7547,32 @@ document.addEventListener("DOMContentLoaded",applySplashGradient);
       <div class="tut-bg" style="background:linear-gradient(160deg,#1a2a1a 0%,#17171f 100%)"></div>
       <div class="tut-content">
         <div class="tut-icon-wrap" style="background:rgba(10,132,255,.18);border-color:rgba(10,132,255,.3)">
-          <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19" aria-hidden="true"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19" aria-hidden="true"/><line x1="5" y1="12" x2="19" y2="12"/></svg></i>
         </div>
         <div class="tut-title">Crea tu primera caja</div>
         <div class="tut-desc">Toca el botón <strong style="color:#fff;background:rgba(10,132,255,.25);padding:2px 10px;border-radius:8px;font-size:13px">+ Nueva caja</strong> para comenzar.</div>
         <div class="tut-demo">
           <div class="tut-demo-row">
-            <div class="tut-demo-icon-wrap"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z" aria-hidden="true"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg></div>
+            <div class="tut-demo-icon-wrap"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z" aria-hidden="true"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg></i></div>
             <div><div class="tut-demo-text">Nombre y número</div><div class="tut-demo-sub">Ej: "Cocina #1", "Ropa invierno"</div></div>
           </div>
           <div class="tut-demo-row">
-            <div class="tut-demo-icon-wrap"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="13.5" cy="6.5" r=".5" fill="currentColor" aria-hidden="true"/><circle cx="17.5" cy="10.5" r=".5" fill="currentColor"/><circle cx="8.5" cy="7.5" r=".5" fill="currentColor"/><circle cx="6.5" cy="12.5" r=".5" fill="currentColor"/><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 0 1 1.668-1.668h1.996c3.051 0 5.555-2.503 5.555-5.554C21.965 6.012 17.461 2 12 2z"/></svg></div>
+            <div class="tut-demo-icon-wrap"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="13.5" cy="6.5" r=".5" fill="currentColor" aria-hidden="true"/><circle cx="17.5" cy="10.5" r=".5" fill="currentColor"/><circle cx="8.5" cy="7.5" r=".5" fill="currentColor"/><circle cx="6.5" cy="12.5" r=".5" fill="currentColor"/><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 0 1 1.668-1.668h1.996c3.051 0 5.555-2.503 5.555-5.554C21.965 6.012 17.461 2 12 2z"/></svg></i></div>
             <div><div class="tut-demo-text">Color personalizado</div><div class="tut-demo-sub">Para identificarla visualmente</div></div>
           </div>
           <div class="tut-demo-row">
-            <div class="tut-demo-icon-wrap"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" aria-hidden="true"/><circle cx="12" cy="10" r="3"/></svg></div>
+            <div class="tut-demo-icon-wrap"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" aria-hidden="true"/><circle cx="12" cy="10" r="3"/></svg></i></div>
             <div><div class="tut-demo-text">Ubicación</div><div class="tut-demo-sub">Cuarto, garaje, depósito, bodega...</div></div>
           </div>
           <div class="tut-demo-row">
-            <div class="tut-demo-icon-wrap"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10" style="color:#FF9500" aria-hidden="true"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg></div>
+            <div class="tut-demo-icon-wrap"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10" style="color:#FF9500" aria-hidden="true"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg></i></div>
             <div><div class="tut-demo-text">Prioridad</div><div class="tut-demo-sub">Urgente, normal o sin prisa</div></div>
           </div>
         </div>
       </div>
       <div class="tut-bottom">
         <div class="tut-dots"><div class="tut-dot"></div><div class="tut-dot active"></div><div class="tut-dot"></div><div class="tut-dot"></div><div class="tut-dot"></div><div class="tut-dot"></div><div class="tut-dot"></div></div>
-        <button class="tut-btn" onclick="nextTut()">Siguiente <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12" aria-hidden="true"/><polyline points="12 5 19 12 12 19"/></svg></button>
+        <button class="tut-btn" onclick="nextTut()">Siguiente <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12" aria-hidden="true"/><polyline points="12 5 19 12 12 19"/></svg></i></button>
         <button class="tut-skip" onclick="finishTut()">Saltar</button>
       </div>
     </div>
@@ -7734,32 +7582,32 @@ document.addEventListener("DOMContentLoaded",applySplashGradient);
       <div class="tut-bg" style="background:linear-gradient(160deg,#1e1a2e 0%,#17171f 100%)"></div>
       <div class="tut-content">
         <div class="tut-icon-wrap" style="background:rgba(88,86,214,.2);border-color:rgba(88,86,214,.35)">
-          <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="8" y1="6" x2="21" y2="6" aria-hidden="true"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+          <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="8" y1="6" x2="21" y2="6" aria-hidden="true"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg></i>
         </div>
         <div class="tut-title">Agrega tus objetos</div>
         <div class="tut-desc">Tienes 3 formas de agregar objetos a cada caja. Usa la que más te convenga.</div>
         <div class="tut-demo">
           <div class="tut-demo-row">
-            <div class="tut-demo-icon-wrap"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" aria-hidden="true"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></div>
+            <div class="tut-demo-icon-wrap"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" aria-hidden="true"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></i></div>
             <div><div class="tut-demo-text">Escribe el nombre</div><div class="tut-demo-sub">Escribe y presiona + o Enter</div></div>
           </div>
           <div class="tut-demo-row">
-            <div class="tut-demo-icon-wrap"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z" aria-hidden="true"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg></div>
+            <div class="tut-demo-icon-wrap"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z" aria-hidden="true"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg></i></div>
             <div><div class="tut-demo-text">Dicta por voz</div><div class="tut-demo-sub">Toca el micrófono y habla</div></div>
           </div>
           <div class="tut-demo-row">
-            <div class="tut-demo-icon-wrap"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z" aria-hidden="true"/><circle cx="12" cy="13" r="4"/></svg></div>
+            <div class="tut-demo-icon-wrap"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z" aria-hidden="true"/><circle cx="12" cy="13" r="4"/></svg></i></div>
             <div><div class="tut-demo-text">Fotografía el objeto</div><div class="tut-demo-sub">BoxVision lo reconoce automáticamente</div></div>
           </div>
           <div class="tut-demo-row">
-            <div class="tut-demo-icon-wrap"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10" style="color:#34C759" aria-hidden="true"/><polyline points="9 12 11 14 15 10"/></svg></div>
+            <div class="tut-demo-icon-wrap"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10" style="color:#34C759" aria-hidden="true"/><polyline points="9 12 11 14 15 10"/></svg></i></div>
             <div><div class="tut-demo-text">Marca como sacado</div><div class="tut-demo-sub">Toca el círculo para marcar progreso</div></div>
           </div>
         </div>
       </div>
       <div class="tut-bottom">
         <div class="tut-dots"><div class="tut-dot"></div><div class="tut-dot"></div><div class="tut-dot active"></div><div class="tut-dot"></div><div class="tut-dot"></div><div class="tut-dot"></div><div class="tut-dot"></div></div>
-        <button class="tut-btn" onclick="nextTut()">Siguiente <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12" aria-hidden="true"/><polyline points="12 5 19 12 12 19"/></svg></button>
+        <button class="tut-btn" onclick="nextTut()">Siguiente <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12" aria-hidden="true"/><polyline points="12 5 19 12 12 19"/></svg></i></button>
         <button class="tut-skip" onclick="finishTut()">Saltar</button>
       </div>
     </div>
@@ -7769,32 +7617,32 @@ document.addEventListener("DOMContentLoaded",applySplashGradient);
       <div class="tut-bg" style="background:linear-gradient(160deg,#1a2832 0%,#17171f 100%)"></div>
       <div class="tut-content">
         <div class="tut-icon-wrap" style="background:rgba(0,199,190,.15);border-color:rgba(0,199,190,.3)">
-          <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="6" height="6" rx="1" aria-hidden="true"/><rect x="15" y="3" width="6" height="6" rx="1"/><rect x="3" y="15" width="6" height="6" rx="1"/><rect x="5" y="5" width="2" height="2" fill="currentColor" stroke="none"/><rect x="17" y="5" width="2" height="2" fill="currentColor" stroke="none"/><rect x="5" y="17" width="2" height="2" fill="currentColor" stroke="none"/><line x1="15" y1="15" x2="15" y2="15.01"/><line x1="18" y1="15" x2="21" y2="15"/><line x1="21" y1="18" x2="21" y2="21"/><line x1="15" y1="18" x2="18" y2="21"/></svg>
+          <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="6" height="6" rx="1" aria-hidden="true"/><rect x="15" y="3" width="6" height="6" rx="1"/><rect x="3" y="15" width="6" height="6" rx="1"/><rect x="5" y="5" width="2" height="2" fill="currentColor" stroke="none"/><rect x="17" y="5" width="2" height="2" fill="currentColor" stroke="none"/><rect x="5" y="17" width="2" height="2" fill="currentColor" stroke="none"/><line x1="15" y1="15" x2="15" y2="15.01"/><line x1="18" y1="15" x2="21" y2="15"/><line x1="21" y1="18" x2="21" y2="21"/><line x1="15" y1="18" x2="18" y2="21"/></svg></i>
         </div>
         <div class="tut-title">Escanea el QR</div>
         <div class="tut-desc">Cada caja tiene su propio código QR. Pégalo en la caja física y escanéalo con cualquier celular.</div>
         <div class="tut-demo">
           <div class="tut-demo-row">
-            <div class="tut-demo-icon-wrap"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9" aria-hidden="true"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg></div>
+            <div class="tut-demo-icon-wrap"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9" aria-hidden="true"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg></i></div>
             <div><div class="tut-demo-text">Imprime o muestra el QR</div><div class="tut-demo-sub">Desde la pantalla de la caja</div></div>
           </div>
           <div class="tut-demo-row">
-            <div class="tut-demo-icon-wrap"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="2" aria-hidden="true"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg></div>
+            <div class="tut-demo-icon-wrap"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="2" aria-hidden="true"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg></i></div>
             <div><div class="tut-demo-text">Escanea con cualquier celular</div><div class="tut-demo-sub">Sin necesidad de tener la app</div></div>
           </div>
           <div class="tut-demo-row">
-            <div class="tut-demo-icon-wrap"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6c0 2-2 2-2 4v10a2 2 0 0 1-2 2h-4a2 2 0 0 1-2-2V10c0-2-2-2-2-4V2h12v4z" aria-hidden="true"/><line x1="6" y1="6" x2="18" y2="6"/><line x1="12" y1="12" x2="12" y2="12"/></svg></div>
+            <div class="tut-demo-icon-wrap"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6c0 2-2 2-2 4v10a2 2 0 0 1-2 2h-4a2 2 0 0 1-2-2V10c0-2-2-2-2-4V2h12v4z" aria-hidden="true"/><line x1="6" y1="6" x2="18" y2="6"/><line x1="12" y1="12" x2="12" y2="12"/></svg></i></div>
             <div><div class="tut-demo-text">Linterna integrada</div><div class="tut-demo-sub">Para escanear en lugares oscuros</div></div>
           </div>
           <div class="tut-demo-row">
-            <div class="tut-demo-icon-wrap"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5" aria-hidden="true"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/></svg></div>
+            <div class="tut-demo-icon-wrap"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5" aria-hidden="true"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/></svg></i></div>
             <div><div class="tut-demo-text">Lee en voz alta</div><div class="tut-demo-sub">Escucha el contenido sin mirar</div></div>
           </div>
         </div>
       </div>
       <div class="tut-bottom">
         <div class="tut-dots"><div class="tut-dot"></div><div class="tut-dot"></div><div class="tut-dot"></div><div class="tut-dot active"></div><div class="tut-dot"></div><div class="tut-dot"></div><div class="tut-dot"></div></div>
-        <button class="tut-btn" onclick="nextTut()">Siguiente <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12" aria-hidden="true"/><polyline points="12 5 19 12 12 19"/></svg></button>
+        <button class="tut-btn" onclick="nextTut()">Siguiente <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12" aria-hidden="true"/><polyline points="12 5 19 12 12 19"/></svg></i></button>
         <button class="tut-skip" onclick="finishTut()">Saltar</button>
       </div>
     </div>
@@ -7804,32 +7652,32 @@ document.addEventListener("DOMContentLoaded",applySplashGradient);
       <div class="tut-bg" style="background:linear-gradient(160deg,#1a1e30 0%,#17171f 100%)"></div>
       <div class="tut-content">
         <div class="tut-icon-wrap" style="background:rgba(10,132,255,.18);border-color:rgba(10,132,255,.3)">
-          <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8" aria-hidden="true"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8" aria-hidden="true"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></i>
         </div>
         <div class="tut-title">Encuentra cualquier cosa</div>
         <div class="tut-desc">¿No recuerdas en qué caja pusiste algo? Búscalo y BoxVision te dice dónde está.</div>
         <div class="tut-demo">
           <div class="tut-demo-row">
-            <div class="tut-demo-icon-wrap"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8" aria-hidden="true"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></div>
+            <div class="tut-demo-icon-wrap"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8" aria-hidden="true"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></i></div>
             <div><div class="tut-demo-text">Busca desde la pantalla principal</div><div class="tut-demo-sub">Escribe el nombre del objeto</div></div>
           </div>
           <div class="tut-demo-row">
-            <div class="tut-demo-icon-wrap" style="background:rgba(10,132,255,.2)"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="10" rx="2" style="color:#0A84FF" aria-hidden="true"/><circle cx="12" cy="5" r="2"/><path d="M12 7v4"/><line x1="8" y1="15" x2="8" y2="15"/><line x1="16" y1="15" x2="16" y2="15"/></svg></div>
+            <div class="tut-demo-icon-wrap" style="background:rgba(10,132,255,.2)"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="10" rx="2" style="color:#0A84FF" aria-hidden="true"/><circle cx="12" cy="5" r="2"/><path d="M12 7v4"/><line x1="8" y1="15" x2="8" y2="15"/><line x1="16" y1="15" x2="16" y2="15"/></svg></i></div>
             <div><div class="tut-demo-text">Pregunta al asistente IA</div><div class="tut-demo-sub">Toca el botón IA y escribe lo que buscas</div></div>
           </div>
           <div class="tut-demo-row">
-            <div class="tut-demo-icon-wrap"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" style="color:#FFCC00" aria-hidden="true"/></svg></div>
+            <div class="tut-demo-icon-wrap"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" style="color:#FFCC00" aria-hidden="true"/></svg></i></div>
             <div><div class="tut-demo-text">Marca favoritas</div><div class="tut-demo-sub">Las cajas más importantes siempre arriba</div></div>
           </div>
           <div class="tut-demo-row">
-            <div class="tut-demo-icon-wrap"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="9" x2="21" y2="9" aria-hidden="true"/><line x1="3" y1="15" x2="21" y2="15"/><polyline points="8 4 3 9 8 14"/><polyline points="16 20 21 15 16 10"/></svg></div>
+            <div class="tut-demo-icon-wrap"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="9" x2="21" y2="9" aria-hidden="true"/><line x1="3" y1="15" x2="21" y2="15"/><polyline points="8 4 3 9 8 14"/><polyline points="16 20 21 15 16 10"/></svg></i></div>
             <div><div class="tut-demo-text">Ordena como quieras</div><div class="tut-demo-sub">Por prioridad, habitación, fecha o nombre</div></div>
           </div>
         </div>
       </div>
       <div class="tut-bottom">
         <div class="tut-dots"><div class="tut-dot"></div><div class="tut-dot"></div><div class="tut-dot"></div><div class="tut-dot"></div><div class="tut-dot active"></div><div class="tut-dot"></div><div class="tut-dot"></div></div>
-        <button class="tut-btn" onclick="nextTut()">Siguiente <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12" aria-hidden="true"/><polyline points="12 5 19 12 12 19"/></svg></button>
+        <button class="tut-btn" onclick="nextTut()">Siguiente <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12" aria-hidden="true"/><polyline points="12 5 19 12 12 19"/></svg></i></button>
         <button class="tut-skip" onclick="finishTut()">Saltar</button>
       </div>
     </div>
@@ -7839,32 +7687,32 @@ document.addEventListener("DOMContentLoaded",applySplashGradient);
       <div class="tut-bg" style="background:linear-gradient(160deg,#1e1a18 0%,#17171f 100%)"></div>
       <div class="tut-content">
         <div class="tut-icon-wrap" style="background:rgba(255,149,0,.15);border-color:rgba(255,149,0,.3)">
-          <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" aria-hidden="true"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+          <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" aria-hidden="true"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></i>
         </div>
         <div class="tut-title">Protege tus cajas</div>
         <div class="tut-desc">Algunas cajas merecen más privacidad. BoxVision tiene varias formas de protegerlas.</div>
         <div class="tut-demo">
           <div class="tut-demo-row">
-            <div class="tut-demo-icon-wrap"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" aria-hidden="true"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/><circle cx="12" cy="16" r="1" fill="currentColor" stroke="none"/></svg></div>
+            <div class="tut-demo-icon-wrap"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" aria-hidden="true"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/><circle cx="12" cy="16" r="1" fill="currentColor" stroke="none"/></svg></i></div>
             <div><div class="tut-demo-text">Contraseña por caja</div><div class="tut-demo-sub">Nadie puede abrirla sin el código</div></div>
           </div>
           <div class="tut-demo-row">
-            <div class="tut-demo-icon-wrap"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" aria-hidden="true"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div>
+            <div class="tut-demo-icon-wrap"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" aria-hidden="true"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></i></div>
             <div><div class="tut-demo-text">Sellar una caja</div><div class="tut-demo-sub">Cuando terminaste de empacar</div></div>
           </div>
           <div class="tut-demo-row">
-            <div class="tut-demo-icon-wrap"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" aria-hidden="true"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg></div>
+            <div class="tut-demo-icon-wrap"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" aria-hidden="true"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg></i></div>
             <div><div class="tut-demo-text">Foto de portada</div><div class="tut-demo-sub">Pon una foto para identificarla rápido</div></div>
           </div>
           <div class="tut-demo-row">
-            <div class="tut-demo-icon-wrap" style="background:rgba(37,211,102,.15)"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21l1.65-3.8a9 9 0 1 1 3.4 2.9L3 21" style="color:#25D366" aria-hidden="true"/><path d="M9 10c0 5 3.5 7.5 7.5 3.5"/></svg></div>
+            <div class="tut-demo-icon-wrap" style="background:rgba(37,211,102,.15)"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21l1.65-3.8a9 9 0 1 1 3.4 2.9L3 21" style="color:#25D366" aria-hidden="true"/><path d="M9 10c0 5 3.5 7.5 7.5 3.5"/></svg></i></div>
             <div><div class="tut-demo-text">Comparte por WhatsApp</div><div class="tut-demo-sub">Envía el contenido a quien necesites</div></div>
           </div>
         </div>
       </div>
       <div class="tut-bottom">
         <div class="tut-dots"><div class="tut-dot"></div><div class="tut-dot"></div><div class="tut-dot"></div><div class="tut-dot"></div><div class="tut-dot"></div><div class="tut-dot active"></div><div class="tut-dot"></div></div>
-        <button class="tut-btn" onclick="nextTut()">Siguiente <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12" aria-hidden="true"/><polyline points="12 5 19 12 12 19"/></svg></button>
+        <button class="tut-btn" onclick="nextTut()">Siguiente <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12" aria-hidden="true"/><polyline points="12 5 19 12 12 19"/></svg></i></button>
         <button class="tut-skip" onclick="finishTut()">Saltar</button>
       </div>
     </div>
@@ -7874,32 +7722,32 @@ document.addEventListener("DOMContentLoaded",applySplashGradient);
       <div class="tut-bg" style="background:linear-gradient(160deg,#17221f 0%,#17171f 100%)"></div>
       <div class="tut-content">
         <div class="tut-icon-wrap" style="background:rgba(52,199,89,.15);border-color:rgba(52,199,89,.3)">
-          <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z" aria-hidden="true"/></svg>
+          <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z" aria-hidden="true"/></svg></i>
         </div>
         <div class="tut-title">Todo en tu cuenta</div>
         <div class="tut-desc">Iniciaste sesión con Google. Tus cajas están seguras en la nube y disponibles desde cualquier dispositivo.</div>
         <div class="tut-demo">
           <div class="tut-demo-row">
-            <div class="tut-demo-icon-wrap"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="2" aria-hidden="true"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg></div>
+            <div class="tut-demo-icon-wrap"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="2" aria-hidden="true"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg></i></div>
             <div><div class="tut-demo-text">Accede desde cualquier celular</div><div class="tut-demo-sub">Tus cajas siempre disponibles</div></div>
           </div>
           <div class="tut-demo-row">
-            <div class="tut-demo-icon-wrap"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10" aria-hidden="true"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg></div>
+            <div class="tut-demo-icon-wrap"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10" aria-hidden="true"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg></i></div>
             <div><div class="tut-demo-text">Sincronización automática</div><div class="tut-demo-sub">Los cambios se guardan al instante</div></div>
           </div>
           <div class="tut-demo-row">
-            <div class="tut-demo-icon-wrap"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" aria-hidden="true"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></div>
+            <div class="tut-demo-icon-wrap"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" aria-hidden="true"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></i></div>
             <div><div class="tut-demo-text">Cada cuenta es independiente</div><div class="tut-demo-sub">Tu familia puede tener sus propias cajas</div></div>
           </div>
           <div class="tut-demo-row">
-            <div class="tut-demo-icon-wrap"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1" aria-hidden="true"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg></div>
+            <div class="tut-demo-icon-wrap"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1" aria-hidden="true"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg></i></div>
             <div><div class="tut-demo-text">Mapa de habitaciones</div><div class="tut-demo-sub">Organiza tus cajas por espacios</div></div>
           </div>
         </div>
       </div>
       <div class="tut-bottom">
         <div class="tut-dots"><div class="tut-dot"></div><div class="tut-dot"></div><div class="tut-dot"></div><div class="tut-dot"></div><div class="tut-dot"></div><div class="tut-dot"></div><div class="tut-dot active"></div></div>
-        <button class="tut-btn" onclick="finishTut()"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z" aria-hidden="true"/><path d="m12 15-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z"/><path d="M9 12H4s.55-3.03 2-4c1.62-1.08 5 0 5 0"/><path d="M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5"/></svg> ¡Listo, empezar!</button>
+        <button class="tut-btn" onclick="finishTut()"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z" aria-hidden="true"/><path d="m12 15-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z"/><path d="M9 12H4s.55-3.03 2-4c1.62-1.08 5 0 5 0"/><path d="M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5"/></svg></i> ¡Listo, empezar!</button>
       </div>
     </div>
 
@@ -7908,6 +7756,13 @@ document.addEventListener("DOMContentLoaded",applySplashGradient);
 
 
 <!-- ═══ 3D CUBE MODAL ═══ -->
+
+<!-- ═══ AI ASSISTANT FAB ═══ -->
+<button class="ai-fab hidden" id="aiFab" onclick="toggleAI()">
+  <div class="ai-dot"></div>
+  <span style="font-size:17px">✦</span>
+  <span class="ai-fab-label">Box IA</span>
+</button>
 
 <!-- ═══ BOX IA PANEL ═══ -->
 <div class="ai-panel" id="aiPanel">
@@ -7921,31 +7776,17 @@ document.addEventListener("DOMContentLoaded",applySplashGradient);
   </div>
 
   <!-- Pantalla configuración API key -->
-  <div id="aiKeyScreen" style="display:none;flex:1;padding:28px 20px;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:14px;overflow-y:auto">
-    <div style="font-size:48px;margin-bottom:4px">🤖</div>
+  <div id="aiKeyScreen" style="display:none;flex:1;padding:32px 24px;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:18px">
+    <div style="font-size:56px">🔑</div>
     <div style="font-size:20px;font-weight:800;color:#fff;letter-spacing:-.4px">Conecta Box IA</div>
-    <div style="font-size:13px;color:rgba(255,255,255,.6);line-height:1.6">Usa tu API key gratuita de <b style="color:rgba(255,255,255,.9)">Groq</b> para<br>respuestas inteligentes sobre tus cajas.</div>
-
-    <!-- Pasos -->
-    <div style="background:rgba(255,255,255,.07);border:0.5px solid rgba(255,255,255,.15);border-radius:16px;padding:14px 16px;font-size:12px;color:rgba(255,255,255,.75);line-height:2;text-align:left;width:100%;box-sizing:border-box">
-      <div>1️⃣ Entra a <b style="color:#0A84FF">console.groq.com</b></div>
-      <div>2️⃣ Crea una cuenta gratis</div>
-      <div>3️⃣ Ve a <b>API Keys</b> → <b>Create API Key</b></div>
-      <div>4️⃣ Copia la key y pégala aquí abajo</div>
+    <div style="font-size:14px;color:rgba(255,255,255,.65);line-height:1.6">Powered by <b style="color:rgba(255,255,255,.9)">Groq</b> vía Cloudflare Workers.<br>Gratis, rápido, sin exponer tu key.</div>
+    <div style="background:rgba(255,255,255,.12);border:0.5px solid rgba(255,255,255,.25);border-radius:16px;padding:14px 16px;font-size:13px;color:rgba(255,255,255,.85);line-height:1.8;text-align:left;width:100%;box-sizing:border-box;backdrop-filter:blur(10px)">
+      ✅ Tu key de Groq está guardada en el Worker<br>
+      ✅ Esta app no necesita la key directamente<br>
+      ✅ Funciona en cualquier red
     </div>
-
-    <!-- Input key -->
-    <div style="width:100%;background:rgba(255,255,255,.09);border:1px solid rgba(255,255,255,.2);border-radius:14px;display:flex;align-items:center;padding:0 14px;box-sizing:border-box;transition:border-color .18s" onfocusin="this.style.borderColor='rgba(10,132,255,.7)'" onfocusout="this.style.borderColor='rgba(255,255,255,.2)'">
-      <span style="font-size:16px;margin-right:10px;flex-shrink:0">🔑</span>
-      <input id="aiKeyInput" type="password" placeholder="gsk_..." autocomplete="off" spellcheck="false"
-        style="flex:1;background:transparent;border:none;outline:none;color:#fff;font-size:14px;padding:14px 0;font-family:inherit;letter-spacing:.5px"
-        onkeydown="if(event.key==='Enter')saveApiKey()"
-      />
-      <button onclick="const i=document.getElementById('aiKeyInput');i.type=i.type==='password'?'text':'password'" style="background:none;border:none;color:rgba(255,255,255,.4);cursor:pointer;padding:4px;font-size:14px">👁</button>
-    </div>
-
-    <button onclick="saveApiKey()" style="width:100%;padding:15px;border-radius:14px;border:none;background:linear-gradient(135deg,#0A84FF,#5856D6);color:#fff;font-size:15px;font-weight:700;cursor:pointer;box-shadow:0 4px 20px rgba(10,132,255,.4);transition:transform .15s" onmousedown="this.style.transform='scale(.97)'" onmouseup="this.style.transform=''" ontouchstart="this.style.transform='scale(.97)'" ontouchend="this.style.transform=''">✦ Conectar Box IA</button>
-    <button onclick="skipApiKey()" style="background:none;border:none;color:rgba(255,255,255,.4);font-size:13px;cursor:pointer;font-family:inherit;padding:4px">Usar sin IA (modo básico)</button>
+    <button onclick="saveApiKey()" style="width:100%;padding:15px;border-radius:14px;border:none;background:#fff;color:#007AFF;font-size:16px;font-weight:700;cursor:pointer;box-shadow:0 4px 20px rgba(0,0,0,.2);transition:transform .15s,box-shadow .15s" onmousedown="this.style.transform='scale(.97)'" onmouseup="this.style.transform=''" ontouchstart="this.style.transform='scale(.97)'" ontouchend="this.style.transform=''">🚀 Iniciar Box IA</button>
+    <button onclick="skipApiKey()" style="background:rgba(255,255,255,.12);border:0.5px solid rgba(255,255,255,.25);backdrop-filter:blur(10px);border-radius:14px;padding:11px 24px;color:rgba(255,255,255,.8);font-size:14px;font-weight:600;cursor:pointer;font-family:inherit;width:100%;transition:transform .15s" onmousedown="this.style.transform='scale(.97)'" onmouseup="this.style.transform=''" ontouchstart="this.style.transform='scale(.97)'" ontouchend="this.style.transform=''">Usar modo básico</button>
   </div>
 
   <div id="aiChatArea" style="display:none;flex:1;flex-direction:column;overflow:hidden">
@@ -8960,8 +8801,6 @@ if(auth){
     goMain();
     // Notificar al sistema de auto-mantenimiento que cargó bien
     if(typeof window._bvAppLoaded === 'function') window._bvAppLoaded();
-    // Disparar evento appReady para otros listeners (ej: visibilidad del FAB)
-    document.dispatchEvent(new Event('appReady'));
 
     // Bloquear saves mientras Firestore carga (evita race condition)
     _firestoreLoading = true;
@@ -9080,7 +8919,6 @@ if(auth){
     if(typeof setupPWA === 'function') setupPWA();
     initTutorial();
     if(typeof window._bvAppLoaded === 'function') window._bvAppLoaded();
-    document.dispatchEvent(new Event('appReady'));
     // FIX: en modo local, si hay cajas guardadas ir directo a main
     if(boxes && boxes.length > 0){
       history.replaceState(null, "", location.pathname + location.search);
@@ -9246,13 +9084,11 @@ if(auth){
   _patchRenderGrid();
   document.addEventListener('DOMContentLoaded', function(){ _patchRenderGrid(); setViewMode(_viewMode); });
   // Fallback: parchear en el primer goMain/renderMain
-  document.addEventListener('DOMContentLoaded', function(){
-    var _origGoMain = window.goMain;
-    window.goMain = function(){
-      _patchRenderGrid();
-      if(typeof _origGoMain === 'function') _origGoMain.apply(this, arguments);
-    };
-  });
+  var _origGoMain = window.goMain;
+  window.goMain = function(){
+    _patchRenderGrid();
+    if(typeof _origGoMain === 'function') _origGoMain.apply(this, arguments);
+  };
 
   // ── 4. Skeleton inicial ───────────────────────────────────────────────────
   document.addEventListener('DOMContentLoaded', function(){
@@ -9781,7 +9617,7 @@ if(auth){
   <div class="update-notification-content">
     <div class="update-notification-left">
       <div class="update-notification-icon">
-        <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="8 17 12 21 16 17"/><line x1="12" y1="12" x2="12" y2="21"/><path d="M20.88 18.09A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.29"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="8 17 12 21 16 17"/><line x1="12" y1="12" x2="12" y2="21"/><path d="M20.88 18.09A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.29"/></svg></i>
       </div>
       <div class="update-notification-text">
         <div class="update-notification-title">Actualización disponible</div>
@@ -10019,23 +9855,6 @@ if(auth){
 </script>
 
 <script>
-/* ── Garantizar visibilidad del botón Box IA ──
-   El manejo del FAB ya lo hace showScreen() y goMain().
-   Este bloque solo actúa como red de seguridad al cargar la app por primera vez,
-   sin usar polling: escucha el evento 'appReady' que se dispara desde launchApp(). */
-(function(){
-  function ensureFabOnMain(){
-    // El FAB ahora es 100% controlado por CSS via data-screen — no necesita JS aquí
-    // Solo asegurar que no quede clase hidden residual
-    var fab = document.getElementById('aiFab');
-    if(fab){ fab.style.removeProperty('display'); fab.classList.remove('hidden'); fab.classList.remove('ai-fab-hidden'); }
-  }
-  // Solo ejecutar una vez cuando la app termine de cargar
-  document.addEventListener('appReady', ensureFabOnMain, { once: true });
-})();
-</script>
-
-<script>
 (function(){
   console.log('🎯 BoxVision v2.2 - Sistema de Logs Mejorado Iniciado');
   
@@ -10142,135 +9961,11 @@ if(auth){
 })();
 </script>
 
-<!-- FAB Box IA — fuera de mainScreen para visibilidad robusta -->
-<button class="ai-fab" id="aiFab" onclick="toggleAI()">
-  <div class="ai-dot"></div>
-  <span style="font-size:17px">✦</span>
-  <span class="ai-fab-label">Box IA</span>
-</button>
-
 <!-- Toast de búsqueda por foto -->
 <div id="searchPhotoToast">
   <div id="searchPhotoToastIcon">📷</div>
   <div id="searchPhotoToastMsg">Analizando imagen…</div>
   <div id="searchPhotoToastSub"></div>
-</div>
-
-
-<!-- Modal contraseña — teclado PIN estilo iOS -->
-<style>
-  @keyframes pwShake{0%,100%{transform:translateX(0)}20%{transform:translateX(-10px)}40%{transform:translateX(10px)}60%{transform:translateX(-6px)}80%{transform:translateX(6px)}}
-  @keyframes pwSlideUp{from{transform:translateY(40px);opacity:0}to{transform:translateY(0);opacity:1}}
-  @keyframes dotPop{0%{transform:scale(1)}50%{transform:scale(1.4)}100%{transform:scale(1)}}
-
-  #pwOverlay{display:none;position:fixed;inset:0;z-index:10000;align-items:flex-end;justify-content:center;backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);background:rgba(0,0,0,.55)}
-  #pwSheet{
-    background:linear-gradient(160deg,#1c1c1e 0%,#2a2a2e 100%);
-    border-radius:28px 28px 0 0;
-    width:100%;max-width:420px;
-    padding:20px 24px calc(24px + env(safe-area-inset-bottom));
-    box-shadow:0 -8px 40px rgba(0,0,0,.5),0 0 0 0.5px rgba(255,255,255,0.08);
-    animation:pwSlideUp .32s cubic-bezier(.16,1,.3,1) both;
-  }
-  /* Handle */
-  #pwSheet::before{content:'';display:block;width:36px;height:4px;border-radius:2px;background:rgba(255,255,255,0.18);margin:0 auto 20px;}
-  /* Icono + nombre caja */
-  .pw-header{display:flex;flex-direction:column;align-items:center;gap:6px;margin-bottom:24px}
-  .pw-box-icon{width:60px;height:60px;border-radius:18px;background:rgba(255,255,255,0.07);border:0.5px solid rgba(255,255,255,0.1);display:flex;align-items:center;justify-content:center;font-size:28px}
-  .pw-box-name{font-size:15px;font-weight:700;color:#fff;text-align:center}
-  .pw-hint{font-size:12px;color:rgba(255,255,255,0.35);text-align:center}
-  /* Dots */
-  .pw-dots{display:flex;gap:14px;justify-content:center;margin-bottom:8px;min-height:18px}
-  .pw-dot-new{width:14px;height:14px;border-radius:50%;border:1.5px solid rgba(255,255,255,0.2);background:transparent;transition:background .12s,border-color .12s,transform .12s}
-  .pw-dot-new.filled{background:#0A84FF;border-color:#0A84FF;animation:dotPop .2s ease}
-  .pw-dot-new.error{background:#FF453A;border-color:#FF453A}
-  /* Error */
-  .pw-error-msg{font-size:12px;color:#FF453A;text-align:center;min-height:18px;margin-bottom:16px;transition:opacity .2s}
-  /* Teclado */
-  .pw-keypad{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:12px}
-  .pw-key{
-    height:64px;border-radius:16px;border:none;
-    background:rgba(255,255,255,0.09);
-    color:#fff;font-size:24px;font-weight:400;font-family:inherit;
-    cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;
-    transition:background .1s,transform .08s;
-    -webkit-tap-highlight-color:transparent;
-    user-select:none;
-  }
-  .pw-key:active{background:rgba(255,255,255,0.2);transform:scale(.93)}
-  .pw-key-sub{font-size:9px;font-weight:600;letter-spacing:1px;color:rgba(255,255,255,0.4);text-transform:uppercase}
-  .pw-key-del{background:rgba(255,255,255,0.05);font-size:20px}
-  .pw-key-ok{background:#0A84FF;font-size:15px;font-weight:700}
-  .pw-key-ok:active{background:#0060CC}
-  .pw-key-empty{background:transparent;pointer-events:none}
-  /* Modo texto (contraseña larga) */
-  .pw-text-row{display:flex;align-items:center;gap:8px;background:rgba(255,255,255,0.07);border:0.5px solid rgba(255,255,255,0.1);border-radius:14px;padding:0 14px;margin-bottom:16px;transition:border-color .18s}
-  .pw-text-row:focus-within{border-color:rgba(10,132,255,0.6)}
-  #pwInput{flex:1;border:none;outline:none;background:transparent;color:#fff;font-size:16px;font-family:inherit;padding:14px 0;letter-spacing:2px}
-  #pwInput::placeholder{letter-spacing:0;color:rgba(255,255,255,0.25)}
-  #pwEyeBtn{background:none;border:none;cursor:pointer;color:rgba(255,255,255,0.35);padding:8px;display:flex;-webkit-tap-highlight-color:transparent}
-  /* Toggle modo */
-  .pw-mode-toggle{text-align:center;margin-bottom:4px}
-  .pw-mode-toggle button{background:none;border:none;color:rgba(255,255,255,0.4);font-size:12px;cursor:pointer;font-family:inherit;padding:4px 8px;-webkit-tap-highlight-color:transparent}
-  /* Cancelar */
-  .pw-cancel-row{text-align:center}
-  .pw-cancel-row button{background:none;border:none;color:rgba(255,255,255,0.45);font-size:14px;cursor:pointer;font-family:inherit;padding:10px 20px;-webkit-tap-highlight-color:transparent}
-</style>
-
-<div id="pwOverlay" onclick="if(event.target===this)closePwModal()">
-  <div id="pwSheet">
-
-    <!-- Encabezado -->
-    <div class="pw-header">
-      <div class="pw-box-icon" id="pwBoxIcon">📦</div>
-      <div class="pw-box-name" id="pwBoxName"></div>
-      <div class="pw-hint">Ingresa la contraseña</div>
-    </div>
-
-    <!-- Dots o input texto según modo -->
-    <div id="pwPinMode">
-      <div class="pw-dots" id="pwDots">
-        <div class="pw-dot-new" id="pwd0"></div>
-        <div class="pw-dot-new" id="pwd1"></div>
-        <div class="pw-dot-new" id="pwd2"></div>
-        <div class="pw-dot-new" id="pwd3"></div>
-        <div class="pw-dot-new" id="pwd4" style="display:none"></div>
-        <div class="pw-dot-new" id="pwd5" style="display:none"></div>
-      </div>
-      <div class="pw-error-msg" id="pwError"></div>
-      <div class="pw-keypad" id="pwKeypad">
-        <button class="pw-key" onclick="pwKey('1')">1</button>
-        <button class="pw-key" onclick="pwKey('2')">2<div class="pw-key-sub">ABC</div></button>
-        <button class="pw-key" onclick="pwKey('3')">3<div class="pw-key-sub">DEF</div></button>
-        <button class="pw-key" onclick="pwKey('4')">4<div class="pw-key-sub">GHI</div></button>
-        <button class="pw-key" onclick="pwKey('5')">5<div class="pw-key-sub">JKL</div></button>
-        <button class="pw-key" onclick="pwKey('6')">6<div class="pw-key-sub">MNO</div></button>
-        <button class="pw-key" onclick="pwKey('7')">7<div class="pw-key-sub">PQRS</div></button>
-        <button class="pw-key" onclick="pwKey('8')">8<div class="pw-key-sub">TUV</div></button>
-        <button class="pw-key" onclick="pwKey('9')">9<div class="pw-key-sub">WXYZ</div></button>
-        <button class="pw-key pw-key-empty"></button>
-        <button class="pw-key" onclick="pwKey('0')">0</button>
-        <button class="pw-key pw-key-del" onclick="pwDel()">⌫</button>
-      </div>
-      <div class="pw-mode-toggle"><button onclick="pwSwitchMode()">Usar contraseña de texto</button></div>
-    </div>
-
-    <div id="pwTextMode" style="display:none">
-      <div class="pw-text-row">
-        <input id="pwInput" type="password" placeholder="Contraseña" autocomplete="off"
-          oninput="syncPwDots(this.value)"
-          onkeydown="if(event.key==='Enter')checkPassword()">
-        <button id="pwEyeBtn" onclick="const i=document.getElementById('pwInput');i.type=i.type==='password'?'text':'password'" tabindex="-1">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
-        </button>
-      </div>
-      <div class="pw-error-msg" id="pwErrorText"></div>
-      <button onclick="checkPassword()" style="width:100%;background:#0A84FF;color:#fff;border:none;border-radius:14px;padding:15px;font-size:15px;font-weight:600;cursor:pointer;font-family:inherit;margin-bottom:8px">Entrar</button>
-      <div class="pw-mode-toggle"><button onclick="pwSwitchMode()">Usar teclado PIN</button></div>
-    </div>
-
-    <div class="pw-cancel-row"><button onclick="closePwModal()">Cancelar</button></div>
-  </div>
 </div>
 
 </body>
