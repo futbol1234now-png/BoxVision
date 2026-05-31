@@ -62,9 +62,14 @@
   // ── EmailJS config — reemplaza con tus claves desde emailjs.com ──────────
   // Para activar: crea cuenta en emailjs.com (gratis), crea un servicio Gmail
   // y una plantilla, luego pega las 3 claves aquí.
-  window.EMAILJS_PUBLIC_KEY  = 'j068SrmxqARUYifIS';
-  window.EMAILJS_SERVICE_ID  = 'service_1hm801u';
-  window.EMAILJS_TEMPLATE_ID = 'template_sh65yng';
+  window.EMAILJS_PUBLIC_KEY         = 'j068SrmxqARUYifIS';
+  window.EMAILJS_SERVICE_ID         = 'service_1hm801u';
+  window.EMAILJS_TEMPLATE_ID        = 'template_sh65yng';
+  // ⬇️ Plantilla dedicada para el código de verificación de borrado seguro
+  // Crea una nueva plantilla en emailjs.com y pega su ID aquí.
+  // Variables usadas: {{verification_code}}, {{from_user}}, {{boxes_count}}, {{date}}
+  // Si lo dejas vacío, se usará EMAILJS_TEMPLATE_ID como fallback.
+  window.EMAILJS_VERIFY_TEMPLATE_ID = 'template_f5lo15o';
   // Variables disponibles en tu plantilla EmailJS:
   // {{from_user}}  → email/nombre del usuario que envía feedback
   // {{category}}   → bug | idea | elogio | otro
@@ -2507,10 +2512,12 @@ to{transform:rotate(360deg)}}
 }
 
 /* ── Color picker mejorado con nombre ── */
-.cdot-wrap{display:flex;flex-direction:column;align-items:center;gap:4px;cursor:pointer}
+.cdot-wrap{display:flex;flex-direction:column;align-items:center;gap:4px;cursor:pointer;-webkit-tap-highlight-color:transparent}
+.cdot{width:30px;height:30px;border-radius:50%;border:2.5px solid transparent;transition:transform .18s cubic-bezier(.34,1.56,.64,1),border-color .18s;box-shadow:0 2px 8px rgba(0,0,0,.25)}
 .cdot-name{font-size:9px;color:var(--muted);transition:color .15s;text-align:center;line-height:1;height:11px}
 .cdot-wrap:hover .cdot-name,.cdot-wrap.sel .cdot-name{color:var(--text)}
 .cdot-wrap.sel .cdot{border-color:var(--text);transform:scale(1.15)}
+#colorGrid{display:grid;grid-template-columns:repeat(5,1fr);gap:10px 4px;padding:4px 2px}
 .colors-grid{display:flex;gap:10px;flex-wrap:wrap;margin-top:4px}
 .tags-box{display:flex;flex-wrap:wrap;gap:6px;padding:8px 10px;border:0.5px solid var(--border);border-radius:13px;background:var(--input);min-height:44px;cursor:text}
 .tag-chip{background:var(--accent);color:#fff;font-size:12px;padding:3px 8px;border-radius:99px;display:flex;align-items:center;gap:4px;font-weight:600}
@@ -3527,6 +3534,10 @@ if(!auth){
       <button class="tbtn" onclick="toggleSortMenu()" id="sortBtn" title="Ordenar y filtrar"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 6h16M7 12h10M10 18h4"/></svg></button>
       <button class="tbtn" onclick="goSettings()" title="Ajustes"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></button>
 
+      <button onclick="openForm()" title="Nueva caja" aria-label="Agregar nueva caja" style="display:flex;align-items:center;gap:6px;background:linear-gradient(135deg,#0A84FF,#5856D6);color:#fff;border:none;border-radius:14px;padding:0 14px;height:36px;font-size:14px;font-weight:700;font-family:inherit;cursor:pointer;box-shadow:0 3px 14px rgba(10,132,255,.42),inset 0 1px 0 rgba(255,255,255,.2);transition:transform .18s cubic-bezier(.34,1.56,.64,1),box-shadow .18s;-webkit-tap-highlight-color:transparent;flex-shrink:0" onmousedown="this.style.transform='scale(.93)'" onmouseup="this.style.transform=''" onmouseleave="this.style.transform=''">
+        <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        <span>Nueva caja</span>
+      </button>
       <img id="userAvatar" src="" onclick="showUserMenu()" style="width:44px;height:44px;border-radius:50%;object-fit:cover;cursor:pointer;display:none;border:2px solid rgba(255,255,255,.2)"/>
     </div>
   </div>
@@ -4111,7 +4122,7 @@ if(!auth){
     <div class="settings-sec">
       <div class="settings-sec-label">Zona de peligro</div>
       <div class="settings-card settings-danger-card">
-        <div class="settings-row settings-tappable" onclick="confirmDeleteAll()">
+        <div class="settings-row settings-tappable" onclick="openSecureDeleteSheet()">
           <div class="settings-row-icon sri-red"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg></div>
           <div class="settings-row-text">
             <div class="settings-label" style="color:var(--red)">Borrar todos los datos</div>
@@ -5585,10 +5596,7 @@ function _getDeletedIds(){
   try{ return JSON.parse(localStorage.getItem("cb-deleted-"+currentUser.uid)||"[]"); }catch(e){ return []; }
 }
 
-function openForm(){ /* modal eliminado temporalmente */ }
-function openEditForm(){ /* modal eliminado temporalmente */ }
-function closeForm(){ /* modal eliminado */ }
-function closeFormOutside(e){ /* modal eliminado */ }
+/* openForm / openEditForm / closeForm / closeFormOutside — definidas en el bloque del modal al final del body */
 function populateRelatedSelect(cur){
   document.getElementById("fRelated").innerHTML='<option value="">— Ninguna —</option>'+
     boxes.filter(b=>b.id!==editingBoxId&&b.id!==currentBoxId).map(b=>`<option value="${b.id}"${b.id===cur?" selected":""}>${esc(b.name)}</option>`).join("");
@@ -5641,15 +5649,14 @@ function saveForm(){
         location:document.getElementById("fLoc").value.trim(),weight:document.getElementById("fWeight").value.trim(),
         color:selectedColor,priority:selectedPri,tags:[...currentTags],related:document.getElementById("fRelated").value||null,
         password:document.getElementById("fPassword").value||null,
+        secretQ:_getSecretQ()||null, secretA:_getSecretA()||null,
         items:[],date:fmtDate(),note:"",photo:null,fav:false,lastUsed:0,history:[],sealed:false,lastModified:Date.now()};
       boxes.push(newBox);
-      // Solicitar ícono IA en background
     }else{
       const box=boxes.find(b=>b.id===editingBoxId);
       if(box){
-        // Si cambió el nombre, resetear ícono para que IA recalcule
         if(box.name !== name) delete box.icon;
-        Object.assign(box,{name,number:document.getElementById("fNum").value.trim(),location:document.getElementById("fLoc").value.trim(),weight:document.getElementById("fWeight").value.trim(),color:selectedColor,priority:selectedPri,tags:[...currentTags],related:document.getElementById("fRelated").value||null,password:document.getElementById("fPassword").value||null,lastModified:Date.now()});
+        Object.assign(box,{name,number:document.getElementById("fNum").value.trim(),location:document.getElementById("fLoc").value.trim(),weight:document.getElementById("fWeight").value.trim(),color:selectedColor,priority:selectedPri,tags:[...currentTags],related:document.getElementById("fRelated").value||null,password:document.getElementById("fPassword").value||null,secretQ:_getSecretQ()||null,secretA:_getSecretA()||null,lastModified:Date.now()});
       }
     }
     const _mode=formMode, _id=editingBoxId;
@@ -9825,6 +9832,226 @@ console.log('🤖 Asistente IA BoxVision v1.0 — Listo');
 })();
 </script>
 
+<!-- ══════════════════════════════════════════════════
+     MODAL: Nueva / Editar Caja
+     ══════════════════════════════════════════════════ -->
+<div id="boxFormOverlay" style="position:fixed;inset:0;background:rgba(0,0,0,.6);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);z-index:600;display:none;align-items:flex-end;justify-content:center" onclick="closeFormOutside(event)">
+  <div id="boxFormSheet" style="background:var(--card);border-radius:24px 24px 0 0;width:100%;max-width:680px;max-height:92vh;overflow-y:auto;scrollbar-width:none;position:relative;transform:translateY(100%);transition:transform .38s cubic-bezier(.32,1,.4,1)">
+    <!-- Preview header -->
+    <div class="modal-preview" style="background:transparent">
+      <div class="modal-preview-bg" id="formPreviewBg" style="position:absolute;inset:0;background:linear-gradient(160deg,#007AFF,rgba(88,86,214,.75));transition:background .3s;border-radius:24px 24px 0 0"></div>
+      <div class="modal-preview-noise"></div>
+      <div class="modal-preview-handle" id="boxFormHandle"></div>
+      <div class="modal-preview-row">
+        <div class="modal-preview-icon" id="formPreviewIcon">📦</div>
+        <div class="modal-preview-info">
+          <div class="modal-preview-name" id="formPreviewName">Nueva caja</div>
+          <div class="modal-preview-meta" id="formPreviewMeta">Sin ubicación</div>
+          <div class="modal-preview-badge" id="formPreviewBadge">🟡 Normal</div>
+        </div>
+      </div>
+    </div>
+    <!-- Body -->
+    <div class="modal-body">
+      <!-- Nombre, Número, Ubicación agrupados iOS -->
+      <div class="form-group-ios">
+        <div class="form-ios-row">
+          <span class="form-ios-label">Nombre</span>
+          <input id="fName" class="form-ios-input" type="text" placeholder="Ej: Cocina, Libros…" oninput="updateFormPreview()" maxlength="60" autocomplete="off"/>
+        </div>
+        <div class="form-ios-row">
+          <span class="form-ios-label">Número</span>
+          <input id="fNum" class="form-ios-input" type="text" placeholder="#1, A-3…" oninput="updateFormPreview()" maxlength="20" autocomplete="off"/>
+        </div>
+        <div class="form-ios-row">
+          <span class="form-ios-label">Ubicación</span>
+          <input id="fLoc" class="form-ios-input" type="text" placeholder="Sala, Dormitorio…" oninput="updateFormPreview()" maxlength="50" autocomplete="off"/>
+        </div>
+        <div class="form-ios-row">
+          <span class="form-ios-label">Peso</span>
+          <input id="fWeight" class="form-ios-input" type="text" placeholder="5 kg, ligera…" maxlength="20" autocomplete="off"/>
+        </div>
+      </div>
+      <!-- Prioridad -->
+      <span class="form-sec-label">Prioridad</span>
+      <div class="pri-btns" style="margin-bottom:14px">
+        <button class="pri-btn" id="pri-red" onclick="setPri('red')"><span class="pri-icon">🔴</span>Urgente</button>
+        <button class="pri-btn sel" id="pri-yellow" onclick="setPri('yellow')"><span class="pri-icon">🟡</span>Normal</button>
+        <button class="pri-btn" id="pri-green" onclick="setPri('green')"><span class="pri-icon">🟢</span>Sin prisa</button>
+      </div>
+      <!-- Color -->
+      <span class="form-sec-label">Color</span>
+      <div id="colorGrid" style="margin-bottom:14px"></div>
+      <!-- Tags -->
+      <span class="form-sec-label">Etiquetas</span>
+      <div class="tags-box" id="tagsBox" onclick="document.getElementById('tagField').focus()">
+        <input id="tagField" placeholder="Añadir etiqueta…" onkeydown="handleTagKey(event)" autocomplete="off"/>
+      </div>
+      <div class="tag-sugs" id="tagSugs" style="margin-bottom:14px"></div>
+      <!-- Relacionada -->
+      <div class="form-group" style="margin-bottom:14px">
+        <label class="form-sec-label">Caja relacionada</label>
+        <select id="fRelated" class="rel-select"></select>
+      </div>
+
+      <!-- Contraseña -->
+      <span class="form-sec-label">Seguridad</span>
+      <div class="form-group-ios" style="margin-bottom:6px">
+        <div class="form-ios-row" style="position:relative">
+          <span class="form-ios-label" style="display:flex;align-items:center;gap:6px">
+            <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--accent)"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+            PIN
+          </span>
+          <input id="fPassword" class="form-ios-input" type="password" inputmode="numeric" maxlength="4" placeholder="4 dígitos (opcional)" autocomplete="new-password" oninput="this.value=this.value.replace(/\D/g,'').slice(0,4);_updatePwPreview(this.value)" style="letter-spacing:4px;font-size:18px;font-weight:700"/>
+          <button type="button" id="fPwToggle" onclick="_toggleFPw()" style="background:none;border:none;color:var(--muted);cursor:pointer;padding:0 14px 0 0;flex-shrink:0;display:flex;align-items:center;-webkit-tap-highlight-color:transparent">
+            <svg id="fPwEyeIcon" xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+          </button>
+        </div>
+      </div>
+      <!-- Preview dots del PIN -->
+      <div id="fPwDots" style="display:none;justify-content:center;gap:10px;padding:10px 0 16px">
+        <div class="pw-dot" id="fpd0"></div>
+        <div class="pw-dot" id="fpd1"></div>
+        <div class="pw-dot" id="fpd2"></div>
+        <div class="pw-dot" id="fpd3"></div>
+      </div>
+      <div id="fPwHint" style="font-size:11px;color:var(--muted);text-align:center;margin-bottom:6px;margin-top:-8px;display:none">
+        🔐 Esta caja pedirá el PIN al abrirse
+      </div>
+
+      <!-- Pregunta secreta — solo aparece cuando hay PIN -->
+      <div id="fSecretSection" style="display:none">
+        <div style="display:flex;align-items:center;gap:7px;margin:10px 2px 7px">
+          <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" style="color:#FF9500;flex-shrink:0"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+          <span style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px">Pregunta de recuperación</span>
+        </div>
+        <div style="font-size:12px;color:var(--muted);margin-bottom:10px;line-height:1.5;padding:0 2px">
+          Si olvidas el PIN, esta pregunta te permitirá recuperar el acceso. Solo tú debes saber la respuesta.
+        </div>
+        <div class="form-group-ios" style="margin-bottom:8px">
+          <!-- Selector de pregunta predefinida o personalizada -->
+          <div class="form-ios-row">
+            <span class="form-ios-label" style="font-size:12px">Pregunta</span>
+            <select id="fSecretQ" class="form-ios-input" style="background:transparent;border:none;outline:none;font-size:14px;color:var(--text);font-family:inherit;flex:1;padding:14px 8px;appearance:none;-webkit-appearance:none;cursor:pointer" onchange="_onSecretQChange(this.value)">
+              <option value="">— Elige una pregunta —</option>
+              <option value="¿Cuál es el nombre de tu primera mascota?">🐾 Nombre de tu primera mascota</option>
+              <option value="¿En qué ciudad naciste?">🏙️ Ciudad donde naciste</option>
+              <option value="¿Cuál es tu película favorita?">🎬 Tu película favorita</option>
+              <option value="¿Cuál es el apellido de tu mejor amigo de la infancia?">👫 Apellido de tu mejor amigo de infancia</option>
+              <option value="¿Cuál es tu comida favorita?">🍕 Tu comida favorita</option>
+              <option value="custom">✏️ Escribir mi propia pregunta…</option>
+            </select>
+          </div>
+          <!-- Input para pregunta personalizada -->
+          <div class="form-ios-row" id="fSecretQCustomRow" style="display:none">
+            <span class="form-ios-label" style="font-size:12px">Mi pregunta</span>
+            <input id="fSecretQCustom" class="form-ios-input" type="text" placeholder="Escribe tu pregunta…" maxlength="100" autocomplete="off"/>
+          </div>
+          <!-- Respuesta -->
+          <div class="form-ios-row" style="border-top:0.5px solid rgba(255,255,255,.06)">
+            <span class="form-ios-label" style="font-size:12px">Respuesta</span>
+            <input id="fSecretA" class="form-ios-input" type="text" placeholder="Tu respuesta secreta…" maxlength="80" autocomplete="off" style="font-size:14px"/>
+            <button type="button" onclick="_toggleSecretA()" style="background:none;border:none;color:var(--muted);cursor:pointer;padding:0 14px 0 0;flex-shrink:0;-webkit-tap-highlight-color:transparent">
+              <svg id="fSecretAEye" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+            </button>
+          </div>
+        </div>
+        <div style="font-size:11px;color:rgba(255,149,0,.7);text-align:center;margin-bottom:14px;padding:0 4px">
+          💡 La respuesta no distingue mayúsculas ni espacios
+        </div>
+      </div>
+
+    </div>
+    <!-- Botones -->
+    <div class="modal-acts" style="padding-bottom:calc(6px + env(safe-area-inset-bottom))">
+      <button class="m-btn m-ghost" onclick="closeForm()">Cancelar</button>
+      <button class="m-btn m-primary" onclick="saveForm()" id="saveFormBtn">Guardar caja</button>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+  /* ── Formulario de caja: abrir / cerrar ── */
+  var _formDragY=0, _formDragStart=0, _formDragging=false;
+
+  window.openForm = function(){
+    var overlay = document.getElementById('boxFormOverlay');
+    var sheet   = document.getElementById('boxFormSheet');
+    if(!overlay) return;
+    formMode = 'new'; editingBoxId = null;
+    selectedColor = '#007AFF'; selectedPri = 'yellow'; currentTags = [];
+    // Reset campos
+    ['fName','fNum','fLoc','fWeight','fPassword'].forEach(function(id){
+      var el = document.getElementById(id); if(el){ el.value=''; if(id==='fPassword') el.type='password'; }
+    });
+    _updatePwPreview('');
+    _resetSecretFields();
+    buildColorGrid(); updatePriBtns(); renderTagChips(); populateRelatedSelect(null); updateFormPreview();
+    document.getElementById('saveFormBtn').textContent = 'Guardar caja';
+    overlay.style.display = 'flex';
+    requestAnimationFrame(function(){
+      requestAnimationFrame(function(){
+        sheet.style.transform = 'translateY(0)';
+      });
+    });
+    setTimeout(function(){ var el=document.getElementById('fName'); if(el) el.focus(); }, 400);
+    // Drag-to-close
+    var handle = document.getElementById('boxFormHandle');
+    if(handle && !handle._boxDragReady){
+      handle._boxDragReady = true;
+      handle.addEventListener('touchstart', function(e){ _formDragStart=e.touches[0].clientY; _formDragging=true; }, {passive:true});
+      handle.addEventListener('touchmove', function(e){
+        if(!_formDragging) return;
+        _formDragY = Math.max(0, e.touches[0].clientY - _formDragStart);
+        sheet.style.transform = 'translateY('+_formDragY+'px)';
+        sheet.style.transition = 'none';
+      }, {passive:true});
+      handle.addEventListener('touchend', function(){
+        _formDragging=false;
+        sheet.style.transition='';
+        if(_formDragY > 120){ closeForm(); }
+        else { sheet.style.transform='translateY(0)'; }
+        _formDragY=0;
+      });
+    }
+  };
+
+  window.openEditForm = function(){
+    var box = boxes.find(function(b){ return b.id===currentBoxId; });
+    if(!box) return;
+    formMode = 'edit'; editingBoxId = box.id;
+    selectedColor = box.color||'#007AFF'; selectedPri = box.priority||'yellow'; currentTags = [...(box.tags||[])];
+    var overlay = document.getElementById('boxFormOverlay');
+    var sheet   = document.getElementById('boxFormSheet');
+    var set = function(id,v){ var el=document.getElementById(id); if(el) el.value=v||''; };
+    set('fName', box.name); set('fNum', box.number); set('fLoc', box.location);
+    set('fWeight', box.weight); set('fPassword', box.password||'');
+    var fpEl = document.getElementById('fPassword'); if(fpEl) fpEl.type='password';
+    _updatePwPreview(box.password||'');
+    _loadSecretFields(box);
+    buildColorGrid(); updatePriBtns(); renderTagChips(); populateRelatedSelect(box.related); updateFormPreview();
+    document.getElementById('saveFormBtn').textContent = 'Guardar cambios';
+    overlay.style.display = 'flex';
+    requestAnimationFrame(function(){
+      requestAnimationFrame(function(){ sheet.style.transform = 'translateY(0)'; });
+    });
+  };
+
+  window.closeForm = function(){
+    var sheet   = document.getElementById('boxFormSheet');
+    var overlay = document.getElementById('boxFormOverlay');
+    if(!sheet) return;
+    sheet.style.transform = 'translateY(100%)';
+    setTimeout(function(){ if(overlay) overlay.style.display='none'; }, 380);
+  };
+
+  window.closeFormOutside = function(e){
+    if(e.target === document.getElementById('boxFormOverlay')) closeForm();
+  };
+})();
+</script>
+
 <script>
 (function(){
   console.log('🎯 BoxVision v2.2 - Sistema de Logs Mejorado Iniciado');
@@ -9933,6 +10160,916 @@ console.log('🤖 Asistente IA BoxVision v1.0 — Listo');
 </script>
 
 
+
+<!-- ══════════════════════════════════════════════════
+     MODAL: Contraseña de caja
+     ══════════════════════════════════════════════════ -->
+<style>
+#pwOverlay{
+  position:fixed;inset:0;z-index:700;
+  background:rgba(0,0,0,.7);
+  backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
+  display:none;align-items:center;justify-content:center;
+  padding:20px;
+}
+#pwCard{
+  background:var(--card);
+  border-radius:28px;
+  width:100%;max-width:340px;
+  padding:32px 24px 28px;
+  box-shadow:0 24px 60px rgba(0,0,0,.5),0 0 0 0.5px rgba(255,255,255,.08);
+  display:flex;flex-direction:column;align-items:center;gap:0;
+  animation:pwCardIn .35s cubic-bezier(.34,1.2,.64,1) both;
+}
+@keyframes pwCardIn{from{opacity:0;transform:scale(.88) translateY(20px)}to{opacity:1;transform:scale(1) translateY(0)}}
+#pwBoxIcon{font-size:52px;margin-bottom:10px;filter:drop-shadow(0 4px 12px rgba(0,0,0,.3))}
+#pwBoxName{font-size:19px;font-weight:800;color:var(--text);letter-spacing:-.4px;margin-bottom:4px;text-align:center}
+#pwSubtitle{font-size:13px;color:var(--muted);margin-bottom:26px;text-align:center}
+/* Puntos PIN */
+.pw-dots{display:flex;gap:14px;margin-bottom:10px}
+.pw-dot{
+  width:14px;height:14px;border-radius:50%;
+  border:2px solid rgba(255,255,255,.25);
+  background:transparent;
+  transition:background .18s cubic-bezier(.34,1.56,.64,1),border-color .18s,transform .18s cubic-bezier(.34,1.56,.64,1);
+}
+.pw-dot.filled{background:#0A84FF;border-color:#0A84FF;transform:scale(1.18)}
+.pw-dot.error{background:#FF3B30!important;border-color:#FF3B30!important}
+/* Input oculto */
+#pwInput{
+  position:absolute;opacity:0;width:1px;height:1px;
+  pointer-events:none;font-size:16px;
+}
+#pwError{
+  font-size:13px;color:#FF3B30;font-weight:600;
+  min-height:18px;text-align:center;margin-bottom:20px;
+  transition:opacity .2s;
+}
+/* Teclado numérico */
+.pw-keypad{
+  display:grid;grid-template-columns:repeat(3,1fr);
+  gap:10px;width:100%;max-width:280px;
+}
+.pw-key{
+  background:var(--card2,rgba(255,255,255,.07));
+  border:0.5px solid var(--border);
+  border-radius:16px;
+  height:58px;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  cursor:pointer;-webkit-tap-highlight-color:transparent;
+  font-size:22px;font-weight:700;color:var(--text);
+  transition:background .12s,transform .12s cubic-bezier(.34,1.56,.64,1),box-shadow .12s;
+  user-select:none;-webkit-user-select:none;
+  font-family:inherit;border:none;
+  box-shadow:0 2px 8px rgba(0,0,0,.15);
+  gap:1px;
+}
+.pw-key .pw-key-sub{font-size:8px;letter-spacing:.8px;color:var(--muted);font-weight:600;text-transform:uppercase}
+.pw-key:active{background:rgba(10,132,255,.18)!important;transform:scale(.91);box-shadow:none}
+.pw-key-del{font-size:18px;background:transparent!important;box-shadow:none!important;border:none!important}
+.pw-key-del:active{background:rgba(255,255,255,.08)!important}
+.pw-key-empty{background:transparent!important;box-shadow:none!important;border:none!important;pointer-events:none}
+/* Botón cancelar abajo */
+#pwCancelBtn{
+  margin-top:16px;background:none;border:none;
+  color:var(--muted);font-size:15px;font-weight:600;
+  cursor:pointer;font-family:inherit;padding:8px 24px;
+  border-radius:12px;transition:color .15s,background .15s;
+  -webkit-tap-highlight-color:transparent;
+}
+#pwCancelBtn:active{background:rgba(255,255,255,.07);color:var(--text)}
+</style>
+
+<div id="pwOverlay">
+  <div id="pwCard">
+    <div id="pwBoxIcon">📦</div>
+    <div id="pwBoxName">Caja</div>
+    <div id="pwSubtitle">Ingresa la contraseña para abrir</div>
+    <div class="pw-dots">
+      <div class="pw-dot" id="pwd0"></div>
+      <div class="pw-dot" id="pwd1"></div>
+      <div class="pw-dot" id="pwd2"></div>
+      <div class="pw-dot" id="pwd3"></div>
+    </div>
+    <div id="pwError"></div>
+    <input id="pwInput" type="password" inputmode="numeric" maxlength="4"
+      oninput="syncPwDots(this.value);if(this.value.length>=4)checkPassword()"
+      onkeydown="if(event.key==='Enter')checkPassword()"/>
+    <div class="pw-keypad">
+      <button class="pw-key" onclick="_pwTap('1')">1</button>
+      <button class="pw-key" onclick="_pwTap('2')">2<span class="pw-key-sub">ABC</span></button>
+      <button class="pw-key" onclick="_pwTap('3')">3<span class="pw-key-sub">DEF</span></button>
+      <button class="pw-key" onclick="_pwTap('4')">4<span class="pw-key-sub">GHI</span></button>
+      <button class="pw-key" onclick="_pwTap('5')">5<span class="pw-key-sub">JKL</span></button>
+      <button class="pw-key" onclick="_pwTap('6')">6<span class="pw-key-sub">MNO</span></button>
+      <button class="pw-key" onclick="_pwTap('7')">7<span class="pw-key-sub">PQRS</span></button>
+      <button class="pw-key" onclick="_pwTap('8')">8<span class="pw-key-sub">TUV</span></button>
+      <button class="pw-key" onclick="_pwTap('9')">9<span class="pw-key-sub">WXYZ</span></button>
+      <div class="pw-key pw-key-empty"></div>
+      <button class="pw-key" onclick="_pwTap('0')">0</button>
+      <button class="pw-key pw-key-del" onclick="_pwDel()">
+        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 4H8l-7 8 7 8h13a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2z"/><line x1="18" y1="9" x2="12" y2="15"/><line x1="12" y1="9" x2="18" y2="15"/></svg>
+      </button>
+    </div>
+    <button id="pwCancelBtn" onclick="closePwModal()">Cancelar</button>
+    <button id="pwForgotBtn" onclick="_openForgotPin()" style="background:none;border:none;color:var(--accent);font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;padding:4px 16px 2px;-webkit-tap-highlight-color:transparent;opacity:.85">¿Olvidaste el PIN?</button>
+  </div>
+</div>
+
+<!-- ── Sheet: Recuperar PIN ── -->
+<style>
+#forgotPinOverlay{
+  position:fixed;inset:0;z-index:800;
+  background:rgba(0,0,0,.65);
+  backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
+  display:none;align-items:flex-end;justify-content:center;
+}
+#forgotPinSheet{
+  background:var(--card);
+  border-radius:28px 28px 0 0;
+  width:100%;max-width:480px;
+  padding:28px 24px calc(28px + env(safe-area-inset-bottom));
+  box-shadow:0 -8px 40px rgba(0,0,0,.4),0 0 0 0.5px rgba(255,255,255,.07);
+  transform:translateY(100%);
+  transition:transform .38s cubic-bezier(.32,1,.4,1);
+  display:flex;flex-direction:column;gap:0;
+}
+.fp-handle{width:36px;height:5px;border-radius:99px;background:rgba(255,255,255,.18);margin:0 auto 22px;}
+.fp-icon{font-size:44px;text-align:center;margin-bottom:10px;}
+.fp-title{font-size:18px;font-weight:800;color:var(--text);text-align:center;letter-spacing:-.3px;margin-bottom:6px;}
+.fp-desc{font-size:13px;color:var(--muted);text-align:center;line-height:1.5;margin-bottom:22px;}
+.fp-step{display:none;flex-direction:column;gap:0;}
+.fp-step.active{display:flex;}
+/* Step 1: verificar nombre */
+.fp-verify-input{
+  width:100%;box-sizing:border-box;
+  background:var(--input);border:1.5px solid var(--border);
+  border-radius:14px;padding:14px 16px;
+  font-size:16px;color:var(--text);font-family:inherit;
+  outline:none;transition:border-color .18s,box-shadow .18s;
+  margin-bottom:10px;
+}
+.fp-verify-input:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(10,132,255,.12);}
+.fp-verify-input::placeholder{color:var(--muted);opacity:.55;}
+.fp-error{font-size:12px;color:#FF3B30;font-weight:600;min-height:16px;margin-bottom:12px;text-align:center;}
+.fp-btn-primary{
+  width:100%;padding:15px;border-radius:16px;border:none;
+  background:linear-gradient(135deg,#0A84FF,#5856D6);
+  color:#fff;font-size:16px;font-weight:700;cursor:pointer;
+  font-family:inherit;
+  box-shadow:0 4px 18px rgba(10,132,255,.35);
+  transition:transform .14s cubic-bezier(.34,1.56,.64,1),opacity .14s;
+  -webkit-tap-highlight-color:transparent;
+  margin-bottom:10px;
+}
+.fp-btn-primary:active{transform:scale(.97);}
+.fp-btn-ghost{
+  width:100%;padding:14px;border-radius:16px;
+  background:transparent;border:1.5px solid var(--border);
+  color:var(--muted);font-size:15px;font-weight:600;cursor:pointer;
+  font-family:inherit;transition:background .15s;
+  -webkit-tap-highlight-color:transparent;
+}
+.fp-btn-ghost:active{background:rgba(255,255,255,.07);}
+/* Step 2: nuevo PIN */
+.fp-new-dots{display:flex;gap:14px;justify-content:center;margin:16px 0 6px;}
+.fp-new-keypad{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:18px;}
+/* Step 3: éxito */
+.fp-success-icon{font-size:56px;text-align:center;margin:8px 0 12px;animation:fpSuccessPop .5s cubic-bezier(.34,1.56,.64,1) both;}
+@keyframes fpSuccessPop{from{opacity:0;transform:scale(.4)}to{opacity:1;transform:scale(1)}}
+</style>
+
+<div id="forgotPinOverlay" onclick="_closeForgotPinOutside(event)">
+  <div id="forgotPinSheet">
+    <div class="fp-handle"></div>
+
+    <!-- Step 1: pregunta secreta -->
+    <div class="fp-step active" id="fpStep1">
+      <div class="fp-icon">🔑</div>
+      <div class="fp-title">Recuperar acceso</div>
+
+      <!-- Sin pregunta secreta configurada -->
+      <div id="fpNoSecretMsg" style="display:none;text-align:center">
+        <div style="font-size:13px;color:var(--muted);line-height:1.6;margin-bottom:20px;padding:0 8px">
+          Esta caja no tiene pregunta de recuperación configurada.<br>
+          <strong style="color:var(--text)">No es posible recuperar el PIN.</strong>
+        </div>
+        <div style="font-size:12px;color:rgba(255,149,0,.8);background:rgba(255,149,0,.1);border:1px solid rgba(255,149,0,.2);border-radius:12px;padding:12px 14px;margin-bottom:20px;line-height:1.5">
+          💡 Al editar la caja puedes agregar una pregunta de recuperación para el futuro.
+        </div>
+        <button class="fp-btn-ghost" onclick="_closeForgotPin()">Cerrar</button>
+      </div>
+
+      <!-- Con pregunta secreta -->
+      <div id="fpVerifyForm">
+        <div style="background:var(--input);border:1px solid var(--border);border-radius:14px;padding:14px 16px;margin-bottom:16px;text-align:center">
+          <div style="font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;font-weight:700;margin-bottom:6px">Tu pregunta secreta</div>
+          <div id="fpSecretQuestion" style="font-size:15px;font-weight:600;color:var(--text);line-height:1.4"></div>
+        </div>
+        <input id="fpVerifyInput" class="fp-verify-input" type="text" placeholder="Tu respuesta…" autocomplete="off"
+          oninput="document.getElementById('fpVerifyError').textContent=''"
+          onkeydown="if(event.key==='Enter')_fpVerify()"/>
+        <div class="fp-error" id="fpVerifyError"></div>
+        <button class="fp-btn-primary" onclick="_fpVerify()">Verificar respuesta</button>
+        <button class="fp-btn-ghost" onclick="_closeForgotPin()">Cancelar</button>
+      </div>
+    </div>
+
+    <!-- Step 2: nuevo PIN -->
+    <div class="fp-step" id="fpStep2">
+      <div class="fp-icon">🔐</div>
+      <div class="fp-title">Nuevo PIN</div>
+      <div class="fp-desc" id="fpNewDesc">Ingresa un nuevo PIN de 4 dígitos para la caja.</div>
+      <div class="fp-new-dots">
+        <div class="pw-dot" id="fpn0"></div>
+        <div class="pw-dot" id="fpn1"></div>
+        <div class="pw-dot" id="fpn2"></div>
+        <div class="pw-dot" id="fpn3"></div>
+      </div>
+      <div class="fp-error" id="fpNewError" style="margin-top:6px;"></div>
+      <input id="fpNewInput" type="password" inputmode="numeric" maxlength="4"
+        style="position:absolute;opacity:0;width:1px;height:1px;pointer-events:none;"
+        oninput="this.value=this.value.replace(/\D/g,'').slice(0,4);_fpSyncDots(this.value,'fpn');if(this.value.length===4)_fpConfirmStep()"/>
+      <div class="fp-new-keypad">
+        <button class="pw-key" onclick="_fpTap('1','fpNewInput','fpn')">1</button>
+        <button class="pw-key" onclick="_fpTap('2','fpNewInput','fpn')">2<span class="pw-key-sub">ABC</span></button>
+        <button class="pw-key" onclick="_fpTap('3','fpNewInput','fpn')">3<span class="pw-key-sub">DEF</span></button>
+        <button class="pw-key" onclick="_fpTap('4','fpNewInput','fpn')">4<span class="pw-key-sub">GHI</span></button>
+        <button class="pw-key" onclick="_fpTap('5','fpNewInput','fpn')">5<span class="pw-key-sub">JKL</span></button>
+        <button class="pw-key" onclick="_fpTap('6','fpNewInput','fpn')">6<span class="pw-key-sub">MNO</span></button>
+        <button class="pw-key" onclick="_fpTap('7','fpNewInput','fpn')">7<span class="pw-key-sub">PQRS</span></button>
+        <button class="pw-key" onclick="_fpTap('8','fpNewInput','fpn')">8<span class="pw-key-sub">TUV</span></button>
+        <button class="pw-key" onclick="_fpTap('9','fpNewInput','fpn')">9<span class="pw-key-sub">WXYZ</span></button>
+        <div class="pw-key pw-key-empty"></div>
+        <button class="pw-key" onclick="_fpTap('0','fpNewInput','fpn')">0</button>
+        <button class="pw-key pw-key-del" onclick="_fpDel('fpNewInput','fpn')">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 4H8l-7 8 7 8h13a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2z"/><line x1="18" y1="9" x2="12" y2="15"/><line x1="12" y1="9" x2="18" y2="15"/></svg>
+        </button>
+      </div>
+      <button class="fp-btn-ghost" onclick="_fpBackToStep1()">← Volver</button>
+    </div>
+
+    <!-- Step 3: confirmar PIN -->
+    <div class="fp-step" id="fpStep3">
+      <div class="fp-icon">✅</div>
+      <div class="fp-title">Confirmar PIN</div>
+      <div class="fp-desc">Ingresa el PIN nuevamente para confirmarlo.</div>
+      <div class="fp-new-dots">
+        <div class="pw-dot" id="fpc0"></div>
+        <div class="pw-dot" id="fpc1"></div>
+        <div class="pw-dot" id="fpc2"></div>
+        <div class="pw-dot" id="fpc3"></div>
+      </div>
+      <div class="fp-error" id="fpConfirmError" style="margin-top:6px;"></div>
+      <input id="fpConfirmInput" type="password" inputmode="numeric" maxlength="4"
+        style="position:absolute;opacity:0;width:1px;height:1px;pointer-events:none;"
+        oninput="this.value=this.value.replace(/\D/g,'').slice(0,4);_fpSyncDots(this.value,'fpc');if(this.value.length===4)_fpSavePin()"/>
+      <div class="fp-new-keypad">
+        <button class="pw-key" onclick="_fpTap('1','fpConfirmInput','fpc')">1</button>
+        <button class="pw-key" onclick="_fpTap('2','fpConfirmInput','fpc')">2<span class="pw-key-sub">ABC</span></button>
+        <button class="pw-key" onclick="_fpTap('3','fpConfirmInput','fpc')">3<span class="pw-key-sub">DEF</span></button>
+        <button class="pw-key" onclick="_fpTap('4','fpConfirmInput','fpc')">4<span class="pw-key-sub">GHI</span></button>
+        <button class="pw-key" onclick="_fpTap('5','fpConfirmInput','fpc')">5<span class="pw-key-sub">JKL</span></button>
+        <button class="pw-key" onclick="_fpTap('6','fpConfirmInput','fpc')">6<span class="pw-key-sub">MNO</span></button>
+        <button class="pw-key" onclick="_fpTap('7','fpConfirmInput','fpc')">7<span class="pw-key-sub">PQRS</span></button>
+        <button class="pw-key" onclick="_fpTap('8','fpConfirmInput','fpc')">8<span class="pw-key-sub">TUV</span></button>
+        <button class="pw-key" onclick="_fpTap('9','fpConfirmInput','fpc')">9<span class="pw-key-sub">WXYZ</span></button>
+        <div class="pw-key pw-key-empty"></div>
+        <button class="pw-key" onclick="_fpTap('0','fpConfirmInput','fpc')">0</button>
+        <button class="pw-key pw-key-del" onclick="_fpDel('fpConfirmInput','fpc')">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 4H8l-7 8 7 8h13a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2z"/><line x1="18" y1="9" x2="12" y2="15"/><line x1="12" y1="9" x2="18" y2="15"/></svg>
+        </button>
+      </div>
+      <button class="fp-btn-ghost" onclick="_fpBackToStep2()">← Volver</button>
+    </div>
+
+    <!-- Step 4: éxito -->
+    <div class="fp-step" id="fpStep4">
+      <div class="fp-success-icon">🎉</div>
+      <div class="fp-title">¡PIN actualizado!</div>
+      <div class="fp-desc">Tu caja ahora tiene un nuevo PIN. ¡No lo olvides!</div>
+      <button class="fp-btn-primary" onclick="_fpDone()" style="margin-top:8px">Abrir caja</button>
+    </div>
+
+  </div>
+</div>
+
+<script>
+(function(){
+  var _fpTargetId = null;
+  var _fpNewPin   = null;
+
+  window._openForgotPin = function(){
+    _fpTargetId = window._pwTargetId;
+    if(!_fpTargetId) return;
+    var box = boxes.find(function(b){ return b.id===_fpTargetId; });
+    if(!box) return;
+
+    // Si no tiene pregunta secreta, avisar
+    if(!box.secretQ || !box.secretA){
+      document.getElementById('fpVerifyError').textContent='';
+      document.getElementById('fpNoSecretMsg').style.display='block';
+      document.getElementById('fpVerifyForm').style.display='none';
+    } else {
+      document.getElementById('fpNoSecretMsg').style.display='none';
+      document.getElementById('fpVerifyForm').style.display='block';
+      document.getElementById('fpSecretQuestion').textContent=box.secretQ;
+      document.getElementById('fpVerifyInput').value='';
+      document.getElementById('fpVerifyError').textContent='';
+    }
+
+    _fpNewPin = null;
+    ['fpNewInput','fpConfirmInput'].forEach(function(id){
+      var el=document.getElementById(id); if(el) el.value='';
+    });
+    _fpSyncDots('','fpn'); _fpSyncDots('','fpc');
+    document.getElementById('fpNewError').textContent='';
+    document.getElementById('fpConfirmError').textContent='';
+    _fpShowStep(1);
+    var ov = document.getElementById('forgotPinOverlay');
+    var sh = document.getElementById('forgotPinSheet');
+    ov.style.display='flex';
+    requestAnimationFrame(function(){ requestAnimationFrame(function(){ sh.style.transform='translateY(0)'; }); });
+    setTimeout(function(){ var el=document.getElementById('fpVerifyInput'); if(el) el.focus(); }, 400);
+  };
+
+  window._closeForgotPin = function(){
+    var sh = document.getElementById('forgotPinSheet');
+    var ov = document.getElementById('forgotPinOverlay');
+    sh.style.transform='translateY(100%)';
+    setTimeout(function(){ ov.style.display='none'; }, 380);
+  };
+
+  window._closeForgotPinOutside = function(e){
+    if(e.target===document.getElementById('forgotPinOverlay')) _closeForgotPin();
+  };
+
+  function _fpShowStep(n){
+    [1,2,3,4].forEach(function(i){
+      var el=document.getElementById('fpStep'+i);
+      if(el) el.classList.toggle('active', i===n);
+    });
+  }
+
+  window._fpVerify = function(){
+    var box = boxes.find(function(b){ return b.id===_fpTargetId; });
+    if(!box) return;
+    var val = (document.getElementById('fpVerifyInput').value||'').trim().toLowerCase().replace(/\s+/g,' ');
+    var correct = (box.secretA||'').trim().toLowerCase().replace(/\s+/g,' ');
+    if(!val || val !== correct){
+      document.getElementById('fpVerifyError').textContent='❌ Respuesta incorrecta, intenta de nuevo.';
+      if(navigator.vibrate) navigator.vibrate([60,30,60]);
+      return;
+    }
+    document.getElementById('fpVerifyError').textContent='';
+    _fpShowStep(2);
+    setTimeout(function(){ var el=document.getElementById('fpNewInput'); if(el) el.focus(); }, 200);
+  };
+
+  window._fpConfirmStep = function(){
+    _fpNewPin = document.getElementById('fpNewInput').value;
+    _fpShowStep(3);
+    setTimeout(function(){ var el=document.getElementById('fpConfirmInput'); if(el) el.focus(); }, 200);
+  };
+
+  window._fpSavePin = function(){
+    var confirm = document.getElementById('fpConfirmInput').value;
+    if(confirm !== _fpNewPin){
+      document.getElementById('fpConfirmError').textContent='❌ Los PINs no coinciden.';
+      // Shake y reset
+      setTimeout(function(){
+        document.getElementById('fpConfirmInput').value='';
+        _fpSyncDots('','fpc');
+        document.getElementById('fpConfirmError').textContent='';
+      }, 1200);
+      if(navigator.vibrate) navigator.vibrate([60,30,60]);
+      return;
+    }
+    // Guardar el nuevo PIN
+    var box = boxes.find(function(b){ return b.id===_fpTargetId; });
+    if(box){
+      box.password = _fpNewPin || null;
+      if(typeof saveData==='function') saveData();
+    }
+    _fpShowStep(4);
+  };
+
+  window._fpDone = function(){
+    _closeForgotPin();
+    // Cerrar también el modal de contraseña y abrir la caja directamente
+    if(typeof closePwModal==='function') closePwModal();
+    if(typeof _doOpenDetail==='function' && _fpTargetId) _doOpenDetail(_fpTargetId);
+  };
+
+  window._fpBackToStep1 = function(){
+    document.getElementById('fpNewInput').value='';
+    _fpSyncDots('','fpn');
+    _fpShowStep(1);
+  };
+  window._fpBackToStep2 = function(){
+    document.getElementById('fpConfirmInput').value='';
+    _fpSyncDots('','fpc');
+    _fpShowStep(2);
+  };
+
+  window._fpSyncDots = function(val, prefix){
+    for(var i=0;i<4;i++){
+      var d=document.getElementById(prefix+i);
+      if(d) d.classList.toggle('filled', i < val.length);
+    }
+  };
+
+  window._fpTap = function(d, inputId, prefix){
+    var inp=document.getElementById(inputId);
+    if(!inp||inp.value.length>=4) return;
+    inp.value+=d;
+    inp.value=inp.value.replace(/\D/g,'').slice(0,4);
+    _fpSyncDots(inp.value, prefix);
+    if(navigator.vibrate) navigator.vibrate(8);
+    if(inp.value.length>=4){
+      if(inputId==='fpNewInput') setTimeout(_fpConfirmStep,80);
+      else if(inputId==='fpConfirmInput') setTimeout(_fpSavePin,80);
+    }
+  };
+
+  window._fpDel = function(inputId, prefix){
+    var inp=document.getElementById(inputId);
+    if(!inp) return;
+    inp.value=inp.value.slice(0,-1);
+    _fpSyncDots(inp.value, prefix);
+    if(navigator.vibrate) navigator.vibrate(6);
+  };
+})();
+</script>
+
+<script>
+function _updatePwPreview(val){
+  var dots = document.getElementById('fPwDots');
+  var hint = document.getElementById('fPwHint');
+  var sec  = document.getElementById('fSecretSection');
+  if(dots){ dots.style.display = val.length > 0 ? 'flex' : 'none'; }
+  if(hint){ hint.style.display = val.length === 4 ? 'block' : 'none'; }
+  if(sec){  sec.style.display  = val.length > 0  ? 'block' : 'none'; }
+  for(var i=0;i<4;i++){
+    var d=document.getElementById('fpd'+i);
+    if(d) d.classList.toggle('filled', i < val.length);
+  }
+}
+function _toggleFPw(){
+  var inp = document.getElementById('fPassword');
+  var ico = document.getElementById('fPwEyeIcon');
+  if(!inp) return;
+  var show = inp.type === 'password';
+  inp.type = show ? 'text' : 'password';
+  ico.innerHTML = show
+    ? '<path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94"/><path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19"/><line x1="1" y1="1" x2="23" y2="23"/>'
+    : '<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>';
+}
+function _onSecretQChange(val){
+  var row = document.getElementById('fSecretQCustomRow');
+  if(row) row.style.display = val==='custom' ? 'flex' : 'none';
+}
+function _toggleSecretA(){
+  var inp = document.getElementById('fSecretA');
+  var ico = document.getElementById('fSecretAEye');
+  if(!inp) return;
+  var show = inp.type !== 'password' ? false : true;
+  inp.type = show ? 'text' : 'password';
+  ico.innerHTML = show
+    ? '<path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94"/><path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19"/><line x1="1" y1="1" x2="23" y2="23"/>'
+    : '<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>';
+}
+function _getSecretQ(){
+  var sel = document.getElementById('fSecretQ');
+  if(!sel) return '';
+  if(sel.value === 'custom'){
+    return (document.getElementById('fSecretQCustom')?.value||'').trim();
+  }
+  return sel.value;
+}
+function _getSecretA(){
+  return (document.getElementById('fSecretA')?.value||'').trim().toLowerCase().replace(/\s+/g,' ');
+}
+function _resetSecretFields(){
+  var sel = document.getElementById('fSecretQ');
+  if(sel) sel.value='';
+  var qc = document.getElementById('fSecretQCustom'); if(qc) qc.value='';
+  var qa = document.getElementById('fSecretA');       if(qa){ qa.value=''; qa.type='text'; }
+  var row= document.getElementById('fSecretQCustomRow'); if(row) row.style.display='none';
+  var sec= document.getElementById('fSecretSection');    if(sec) sec.style.display='none';
+}
+function _loadSecretFields(box){
+  var sel = document.getElementById('fSecretQ');
+  var qc  = document.getElementById('fSecretQCustom');
+  var qa  = document.getElementById('fSecretA');
+  var row = document.getElementById('fSecretQCustomRow');
+  if(!sel) return;
+  var q = box.secretQ||'', a = box.secretA||'';
+  // Detectar si es pregunta custom o predefinida
+  var opts = Array.from(sel.options).map(function(o){return o.value;});
+  if(q && !opts.includes(q)){
+    sel.value='custom'; if(qc) qc.value=q; if(row) row.style.display='flex';
+  } else {
+    sel.value=q; if(row) row.style.display='none';
+  }
+  if(qa) qa.value=a;
+}
+function _pwTap(d){
+  var inp=document.getElementById('pwInput');
+  if(!inp||inp.value.length>=4) return;
+  inp.value+=d;
+  syncPwDots(inp.value);
+  if(navigator.vibrate) navigator.vibrate(8);
+  if(inp.value.length>=4) setTimeout(checkPassword,80);
+}
+function _pwDel(){
+  var inp=document.getElementById('pwInput');
+  if(!inp) return;
+  inp.value=inp.value.slice(0,-1);
+  syncPwDots(inp.value);
+  if(navigator.vibrate) navigator.vibrate(6);
+}
+</script>
+
+<!-- ══════════════════════════════════════════════════
+     BORRADO SEGURO — Sheet de verificación 3 pasos
+     ══════════════════════════════════════════════════ -->
+<div id="secureDeleteOverlay" style="display:none;position:fixed;inset:0;z-index:9990;background:rgba(0,0,0,0.6);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)" onclick="_sdelOutside(event)">
+  <div id="secureDeleteSheet" style="position:absolute;bottom:0;left:0;right:0;max-width:480px;margin:0 auto;background:var(--card,#1e1e28);border-radius:24px 24px 0 0;padding:0 0 max(28px,env(safe-area-inset-bottom,28px));transform:translateY(100%);transition:transform .42s cubic-bezier(.32,0,.67,0);box-shadow:0 -8px 48px rgba(0,0,0,.6)">
+
+    <!-- Handle -->
+    <div style="width:36px;height:5px;border-radius:99px;background:rgba(255,255,255,.18);margin:12px auto 0"></div>
+
+    <!-- Header -->
+    <div style="padding:16px 20px 12px;display:flex;align-items:center;gap:12px;border-bottom:0.5px solid rgba(255,255,255,.08)">
+      <div style="width:40px;height:40px;border-radius:14px;background:rgba(255,59,48,.15);border:1px solid rgba(255,59,48,.3);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0">🗑️</div>
+      <div style="flex:1;min-width:0">
+        <div style="font-size:16px;font-weight:800;color:#FF3B30;letter-spacing:-.3px">Borrar todos los datos</div>
+        <div style="font-size:12px;color:rgba(255,255,255,.45);margin-top:1px">Verificación de seguridad requerida</div>
+      </div>
+      <button onclick="_sdelClose()" style="width:30px;height:30px;border-radius:50%;background:rgba(255,255,255,.1);border:none;cursor:pointer;color:rgba(255,255,255,.6);font-size:16px;display:flex;align-items:center;justify-content:center;font-family:inherit">✕</button>
+    </div>
+
+    <!-- Indicador de pasos -->
+    <div style="display:flex;align-items:center;justify-content:center;gap:6px;padding:14px 20px 0">
+      <div id="sdStep1dot" style="width:8px;height:8px;border-radius:50%;background:#FF3B30;transition:all .3s"></div>
+      <div id="sdStep2dot" style="width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,.2);transition:all .3s"></div>
+      <div id="sdStep3dot" style="width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,.2);transition:all .3s"></div>
+    </div>
+
+    <!-- ── PASO 1: Envío de código por email ── -->
+    <div id="sdStep1" style="padding:20px 20px 4px">
+      <div style="text-align:center;margin-bottom:18px">
+        <div style="font-size:36px;margin-bottom:8px">📧</div>
+        <div style="font-size:15px;font-weight:700;color:var(--text,#fff);margin-bottom:6px">Verificación por correo</div>
+        <div style="font-size:13px;color:rgba(255,255,255,.5);line-height:1.5">
+          Enviaremos un código de 6 dígitos a<br>
+          <span id="sdEmailDisplay" style="color:#0A84FF;font-weight:600"></span>
+        </div>
+      </div>
+      <button id="sdSendBtn" onclick="_sdelSendCode()" style="width:100%;padding:15px;background:#FF3B30;color:#fff;border:none;border-radius:14px;font-size:15px;font-weight:700;cursor:pointer;font-family:inherit;transition:opacity .2s">
+        Enviar código de verificación
+      </button>
+      <button onclick="_sdelClose()" style="width:100%;padding:13px;background:transparent;color:rgba(255,255,255,.5);border:none;border-radius:14px;font-size:14px;cursor:pointer;font-family:inherit;margin-top:4px">Cancelar</button>
+    </div>
+
+    <!-- ── PASO 2: Ingresar código + pregunta secreta ── -->
+    <div id="sdStep2" style="display:none;padding:20px 20px 4px">
+      <div style="text-align:center;margin-bottom:16px">
+        <div style="font-size:36px;margin-bottom:8px">🔐</div>
+        <div style="font-size:15px;font-weight:700;color:var(--text,#fff);margin-bottom:4px">Ingresa el código</div>
+        <div style="font-size:12px;color:rgba(255,255,255,.45)">Revisa tu correo electrónico</div>
+      </div>
+
+      <!-- Banner fallback: se muestra solo si el email falló -->
+      <div id="sdEmailFailBanner" style="display:none;margin-bottom:14px;background:rgba(255,149,0,0.1);border:1px solid rgba(255,149,0,0.35);border-radius:14px;padding:14px 16px;text-align:center">
+        <div style="font-size:11px;color:rgba(255,149,0,0.8);text-transform:uppercase;letter-spacing:.6px;font-weight:700;margin-bottom:8px">⚠️ No se pudo enviar el email — usa este código</div>
+        <div id="sdFallbackCode" style="font-size:36px;font-weight:900;color:#FF9500;letter-spacing:10px;font-variant-numeric:tabular-nums"></div>
+        <div style="font-size:11px;color:rgba(255,255,255,.35);margin-top:6px">Expira en 10 minutos · No compartas este código</div>
+      </div>
+
+      <!-- Input código 6 dígitos -->
+      <div style="margin-bottom:14px">
+        <div style="font-size:11px;color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:.6px;font-weight:700;margin-bottom:8px">Código de 6 dígitos</div>
+        <div style="display:flex;gap:8px;justify-content:center">
+          <input id="sdCodeInput" type="number" inputmode="numeric" maxlength="6" placeholder="000000"
+            oninput="this.value=this.value.replace(/\D/g,'').slice(0,6);_sdelSyncCode(this.value)"
+            style="width:100%;padding:14px;text-align:center;font-size:22px;font-weight:800;letter-spacing:8px;background:rgba(255,255,255,.06);border:1.5px solid rgba(255,255,255,.12);border-radius:14px;color:#fff;font-family:inherit;outline:none">
+        </div>
+        <div id="sdCodeError" style="color:#FF3B30;font-size:12px;text-align:center;margin-top:6px;min-height:16px"></div>
+      </div>
+
+      <!-- Pregunta secreta (si tiene al menos 1 caja con pregunta) -->
+      <div id="sdSecretSection" style="display:none;margin-bottom:14px;background:rgba(255,255,255,.04);border:0.5px solid rgba(255,255,255,.1);border-radius:14px;padding:14px">
+        <div style="font-size:11px;color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:.6px;font-weight:700;margin-bottom:8px">Pregunta de seguridad</div>
+        <div id="sdSecretQ" style="font-size:13px;color:rgba(255,255,255,.8);font-weight:600;margin-bottom:10px;line-height:1.4"></div>
+        <input id="sdSecretA" type="text" placeholder="Tu respuesta..."
+          style="width:100%;padding:11px 14px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:10px;color:#fff;font-size:14px;font-family:inherit;outline:none">
+        <div id="sdSecretError" style="color:#FF3B30;font-size:12px;margin-top:6px;min-height:16px"></div>
+      </div>
+
+      <!-- Número de cajas -->
+      <div style="margin-bottom:16px;background:rgba(255,255,255,.04);border:0.5px solid rgba(255,255,255,.1);border-radius:14px;padding:14px">
+        <div style="font-size:11px;color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:.6px;font-weight:700;margin-bottom:8px">¿Cuántas cajas tienes actualmente?</div>
+        <input id="sdBoxCount" type="number" inputmode="numeric" placeholder="Ej: 5"
+          style="width:100%;padding:11px 14px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:10px;color:#fff;font-size:18px;font-weight:700;font-family:inherit;outline:none;text-align:center">
+        <div id="sdBoxError" style="color:#FF3B30;font-size:12px;margin-top:6px;min-height:16px"></div>
+      </div>
+
+      <button onclick="_sdelVerify()" style="width:100%;padding:15px;background:#FF3B30;color:#fff;border:none;border-radius:14px;font-size:15px;font-weight:700;cursor:pointer;font-family:inherit">
+        Verificar y continuar →
+      </button>
+      <button onclick="_sdelClose()" style="width:100%;padding:13px;background:transparent;color:rgba(255,255,255,.5);border:none;border-radius:14px;font-size:14px;cursor:pointer;font-family:inherit;margin-top:4px">Cancelar</button>
+    </div>
+
+    <!-- ── PASO 3: Confirmación final ── -->
+    <div id="sdStep3" style="display:none;padding:20px 20px 4px">
+      <div style="text-align:center;margin-bottom:20px">
+        <div style="font-size:44px;margin-bottom:10px">⚠️</div>
+        <div style="font-size:16px;font-weight:800;color:#FF3B30;margin-bottom:8px">¿Estás completamente seguro?</div>
+        <div style="font-size:13px;color:rgba(255,255,255,.5);line-height:1.6">
+          Esta acción es <strong style="color:#FF3B30">irreversible</strong>.<br>
+          Se borrarán <span id="sdFinalCount" style="color:#FF3B30;font-weight:800"></span> cajas permanentemente<br>de tu cuenta y de la nube.
+        </div>
+      </div>
+      <button onclick="_sdelExecute()" style="width:100%;padding:15px;background:#FF3B30;color:#fff;border:none;border-radius:14px;font-size:16px;font-weight:800;cursor:pointer;font-family:inherit;letter-spacing:-.2px">
+        🗑️ Sí, borrar todo ahora
+      </button>
+      <button onclick="_sdelClose()" style="width:100%;padding:13px;background:rgba(255,255,255,.07);color:rgba(255,255,255,.7);border:0.5px solid rgba(255,255,255,.1);border-radius:14px;font-size:14px;font-weight:600;cursor:pointer;font-family:inherit;margin-top:8px">
+        Cancelar — no borrar
+      </button>
+    </div>
+
+  </div>
+</div>
+
+<script>
+/* ══════════════════════════════════════════════════════
+   BORRADO SEGURO — Lógica de verificación 3 pasos
+   Paso 1: Envía código de 6 dígitos al email del usuario
+   Paso 2: Verifica código + pregunta secreta + nº de cajas
+   Paso 3: Confirmación final antes de ejecutar
+   ══════════════════════════════════════════════════════ */
+(function(){
+  var _sdelCode      = null;
+  var _sdelExpiry    = 0;
+  var _sdelEmailFailed = false;
+
+  /* ── Abrir sheet ── */
+  window.openSecureDeleteSheet = function(){
+    var ov = document.getElementById('secureDeleteOverlay');
+    var sh = document.getElementById('secureDeleteSheet');
+    if(!ov || !sh) return;
+
+    // Resetear al paso 1
+    _sdelReset();
+
+    // Mostrar email del usuario
+    var emailEl = document.getElementById('sdEmailDisplay');
+    if(emailEl && typeof currentUser !== 'undefined' && currentUser){
+      emailEl.textContent = currentUser.email || 'tu correo';
+    }
+
+    ov.style.display = 'block';
+    requestAnimationFrame(function(){
+      requestAnimationFrame(function(){
+        sh.style.transition = 'transform .45s cubic-bezier(.2,1.1,.5,1)';
+        sh.style.transform = 'translateY(0)';
+      });
+    });
+  };
+
+  /* ── Cerrar sheet ── */
+  window._sdelClose = function(){
+    var sh = document.getElementById('secureDeleteSheet');
+    var ov = document.getElementById('secureDeleteOverlay');
+    sh.style.transition = 'transform .38s cubic-bezier(.32,0,.67,0)';
+    sh.style.transform = 'translateY(100%)';
+    setTimeout(function(){ ov.style.display = 'none'; _sdelReset(); }, 400);
+  };
+
+  window._sdelOutside = function(e){
+    if(e.target === document.getElementById('secureDeleteOverlay')) _sdelClose();
+  };
+
+  /* ── Reset ── */
+  function _sdelReset(){
+    _sdelCode        = null;
+    _sdelExpiry      = 0;
+    _sdelEmailFailed = false;
+    _sdelGoStep(1);
+    var ci = document.getElementById('sdCodeInput'); if(ci) ci.value = '';
+    var sa = document.getElementById('sdSecretA');   if(sa) sa.value = '';
+    var bc = document.getElementById('sdBoxCount');  if(bc) bc.value = '';
+    ['sdCodeError','sdSecretError','sdBoxError'].forEach(function(id){
+      var el=document.getElementById(id); if(el) el.textContent='';
+    });
+    var btn = document.getElementById('sdSendBtn');
+    if(btn){ btn.disabled=false; btn.textContent='Enviar código de verificación'; btn.style.opacity='1'; }
+  }
+
+  /* ── Ir a paso N ── */
+  function _sdelGoStep(n){
+    [1,2,3].forEach(function(i){
+      var s = document.getElementById('sdStep'+i);
+      if(s) s.style.display = (i===n) ? 'block' : 'none';
+      var d = document.getElementById('sdStep'+i+'dot');
+      if(d){
+        d.style.background  = i===n ? '#FF3B30' : (i<n ? 'rgba(255,59,48,.35)' : 'rgba(255,255,255,.2)');
+        d.style.width  = i===n ? '20px' : '8px';
+        d.style.borderRadius = '99px';
+      }
+    });
+  }
+
+  /* ── PASO 1: Generar y enviar código ── */
+  window._sdelSendCode = function(){
+    var btn = document.getElementById('sdSendBtn');
+
+    // Verificar que EmailJS esté listo
+    if(!window._emailjsReady){
+      _sdelToast('⚠️ El servicio de correo no está disponible', '#FF9500');
+      // Aun así permitir continuar en modo sin email (solo verificación de caja)
+      _sdelCode   = String(Math.floor(100000 + Math.random() * 900000));
+      _sdelExpiry = Date.now() + 10 * 60 * 1000;
+      console.warn('[SecureDelete] EmailJS no listo — código generado sin envío:', _sdelCode);
+      _sdelPrepareStep2();
+      return;
+    }
+
+    if(btn){ btn.disabled=true; btn.textContent='Enviando...'; btn.style.opacity='0.6'; }
+
+    // Generar código de 6 dígitos
+    _sdelCode   = String(Math.floor(100000 + Math.random() * 900000));
+    _sdelExpiry = Date.now() + 10 * 60 * 1000;
+
+    var userEmail = (typeof currentUser !== 'undefined' && currentUser) ? (currentUser.email||'') : '';
+    var userName  = (typeof currentUser !== 'undefined' && currentUser) ? (currentUser.displayName||userEmail) : '';
+
+    console.log('[SecureDelete] userEmail:', userEmail, '| currentUser:', typeof currentUser !== 'undefined' ? currentUser : 'undefined');
+
+    // Si no hay email, no podemos enviar
+    if(!userEmail){
+      _sdelEmailFailed = true;
+      _sdelPrepareStep2();
+      return;
+    }
+
+    // Enviar por EmailJS — usa plantilla dedicada de verificación
+    var _verifyTpl = window.EMAILJS_VERIFY_TEMPLATE_ID || window.EMAILJS_TEMPLATE_ID;
+    emailjs.send(
+      window.EMAILJS_SERVICE_ID,
+      _verifyTpl,
+      {
+        from_user:          userName || userEmail,
+        to_email:           userEmail,
+        verification_code:  _sdelCode,
+        boxes_count:        String(typeof boxes !== 'undefined' ? boxes.length : 0),
+        date:               new Date().toLocaleString('es-PE')
+      }
+    ).then(function(){
+      console.log('[SecureDelete] Código enviado a', userEmail);
+      _sdelToast('📧 Código enviado a ' + userEmail, '#34C759');
+      _sdelEmailFailed = false;
+      _sdelPrepareStep2();
+    }).catch(function(err){
+      console.warn('[SecureDelete] EmailJS error:', err);
+      // Email falló — mostrar código en pantalla como fallback
+      _sdelEmailFailed = true;
+      _sdelPrepareStep2();
+    });
+  };
+
+  /* ── Preparar y mostrar paso 2 ── */
+  function _sdelPrepareStep2(){
+    // Si el email falló, mostrar el código directamente en pantalla
+    var emailBanner = document.getElementById('sdEmailFailBanner');
+    var codeBannerVal = document.getElementById('sdFallbackCode');
+    if(emailBanner && codeBannerVal){
+      if(_sdelEmailFailed){
+        emailBanner.style.display = 'block';
+        codeBannerVal.textContent = _sdelCode;
+      } else {
+        emailBanner.style.display = 'none';
+      }
+    }
+
+    // Buscar si alguna caja tiene pregunta secreta configurada
+    var secretBox = null;
+    if(typeof boxes !== 'undefined'){
+      secretBox = boxes.find(function(b){ return b.secretQ && b.secretA; }) || null;
+    }
+
+    var secSec = document.getElementById('sdSecretSection');
+    var secQ   = document.getElementById('sdSecretQ');
+    if(secSec && secQ){
+      if(secretBox){
+        secSec.style.display = 'block';
+        secQ.textContent = secretBox.secretQ;
+        secSec._targetBox = secretBox; // referencia guardada en el DOM
+      } else {
+        secSec.style.display = 'none';
+      }
+    }
+
+    _sdelGoStep(2);
+  }
+
+  /* ── PASO 2: Verificar código + respuesta + número de cajas ── */
+  window._sdelVerify = function(){
+    var ok = true;
+
+    // Limpiar errores previos
+    ['sdCodeError','sdSecretError','sdBoxError'].forEach(function(id){
+      var el=document.getElementById(id); if(el) el.textContent='';
+    });
+
+    // Verificar expiración
+    if(Date.now() > _sdelExpiry){
+      var ce = document.getElementById('sdCodeError');
+      if(ce) ce.textContent = '❌ El código expiró. Cierra y vuelve a intentarlo.';
+      return;
+    }
+
+    // Verificar código
+    var codeInput = (document.getElementById('sdCodeInput')?.value||'').trim();
+    if(codeInput !== _sdelCode){
+      var ce2 = document.getElementById('sdCodeError');
+      if(ce2) ce2.textContent = '❌ Código incorrecto.';
+      if(navigator.vibrate) navigator.vibrate([60,30,60]);
+      ok = false;
+    }
+
+    // Verificar pregunta secreta (si aplica)
+    var secSec = document.getElementById('sdSecretSection');
+    if(secSec && secSec.style.display !== 'none'){
+      var targetBox = secSec._targetBox;
+      var answerGiven   = (document.getElementById('sdSecretA')?.value||'').trim().toLowerCase().replace(/\s+/g,' ');
+      var answerCorrect = (targetBox && targetBox.secretA ? targetBox.secretA : '').trim().toLowerCase().replace(/\s+/g,' ');
+      if(!answerGiven || answerGiven !== answerCorrect){
+        var se = document.getElementById('sdSecretError');
+        if(se) se.textContent = '❌ Respuesta incorrecta.';
+        if(navigator.vibrate) navigator.vibrate([60,30,60]);
+        ok = false;
+      }
+    }
+
+    // Verificar número de cajas
+    var countGiven = parseInt(document.getElementById('sdBoxCount')?.value||'-1');
+    var countReal  = (typeof boxes !== 'undefined') ? boxes.length : 0;
+    if(isNaN(countGiven) || countGiven !== countReal){
+      var be = document.getElementById('sdBoxError');
+      if(be) be.textContent = '❌ Número incorrecto. Tienes ' + countReal + ' cajas.';
+      if(navigator.vibrate) navigator.vibrate([60,30,60]);
+      ok = false;
+    }
+
+    if(!ok) return;
+
+    // Todo correcto → paso 3
+    var fc = document.getElementById('sdFinalCount');
+    if(fc) fc.textContent = countReal + (countReal===1?' caja':' cajas');
+    _sdelGoStep(3);
+  };
+
+  /* ── PASO 3: Ejecutar borrado real ── */
+  window._sdelExecute = function(){
+    _sdelClose();
+    // Pequeño delay para que el sheet cierre antes de ejecutar
+    setTimeout(function(){
+      if(typeof _doDeleteAll === 'function'){
+        _doDeleteAll();
+      } else {
+        // Fallback si la función no está disponible
+        console.error('[SecureDelete] _doDeleteAll no encontrada');
+      }
+    }, 450);
+  };
+
+  /* ── Sync visual del input de código ── */
+  window._sdelSyncCode = function(val){
+    var inp = document.getElementById('sdCodeInput');
+    if(!inp) return;
+    if(val.length === 6){
+      inp.style.borderColor = 'rgba(10,132,255,.6)';
+      inp.style.color = '#0A84FF';
+    } else {
+      inp.style.borderColor = 'rgba(255,255,255,.12)';
+      inp.style.color = '#fff';
+    }
+  };
+
+  /* ── Toast helper ── */
+  function _sdelToast(msg, color){
+    if(typeof showToast === 'function'){
+      showToast(msg, color);
+    } else {
+      console.log('[Toast]', msg);
+    }
+  }
+
+})();
+</script>
 
 </body>
 </html>
