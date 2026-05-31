@@ -4727,8 +4727,10 @@ function showScreen(id){
   document.body.setAttribute("data-screen", id);
   // Mostrar FAB solo en mainScreen
   const _fab=document.getElementById("aiFab");
+  const _aipanel=document.getElementById("aiPanel");
+  if(id!=="mainScreen"&&_aipanel){_aipanel.classList.remove("open");if(typeof aiOpen!=="undefined")aiOpen=false;}
   if(_fab){
-    if(id==="mainScreen"){_fab.style.removeProperty("display");_fab.classList.remove("hidden");}
+    if(id==="mainScreen"){if(typeof aiOpen!=="undefined"&&aiOpen){aiOpen=false;if(_aipanel)_aipanel.classList.remove("open");}_fab.style.removeProperty("display");_fab.classList.remove("hidden");}
     else{_fab.style.display="none";}
   }
 }
@@ -4849,7 +4851,7 @@ function goSplash(){showSplash();}
 let activeFilter="todo"; let activeSort="default";
 function goMain(){showScreen("mainScreen");renderMain();_startClock();
   const f=document.getElementById("aiFab");
-  if(f){f.classList.remove("hidden");f.style.removeProperty("display");}
+  if(f){f.classList.remove("hidden");if(!aiOpen){f.style.removeProperty("display");}else{f.style.display="none";}}
   // Mostrar changelog si hay versión nueva sin ver (primer arranque tras actualización)
   if(window._changelogPending){
     window._changelogPending=false;
@@ -5160,6 +5162,7 @@ function renderProgress(){
 
 function renderItems(){
   const box=boxes.find(b=>b.id===currentBoxId);if(!box) return;
+  requestAnimationFrame(()=>{
   const col=box.color||"#007AFF",done=box.items.filter(i=>i.done).length;
   const titleEl=document.getElementById("itemsTitle");
   if(titleEl) titleEl.innerHTML=`<span class="dsec-title-icon dsec-icon-cont"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="16.5" y1="9.4" x2="7.5" y2="4.21"/><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg></span>CONTENIDO (${box.items.length} obj · ${done} sacado${done!==1?"s":""})`;
@@ -5176,6 +5179,7 @@ function renderItems(){
       <div class="i-txt${it.done?" done":""}">${esc(it.text)}</div>
       <button class="i-del" onclick="delItem(${i})">✕</button>
     </div>`).join("");
+  }); // end rAF
 }
 
 function toggleItem(idx){
@@ -5517,30 +5521,47 @@ function renderPhotoArea(){
 function showQuickQR(){
   const box=boxes.find(b=>b.id===currentBoxId);if(!box) return;
   const m=document.createElement("div");
+  m.id="quickQROverlay";
   m.style.cssText="position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:10010;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(14px);animation:fadeIn .2s ease";
   m.innerHTML=`<div style="background:var(--card);border-radius:26px;padding:28px 24px;width:min(320px,90vw);text-align:center;box-shadow:0 24px 80px rgba(0,0,0,.6)">
     <div style="font-size:18px;font-weight:800;margin-bottom:4px;letter-spacing:-.4px">${esc(box.name)}</div>
     <div style="font-size:12px;color:var(--muted);margin-bottom:18px">${box.number?"#"+box.number+" · ":""}Escanea para ver contenido</div>
     <div id="quickQRContainer" style="display:flex;justify-content:center;padding:10px;background:#fff;border-radius:16px;margin-bottom:18px"></div>
-    <button onclick="this.closest('[style]').remove()" style="width:100%;padding:14px;border-radius:14px;border:none;background:var(--accent);color:#fff;font-size:15px;font-weight:700;cursor:pointer;font-family:inherit">Cerrar</button>
+    <button onclick="document.getElementById('quickQROverlay').remove()" style="width:100%;padding:14px;border-radius:14px;border:none;background:var(--accent);color:#fff;font-size:15px;font-weight:700;cursor:pointer;font-family:inherit">Cerrar</button>
   </div>`;
   document.body.appendChild(m);
   m.onclick=ev=>{if(ev.target===m)m.remove();};
-  // Generar QR dentro del modal
+  // Generar QR usando qrcode (minúscula) — misma librería que el resto de la app
   setTimeout(()=>{
     const el=document.getElementById("quickQRContainer");if(!el) return;
     const payload={n:box.name,num:box.number,loc:box.location,col:box.color,
       tags:(box.tags||[]).slice(0,5),items:box.items.slice(0,20).map(i=>({t:i.text.slice(0,40),d:i.done?1:0})),
       date:box.date,note:(box.note||"").slice(0,100),pri:box.priority,brand:settings.brand};
     const data=btoa(encodeURIComponent(JSON.stringify(payload)));
-    // FIX BUG #3: evitar doble slash cuando pathname termina en "/"
     const _qrBase=(location.origin+location.pathname).replace(/\/[^\/]*$/,"/").replace(/([^:])\/\//g,"$1/");
     const url=_qrBase+'viewer.html#view/'+data;
-    try{new QRCode(el,{text:url,width:200,height:200,correctLevel:QRCode.CorrectLevel.M});}catch(e){el.textContent="Error generando QR";}
+    try{
+      const qr=qrcode(0,"M");qr.addData(url);qr.make();
+      const mod=qr.getModuleCount();
+      const cv=document.createElement("canvas");
+      const size=200;cv.width=cv.height=size;cv.style.width=size+"px";cv.style.height=size+"px";
+      const ctx=cv.getContext("2d");
+      ctx.fillStyle="#ffffff";ctx.fillRect(0,0,size,size);
+      const cell=Math.floor((size-16)/mod);
+      const offset=Math.round((size-cell*mod)/2);
+      ctx.fillStyle="#000000";
+      for(let r=0;r<mod;r++) for(let c=0;c<mod;c++) if(qr.isDark(r,c)) ctx.fillRect(offset+c*cell,offset+r*cell,cell,cell);
+      el.appendChild(cv);
+    }catch(e){el.textContent="Error generando QR: "+e.message;}
   },80);
 }
 
+let _qrTimer=null;
 function generateQR(id){
+  clearTimeout(_qrTimer);
+  _qrTimer=setTimeout(()=>_generateQRNow(id),400);
+}
+function _generateQRNow(id){
   const box=boxes.find(b=>b.id===id);const el=document.getElementById("detailQR");if(!box||!el) return;
   el.innerHTML='<div style="padding:20px;color:var(--muted);font-size:12px">Generando QR...</div>';
   // defer to next frame for smooth UI
@@ -7079,10 +7100,13 @@ function showToastUndo(msg, onUndo){
 }
 
 // Barra de progreso global de mudanza (9)
+let _gpCache={total:-1,done:-1};
 function renderGlobalProgress(){
   let el=document.getElementById("globalProgressBar");
   const totalObj=boxes.reduce((s,b)=>s+b.items.length,0);
   const doneObj=boxes.reduce((s,b)=>s+b.items.filter(i=>i.done).length,0);
+  if(el&&_gpCache.total===totalObj&&_gpCache.done===doneObj) return;
+  _gpCache={total:totalObj,done:doneObj};
   if(!totalObj){if(el)el.remove();return;}
   const pct=Math.round(doneObj/totalObj*100);
   if(!el){
