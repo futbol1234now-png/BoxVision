@@ -753,6 +753,38 @@ input,button,textarea,select{font-family:inherit}
 .sr-item:hover{background:var(--card2)}
 .sr-item:last-child{border:none}
 .sr-none{padding:20px;text-align:center;color:var(--muted);font-size:14px}
+
+/* ── Botón búsqueda IA en barra de búsqueda ── */
+#aiSearchBtn{
+  display:flex;
+  align-items:center;gap:8px;
+  margin:8px 0 0;
+  padding:11px 14px;
+  background:linear-gradient(135deg,rgba(10,132,255,.18),rgba(88,86,214,.15));
+  border:1px solid rgba(10,132,255,.35);
+  border-radius:14px;
+  cursor:pointer;
+  font-size:13px;font-weight:600;
+  color:#0A84FF;
+  width:100%;
+  font-family:inherit;
+  text-align:left;
+  transition:background .15s,transform .1s;
+  -webkit-tap-highlight-color:transparent;
+  animation:srSlide .2s cubic-bezier(.34,1.2,.64,1);
+}
+#aiSearchBtn:active{transform:scale(.98);background:linear-gradient(135deg,rgba(10,132,255,.26),rgba(88,86,214,.22));}
+.ai-search-icon{
+  width:26px;height:26px;border-radius:8px;
+  background:linear-gradient(135deg,#0A84FF,#5856D6);
+  display:flex;align-items:center;justify-content:center;
+  flex-shrink:0;font-size:13px;
+  box-shadow:0 2px 8px rgba(10,132,255,.35);
+}
+.ai-search-text{flex:1;min-width:0}
+.ai-search-label{font-size:13px;font-weight:700;color:#0A84FF}
+.ai-search-preview{font-size:11px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:200px;margin-top:1px}
+.ai-search-arrow{font-size:14px;color:rgba(10,132,255,.5);flex-shrink:0}
 .filter-row{display:flex;gap:7px;overflow-x:auto;padding:6px 14px 10px;scrollbar-width:none}
 .filter-row::-webkit-scrollbar{display:none}
 .pill{flex-shrink:0;display:inline-flex;align-items:center;gap:5px;background:var(--pill);color:var(--pilltext);border:0.5px solid transparent;border-radius:99px;padding:7px 14px;font-size:13px;font-weight:500;cursor:pointer;white-space:nowrap;transition:background .15s,color .15s,border-color .15s;-webkit-tap-highlight-color:transparent}
@@ -2200,7 +2232,7 @@ button{-webkit-tap-highlight-color:transparent;outline:none}
   background:linear-gradient(135deg,#1a1a2e 0%,#16213e 50%,#0f3460 100%);
   border:1px solid rgba(88,86,214,.35);
   cursor:pointer;
-  display:flex;align-items:center;justify-content:center;
+  align-items:center;justify-content:center;
   font-size:18px;
   box-shadow:
     0 4px 24px rgba(88,86,214,.35),
@@ -2209,7 +2241,6 @@ button{-webkit-tap-highlight-color:transparent;outline:none}
   transition:transform var(--dur-fast) var(--ease-spring),
              box-shadow var(--dur-fast),
              width .3s var(--ease-spring);
-  animation:fabIn .5s .3s var(--ease-spring) forwards;
   overflow:hidden;
   white-space:nowrap;
 }
@@ -2219,9 +2250,13 @@ button{-webkit-tap-highlight-color:transparent;outline:none}
 }
 @keyframes fabIn{from{transform:scale(0) translateY(20px);opacity:0}to{transform:scale(1) translateY(0);opacity:1}}
 
-/* FAB visible solo cuando mainScreen está activo */
-#aiFab { display: none; }
-#mainScreen:not(.hidden) #aiFab { display: flex; }
+/* FAB: visible por defecto, oculto solo en splash/login/viewer/modal */
+#aiFab { display: flex !important; }
+body[data-screen="splash"] #aiFab,
+body[data-screen="loginScreen"] #aiFab,
+body[data-screen="viewer"] #aiFab { display: none !important; }
+body.modal-open #aiFab { display: none !important; }
+#aiFab.ai-fab-hidden { display: none !important; }
 
 .ai-fab:hover{
   transform:translateY(-2px) scale(1.03);
@@ -2862,7 +2897,7 @@ if(!auth){
 }
 </script>
 </head>
-<body data-dark="1">
+<body data-dark="1" data-screen="loginScreen">
 
 <!-- ═══ LOGIN SCREEN v2.4 — Apple-clean redesign ═══ -->
 <style>
@@ -3181,15 +3216,18 @@ if(!auth){
       </button>
     </div>
     <div class="sr-wrap" id="srWrap"></div>
+    <button id="aiSearchBtn" onclick="_aiSearchFromBar()" aria-label="Preguntar a Box IA">
+      <div class="ai-search-icon">✦</div>
+      <div class="ai-search-text">
+        <div class="ai-search-label">Preguntar a Box IA</div>
+        <div class="ai-search-preview" id="aiSearchPreview">¿En qué caja está algo?</div>
+      </div>
+      <div class="ai-search-arrow">→</div>
+    </button>
   </div>
   <input type="file" id="searchPhotoInput" accept="image/*" style="display:none" onchange="handleSearchPhoto(event)"/>
   <div class="filter-row" id="filterRow"></div>
   <div class="main-scroll" id="mainScroll"></div>
-  <button class="ai-fab" id="aiFab" onclick="toggleAI()">
-    <div class="ai-dot"></div>
-    <span style="font-size:17px">✦</span>
-    <span class="ai-fab-label">Box IA</span>
-  </button>
 </div>
 
 <div id="detailScreen" class="hidden">
@@ -4725,13 +4763,14 @@ function showScreen(id){
   });
   // Marcar pantalla activa en body para CSS
   document.body.setAttribute("data-screen", id);
-  // Mostrar FAB solo en mainScreen
-  const _fab=document.getElementById("aiFab");
+  // FAB visibility es manejado 100% por CSS via data-screen (ver .ai-fab CSS)
+  // Solo cerrar el panel si salimos de una pantalla principal
   const _aipanel=document.getElementById("aiPanel");
-  if(id!=="mainScreen"&&_aipanel){_aipanel.classList.remove("open");if(typeof aiOpen!=="undefined")aiOpen=false;}
-  if(_fab){
-    if(id==="mainScreen"){if(typeof aiOpen!=="undefined"&&aiOpen){aiOpen=false;if(_aipanel)_aipanel.classList.remove("open");}_fab.style.removeProperty("display");_fab.classList.remove("hidden");}
-    else{_fab.style.display="none";}
+  const _fabHiddenScreens=["splash","loginScreen","viewer"];
+  if(_fabHiddenScreens.includes(id)){
+    if(_aipanel){_aipanel.classList.remove("open");if(typeof aiOpen!=="undefined")aiOpen=false;}
+  } else {
+    if(typeof aiOpen!=="undefined"&&aiOpen){aiOpen=false;if(_aipanel)_aipanel.classList.remove("open");}
   }
 }
 
@@ -4850,8 +4889,9 @@ function goSplash(){showSplash();}
 
 let activeFilter="todo"; let activeSort="default";
 function goMain(){showScreen("mainScreen");renderMain();_startClock();
-  const f=document.getElementById("aiFab");
-  if(f){f.classList.remove("hidden");if(!aiOpen){f.style.removeProperty("display");}else{f.style.display="none";}}
+  // FAB: dejar que CSS via data-screen y modal-open lo controle
+  var _f=document.getElementById("aiFab");
+  if(_f){_f.style.removeProperty("display");_f.classList.remove("hidden");_f.classList.remove("ai-fab-hidden");}
   // Mostrar changelog si hay versión nueva sin ver (primer arranque tras actualización)
   if(window._changelogPending){
     window._changelogPending=false;
@@ -5715,7 +5755,7 @@ function openEditForm(){
   document.getElementById("modalOverlay").classList.add("open");
   document.body.classList.add("modal-open");
 }
-function closeForm(){document.getElementById("modalOverlay").classList.remove("open");document.body.classList.remove("modal-open");}
+function closeForm(){document.getElementById("modalOverlay").classList.remove("open");document.body.classList.remove("modal-open");var _f=document.getElementById("aiFab");if(_f) _f.style.removeProperty("display");}
 function closeFormOutside(e){if(e.target===document.getElementById("modalOverlay")) closeForm();}
 function populateRelatedSelect(cur){
   document.getElementById("fRelated").innerHTML='<option value="">— Ninguna —</option>'+
@@ -5804,7 +5844,14 @@ let _searchTimer=null;
 function doSearch(q){
   document.getElementById("searchClear").classList.toggle("hidden",!q);
   clearTimeout(_searchTimer);
-  if(!q.trim()){document.getElementById("srWrap").classList.remove("open");return;}
+  if(!q.trim()){
+    document.getElementById("srWrap").classList.remove("open");
+    var prev=document.getElementById("aiSearchPreview");
+    if(prev) prev.textContent="¿En qué caja está algo?";
+    return;
+  }
+  // Mostrar/ocultar botón búsqueda IA según el tipo de consulta
+  if(typeof _updateAISearchBtn === "function") _updateAISearchBtn(q);
   // Debounce: esperar 180ms antes de buscar (evita buscar en cada tecla)
   _searchTimer=setTimeout(()=>_runSearch(q),180);
 }
@@ -5838,7 +5885,24 @@ function _runSearch(q){
           ${h.type==="item"?` → ${esc(h.item)}`:'<span style="font-size:11px;color:var(--muted)"> · caja</span>'}
         </div>
       </div>`).join("")
-    :`<div class="sr-none">No se encontró "${esc(q)}"</div>`;
+    :`<div class="sr-none" style="padding:16px">
+        <div style="font-size:13px;color:var(--muted);margin-bottom:12px">No se encontró <b>${esc(q)}</b> en tus cajas</div>
+        <button onclick="_aiSearchFromBar()" style="
+          width:100%;display:flex;align-items:center;gap:10px;
+          padding:12px 14px;border-radius:14px;border:none;cursor:pointer;
+          background:linear-gradient(135deg,rgba(10,132,255,.18),rgba(88,86,214,.15));
+          border:1px solid rgba(10,132,255,.35);font-family:inherit;
+          text-align:left;transition:background .15s;
+        " onmouseenter="this.style.background='linear-gradient(135deg,rgba(10,132,255,.26),rgba(88,86,214,.22))'"
+           onmouseleave="this.style.background='linear-gradient(135deg,rgba(10,132,255,.18),rgba(88,86,214,.15))'">
+          <div style="width:30px;height:30px;border-radius:9px;background:linear-gradient(135deg,#0A84FF,#5856D6);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:14px;box-shadow:0 2px 8px rgba(10,132,255,.35)">✦</div>
+          <div style="flex:1;min-width:0">
+            <div style="font-size:13px;font-weight:700;color:#0A84FF">Preguntarle a Box IA</div>
+            <div style="font-size:11px;color:var(--muted);margin-top:1px">Busca entre todas tus cajas con IA</div>
+          </div>
+          <div style="font-size:14px;color:rgba(10,132,255,.5)">→</div>
+        </button>
+      </div>`;
   wrap.classList.add("open");
 }
 function clearSearch(){document.getElementById("searchInput").value="";doSearch("");}
@@ -6832,7 +6896,7 @@ function playBeep(){
 function showViewer(box){
   playBeep();
   showScreen("viewer");
-  const _vfab=document.getElementById("aiFab");if(_vfab) _vfab.classList.add("hidden");
+  // FAB oculto en viewer — manejado por showScreen()
   _viewerItems=[]; // clear stale data
   window._viewerColor="#007AFF";
   const vsi=document.getElementById("vSearchInput");if(vsi) vsi.value="";
@@ -7226,7 +7290,7 @@ function toggleAI(){
   const fab = document.getElementById("aiFab");
   if(aiOpen){
     panel.classList.add("open");
-    fab.style.display = "none";
+    fab.classList.add("ai-fab-hidden");
     const connected = localStorage.getItem("boxia_connected");
     const skipped = localStorage.getItem("boxia_skip");
     if(!connected && !skipped){
@@ -7237,7 +7301,8 @@ function toggleAI(){
     }
   } else {
     panel.classList.remove("open");
-    fab.style.display = "flex";
+    fab.classList.remove("ai-fab-hidden");
+    fab.style.setProperty("display","flex","important");
   }
 }
 
@@ -7278,13 +7343,22 @@ async function testGroqConnection(){
 }
 
 function saveApiKey(){
-  // Guardar key cifrada en sessionStorage y marcar como conectado en localStorage
   const inp = document.getElementById("aiKeyInput");
   const key = inp ? inp.value.trim() : "";
-  if(key) _saveGroqKey(key); // sessionStorage ofuscado — no queda en texto plano
+  if(!key){
+    showToast("⚠️ Pega tu API key de Groq primero","#FF9500");
+    if(inp) inp.focus();
+    return;
+  }
+  if(!key.startsWith("gsk_") && !key.startsWith("gsk-")){
+    showToast("⚠️ La key de Groq empieza con gsk_","#FF9500");
+    if(inp) inp.focus();
+    return;
+  }
+  _saveGroqKey(key);
   localStorage.setItem("boxia_connected","1");
   localStorage.removeItem("boxia_skip");
-  showToast("✅ Box IA conectada","#34C759");
+  showToast("✅ Box IA conectada con Groq","#34C759");
   showAIChat();
 }
 
@@ -7416,17 +7490,33 @@ async function aiAsk(q){
   inp.disabled = true;
   aiShowTyping();
 
+  const apiKey = _getGroqKey();
+
+  // Sin API key: responder localmente
+  if(!apiKey){
+    aiHideTyping();
+    const localReply = aiRespondLocal(q);
+    aiAddMsg("bot", localReply, true);
+    aiStreaming = false;
+    inp.disabled = false;
+    setTimeout(()=>inp.focus(), 100);
+    return;
+  }
+
   try {
-    const WORKER_AI_URL = BOX_IA_WORKER + "/chat";
-    const res = await fetch(WORKER_AI_URL,{
+    // Llamada directa a Groq sin Worker intermedio
+    const res = await fetch("https://api.groq.com/openai/v1/chat/completions",{
       method:"POST",
-      headers:{"Content-Type":"application/json"},
+      headers:{
+        "Content-Type":"application/json",
+        "Authorization":"Bearer " + apiKey
+      },
       body:JSON.stringify({
         model:"llama-3.3-70b-versatile",
         max_tokens:1000,
         messages:[
           {role:"system", content:`Eres Box IA, asistente experto en mudanzas y organización de cajas. Responde siempre en español (Perú). Usa HTML básico para formato: <b>, <br>. Sin markdown con asteriscos. Sé conciso, útil y empático. Cuando busques objetos revisa todas las cajas. Puedes dar consejos de organización y anticipar necesidades del usuario.\n\n${buildContextSnapshot()}`},
-          ...aiHistory.slice(-20).map(m=>({role:m.role, content:m.content})) // FIX C: max 20 msgs
+          ...aiHistory.slice(-20).map(m=>({role:m.role, content:m.content}))
         ]
       })
     });
@@ -7443,16 +7533,14 @@ async function aiAsk(q){
     aiHideTyping();
     const errMsg = String(e?.message||e);
     console.error("Box IA error:", errMsg);
-    if(e.message === "no_key"){
-      aiAddMsg("bot","⚙️ <b>Worker no configurado.</b><br>Revisa la URL del Worker en la app.");
-    } else if(errMsg.includes("401")||errMsg.includes("invalid_api_key")||errMsg.includes("Unauthorized")){
+    if(errMsg.includes("401")||errMsg.includes("invalid_api_key")||errMsg.includes("Unauthorized")){
       aiAddMsg("bot","🔑 <b>API key inválida o expirada.</b><br>Toca <i>⚙️ Cambiar API key</i> para actualizarla.");
-    } else if(errMsg.includes("Failed to fetch")||errMsg.includes("NetworkError")||errMsg.includes("CORS")){
-      aiAddMsg("bot","🌐 <b>Error de red.</b><br>Verifica tu conexión a internet e intenta de nuevo.");
     } else if(errMsg.includes("429")||errMsg.includes("rate_limit")){
       aiAddMsg("bot","⏳ <b>Demasiadas consultas.</b><br>Espera unos segundos e intenta de nuevo.");
     } else {
-      aiAddMsg("bot",`⚠️ <b>Error:</b> ${errMsg.slice(0,120)}<br><br>Intenta de nuevo o verifica tu key en ⚙️`);
+      // Cualquier otro error: responder localmente
+      const localReply = aiRespondLocal(q);
+      aiAddMsg("bot", localReply, true);
     }
   } finally {
     aiStreaming = false;
@@ -7478,16 +7566,85 @@ function aiRespondLocal(q){
     const u=boxes.filter(b=>b.priority==="red");
     return u.length?`<b>${u.length} caja${u.length!==1?"s":""} urgente${u.length!==1?"s":""}</b>:<br><br>`+u.map(b=>`🔴 <b>${esc(b.name)}</b>${b.location?" — "+b.location:""}`).join("<br>"):"Sin cajas urgentes 🟡";
   }
-  return `⚠️ Sin conexión con Box IA.<br>Intenta de nuevo en un momento.`;
+  // Fallback general: buscar cualquier término en todas las cajas
+  const words = ql.replace(/[¿?¡!]/g,"").trim().split(/\s+/).filter(w=>w.length>2);
+  if(words.length){
+    const hits=[];
+    boxes.forEach(b=>{
+      words.forEach(w=>{
+        b.items.forEach(it=>{ if(it.text.toLowerCase().includes(w) && !hits.find(h=>h.it===it)) hits.push({b,it}); });
+        if((b.name.toLowerCase().includes(w)||(b.location||"").toLowerCase().includes(w)) && !hits.find(h=>h.b===b&&h.type==="box")) hits.push({b,it:{text:b.name},type:"box"});
+      });
+    });
+    if(hits.length) return `Encontré <b>${hits.length}</b> resultado${hits.length!==1?"s":""}:<br><br>`+hits.slice(0,6).map(h=>`📦 <b>${esc(h.b.name)}</b>${h.b.location?" — "+h.b.location:""}<br>→ ${esc(h.it.text)}${h.it.done?" ✅":""}`).join("<br>");
+    return `No encontré nada relacionado con "<b>${esc(q)}</b>" en tus cajas 🔍<br><br><span style="color:var(--muted);font-size:12px">Conecta Box IA con una API key para respuestas más inteligentes.</span>`;
+  }
+  return `Hola 👋 Puedo ayudarte a encontrar objetos en tus cajas.<br>Escribe lo que buscas, por ejemplo: <b>"¿dónde están mis libros?"</b>`;
 }
 
-// Show FAB only in main screens (not viewer/tutorial)
+// ── Búsqueda IA desde la barra de búsqueda ──────────────────────────────────
+// Detecta si el query parece una pregunta/búsqueda natural (no un filtro corto)
+function _isNaturalQuery(q){
+  if(!q || q.length < 3) return false;
+  const lower = q.toLowerCase().trim();
+  // Palabras clave de búsqueda inteligente
+  const triggers = [
+    "dond","busca","busco","encontr","tengo","está","están","dónde","cuál","cuáles",
+    "cuánto","cuántas","cuántos","qué caja","necesito","urgente","falta","lista",
+    "ayuda","recomienda","organiza","ordena","prioridad","próximo","primero",
+    "cuándo","total","valor","peso","precio","cuánto vale","llevo","progreso",
+    "resumen","todas las","todas mis","mis cajas","habitación","cuarto",
+    "mudanza","desempacar","sacar","abierta","sellada","favorita"
+  ];
+  if(triggers.some(t => lower.includes(t))) return true;
+  // Si tiene más de 4 palabras, probablemente es una pregunta natural
+  if(q.trim().split(/\s+/).length >= 4) return true;
+  // Si termina con "?" es pregunta
+  if(q.trim().endsWith("?")) return true;
+  return false;
+}
+
+// Actualiza el subtítulo del botón según lo que hay escrito — nunca lo oculta
+function _updateAISearchBtn(q){
+  const preview = document.getElementById("aiSearchPreview");
+  if(!preview) return;
+  if(q && q.trim().length >= 1){
+    preview.textContent = '"' + q.trim() + '"';
+  } else {
+    preview.textContent = '¿En qué caja está algo?';
+  }
+}
+
+// Acción al pulsar el botón IA en la barra de búsqueda
+function _aiSearchFromBar(){
+  const inp = document.getElementById("searchInput");
+  const q = inp ? inp.value.trim() : "";
+  // Abrir panel IA siempre
+  aiOpen = false;
+  toggleAI();
+  // Si hay texto escrito, enviarlo automaticamente
+  if(q){
+    setTimeout(function(){
+      const aiInp = document.getElementById("aiInput");
+      if(aiInp){
+        aiInp.value = q;
+        aiAsk(q);
+      }
+    }, 420);
+  } else {
+    // Sin texto: solo abrir el panel con el foco en el input
+    setTimeout(function(){
+      const aiInp = document.getElementById("aiInput");
+      if(aiInp) aiInp.focus();
+    }, 420);
+  }
+}
+
+// FAB visibility manejado por CSS via data-screen — solo quitar clase hidden residual
 function updateFABVisibility(){
   const fab = document.getElementById("aiFab");
   if(!fab) return;
-  const hash = location.hash;
-  const isViewer = hash.startsWith("#view/");
-  fab.classList.toggle("hidden", isViewer);
+  fab.classList.remove("hidden");
 }
 
 window.addEventListener("hashchange",()=>{route();updateFABVisibility();});
@@ -7764,17 +7921,31 @@ document.addEventListener("DOMContentLoaded",applySplashGradient);
   </div>
 
   <!-- Pantalla configuración API key -->
-  <div id="aiKeyScreen" style="display:none;flex:1;padding:32px 24px;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:18px">
-    <div style="font-size:56px">🔑</div>
+  <div id="aiKeyScreen" style="display:none;flex:1;padding:28px 20px;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:14px;overflow-y:auto">
+    <div style="font-size:48px;margin-bottom:4px">🤖</div>
     <div style="font-size:20px;font-weight:800;color:#fff;letter-spacing:-.4px">Conecta Box IA</div>
-    <div style="font-size:14px;color:rgba(255,255,255,.65);line-height:1.6">Powered by <b style="color:rgba(255,255,255,.9)">Groq</b> vía Cloudflare Workers.<br>Gratis, rápido, sin exponer tu key.</div>
-    <div style="background:rgba(255,255,255,.12);border:0.5px solid rgba(255,255,255,.25);border-radius:16px;padding:14px 16px;font-size:13px;color:rgba(255,255,255,.85);line-height:1.8;text-align:left;width:100%;box-sizing:border-box;backdrop-filter:blur(10px)">
-      ✅ Tu key de Groq está guardada en el Worker<br>
-      ✅ Esta app no necesita la key directamente<br>
-      ✅ Funciona en cualquier red
+    <div style="font-size:13px;color:rgba(255,255,255,.6);line-height:1.6">Usa tu API key gratuita de <b style="color:rgba(255,255,255,.9)">Groq</b> para<br>respuestas inteligentes sobre tus cajas.</div>
+
+    <!-- Pasos -->
+    <div style="background:rgba(255,255,255,.07);border:0.5px solid rgba(255,255,255,.15);border-radius:16px;padding:14px 16px;font-size:12px;color:rgba(255,255,255,.75);line-height:2;text-align:left;width:100%;box-sizing:border-box">
+      <div>1️⃣ Entra a <b style="color:#0A84FF">console.groq.com</b></div>
+      <div>2️⃣ Crea una cuenta gratis</div>
+      <div>3️⃣ Ve a <b>API Keys</b> → <b>Create API Key</b></div>
+      <div>4️⃣ Copia la key y pégala aquí abajo</div>
     </div>
-    <button onclick="saveApiKey()" style="width:100%;padding:15px;border-radius:14px;border:none;background:#fff;color:#007AFF;font-size:16px;font-weight:700;cursor:pointer;box-shadow:0 4px 20px rgba(0,0,0,.2);transition:transform .15s,box-shadow .15s" onmousedown="this.style.transform='scale(.97)'" onmouseup="this.style.transform=''" ontouchstart="this.style.transform='scale(.97)'" ontouchend="this.style.transform=''">🚀 Iniciar Box IA</button>
-    <button onclick="skipApiKey()" style="background:rgba(255,255,255,.12);border:0.5px solid rgba(255,255,255,.25);backdrop-filter:blur(10px);border-radius:14px;padding:11px 24px;color:rgba(255,255,255,.8);font-size:14px;font-weight:600;cursor:pointer;font-family:inherit;width:100%;transition:transform .15s" onmousedown="this.style.transform='scale(.97)'" onmouseup="this.style.transform=''" ontouchstart="this.style.transform='scale(.97)'" ontouchend="this.style.transform=''">Usar modo básico</button>
+
+    <!-- Input key -->
+    <div style="width:100%;background:rgba(255,255,255,.09);border:1px solid rgba(255,255,255,.2);border-radius:14px;display:flex;align-items:center;padding:0 14px;box-sizing:border-box;transition:border-color .18s" onfocusin="this.style.borderColor='rgba(10,132,255,.7)'" onfocusout="this.style.borderColor='rgba(255,255,255,.2)'">
+      <span style="font-size:16px;margin-right:10px;flex-shrink:0">🔑</span>
+      <input id="aiKeyInput" type="password" placeholder="gsk_..." autocomplete="off" spellcheck="false"
+        style="flex:1;background:transparent;border:none;outline:none;color:#fff;font-size:14px;padding:14px 0;font-family:inherit;letter-spacing:.5px"
+        onkeydown="if(event.key==='Enter')saveApiKey()"
+      />
+      <button onclick="const i=document.getElementById('aiKeyInput');i.type=i.type==='password'?'text':'password'" style="background:none;border:none;color:rgba(255,255,255,.4);cursor:pointer;padding:4px;font-size:14px">👁</button>
+    </div>
+
+    <button onclick="saveApiKey()" style="width:100%;padding:15px;border-radius:14px;border:none;background:linear-gradient(135deg,#0A84FF,#5856D6);color:#fff;font-size:15px;font-weight:700;cursor:pointer;box-shadow:0 4px 20px rgba(10,132,255,.4);transition:transform .15s" onmousedown="this.style.transform='scale(.97)'" onmouseup="this.style.transform=''" ontouchstart="this.style.transform='scale(.97)'" ontouchend="this.style.transform=''">✦ Conectar Box IA</button>
+    <button onclick="skipApiKey()" style="background:none;border:none;color:rgba(255,255,255,.4);font-size:13px;cursor:pointer;font-family:inherit;padding:4px">Usar sin IA (modo básico)</button>
   </div>
 
   <div id="aiChatArea" style="display:none;flex:1;flex-direction:column;overflow:hidden">
@@ -9854,13 +10025,10 @@ if(auth){
    sin usar polling: escucha el evento 'appReady' que se dispara desde launchApp(). */
 (function(){
   function ensureFabOnMain(){
+    // El FAB ahora es 100% controlado por CSS via data-screen — no necesita JS aquí
+    // Solo asegurar que no quede clase hidden residual
     var fab = document.getElementById('aiFab');
-    var main = document.getElementById('mainScreen');
-    if(!fab || !main) return;
-    if(main.classList.contains('active') && !main.classList.contains('hidden')){
-      fab.classList.remove('hidden');
-      fab.style.removeProperty('display');
-    }
+    if(fab){ fab.style.removeProperty('display'); fab.classList.remove('hidden'); fab.classList.remove('ai-fab-hidden'); }
   }
   // Solo ejecutar una vez cuando la app termine de cargar
   document.addEventListener('appReady', ensureFabOnMain, { once: true });
@@ -9973,6 +10141,13 @@ if(auth){
   console.log('  _getHealth() ........ Ver salud de app');
 })();
 </script>
+
+<!-- FAB Box IA — fuera de mainScreen para visibilidad robusta -->
+<button class="ai-fab" id="aiFab" onclick="toggleAI()">
+  <div class="ai-dot"></div>
+  <span style="font-size:17px">✦</span>
+  <span class="ai-fab-label">Box IA</span>
+</button>
 
 <!-- Toast de búsqueda por foto -->
 <div id="searchPhotoToast">
