@@ -311,7 +311,7 @@
   transition: background .3s ease, backdrop-filter .3s ease, -webkit-backdrop-filter .3s ease;
 }
 #aiOverlay.open {
-  background: rgba(0,0,0,.45);
+  background: rgba(0,0,0,.55);
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
   pointer-events: all;
@@ -346,8 +346,8 @@
     right: auto;
     transform: translateX(-50%) translateY(100%);
     width: 480px;
-    border-radius: 22px;
-    bottom: 20px;
+    border-radius: 22px 22px 0 0;
+    bottom: 0;
     max-height: 75vh;
   }
   #aiSheet.open {
@@ -1027,25 +1027,37 @@ input,button,textarea,select{font-family:inherit}
 /* Stats */
 .sp-stats{
   display:grid;grid-template-columns:repeat(3,1fr);
-  gap:8px;width:100%;max-width:360px;margin-bottom:20px;
+  gap:10px;width:100%;max-width:360px;margin-bottom:20px;
 }
 .sp-stat{
-  background:rgba(255,255,255,.06);
-  backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
-  border-radius:20px;padding:14px 8px 12px;text-align:center;
-  border:0.5px solid rgba(255,255,255,.1);
-  box-shadow:0 4px 16px rgba(0,0,0,.25),inset 0 1px 0 rgba(255,255,255,.07);
-  transition:transform .2s;
+  background:rgba(255,255,255,.08);
+  backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);
+  border-radius:22px;padding:16px 8px 14px;text-align:center;
+  border:0.5px solid rgba(255,255,255,.14);
+  box-shadow:0 8px 24px rgba(0,0,0,.2),inset 0 1px 0 rgba(255,255,255,.12);
+  transition:transform .2s cubic-bezier(.34,1.3,.64,1);
+  cursor:pointer;
 }
-.sp-stat:active{transform:scale(.96)}
-.sp-stat-n{font-size:26px;font-weight:800;color:#fff;letter-spacing:-.5px}
-.sp-stat-l{font-size:10px;color:rgba(255,255,255,.5);margin-top:3px;text-transform:uppercase;letter-spacing:.5px}
-/* Ícono dentro de cada stat */
-.sp-stat-icon{font-size:20px;margin-bottom:4px;line-height:1;filter:drop-shadow(0 2px 4px rgba(0,0,0,0.3))}
+.sp-stat:active{transform:scale(.93)}
+.sp-stat-n{font-size:30px;font-weight:900;color:#fff;letter-spacing:-.8px;line-height:1;margin:6px 0 4px}
+.sp-stat-l{font-size:10px;color:rgba(255,255,255,.55);text-transform:uppercase;letter-spacing:.8px;font-weight:700}
+/* Ícono dentro de cada stat — con fondo pill */
+.sp-stat-icon{
+  font-size:22px;line-height:1;
+  display:inline-flex;align-items:center;justify-content:center;
+  width:44px;height:44px;border-radius:14px;
+  background:rgba(255,255,255,.12);
+  border:0.5px solid rgba(255,255,255,.15);
+  margin-bottom:2px;
+  filter:drop-shadow(0 2px 6px rgba(0,0,0,0.25));
+}
+#spStatC .sp-stat-icon{background:rgba(10,132,255,.25);border-color:rgba(10,132,255,.35)}
+#spStatO .sp-stat-icon{background:rgba(52,199,89,.22);border-color:rgba(52,199,89,.32)}
+#spStatF .sp-stat-icon{background:rgba(255,204,0,.22);border-color:rgba(255,204,0,.32)}
 /* Mini barra de progreso dentro de cada stat */
 .sp-stat-bar{
-  width:100%;height:3px;background:rgba(255,255,255,.1);
-  border-radius:99px;margin-top:8px;overflow:hidden;
+  width:60%;height:3px;background:rgba(255,255,255,.1);
+  border-radius:99px;margin:8px auto 0;overflow:hidden;
 }
 .sp-stat-bar-fill{
   height:100%;border-radius:99px;
@@ -1057,7 +1069,7 @@ input,button,textarea,select{font-family:inherit}
 #spStatC{animation-delay:.05s}
 #spStatO{animation-delay:.12s}
 #spStatF{animation-delay:.19s}
-@keyframes spStatIn{from{opacity:0;transform:translateY(12px) scale(.93)}to{opacity:1;transform:translateY(0) scale(1)}}
+@keyframes spStatIn{from{opacity:0;transform:translateY(14px) scale(.9)}to{opacity:1;transform:translateY(0) scale(1)}}
 /* Animación conteo numérico */
 @keyframes spNumPop{0%{transform:scale(.7);opacity:0}60%{transform:scale(1.12)}100%{transform:scale(1);opacity:1}}
 .sp-stat-n.popped{animation:spNumPop .45s cubic-bezier(.34,1.4,.64,1)}
@@ -3476,14 +3488,14 @@ if(!auth){
   </div>
   <div class="sp-sub">Todo en orden, todo a un escaneo.</div>
   <div class="sp-stats" id="spStatsWrap">
-    <div class="sp-stat" id="spStatC">
+    <div class="sp-stat" id="spStatC" onclick="showScreen('mainScreen')">
       <div class="sp-stat-icon">📦</div>
       <div class="sp-stat-n" id="sp-c">—</div>
       <div class="sp-stat-l">Cajas</div>
       <div class="sp-stat-bar"><div class="sp-stat-bar-fill" id="sp-bar-c" style="width:0%"></div></div>
     </div>
     <div class="sp-stat" id="spStatO">
-      <div class="sp-stat-icon">🧺</div>
+      <div class="sp-stat-icon">🗂️</div>
       <div class="sp-stat-n" id="sp-o">—</div>
       <div class="sp-stat-l">Objetos</div>
       <div class="sp-stat-bar"><div class="sp-stat-bar-fill" id="sp-bar-o" style="width:0%;background:var(--green)"></div></div>
@@ -5805,18 +5817,17 @@ Si no encuentras el objeto, dilo con honestidad y sugiere dónde podría estar.
 No uses markdown con asteriscos. Puedes usar emojis con moderación.`;
 
   try{
-    const res = await fetch("https://api.anthropic.com/v1/messages",{
+    const res = await fetch("https://api.groq.com/openai/v1/chat/completions",{
       method:"POST",
-      headers:{"Content-Type":"application/json"},
+      headers:{"Content-Type":"application/json","Authorization":"Bearer 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"},
       body:JSON.stringify({
-        model:"claude-sonnet-4-20250514",
+        model:"llama-3.3-70b-versatile",
         max_tokens:200,
-        system: systemPrompt,
-        messages:[{role:"user", content: query}]
+        messages:[{role:"system", content: systemPrompt},{role:"user", content: query}]
       })
     });
     const data = await res.json();
-    const text = (data.content||[]).map(c=>c.text||"").join("").trim();
+    const text = ((data.choices||[])[0]?.message?.content||"").trim();
     // Reemplazar typing con respuesta
     const typing = document.getElementById("iaTypingRow");
     if(typing){
@@ -9747,18 +9758,17 @@ async function _runAI(userMsg){
   var messages = _aiHistory.slice(-16).map(function(m){ return {role:m.role, content:m.content}; });
 
   try{
-    var res = await fetch('https://api.anthropic.com/v1/messages', {
+    var res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer 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' },
       body: JSON.stringify({
-        model: 'claude-sonnet-4-20250514',
+        model: 'llama-3.3-70b-versatile',
         max_tokens: 400,
-        system: systemPrompt,
-        messages: messages
+        messages: [{ role: 'system', content: systemPrompt }].concat(messages)
       })
     });
     var data = await res.json();
-    var text = (data.content||[]).map(function(c){ return c.text||''; }).join('').trim();
+    var text = ((data.choices||[])[0]?.message?.content||'').trim();
     if(!text && data.error) text = '⚠️ Error: ' + (data.error.message||'respuesta inválida');
 
     _removeTyping();
