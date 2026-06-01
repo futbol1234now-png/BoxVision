@@ -1242,16 +1242,16 @@ to{transform:rotate(360deg)}}
 .pill svg{flex-shrink:0;transition:stroke .18s,fill .18s}
 .pill:active{transform:scale(.92);transition-duration:80ms}
 .pill.active{
-  background:rgba(0,122,255,.72);
+  background:var(--accent);
   color:#fff;
   font-weight:700;
-  border-color:rgba(0,122,255,.35);
-  box-shadow:0 2px 8px rgba(0,122,255,.18);
+  border-color:transparent;
+  box-shadow:0 3px 14px rgba(0,122,255,.38);
 }
 .pill.active svg{stroke:#fff}
 .pill.active svg[fill]{fill:#fff;stroke:#fff}
 [data-dark=""] .pill{background:rgba(255,255,255,.06);border-color:rgba(255,255,255,.1)}
-[data-dark=""] .pill.active{background:rgba(0,122,255,.72);box-shadow:0 2px 8px rgba(0,122,255,.2)}
+[data-dark=""] .pill.active{background:var(--accent);box-shadow:0 3px 14px rgba(0,122,255,.5)}
 .sec-hdr{font-size:12px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;padding:14px 0 8px}
 .boxes-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:4px}
 .box-card{
@@ -1282,29 +1282,13 @@ to{transform:rotate(360deg)}}
   flex-shrink:0;
 }
 .bc-fav:active{transform:scale(.82)}
-.bc-fav.is-fav{background:rgba(255,214,10,.28);border-color:rgba(255,214,10,.45)}
-.bc-badges{display:flex;gap:5px;align-items:center;flex-wrap:wrap}
+.bc-fav.is-fav{background:rgba(255,214,10,.15);border-color:rgba(255,214,10,.28)}
+.bc-badges{display:flex;gap:4px;align-items:center;flex-wrap:wrap}
 .bc-num{
-  background:rgba(0,0,0,.32);color:rgba(255,255,255,.9);
-  font-size:10px;font-weight:800;
+  background:rgba(255,255,255,.15);color:rgba(255,255,255,.85);
+  font-size:10px;font-weight:700;
   padding:2px 8px;border-radius:99px;
   letter-spacing:.3px;
-  border:0.5px solid rgba(255,255,255,.14);
-  backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);
-}
-.bc-lock-badge{
-  display:inline-flex;align-items:center;justify-content:center;
-  background:rgba(0,0,0,.32);
-  border:0.5px solid rgba(255,255,255,.14);
-  border-radius:99px;
-  padding:2px 7px;
-  gap:3px;
-  backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);
-}
-.bc-lock-badge svg{
-  width:10px;height:10px;
-  stroke:rgba(255,255,255,.85);
-  flex-shrink:0;
 }
 /* .bc-icon definido más abajo con estilos premium — no duplicar aquí */
 /* Thumbnail flotante en tarjeta con foto */
@@ -2283,7 +2267,7 @@ to{transform:rotate(360deg)}}
 .empty-state-btn:active{transform:scale(.97)}
 
 /* ── Progress ring en cards ── */
-.bc-ring{position:absolute;top:10px;right:10px;z-index:5}
+.bc-ring{position:absolute;bottom:12px;right:12px;z-index:5}
 .bc-ring svg{display:block}
 .bc-ring-bg{fill:none;stroke:rgba(255,255,255,.15);stroke-width:3}
 .bc-ring-fill{fill:none;stroke:#34C759;stroke-width:3;stroke-linecap:round;transition:stroke-dashoffset .6s cubic-bezier(.4,0,.2,1);transform-origin:center;transform:rotate(-90deg)}
@@ -2782,7 +2766,7 @@ body{
   border:1px solid rgba(255,255,255,.07);
 }
 .pill.active{
-  box-shadow:0 2px 8px rgba(10,132,255,.15);
+  box-shadow:0 4px 14px rgba(10,132,255,.35);
 }
 
 /* ── Secciones de detalle ── */
@@ -2793,17 +2777,11 @@ body{
 
 
 
-/* ── Badges de número y candado en card ── */
+/* ── Badges de número en card ── */
 .bc-num{
   background:rgba(0,0,0,.4) !important;
   backdrop-filter:blur(8px);
-  border:0.5px solid rgba(255,255,255,.15);
-  box-shadow:0 2px 8px rgba(0,0,0,.2);
-}
-.bc-lock-badge{
-  background:rgba(0,0,0,.4) !important;
-  backdrop-filter:blur(8px);
-  border:0.5px solid rgba(255,255,255,.15);
+  border:1px solid rgba(255,255,255,.15);
   box-shadow:0 2px 8px rgba(0,0,0,.2);
 }
 
@@ -3393,7 +3371,7 @@ if(!auth){
       <div>
         <div style="display:flex;align-items:baseline;gap:8px">
           <div class="topbar-title" style="font-size:20px;font-weight:800;letter-spacing:-.5px;cursor:pointer;" onclick="goSplash()">BoxVision</div>
-          <div id="mainClockTime" style="font-size:15px;font-weight:700;color:var(--accent);letter-spacing:-.3px;font-variant-numeric:tabular-nums;opacity:.85">--:--</div>
+          <div id="mainClockTime" style="font-size:15px;font-weight:600;color:var(--muted);letter-spacing:-.3px;font-variant-numeric:tabular-nums;opacity:.75">--:--</div>
         </div>
         <div class="topbar-sub" id="mainSub"></div>
       </div>
@@ -3406,7 +3384,7 @@ if(!auth){
       <button class="tbtn" onclick="toggleSortMenu()" id="sortBtn" title="Ordenar y filtrar"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 6h16M7 12h10M10 18h4"/></svg></button>
       <button class="tbtn" onclick="goSettings()" title="Ajustes"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></button>
 
-      <button onclick="openForm()" title="Nueva caja" aria-label="Agregar nueva caja" style="display:flex;align-items:center;gap:6px;background:linear-gradient(135deg,#0A84FF,#5856D6);color:#fff;border:none;border-radius:14px;padding:0 14px;height:36px;font-size:14px;font-weight:700;font-family:inherit;cursor:pointer;box-shadow:0 3px 14px rgba(10,132,255,.42),inset 0 1px 0 rgba(255,255,255,.2);transition:transform .18s cubic-bezier(.34,1.56,.64,1),box-shadow .18s;-webkit-tap-highlight-color:transparent;flex-shrink:0" onmousedown="this.style.transform='scale(.93)'" onmouseup="this.style.transform=''" onmouseleave="this.style.transform=''">
+      <button onclick="openForm()" title="Nueva caja" aria-label="Agregar nueva caja" style="display:flex;align-items:center;gap:6px;background:rgba(10,132,255,.18);color:rgba(10,132,255,.95);border:1px solid rgba(10,132,255,.3);border-radius:14px;padding:0 14px;height:36px;font-size:14px;font-weight:700;font-family:inherit;cursor:pointer;box-shadow:none;transition:transform .18s cubic-bezier(.34,1.56,.64,1),background .15s;-webkit-tap-highlight-color:transparent;flex-shrink:0" onmousedown="this.style.transform='scale(.93)'" onmouseup="this.style.transform=''" onmouseleave="this.style.transform=''">
         <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
         <span>Nueva caja</span>
       </button>
@@ -3441,6 +3419,7 @@ if(!auth){
     <div class="sr-wrap" id="srWrap"></div>
   </div>
   <div class="filter-row" id="filterRow"></div>
+  <div id="globalProgressBar" style="padding:2px 14px 10px;background:var(--bg);display:none"></div>
   <div class="main-scroll" id="mainScroll"></div>
 </div>
 
@@ -5069,8 +5048,8 @@ function boxCard(b){
           <svg width="14" height="14" viewBox="0 0 24 24" fill="${b.fav?"#FFD60A":"none"}" stroke="${b.fav?"#FFD60A":"rgba(255,255,255,.8)"}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
         </button>
         <div class="bc-badges">
+          ${b.password?'<span style="display:inline-flex;align-items:center;opacity:.7"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.55)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></span>':""}
           ${b.number?`<span class="bc-num">#${esc(b.number)}</span>`:""}
-          ${b.password?`<span class="bc-lock-badge"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg></span>`:""}
         </div>
       </div>
       <span class="bc-icon">${getIcon(b.name, b)}</span>
@@ -5081,7 +5060,7 @@ function boxCard(b){
       </div>
       <div class="bc-list-badges">
         ${b.fav?'<span style="font-size:14px">⭐</span>':""}
-        ${b.password?`<span class="bc-lock-badge"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg></span>`:""}
+        ${b.password?'<span style="display:inline-flex;align-items:center;opacity:.65"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.55)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></span>':""}
         ${b.number?`<span class="bc-num">#${esc(b.number)}</span>`:""}
       </div>
     </div>
@@ -6943,18 +6922,13 @@ function showToastUndo(msg, onUndo){
 
 // Barra de progreso global de mudanza (9)
 function renderGlobalProgress(){
-  let el=document.getElementById("globalProgressBar");
+  const el=document.getElementById("globalProgressBar");
+  if(!el) return;
   const totalObj=boxes.reduce((s,b)=>s+b.items.length,0);
   const doneObj=boxes.reduce((s,b)=>s+b.items.filter(i=>i.done).length,0);
-  if(!totalObj){if(el)el.remove();return;}
+  if(!totalObj){ el.style.display='none'; return; }
   const pct=Math.round(doneObj/totalObj*100);
-  if(!el){
-    el=document.createElement("div");el.id="globalProgressBar";
-    el.style.cssText="position:sticky;top:57px;z-index:99;padding:7px 14px 5px;background:var(--bg)";
-    // Insertar justo antes del search-wrap
-    const sw=document.querySelector(".search-wrap");
-    if(sw) sw.parentNode.insertBefore(el,sw);
-  }
+  el.style.display='block';
   el.innerHTML=`<div style="display:flex;align-items:center;gap:9px">
     <div style="flex:1;height:5px;background:var(--border);border-radius:99px;overflow:hidden">
       <div style="height:100%;width:${pct}%;background:${pct>=100?"#34C759":pct>=60?"#0A84FF":"#FF9500"};border-radius:99px;transition:width .5s cubic-bezier(.4,0,.2,1)"></div>
@@ -9657,9 +9631,9 @@ function _setHeaderStatus(text){
 
 /* ── Extraer cajas relevantes de la respuesta ── */
 function _extractRelevantBoxes(text){
-  if(!window.boxes || !window.boxes.length) return [];
+  if(!boxes || !boxes.length) return [];
   var lower = text.toLowerCase();
-  return window.boxes.filter(function(box){
+  return boxes.filter(function(box){
     var name = (box.name||'').toLowerCase();
     if(lower.indexOf(name) !== -1) return true;
     var itemTexts = (box.items||[]).map(function(i){ return i.text.toLowerCase(); });
@@ -9669,34 +9643,18 @@ function _extractRelevantBoxes(text){
 
 /* ── Construcción del contexto ───────────────── */
 function _buildContext(){
-  if(!window.boxes || !window.boxes.length) return 'No hay cajas registradas todavía.';
-  var bs = window.boxes;
-  var totalCajas   = bs.length;
-  var totalObjetos = bs.reduce(function(s,b){ return s + (b.items||[]).length; }, 0);
-  var totalSacados = bs.reduce(function(s,b){ return s + (b.items||[]).filter(function(i){ return i.done; }).length; }, 0);
-  var urgentes     = bs.filter(function(b){ return b.priority === 'red'; }).length;
-  var selladas     = bs.filter(function(b){ return b.sealed; }).length;
-  var vacias       = bs.filter(function(b){ return !(b.items||[]).length; }).length;
-  var resumen = '=== RESUMEN GLOBAL ===\n'
-    + 'Total de cajas: ' + totalCajas + '\n'
-    + 'Total de objetos: ' + totalObjetos + '\n'
-    + 'Objetos sacados/desempacados: ' + totalSacados + '\n'
-    + (urgentes ? 'Cajas urgentes: ' + urgentes + '\n' : '')
-    + (selladas ? 'Cajas selladas: ' + selladas + '\n' : '')
-    + (vacias   ? 'Cajas vacías: '   + vacias   + '\n' : '')
-    + '=== DETALLE DE CAJAS ===\n';
-  var detalle = bs.slice(0,50).map(function(b){
-    var itemCount = (b.items||[]).length;
+  if(!boxes || !boxes.length) return 'No hay cajas registradas todavía.';
+  return boxes.slice(0,50).map(function(b){
     var items = (b.items||[]).slice(0,20).map(function(i){ return i.text; }).join(', ');
-    var parts = ['• ' + b.name + ' (' + itemCount + ' obj)'];
-    if(b.location) parts.push('📍' + b.location);
+    var parts = ['• ' + b.name];
+    if(b.location) parts.push('(' + b.location + ')');
     if(b.tags && b.tags.length) parts.push('[' + b.tags.join(', ') + ']');
     if(b.sealed) parts.push('[SELLADA]');
-    if(b.priority === 'red') parts.push('[URGENTE]');
-    parts.push('→ ' + (items||'vacía'));
+    if(b.urgent) parts.push('[URGENTE]');
+    if(b.priority) parts.push('[PRIORIDAD:' + b.priority + ']');
+    parts.push(': ' + (items||'sin objetos'));
     return parts.join(' ');
   }).join('\n');
-  return resumen + detalle;
 }
 
 /* ── Llamada a la API ────────────────────────── */
@@ -9715,7 +9673,7 @@ async function _runAI(userMsg){
     + '- Sé directo: indica exactamente en qué caja está lo que busca.\n'
     + '- Máximo 3-4 líneas por respuesta. Sin markdown con asteriscos.\n'
     + '- Puedes usar emojis con moderación.\n'
-    + '- Para preguntas de estadísticas (cuántas cajas, cuántos objetos, etc.) usa SIEMPRE los datos del RESUMEN GLOBAL al inicio del contexto. Son 100% exactos.\n'
+    + '- Si el usuario pide estadísticas, sé preciso con los números.\n'
     + '- Si no encuentras algo, sé honesto y sugiere alternativas.\n'
     + '- Nunca inventes contenido de cajas que no existan en el listado.';
 
