@@ -1242,16 +1242,16 @@ to{transform:rotate(360deg)}}
 .pill svg{flex-shrink:0;transition:stroke .18s,fill .18s}
 .pill:active{transform:scale(.92);transition-duration:80ms}
 .pill.active{
-  background:var(--accent);
+  background:rgba(0,122,255,.72);
   color:#fff;
   font-weight:700;
-  border-color:transparent;
-  box-shadow:0 3px 14px rgba(0,122,255,.38);
+  border-color:rgba(0,122,255,.35);
+  box-shadow:0 2px 8px rgba(0,122,255,.18);
 }
 .pill.active svg{stroke:#fff}
 .pill.active svg[fill]{fill:#fff;stroke:#fff}
 [data-dark=""] .pill{background:rgba(255,255,255,.06);border-color:rgba(255,255,255,.1)}
-[data-dark=""] .pill.active{background:var(--accent);box-shadow:0 3px 14px rgba(0,122,255,.5)}
+[data-dark=""] .pill.active{background:rgba(0,122,255,.72);box-shadow:0 2px 8px rgba(0,122,255,.2)}
 .sec-hdr{font-size:12px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;padding:14px 0 8px}
 .boxes-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:4px}
 .box-card{
@@ -1283,12 +1283,28 @@ to{transform:rotate(360deg)}}
 }
 .bc-fav:active{transform:scale(.82)}
 .bc-fav.is-fav{background:rgba(255,214,10,.28);border-color:rgba(255,214,10,.45)}
-.bc-badges{display:flex;gap:4px;align-items:center;flex-wrap:wrap}
+.bc-badges{display:flex;gap:5px;align-items:center;flex-wrap:wrap}
 .bc-num{
-  background:rgba(0,0,0,.3);color:#fff;
+  background:rgba(0,0,0,.32);color:rgba(255,255,255,.9);
   font-size:10px;font-weight:800;
   padding:2px 8px;border-radius:99px;
   letter-spacing:.3px;
+  border:0.5px solid rgba(255,255,255,.14);
+  backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);
+}
+.bc-lock-badge{
+  display:inline-flex;align-items:center;justify-content:center;
+  background:rgba(0,0,0,.32);
+  border:0.5px solid rgba(255,255,255,.14);
+  border-radius:99px;
+  padding:2px 7px;
+  gap:3px;
+  backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);
+}
+.bc-lock-badge svg{
+  width:10px;height:10px;
+  stroke:rgba(255,255,255,.85);
+  flex-shrink:0;
 }
 /* .bc-icon definido más abajo con estilos premium — no duplicar aquí */
 /* Thumbnail flotante en tarjeta con foto */
@@ -2766,7 +2782,7 @@ body{
   border:1px solid rgba(255,255,255,.07);
 }
 .pill.active{
-  box-shadow:0 4px 14px rgba(10,132,255,.35);
+  box-shadow:0 2px 8px rgba(10,132,255,.15);
 }
 
 /* ── Secciones de detalle ── */
@@ -2777,11 +2793,17 @@ body{
 
 
 
-/* ── Badges de número en card ── */
+/* ── Badges de número y candado en card ── */
 .bc-num{
   background:rgba(0,0,0,.4) !important;
   backdrop-filter:blur(8px);
-  border:1px solid rgba(255,255,255,.15);
+  border:0.5px solid rgba(255,255,255,.15);
+  box-shadow:0 2px 8px rgba(0,0,0,.2);
+}
+.bc-lock-badge{
+  background:rgba(0,0,0,.4) !important;
+  backdrop-filter:blur(8px);
+  border:0.5px solid rgba(255,255,255,.15);
   box-shadow:0 2px 8px rgba(0,0,0,.2);
 }
 
@@ -5047,8 +5069,8 @@ function boxCard(b){
           <svg width="14" height="14" viewBox="0 0 24 24" fill="${b.fav?"#FFD60A":"none"}" stroke="${b.fav?"#FFD60A":"rgba(255,255,255,.8)"}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
         </button>
         <div class="bc-badges">
-          ${b.password?'<span style="font-size:11px">🔐</span>':""}
           ${b.number?`<span class="bc-num">#${esc(b.number)}</span>`:""}
+          ${b.password?`<span class="bc-lock-badge"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg></span>`:""}
         </div>
       </div>
       <span class="bc-icon">${getIcon(b.name, b)}</span>
@@ -5059,7 +5081,7 @@ function boxCard(b){
       </div>
       <div class="bc-list-badges">
         ${b.fav?'<span style="font-size:14px">⭐</span>':""}
-        ${b.password?'<span style="font-size:13px">🔐</span>':""}
+        ${b.password?`<span class="bc-lock-badge"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg></span>`:""}
         ${b.number?`<span class="bc-num">#${esc(b.number)}</span>`:""}
       </div>
     </div>
@@ -9648,17 +9670,33 @@ function _extractRelevantBoxes(text){
 /* ── Construcción del contexto ───────────────── */
 function _buildContext(){
   if(!window.boxes || !window.boxes.length) return 'No hay cajas registradas todavía.';
-  return window.boxes.slice(0,50).map(function(b){
+  var bs = window.boxes;
+  var totalCajas   = bs.length;
+  var totalObjetos = bs.reduce(function(s,b){ return s + (b.items||[]).length; }, 0);
+  var totalSacados = bs.reduce(function(s,b){ return s + (b.items||[]).filter(function(i){ return i.done; }).length; }, 0);
+  var urgentes     = bs.filter(function(b){ return b.priority === 'red'; }).length;
+  var selladas     = bs.filter(function(b){ return b.sealed; }).length;
+  var vacias       = bs.filter(function(b){ return !(b.items||[]).length; }).length;
+  var resumen = '=== RESUMEN GLOBAL ===\n'
+    + 'Total de cajas: ' + totalCajas + '\n'
+    + 'Total de objetos: ' + totalObjetos + '\n'
+    + 'Objetos sacados/desempacados: ' + totalSacados + '\n'
+    + (urgentes ? 'Cajas urgentes: ' + urgentes + '\n' : '')
+    + (selladas ? 'Cajas selladas: ' + selladas + '\n' : '')
+    + (vacias   ? 'Cajas vacías: '   + vacias   + '\n' : '')
+    + '=== DETALLE DE CAJAS ===\n';
+  var detalle = bs.slice(0,50).map(function(b){
+    var itemCount = (b.items||[]).length;
     var items = (b.items||[]).slice(0,20).map(function(i){ return i.text; }).join(', ');
-    var parts = ['• ' + b.name];
-    if(b.location) parts.push('(' + b.location + ')');
+    var parts = ['• ' + b.name + ' (' + itemCount + ' obj)'];
+    if(b.location) parts.push('📍' + b.location);
     if(b.tags && b.tags.length) parts.push('[' + b.tags.join(', ') + ']');
     if(b.sealed) parts.push('[SELLADA]');
-    if(b.urgent) parts.push('[URGENTE]');
-    if(b.priority) parts.push('[PRIORIDAD:' + b.priority + ']');
-    parts.push(': ' + (items||'sin objetos'));
+    if(b.priority === 'red') parts.push('[URGENTE]');
+    parts.push('→ ' + (items||'vacía'));
     return parts.join(' ');
   }).join('\n');
+  return resumen + detalle;
 }
 
 /* ── Llamada a la API ────────────────────────── */
@@ -9677,7 +9715,7 @@ async function _runAI(userMsg){
     + '- Sé directo: indica exactamente en qué caja está lo que busca.\n'
     + '- Máximo 3-4 líneas por respuesta. Sin markdown con asteriscos.\n'
     + '- Puedes usar emojis con moderación.\n'
-    + '- Si el usuario pide estadísticas, sé preciso con los números.\n'
+    + '- Para preguntas de estadísticas (cuántas cajas, cuántos objetos, etc.) usa SIEMPRE los datos del RESUMEN GLOBAL al inicio del contexto. Son 100% exactos.\n'
     + '- Si no encuentras algo, sé honesto y sugiere alternativas.\n'
     + '- Nunca inventes contenido de cajas que no existan en el listado.';
 
