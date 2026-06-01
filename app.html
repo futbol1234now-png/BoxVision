@@ -1177,10 +1177,67 @@ input,button,textarea,select{font-family:inherit}
 .sr-wrap.open{display:block;animation:srSlide .2s cubic-bezier(.34,1.2,.64,1)}
 @keyframes srSlide{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:translateY(0)}}
 
-/* Botón de búsqueda por foto */
-#iaSearchBtn:hover{background:linear-gradient(135deg,rgba(10,132,255,.35),rgba(88,86,214,.28)) !important;transform:scale(1.04)}
-#iaSearchBtn:active{transform:scale(.92) !important}
-to{transform:rotate(360deg)}}
+/* ── Botón IA — rediseño premium ── */
+#iaSearchBtn{
+  position:relative;
+  overflow:hidden;
+  flex-shrink:0;
+  height:34px;
+  padding:0 12px 0 10px;
+  margin-left:6px;
+  border-radius:10px;
+  border:1px solid rgba(10,132,255,.4);
+  background:linear-gradient(135deg,rgba(10,132,255,.18),rgba(88,86,214,.14));
+  color:var(--accent);
+  font-size:11.5px;
+  font-weight:800;
+  letter-spacing:.4px;
+  font-family:inherit;
+  display:flex;align-items:center;gap:5px;
+  cursor:pointer;
+  transition:transform .18s cubic-bezier(.34,1.56,.64,1),
+             box-shadow .18s,
+             background .2s,
+             border-color .2s;
+  -webkit-tap-highlight-color:transparent;
+  box-shadow:0 0 0 0 rgba(10,132,255,0),
+             inset 0 1px 0 rgba(255,255,255,.12);
+}
+/* Brillo animado tipo shimmer */
+#iaSearchBtn::before{
+  content:'';
+  position:absolute;
+  top:0;left:-75%;
+  width:50%;height:100%;
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,.18),transparent);
+  transform:skewX(-18deg);
+  animation:iaBtnShimmer 3.5s ease-in-out infinite;
+  pointer-events:none;
+}
+@keyframes iaBtnShimmer{
+  0%,70%,100%{left:-75%;opacity:0}
+  30%{opacity:1}
+  55%{left:135%;opacity:0}
+}
+/* Punto de estado animado */
+#iaSearchBtn .ia-dot{
+  width:5px;height:5px;border-radius:50%;
+  background:#34C759;
+  box-shadow:0 0 5px #34C759;
+  animation:iaDotPulse 2.2s ease-in-out infinite;
+  flex-shrink:0;
+}
+@keyframes iaDotPulse{
+  0%,100%{opacity:1;transform:scale(1)}
+  50%{opacity:.5;transform:scale(.7)}
+}
+#iaSearchBtn:hover{
+  background:linear-gradient(135deg,rgba(10,132,255,.32),rgba(88,86,214,.26)) !important;
+  border-color:rgba(10,132,255,.65);
+  box-shadow:0 0 14px rgba(10,132,255,.28),inset 0 1px 0 rgba(255,255,255,.15);
+  transform:scale(1.05);
+}
+#iaSearchBtn:active{transform:scale(.93) !important;box-shadow:none}
 
 .sr-item{
   display:flex;align-items:center;gap:12px;
@@ -1193,19 +1250,35 @@ to{transform:rotate(360deg)}}
 .sr-item:last-child{border:none}
 .sr-none{padding:20px;text-align:center;color:var(--muted);font-size:14px}
 
-/* ── Búsqueda con IA ── */
-#iaSearchBtn:hover,#iaSearchBtn:active{color:var(--accent)}
-#iaSearchBtn.loading{color:var(--accent);animation:iaSpin .7s linear infinite}
+/* ── Estado loading del botón IA ── */
+#iaSearchBtn.loading{
+  pointer-events:none;
+  border-color:rgba(10,132,255,.6);
+  background:linear-gradient(135deg,rgba(10,132,255,.25),rgba(88,86,214,.2)) !important;
+  box-shadow:0 0 12px rgba(10,132,255,.25);
+}
+#iaSearchBtn.loading svg{animation:iaSpin .7s linear infinite}
+#iaSearchBtn.loading .ia-dot{background:#FF9500;box-shadow:0 0 5px #FF9500;animation:iaDotPulse .5s ease-in-out infinite}
 @keyframes iaSpin{to{transform:rotate(360deg)}}
 .ia-chip{
-  background:rgba(10,132,255,.13);border:1px solid rgba(10,132,255,.25);
-  color:var(--accent);border-radius:20px;
-  padding:5px 12px;font-size:12px;font-weight:600;cursor:pointer;
-  transition:background .15s,transform .1s;white-space:nowrap;
+  flex-shrink:0;
+  background:linear-gradient(135deg,rgba(10,132,255,.12),rgba(88,86,214,.09));
+  border:1px solid rgba(10,132,255,.28);
+  color:var(--accent);border-radius:99px;
+  padding:6px 13px;font-size:12.5px;font-weight:700;cursor:pointer;
+  transition:background .15s,transform .12s cubic-bezier(.34,1.56,.64,1),box-shadow .15s;
+  white-space:nowrap;
   -webkit-tap-highlight-color:transparent;
+  box-shadow:0 1px 6px rgba(10,132,255,.1);
+  font-family:inherit;
+  letter-spacing:.1px;
 }
-.ia-chip:hover{background:rgba(10,132,255,.22)}
-.ia-chip:active{transform:scale(.93)}
+.ia-chip:hover{
+  background:linear-gradient(135deg,rgba(10,132,255,.22),rgba(88,86,214,.16));
+  box-shadow:0 2px 10px rgba(10,132,255,.2);
+  border-color:rgba(10,132,255,.45);
+}
+.ia-chip:active{transform:scale(.91)}
 .sr-ia-answer{
   padding:14px 16px 10px;border-bottom:.5px solid var(--border);
 }
@@ -3404,17 +3477,19 @@ if(!auth){
       <span class="search-icon"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></i></span>
       <input id="searchInput" type="text" placeholder="Buscar en todas las cajas..." data-i18n="main.search" data-i18n-attr="placeholder" oninput="doSearch(this.value)"/>
       <span id="searchClear" class="hidden" style="font-size:14px;color:var(--muted);cursor:pointer;padding:4px;margin-right:-4px;transition:color .15s" onmouseenter="this.style.color='var(--red)'" onmouseleave="this.style.color='var(--muted)'" onclick="clearSearch()">✕</span>
-      <button id="iaSearchBtn" onclick="openAIAssistant()" title="Buscar con IA" aria-label="Buscar con IA" style="background:linear-gradient(135deg,rgba(10,132,255,.22),rgba(88,86,214,.18));border:1px solid rgba(10,132,255,.35);border-radius:10px;cursor:pointer;padding:5px 9px 5px 8px;color:var(--accent);display:flex;align-items:center;gap:5px;flex-shrink:0;margin-left:6px;transition:background .2s,transform .15s;-webkit-tap-highlight-color:transparent;font-size:11px;font-weight:700;letter-spacing:.3px;font-family:inherit">
-        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a5 5 0 0 1 5 5c0 2.5-1.5 4.5-3.5 5.4L15 21H9l1.5-8.6C8.5 11.5 7 9.5 7 7a5 5 0 0 1 5-5z"/><line x1="9" y1="21" x2="15" y2="21"/></svg>
+      <button id="iaSearchBtn" onclick="openAIAssistant()" title="Asistente IA" aria-label="Buscar con IA">
+        <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26Z"/></svg>
         <span>IA</span>
+        <span class="ia-dot"></span>
       </button>
     </div>
     <!-- Sugerencias IA bajo el buscador -->
-    <div id="iaSearchSuggestions" style="display:none;padding:8px 14px 10px;">
-      <div style="font-size:11px;color:var(--accent);margin-bottom:7px;letter-spacing:.4px;text-transform:uppercase;font-weight:700;display:flex;align-items:center;gap:5px">
-        <span style="font-size:13px">✦</span> Pregúntale a la IA
+    <div id="iaSearchSuggestions" style="display:none;padding:10px 14px 12px;">
+      <div style="font-size:10.5px;color:var(--accent);margin-bottom:9px;letter-spacing:.5px;text-transform:uppercase;font-weight:800;display:flex;align-items:center;gap:6px">
+        <span style="display:inline-flex;align-items:center;justify-content:center;width:18px;height:18px;border-radius:6px;background:linear-gradient(135deg,rgba(10,132,255,.25),rgba(88,86,214,.2));border:1px solid rgba(10,132,255,.3);font-size:10px">✦</span>
+        Pregúntale a la IA
       </div>
-      <div style="display:flex;gap:7px;flex-wrap:wrap" id="iaChips"></div>
+      <div style="display:flex;gap:7px;overflow-x:auto;scrollbar-width:none;padding-bottom:2px" id="iaChips"></div>
     </div>
     <div class="sr-wrap" id="srWrap"></div>
   </div>
@@ -3538,6 +3613,10 @@ if(!auth){
           <button class="det-action-btn dat-wa" onclick="shareBoxWhatsApp()">
             <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
             WhatsApp
+          </button>
+          <button class="det-action-btn" style="background:rgba(52,199,89,.1);color:#34C759;border-color:rgba(52,199,89,.2)" onclick="printBoxLabel()">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+            Imprimir
           </button>
           <button class="det-action-btn dat-dup" onclick="confirmDupBox()">
             <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="7" width="14" height="14" rx="2"/><path d="M7 7V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2h-2"/></svg>
@@ -9795,6 +9874,434 @@ console.log('🤖 Asistente IA BoxVision v1.0 — Listo');
 })();
 </script>
 
+<script>
+/* ══════════════════════════════════════════════════════
+   1. ETIQUETA IMPRIMIBLE
+   ══════════════════════════════════════════════════════ */
+function printBoxLabel(){
+  var box = boxes.find(function(b){ return b.id === currentBoxId; });
+  if(!box) return;
+  var col  = box.color || '#007AFF';
+  var icon = getIcon(box.name, box) || '📦';
+  var num  = box.number ? ' #' + box.number : '';
+  var loc  = box.location ? '📍 ' + box.location : '';
+  var wt   = box.weight   ? '⚖️ ' + box.weight + ' kg' : '';
+  var pri  = {red:'🔴 Urgente', yellow:'🟡 Normal', green:'🟢 Sin prisa'}[box.priority] || '';
+  var itemsHTML = box.items.length
+    ? box.items.map(function(it,i){
+        return '<div style="display:flex;align-items:center;gap:8px;padding:5px 0;border-bottom:1px solid #eee;font-size:13px">'
+          + '<span style="color:#999;min-width:22px">'+(i+1)+'.</span>'
+          + '<span style="'+(it.done?'text-decoration:line-through;color:#aaa':'')+'">' + it.text + '</span>'
+          + (it.done ? '<span style="color:#34C759;margin-left:auto">✓</span>' : '')
+          + '</div>';
+      }).join('')
+    : '<p style="color:#aaa;font-size:13px">Sin objetos registrados</p>';
+
+  // Generar QR como data URL usando TinyQR
+  var qrDataURL = '';
+  try {
+    var cv = document.createElement('canvas');
+    cv.width = cv.height = 180;
+    TinyQR.toCanvas(cv, _buildQRURL(box), {width:180, margin:1, dark:'#000', light:'#fff'});
+    qrDataURL = cv.toDataURL('image/png');
+  } catch(e){}
+
+  var html = '<!DOCTYPE html><html><head><meta charset="UTF-8">'
+    + '<title>Etiqueta — ' + box.name + '</title>'
+    + '<style>'
+    + '*{margin:0;padding:0;box-sizing:border-box}'
+    + 'body{font-family:-apple-system,BlinkMacSystemFont,sans-serif;background:#f5f5f5;padding:20px}'
+    + '.label{background:#fff;border-radius:16px;max-width:400px;margin:0 auto;overflow:hidden;box-shadow:0 2px 20px rgba(0,0,0,.12);page-break-inside:avoid}'
+    + '.hero{background:'+col+';padding:22px 20px 18px;color:#fff;position:relative}'
+    + '.hero-icon{font-size:44px;margin-bottom:6px}'
+    + '.hero-name{font-size:22px;font-weight:800;letter-spacing:-.4px}'
+    + '.hero-num{font-size:13px;opacity:.8;margin-top:3px}'
+    + '.meta{display:flex;flex-wrap:wrap;gap:8px;padding:14px 20px;border-bottom:1px solid #eee;font-size:12px;color:#666}'
+    + '.meta span{background:#f0f0f0;border-radius:99px;padding:4px 10px}'
+    + '.items{padding:14px 20px}'
+    + '.items-title{font-size:11px;font-weight:700;color:#999;letter-spacing:.5px;text-transform:uppercase;margin-bottom:10px}'
+    + '.qr-row{display:flex;align-items:center;gap:16px;padding:14px 20px 18px;border-top:1px solid #eee;margin-top:4px}'
+    + '.qr-img{width:80px;height:80px;border-radius:8px;flex-shrink:0}'
+    + '.qr-hint{font-size:11px;color:#aaa;line-height:1.5}'
+    + '.footer{background:#f9f9f9;padding:10px 20px;font-size:10px;color:#bbb;text-align:center}'
+    + '@media print{body{background:#fff;padding:0}.label{box-shadow:none;border-radius:0;max-width:100%}}'
+    + '</style>'
+    + '<script>window.onload=function(){window.print();}<\/script>'
+    + '</head><body>'
+    + '<div class="label">'
+    + '<div class="hero">'
+    + '<div class="hero-icon">'+icon+'</div>'
+    + '<div class="hero-name">'+box.name+num+'</div>'
+    + (pri ? '<div class="hero-num">'+pri+'</div>' : '')
+    + '</div>'
+    + '<div class="meta">'
+    + (loc ? '<span>'+loc+'</span>' : '')
+    + (wt  ? '<span>'+wt+'</span>'  : '')
+    + '<span>📦 '+box.items.length+' objeto'+(box.items.length!==1?'s':'')+'</span>'
+    + (box.date ? '<span>📅 '+box.date+'</span>' : '')
+    + (box.sealed ? '<span>🔒 Sellada</span>' : '')
+    + '</div>'
+    + '<div class="items">'
+    + '<div class="items-title">Contenido</div>'
+    + itemsHTML
+    + '</div>'
+    + (qrDataURL ? '<div class="qr-row"><img class="qr-img" src="'+qrDataURL+'"/><div class="qr-hint">Escanea para ver<br>el contenido en vivo<br>con BoxVision</div></div>' : '')
+    + '<div class="footer">Generado con BoxVision · '+ new Date().toLocaleDateString('es-PE') +'</div>'
+    + '</div></body></html>';
+
+  var win = window.open('', '_blank', 'width=480,height=700');
+  if(win){ win.document.write(html); win.document.close(); }
+  else { showToast('Permite ventanas emergentes para imprimir', '#FF9500'); }
+}
+
+/* ══════════════════════════════════════════════════════
+   2. SUGERENCIAS DE OBJETOS AL ESCRIBIR NOMBRE DE CAJA
+   ══════════════════════════════════════════════════════ */
+var _SUGGEST_MAP = {
+  'cocina':    ['Olla grande','Sartén','Platos','Vasos','Cubiertos','Tazas','Licuadora','Cafetera','Tuppers','Cuchillos','Tablas de cortar','Colador'],
+  'bano':      ['Shampoo','Acondicionador','Jabón','Toallas','Crema corporal','Pasta de dientes','Cepillo de dientes','Desodorante','Espejo','Secador de cabello'],
+  'dormitorio':['Ropa de cama','Almohadas','Cobijas','Lámpara de noche','Despertador','Ropa','Zapatos','Libros'],
+  'sala':      ['Control remoto','Cojines','Cuadros','Flores artificiales','Libros decorativos','Lampara de sala'],
+  'ropa':      ['Camisas','Pantalones','Vestidos','Zapatos','Calcetines','Ropa interior','Abrigos','Chaquetas','Cinturones'],
+  'libros':    ['Novelas','Libros de texto','Revistas','Diccionarios','Atlas','Libros de cocina','Cuadernos'],
+  'electronica':['Laptop','Cargadores','Auriculares','Mouse','Teclado','Cables HDMI','Powerbank','Tablet','Disco duro externo'],
+  'juguetes':  ['Legos','Muñecos','Pelotas','Rompecabezas','Juegos de mesa','Carros de juguete','Muñecas'],
+  'documentos':['Pasaporte','DNI','Escrituras','Contratos','Facturas','Certificados','Recibos'],
+  'herramientas':['Martillo','Destornilladores','Llave inglesa','Taladro','Cinta métrica','Nivel','Clavos','Tornillos'],
+  'oficina':   ['Papeles','Carpetas','Grapadora','Perforadora','Post-its','Bolígrafos','Marcadores','Tijeras'],
+  'jardin':    ['Macetas','Tierra','Semillas','Pala','Rastrillo','Manguera','Abono','Guantes de jardín'],
+  'deporte':   ['Zapatillas','Ropa deportiva','Pelota','Casco','Guantes','Mochila deportiva'],
+  'mascotas':  ['Comida','Collar','Correa','Juguetes','Cama','Cepillo','Shampoo mascota','Tazón'],
+  'navidad':   ['Árbol navideño','Esferas','Luces','Estrella','Pesebre','Regalos','Adornos'],
+  'bebe':      ['Pañales','Biberones','Ropa de bebé','Chupete','Manta','Crema pañal','Toallitas'],
+};
+
+function _showBoxNameSuggestions(val){
+  var existing = document.getElementById('_bvNameSugWrap');
+  if(existing) existing.remove();
+  if(!val || val.trim().length < 2) return;
+
+  var norm = val.trim().toLowerCase()
+    .normalize('NFD').replace(/[\u0300-\u036f]/g,'');
+
+  var matched = null;
+  for(var key in _SUGGEST_MAP){
+    if(norm.indexOf(key) !== -1 || key.indexOf(norm) !== -1){
+      matched = _SUGGEST_MAP[key];
+      break;
+    }
+  }
+  if(!matched) return;
+
+  var wrap = document.createElement('div');
+  wrap.id = '_bvNameSugWrap';
+  wrap.style.cssText = 'margin:8px 0 0;animation:srSlide .2s cubic-bezier(.34,1.2,.64,1)';
+  wrap.innerHTML = '<div style="font-size:11px;color:var(--accent);font-weight:700;letter-spacing:.4px;text-transform:uppercase;margin-bottom:7px;display:flex;align-items:center;gap:5px">'
+    + '<span>✦</span> Objetos sugeridos para esta caja</div>'
+    + '<div style="display:flex;flex-wrap:wrap;gap:6px">'
+    + matched.map(function(item){
+        return '<button onclick="_addSuggestedItem(this,\''+item.replace(/'/g,"\\'")+'\')" '
+          + 'style="background:rgba(10,132,255,.1);border:1px solid rgba(10,132,255,.25);border-radius:99px;'
+          + 'padding:5px 12px;font-size:12px;font-weight:600;color:var(--accent);cursor:pointer;'
+          + 'transition:background .12s,transform .1s,opacity .15s;font-family:inherit;-webkit-tap-highlight-color:transparent">'
+          + item + '</button>';
+      }).join('')
+    + '</div>'
+    + '<div style="font-size:11px;color:var(--muted);margin-top:8px">Toca para agregar a la caja al guardarla</div>';
+
+  var fNameRow = document.getElementById('fName');
+  if(fNameRow && fNameRow.closest('.form-ios-row')){
+    fNameRow.closest('.form-group-ios').insertAdjacentElement('afterend', wrap);
+  }
+}
+
+window._addSuggestedItem = function(btn, item){
+  if(!window._bvPendingSugItems) window._bvPendingSugItems = [];
+  var idx = window._bvPendingSugItems.indexOf(item);
+  if(idx === -1){
+    window._bvPendingSugItems.push(item);
+    btn.style.background = 'rgba(10,132,255,.28)';
+    btn.style.borderColor = 'rgba(10,132,255,.55)';
+    btn.innerHTML = '✓ ' + item;
+  } else {
+    window._bvPendingSugItems.splice(idx,1);
+    btn.style.background = '';
+    btn.style.borderColor = '';
+    btn.innerHTML = item;
+  }
+};
+
+// Hook en saveForm para agregar los items sugeridos al guardar
+(function(){
+  var _origSave = window.saveForm;
+  if(typeof _origSave === 'function'){
+    window.saveForm = function(){
+      _origSave();
+      var pending = window._bvPendingSugItems;
+      if(!pending || !pending.length) return;
+      // Esperar a que la caja se haya guardado y estar en main
+      setTimeout(function(){
+        var added = pending.slice();
+        window._bvPendingSugItems = [];
+        // Encontrar la caja recién creada (la última si es nueva)
+        if(!boxes.length) return;
+        var target = boxes[boxes.length - 1];
+        if(!target) return;
+        added.forEach(function(text){
+          if(!target.items.find(function(i){ return i.text === text; })){
+            target.items.push({text: text, done: false});
+          }
+        });
+        saveData();
+        showToast('✅ ' + added.length + ' objeto' + (added.length!==1?'s':'') + ' agregados', '#34C759');
+        var sw = document.getElementById('_bvNameSugWrap');
+        if(sw) sw.remove();
+      }, 200);
+    };
+  }
+})();
+
+/* ══════════════════════════════════════════════════════
+   3. IA AGENTE — ejecuta acciones además de responder
+   ══════════════════════════════════════════════════════ */
+(function(){
+  // Sobrescribir _runAI para detectar intención de acción
+  var _origRunAI = window._runAI || null;
+
+  // Definimos las herramientas (function calling simulado via prompt)
+  var ACTION_SYSTEM = 'Eres el asistente agente de BoxVision. Puedes responder preguntas Y ejecutar acciones.\n'
+    + 'Si el usuario quiere CREAR una caja, AGREGAR objetos, MARCAR items, o MOVER cajas a habitaciones,\n'
+    + 'responde SOLO con un JSON en este formato exacto (sin texto extra, sin markdown):\n'
+    + '{"action":"create_box","name":"...","items":["...","..."],"location":"...","color":"#007AFF"}\n'
+    + '{"action":"add_items","box_name":"...","items":["...","..."]}\n'
+    + '{"action":"mark_done","box_name":"...","item_text":"..."}\n'
+    + '{"action":"seal_box","box_name":"..."}\n'
+    + 'Si NO es una acción, responde normalmente en texto.\n'
+    + 'Detecta acciones en frases como: "crea una caja", "agrega", "añade", "pon en la caja", "marca como sacado", "sella la caja".\n'
+    + 'Para colores: rojo=#FF3B30, azul=#007AFF, verde=#34C759, naranja=#FF9500, morado=#5856D6, rosa=#FF2D55.\n';
+
+  function _execAction(parsed){
+    try{
+      if(parsed.action === 'create_box'){
+        var name = parsed.name || 'Nueva caja';
+        var newBox = {
+          id: genId(), name: name,
+          number: '', location: parsed.location||'', weight:'',
+          color: parsed.color||'#007AFF', priority:'yellow',
+          tags:[], related:null, password:null, secretQ:null, secretA:null,
+          items:(parsed.items||[]).map(function(t){ return {text:t, done:false}; }),
+          date: fmtDate(), note:'', photo:null, fav:false,
+          lastUsed:0, history:[], sealed:false, lastModified:Date.now()
+        };
+        boxes.push(newBox);
+        saveData();
+        var msg = '✅ Caja "' + name + '" creada'
+          + (parsed.items&&parsed.items.length ? ' con ' + parsed.items.length + ' objeto' + (parsed.items.length!==1?'s':'') : '')
+          + (parsed.location ? ' · 📍 '+parsed.location : '') + '.';
+        return { ok:true, msg:msg, boxCards:[newBox] };
+      }
+      if(parsed.action === 'add_items'){
+        var target = boxes.find(function(b){
+          return b.name.toLowerCase().indexOf((parsed.box_name||'').toLowerCase()) !== -1;
+        });
+        if(!target) return { ok:false, msg:'⚠️ No encontré ninguna caja llamada "'+parsed.box_name+'". Verifica el nombre.' };
+        if(target.sealed) return { ok:false, msg:'🔒 La caja "'+target.name+'" está sellada. Ábrela primero.' };
+        var added = [];
+        (parsed.items||[]).forEach(function(t){
+          if(!target.items.find(function(i){ return i.text.toLowerCase()===t.toLowerCase(); })){
+            target.items.push({text:t, done:false});
+            added.push(t);
+          }
+        });
+        saveData();
+        return { ok:true, msg:'✅ Agregué ' + added.length + ' objeto' + (added.length!==1?'s':'') + ' a "'+target.name+'": ' + added.join(', ') + '.', boxCards:[target] };
+      }
+      if(parsed.action === 'mark_done'){
+        var tbox = boxes.find(function(b){
+          return b.name.toLowerCase().indexOf((parsed.box_name||'').toLowerCase()) !== -1;
+        });
+        if(!tbox) return { ok:false, msg:'⚠️ No encontré la caja "'+parsed.box_name+'".' };
+        var item = tbox.items.find(function(i){
+          return i.text.toLowerCase().indexOf((parsed.item_text||'').toLowerCase()) !== -1;
+        });
+        if(!item) return { ok:false, msg:'⚠️ No encontré "'+parsed.item_text+'" en la caja "'+tbox.name+'".' };
+        item.done = true;
+        saveData();
+        return { ok:true, msg:'✅ Marqué "'+item.text+'" como sacado en la caja "'+tbox.name+'".', boxCards:[tbox] };
+      }
+      if(parsed.action === 'seal_box'){
+        var sbox = boxes.find(function(b){
+          return b.name.toLowerCase().indexOf((parsed.box_name||'').toLowerCase()) !== -1;
+        });
+        if(!sbox) return { ok:false, msg:'⚠️ No encontré la caja "'+parsed.box_name+'".' };
+        sbox.sealed = !sbox.sealed;
+        saveData();
+        return { ok:true, msg:(sbox.sealed?'🔒 Caja "':'🔓 Caja "')+sbox.name+'" '+(sbox.sealed?'sellada':'abierta')+'.', boxCards:[sbox] };
+      }
+    } catch(e){ return { ok:false, msg:'❌ Error al ejecutar la acción: '+e.message }; }
+    return null;
+  }
+
+  // Reemplazar _runAI con versión agente
+  window._runAI = async function(userMsg){
+    var $id = function(id){ return document.getElementById(id); };
+    var _aiTypingRef = window._aiTyping;
+    window._aiTyping = true;
+
+    var statusEl = $id('aiHeaderStatus');
+    if(statusEl) statusEl.textContent = 'Pensando…';
+    var sendBtn = $id('aiSendBtn');
+    if(sendBtn) sendBtn.classList.add('loading');
+
+    // Mostrar typing
+    var msgs = $id('aiMessages');
+    var typingRow = document.createElement('div');
+    typingRow.className = 'ai-msg bot'; typingRow.id = '_aiTypingRow';
+    typingRow.innerHTML = '<div class="ai-msg-avatar">🤖</div><div class="ai-typing"><span></span><span></span><span></span></div>';
+    if(msgs){ msgs.appendChild(typingRow); msgs.scrollTop = msgs.scrollHeight; }
+
+    var context = _buildContext();
+    var rooms_ctx = (typeof rooms !== 'undefined' && rooms.length)
+      ? '\nHabitaciones: ' + rooms.map(function(r){ return r.name; }).join(', ')
+      : '';
+
+    var systemPrompt = ACTION_SYSTEM
+      + '\nDatos actuales del usuario:\n' + context + rooms_ctx
+      + '\n\nPara respuestas normales (no acciones): sé directo, máx 3-4 líneas, sin asteriscos, en español informal.';
+
+    var messages = (window._aiHistory||[]).slice(-14).map(function(m){
+      return {role:m.role, content:m.content};
+    });
+
+    var groqKey = localStorage.getItem('bv_groq_api_key');
+    if(!groqKey){
+      typingRow.remove();
+      window._aiTyping = false;
+      if(sendBtn) sendBtn.classList.remove('loading');
+      if(statusEl) statusEl.textContent = 'Configura tu API Key';
+      window._showGroqKeyModal(function(){
+        if(window._aiHistory) window._aiHistory.pop();
+        window._runAI(userMsg);
+      });
+      return;
+    }
+
+    var now = function(){
+      var d = new Date();
+      return d.getHours().toString().padStart(2,'0')+':'+d.getMinutes().toString().padStart(2,'0');
+    };
+    var _esc2 = function(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); };
+
+    function _appendMsgLocal(msg){
+      if(!msgs) return;
+      var isUser = msg.role === 'user';
+      var w = document.createElement('div');
+      w.className = 'ai-msg '+(isUser?'user':'bot')+(msg.isError?' ai-error-bubble':'');
+      var avatar = isUser ? '' : '<div class="ai-msg-avatar">🤖</div>';
+      var bub = _esc2(msg.content).replace(/\n/g,'<br>');
+      var cards = '';
+      if(msg.boxCards && msg.boxCards.length){
+        cards = msg.boxCards.map(function(box){
+          var its = (box.items||[]).slice(0,3).map(function(i){ return i.text; }).join(', ');
+          return '<div class="ai-box-card" onclick="window._aiGoBox(\''+box.id+'\')">'
+            +'<div class="ai-box-icon">'+(getIcon(box.name,box)||'📦')+'</div>'
+            +'<div class="ai-box-info"><div class="ai-box-name">'+_esc2(box.name)+'</div>'
+            +'<div class="ai-box-items">'+(its||'Sin objetos')+'</div></div>'
+            +'<div class="ai-box-arrow">›</div></div>';
+        }).join('');
+      }
+      w.innerHTML = avatar+'<div><div class="ai-bubble">'+bub+cards+'</div>'
+        +'<div class="ai-bubble-time">'+(msg.time||'')+'</div></div>';
+      msgs.appendChild(w); msgs.scrollTop = msgs.scrollHeight;
+    }
+
+    try{
+      var res = await fetch('https://api.groq.com/openai/v1/chat/completions',{
+        method:'POST',
+        headers:{'Content-Type':'application/json','Authorization':'Bearer '+groqKey},
+        body:JSON.stringify({
+          model:'llama-3.3-70b-versatile',
+          max_tokens:500,
+          messages:[{role:'system',content:systemPrompt}].concat(messages)
+        })
+      });
+      var data = await res.json();
+
+      if(data.error && (res.status===401||(data.error.code||'')==='invalid_api_key')){
+        localStorage.removeItem('bv_groq_api_key');
+        typingRow.remove();
+        window._aiTyping = false;
+        if(sendBtn) sendBtn.classList.remove('loading');
+        if(statusEl) statusEl.textContent = 'Clave inválida';
+        window._showGroqKeyModal(function(){ window._aiHistory.pop(); window._runAI(userMsg); }, true);
+        return;
+      }
+
+      var text = (((data.choices||[])[0]||{}).message||{}).content || '';
+      text = text.trim();
+      if(!text && data.error) text = '⚠️ ' + (data.error.message||'Error');
+
+      typingRow.remove();
+
+      // Intentar parsear como acción JSON
+      var actionResult = null;
+      try{
+        var jsonMatch = text.match(/\{[\s\S]*\}/);
+        if(jsonMatch){
+          var parsed = JSON.parse(jsonMatch[0]);
+          if(parsed.action){ actionResult = _execAction(parsed); }
+        }
+      } catch(e){}
+
+      if(actionResult){
+        window._aiHistory.push({role:'assistant', content:actionResult.msg});
+        _appendMsgLocal({role:'bot', content:actionResult.msg, time:now(), boxCards:actionResult.boxCards||[]});
+        if(statusEl) statusEl.textContent = 'Acción ejecutada ✓';
+        // Refrescar la pantalla principal si está visible
+        if(typeof renderMain === 'function'){
+          setTimeout(function(){ renderMain(); }, 100);
+        }
+      } else {
+        var relBoxes = (typeof _extractRelevantBoxes === 'function') ? _extractRelevantBoxes(text) : [];
+        window._aiHistory.push({role:'assistant', content:text});
+        _appendMsgLocal({role:'bot', content:text, time:now(), boxCards:relBoxes});
+        if(statusEl) statusEl.textContent = 'Listo para ayudarte';
+      }
+
+      var quickWrap = $id('aiQuickChips');
+      if(quickWrap && window._aiHistory.length > 2) quickWrap.style.display = 'flex';
+
+    } catch(err){
+      typingRow.remove();
+      _appendMsgLocal({role:'bot', content:'❌ Sin conexión. Revisa tu red e intenta de nuevo.', time:now(), isError:true});
+      if(statusEl) statusEl.textContent = 'Sin conexión';
+    }
+
+    window._aiTyping = false;
+    if(sendBtn) sendBtn.classList.remove('loading');
+  };
+
+  // Actualizar chips rápidos para incluir acciones de agente
+  document.addEventListener('DOMContentLoaded', function(){
+    var chipsWrap = document.getElementById('aiQuickChips');
+    if(!chipsWrap) return;
+    var agentChips = [
+      '¿Dónde están mis llaves?',
+      'Crea una caja "Cocina" con ollas y sartenes',
+      '¿Qué cajas no he abierto?',
+      'Agrega "cargador" a la caja electrónica',
+      '¿Cuántos objetos tengo en total?',
+      'Sella la caja de libros'
+    ];
+    chipsWrap.innerHTML = agentChips.map(function(c){
+      return '<button class="ai-quick-chip" onclick="aiQuickSend(this)">'+c+'</button>';
+    }).join('');
+  });
+
+  console.log('🤖 BoxVision IA Agente v2.0 — Listo (acciones + búsqueda)');
+})();
+</script>
+
 <!-- ══════════════════════════════════════════════════
      MODAL: Nueva / Editar Caja
      ══════════════════════════════════════════════════ -->
@@ -9820,7 +10327,7 @@ console.log('🤖 Asistente IA BoxVision v1.0 — Listo');
       <div class="form-group-ios">
         <div class="form-ios-row">
           <span class="form-ios-label">Nombre</span>
-          <input id="fName" class="form-ios-input" type="text" placeholder="Ej: Cocina, Libros…" oninput="updateFormPreview()" maxlength="60" autocomplete="off"/>
+          <input id="fName" class="form-ios-input" type="text" placeholder="Ej: Cocina, Libros…" oninput="updateFormPreview();_showBoxNameSuggestions(this.value)" maxlength="60" autocomplete="off"/>
         </div>
         <div class="form-ios-row">
           <span class="form-ios-label">Número</span>
