@@ -2,159 +2,288 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <title>Política de Privacidad — BoxVision</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 :root{
-  --bg:#17171f;--card:#1e1e28;--text:#FFFFFF;--muted:#8E8E93;
-  --border:rgba(255,255,255,0.08);--accent:#007AFF;--green:#34C759;
-  --topbar:rgba(23,23,31,0.88);--topbarborder:rgba(255,255,255,0.07);
+  --bg:#111118;--card:#1c1c24;--card2:#232330;
+  --text:#f5f5f7;--muted:#6e6e73;--muted2:rgba(245,245,247,.45);
+  --border:rgba(255,255,255,0.07);--border2:rgba(255,255,255,0.04);
+  --accent:#2997FF;--accent2:#5e5ce6;
+  --green:#30d158;--red:#ff453a;--yellow:#ffd60a;--orange:#ff9f0a;
+  --topbar:rgba(17,17,24,0.92);
+  --r:18px;--rs:12px;
+  --ease:cubic-bezier(.32,1,.4,1);
 }
-body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','Segoe UI',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;}
-body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse 80% 50% at 15% 20%,rgba(10,132,255,0.07) 0%,transparent 60%),radial-gradient(ellipse 60% 40% at 85% 70%,rgba(88,86,214,0.06) 0%,transparent 60%);pointer-events:none;z-index:0;}
+html{scroll-behavior:smooth;}
+body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','SF Pro Text',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;-webkit-font-smoothing:antialiased;}
+body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:1;opacity:.025;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");}
 
-/* Topbar */
-.topbar{position:sticky;top:0;z-index:200;background:var(--topbar);border-bottom:0.5px solid var(--topbarborder);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);padding:14px 16px 12px;display:flex;align-items:center;gap:10px;}
-.topbar-back{width:36px;height:36px;border-radius:10px;background:rgba(255,255,255,.08);border:0.5px solid rgba(255,255,255,.1);display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--accent);font-size:18px;transition:background .15s;text-decoration:none;flex-shrink:0;}
-.topbar-back:active{background:rgba(255,255,255,.14);}
+#rp{position:fixed;top:0;left:0;right:0;height:2px;z-index:9000;pointer-events:none;}
+#rpf{height:100%;width:0%;background:linear-gradient(90deg,var(--accent),var(--green));transition:width .1s linear;}
+
+.topbar{position:sticky;top:0;z-index:500;background:var(--topbar);border-bottom:0.5px solid var(--border);backdrop-filter:saturate(180%) blur(20px);-webkit-backdrop-filter:saturate(180%) blur(20px);padding:10px 16px;display:flex;align-items:center;gap:12px;transition:box-shadow .2s;}
+.topbar.scrolled{box-shadow:0 1px 0 var(--border),0 4px 16px rgba(0,0,0,.4);}
+.topbar-back{width:34px;height:34px;border-radius:10px;background:rgba(255,255,255,.06);border:0.5px solid rgba(255,255,255,.08);display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--accent);text-decoration:none;flex-shrink:0;transition:background .15s,transform .1s;}
+.topbar-back:active{background:rgba(255,255,255,.12);transform:scale(.88);}
 .topbar-info{flex:1;min-width:0;}
-.topbar-title{font-size:17px;font-weight:700;letter-spacing:-.3px}
-.topbar-sub{font-size:11px;color:var(--muted);margin-top:1px}
-
-/* Lang switcher */
-.lang-switcher{display:flex;background:rgba(255,255,255,.08);border:0.5px solid rgba(255,255,255,.12);border-radius:10px;overflow:hidden;flex-shrink:0;}
-.lang-btn{padding:6px 11px;font-size:12px;font-weight:700;cursor:pointer;color:var(--muted);transition:all .18s;border:none;background:transparent;letter-spacing:.3px;}
-.lang-btn.active{background:var(--accent);color:#fff;border-radius:9px;}
+.topbar-title{font-size:15px;font-weight:650;letter-spacing:-.25px;line-height:1.2;}
+.topbar-sub{font-size:11px;color:var(--muted);margin-top:1.5px;}
+.lang-sw{display:flex;background:rgba(255,255,255,.06);border:0.5px solid rgba(255,255,255,.09);border-radius:9px;padding:2px;gap:2px;flex-shrink:0;}
+.lang-btn{padding:4px 11px;font-size:11px;font-weight:700;cursor:pointer;color:var(--muted);border:none;background:transparent;letter-spacing:.5px;border-radius:7px;transition:all .18s;}
+.lang-btn.active{background:var(--accent);color:#fff;box-shadow:0 1px 6px rgba(41,151,255,.45);}
 
 /* Hero */
-.hero{position:relative;overflow:hidden;background:linear-gradient(135deg,#0A84FF,#5856D6 60%,#AF52DE);padding:32px 20px 28px;text-align:center;}
-.hero::after{content:'';position:absolute;inset:0;background:linear-gradient(180deg,transparent 40%,rgba(23,23,31,.6));pointer-events:none;}
-.hero-icon{font-size:52px;position:relative;z-index:1;margin-bottom:10px;line-height:1;filter:drop-shadow(0 4px 16px rgba(0,0,0,.4));}
-.hero-title{font-size:26px;font-weight:800;letter-spacing:-.5px;position:relative;z-index:1;margin-bottom:6px;}
-.hero-sub{font-size:13px;color:rgba(255,255,255,.7);position:relative;z-index:1;line-height:1.5;}
-.hero-badge{display:inline-flex;align-items:center;gap:6px;margin-top:14px;position:relative;z-index:1;background:rgba(255,255,255,.15);border:0.5px solid rgba(255,255,255,.2);backdrop-filter:blur(12px);border-radius:99px;padding:6px 14px;font-size:12px;font-weight:600;color:rgba(255,255,255,.9);}
+.hero{padding:44px 20px 36px;text-align:center;position:relative;z-index:2;}
+.hero-icon{width:72px;height:72px;border-radius:22px;background:rgba(41,151,255,.12);border:0.5px solid rgba(41,151,255,.2);display:inline-flex;align-items:center;justify-content:center;margin-bottom:20px;animation:iconIn .55s cubic-bezier(.34,1.3,.64,1) both;box-shadow:0 0 0 8px rgba(41,151,255,.05);}
+.hero-icon svg{width:34px;height:34px;stroke:var(--accent);stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round;fill:none;}
+@keyframes iconIn{from{transform:scale(.5) rotate(-8deg);opacity:0}to{transform:scale(1) rotate(0);opacity:1}}
+.hero-title{font-size:30px;font-weight:700;letter-spacing:-.7px;margin-bottom:9px;line-height:1.1;animation:txIn .4s .1s var(--ease) both;}
+.hero-sub{font-size:14px;color:var(--muted);line-height:1.6;max-width:280px;margin:0 auto;animation:txIn .4s .18s var(--ease) both;}
+.hero-meta{display:inline-flex;align-items:center;gap:6px;margin-top:18px;color:var(--muted2);font-size:12px;font-weight:500;letter-spacing:.2px;animation:txIn .4s .24s var(--ease) both;}
+.hero-meta span{width:4px;height:4px;border-radius:50%;background:var(--muted2);}
+@keyframes txIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
 
-/* Body */
-.page-body{padding:0 14px 80px;max-width:680px;margin:0 auto;position:relative;z-index:1;}
-.sec{background:var(--card);border-radius:20px;margin-top:14px;overflow:hidden;border:0.5px solid var(--border);box-shadow:0 2px 12px rgba(0,0,0,.12);}
-.sec-header{display:flex;align-items:center;gap:10px;padding:16px 18px 0;margin-bottom:4px;}
-.sec-icon{width:30px;height:30px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0;}
-.sec-title{font-size:13px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.6px;}
-.sec-body{padding:10px 18px 18px;font-size:15px;line-height:1.65;color:var(--text);}
-.sec-body p{margin-bottom:12px;}.sec-body p:last-child{margin-bottom:0;}
-.sec-body ul{padding-left:18px;margin-bottom:12px;}.sec-body ul li{margin-bottom:7px;color:rgba(255,255,255,.85);}
-.sec-body strong{color:#fff;font-weight:700;}
-.highlight{background:rgba(10,132,255,.1);border:0.5px solid rgba(10,132,255,.25);border-radius:14px;padding:14px 16px;margin:12px 0;font-size:14px;line-height:1.6;color:rgba(255,255,255,.85);}
-.highlight.green{background:rgba(52,199,89,.1);border-color:rgba(52,199,89,.25);}
-.highlight.yellow{background:rgba(255,204,0,.1);border-color:rgba(255,204,0,.25);}
-.data-row{display:flex;align-items:flex-start;gap:12px;padding:12px 0;border-bottom:0.5px solid var(--border);}
-.data-row:last-child{border:none}
-.data-dot{width:8px;height:8px;border-radius:50%;background:var(--accent);flex-shrink:0;margin-top:5px;}
-.data-dot.green{background:var(--green);}.data-dot.orange{background:#FF9500;}
-.data-text{font-size:14px;line-height:1.5;color:rgba(255,255,255,.85);}.data-text strong{color:#fff;}
-.contact-row{display:flex;align-items:center;gap:12px;padding:14px 18px;border-bottom:0.5px solid var(--border);text-decoration:none;color:inherit;transition:background .12s;cursor:pointer;}
-.contact-row:last-child{border:none;}.contact-row:active{background:rgba(255,255,255,.04);}
-.contact-icon{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;}
-.contact-label{flex:1;font-size:15px;font-weight:500;}.contact-val{font-size:13px;color:var(--accent);}
-.page-footer{text-align:center;padding:32px 20px 20px;color:var(--muted);font-size:12px;line-height:1.7;}
-.page-footer a{color:var(--accent);text-decoration:none;}
+/* Trust bar */
+.trust{display:flex;gap:0;margin:0 14px;max-width:640px;margin-left:auto;margin-right:auto;background:var(--card);border:0.5px solid var(--border);border-radius:var(--r);overflow:hidden;position:relative;z-index:2;}
+.ti{flex:1;display:flex;flex-direction:column;align-items:center;padding:14px 8px;gap:7px;border-right:0.5px solid var(--border2);text-align:center;}
+.ti:last-child{border-right:none;}
+.ti svg{width:20px;height:20px;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round;fill:none;}
+.ti-lbl{font-size:10.5px;font-weight:600;color:var(--muted);line-height:1.3;letter-spacing:.1px;}
 
-/* Lang content toggle */
+/* TOC */
+.toc{display:flex;gap:6px;flex-wrap:wrap;padding:12px 14px 4px;max-width:640px;margin:0 auto;position:relative;z-index:2;}
+.tc{display:inline-flex;align-items:center;gap:5px;background:var(--card);border:0.5px solid var(--border);border-radius:99px;padding:6px 12px;font-size:11.5px;font-weight:600;color:var(--muted);cursor:pointer;text-decoration:none;transition:background .15s,color .15s,transform .1s;letter-spacing:.1px;}
+.tc:active{transform:scale(.92);}
+.tc svg{width:12px;height:12px;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;fill:none;flex-shrink:0;}
+
+/* Sections */
+.page-body{padding:10px 14px 100px;max-width:640px;margin:0 auto;position:relative;z-index:2;}
+.sec{background:var(--card);border-radius:var(--r);margin-top:10px;overflow:hidden;border:0.5px solid var(--border);opacity:0;transform:translateY(12px);transition:opacity .35s var(--ease),transform .35s var(--ease);}
+.sec.in{opacity:1;transform:translateY(0);}
+.sec-hd{display:flex;align-items:center;gap:11px;padding:14px 16px 13px;border-bottom:0.5px solid var(--border2);}
+.sec-ico{width:30px;height:30px;border-radius:9px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.sec-ico svg{width:16px;height:16px;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round;fill:none;}
+.sec-lbl{font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;}
+.sec-bd{padding:14px 16px 16px;font-size:14.5px;line-height:1.7;}
+.sec-bd p{color:rgba(245,245,247,.8);margin-bottom:10px;}
+.sec-bd p:last-child{margin-bottom:0;}
+.sec-bd ul{list-style:none;padding:0;margin-bottom:10px;}
+.sec-bd ul li{color:rgba(245,245,247,.8);padding:5px 0 5px 18px;position:relative;font-size:14px;}
+.sec-bd ul li::before{content:'';position:absolute;left:4px;top:13px;width:5px;height:5px;border-radius:50%;background:var(--accent);opacity:.7;}
+.sec-bd strong{color:var(--text);font-weight:650;}
+.sec-bd em{color:var(--muted);font-style:italic;}
+
+.hl{border-radius:var(--rs);padding:12px 14px;margin:10px 0;font-size:13.5px;line-height:1.65;color:rgba(245,245,247,.8);display:flex;align-items:flex-start;gap:10px;border-left:2.5px solid;}
+.hl svg{width:15px;height:15px;flex-shrink:0;margin-top:1px;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;fill:none;}
+.hl-content{flex:1;}
+.hl.blue{background:rgba(41,151,255,.07);border-left-color:var(--accent);}
+.hl.blue svg{stroke:var(--accent);}
+.hl.green{background:rgba(48,209,88,.07);border-left-color:var(--green);}
+.hl.green svg{stroke:var(--green);}
+.hl.red{background:rgba(255,69,58,.07);border-left-color:var(--red);}
+.hl.red svg{stroke:var(--red);}
+.hl.yellow{background:rgba(255,214,10,.07);border-left-color:var(--yellow);}
+.hl.yellow svg{stroke:var(--yellow);}
+
+.dr{display:flex;align-items:flex-start;gap:12px;padding:11px 0;border-bottom:0.5px solid var(--border2);}
+.dr:last-child{border:none;padding-bottom:0;}
+.dd{width:7px;height:7px;border-radius:50%;background:var(--accent);flex-shrink:0;margin-top:6px;}
+.dd.g{background:var(--green);}
+.dd.o{background:var(--orange);}
+.dt{font-size:14px;line-height:1.55;color:rgba(245,245,247,.8);}
+.dt strong{color:var(--text);}
+.dt em{color:var(--muted);font-style:italic;}
+
+.contact-row{display:flex;align-items:center;gap:12px;padding:14px 16px;border-top:0.5px solid var(--border2);text-decoration:none;color:inherit;transition:background .12s;-webkit-tap-highlight-color:transparent;}
+.contact-row:first-child{border-top:none;}
+.contact-row:active{background:rgba(255,255,255,.04);}
+.cico{width:34px;height:34px;border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.cico svg{width:17px;height:17px;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round;fill:none;}
+.clbl{flex:1;font-size:14.5px;font-weight:500;}
+.cval{font-size:12px;color:var(--accent);flex-shrink:0;}
+.cchev{color:rgba(255,255,255,.18);flex-shrink:0;}
+.cchev svg{width:7px;height:12px;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;fill:none;}
+
+.footer{text-align:center;padding:40px 20px 28px;color:var(--muted);font-size:12px;line-height:1.9;}
+.ficon{width:48px;height:48px;border-radius:14px;background:rgba(41,151,255,.1);border:0.5px solid rgba(41,151,255,.18);display:inline-flex;align-items:center;justify-content:center;margin-bottom:12px;}
+.ficon svg{width:24px;height:24px;stroke:var(--accent);stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round;fill:none;}
+.fname{font-size:13px;font-weight:650;color:var(--text);display:block;margin-bottom:2px;}
+.fdiv{width:28px;height:0.5px;background:var(--border);margin:14px auto;}
+.footer a{color:var(--accent);text-decoration:none;}
+
 [data-lang]{display:none;}
-[data-lang].visible{display:block;}
-.hero-title[data-lang], .hero-sub[data-lang]{display:none;}
-.hero-title[data-lang].visible, .hero-sub[data-lang].visible{display:block;}
+[data-lang].v{display:block;}
+.clbl[data-lang]{display:none;}
+.clbl[data-lang].v{display:flex;flex:1;}
+.ti-lbl[data-lang]{display:none;}
+.ti-lbl[data-lang].v{display:block;}
 </style>
 </head>
 <body>
 
-<div class="topbar">
-  <a class="topbar-back" onclick="window.close()" href="javascript:history.back()">‹</a>
+<div id="rp"><div id="rpf"></div></div>
+
+<div class="topbar" id="tb">
+  <a class="topbar-back" href="javascript:history.back()">
+    <svg width="10" height="16" viewBox="0 0 10 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 1L1.5 8L8 15"/></svg>
+  </a>
   <div class="topbar-info">
-    <div class="topbar-title" data-lang="es" id="tb-title-es">Política de Privacidad</div>
-    <div class="topbar-title" data-lang="en" id="tb-title-en">Privacy Policy</div>
-    <div class="topbar-sub" data-lang="es">BoxVision · Última actualización: mayo 2026</div>
-    <div class="topbar-sub" data-lang="en">BoxVision · Last updated: May 2026</div>
+    <div class="topbar-title" data-lang="es">Política de Privacidad</div>
+    <div class="topbar-title" data-lang="en">Privacy Policy</div>
+    <div class="topbar-sub" data-lang="es">BoxVision · Mayo 2026</div>
+    <div class="topbar-sub" data-lang="en">BoxVision · May 2026</div>
   </div>
-  <div class="lang-switcher">
+  <div class="lang-sw">
     <button class="lang-btn active" id="btn-es" onclick="setLang('es')">ES</button>
     <button class="lang-btn" id="btn-en" onclick="setLang('en')">EN</button>
   </div>
 </div>
 
 <div class="hero">
-  <div class="hero-icon">🔒</div>
-  <div class="hero-title" data-lang="es">Tu privacidad importa</div>
-  <div class="hero-title" data-lang="en">Your privacy matters</div>
-  <div class="hero-sub" data-lang="es">Queremos que sepas exactamente qué datos guardamos<br>y cómo los protegemos.</div>
-  <div class="hero-sub" data-lang="en">We want you to know exactly what data we store<br>and how we protect it.</div>
-  <div class="hero-badge">📅 2026</div>
+  <div class="hero-icon">
+    <svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+  </div>
+  <h1 class="hero-title" data-lang="es">Tu privacidad importa</h1>
+  <h1 class="hero-title" data-lang="en">Your privacy matters</h1>
+  <p class="hero-sub" data-lang="es">Sabés exactamente qué datos guardamos y cómo los protegemos.</p>
+  <p class="hero-sub" data-lang="en">You know exactly what data we store and how we protect it.</p>
+  <div class="hero-meta">
+    <span></span>Sin rastreo<span></span>Sin anuncios<span></span>Mayo 2026
+  </div>
+</div>
+
+<!-- Trust bar -->
+<div class="trust">
+  <div class="ti">
+    <svg viewBox="0 0 24 24" stroke="#ff453a"><circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/></svg>
+    <span class="ti-lbl" data-lang="es">No vendemos datos</span>
+    <span class="ti-lbl" data-lang="en">No data selling</span>
+  </div>
+  <div class="ti">
+    <svg viewBox="0 0 24 24" stroke="#30d158"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+    <span class="ti-lbl" data-lang="es">Datos encriptados</span>
+    <span class="ti-lbl" data-lang="en">Encrypted data</span>
+  </div>
+  <div class="ti">
+    <svg viewBox="0 0 24 24" stroke="#2997FF"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/></svg>
+    <span class="ti-lbl" data-lang="es">Borrado total</span>
+    <span class="ti-lbl" data-lang="en">Full deletion</span>
+  </div>
+  <div class="ti">
+    <svg viewBox="0 0 24 24" stroke="#ffd60a"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+    <span class="ti-lbl" data-lang="es">Sin seguimiento</span>
+    <span class="ti-lbl" data-lang="en">No tracking</span>
+  </div>
+</div>
+
+<!-- TOC -->
+<div class="toc">
+  <a class="tc" href="#s-res">
+    <svg viewBox="0 0 24 24"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+    <span data-lang="es">Resumen</span><span data-lang="en">Summary</span>
+  </a>
+  <a class="tc" href="#s-dat">
+    <svg viewBox="0 0 24 24"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>
+    <span data-lang="es">Datos</span><span data-lang="en">Data</span>
+  </a>
+  <a class="tc" href="#s-uso">
+    <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M4.93 4.93a10 10 0 0 0 0 14.14"/></svg>
+    <span data-lang="es">Uso</span><span data-lang="en">Use</span>
+  </a>
+  <a class="tc" href="#s-seg">
+    <svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+    <span data-lang="es">Seguridad</span><span data-lang="en">Security</span>
+  </a>
+  <a class="tc" href="#s-der">
+    <svg viewBox="0 0 24 24"><circle cx="12" cy="7" r="4"/><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/></svg>
+    <span data-lang="es">Derechos</span><span data-lang="en">Rights</span>
+  </a>
+  <a class="tc" href="#s-con">
+    <svg viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+    <span data-lang="es">Contacto</span><span data-lang="en">Contact</span>
+  </a>
 </div>
 
 <div class="page-body">
 
-  <!-- INTRO -->
-  <div class="sec">
-    <div class="sec-header">
-      <div class="sec-icon" style="background:rgba(10,132,255,.15);color:#007AFF">📋</div>
-      <div class="sec-title" data-lang="es">Resumen</div>
-      <div class="sec-title" data-lang="en">Summary</div>
+  <!-- RESUMEN -->
+  <div class="sec" id="s-res">
+    <div class="sec-hd">
+      <div class="sec-ico" style="background:rgba(41,151,255,.12)">
+        <svg viewBox="0 0 24 24" stroke="#2997FF"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+      </div>
+      <span class="sec-lbl" data-lang="es">Resumen</span>
+      <span class="sec-lbl" data-lang="en">Summary</span>
     </div>
-    <div class="sec-body">
+    <div class="sec-bd">
       <div data-lang="es">
         <p>BoxVision es una aplicación para organizar cajas de mudanza. Esta política explica qué información recopilamos, cómo la usamos y cómo la protegemos.</p>
-        <div class="highlight green">✅ <strong>En resumen:</strong> solo guardamos lo que necesitas para que la app funcione. No vendemos tus datos, no mostramos publicidad y tú tienes control total sobre tu información.</div>
+        <div class="hl green">
+          <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+          <div class="hl-content"><strong>En resumen:</strong> solo guardamos lo que necesitás para que la app funcione. No vendemos tus datos, no mostramos publicidad y tenés control total.</div>
+        </div>
       </div>
       <div data-lang="en">
         <p>BoxVision is an app for organizing moving boxes. This policy explains what information we collect, how we use it, and how we protect it.</p>
-        <div class="highlight green">✅ <strong>In short:</strong> we only store what you need for the app to work. We don't sell your data, we don't show ads, and you have full control over your information.</div>
+        <div class="hl green">
+          <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+          <div class="hl-content"><strong>In short:</strong> we only store what you need for the app to work. We don't sell your data, we don't show ads, and you have full control.</div>
+        </div>
       </div>
     </div>
   </div>
 
-  <!-- DATA WE COLLECT -->
-  <div class="sec">
-    <div class="sec-header">
-      <div class="sec-icon" style="background:rgba(88,86,214,.15);color:#5856D6">📊</div>
-      <div class="sec-title" data-lang="es">Datos que recopilamos</div>
-      <div class="sec-title" data-lang="en">Data we collect</div>
+  <!-- DATA COLLECTED -->
+  <div class="sec" id="s-dat">
+    <div class="sec-hd">
+      <div class="sec-ico" style="background:rgba(94,92,230,.12)">
+        <svg viewBox="0 0 24 24" stroke="#8e8bff"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>
+      </div>
+      <span class="sec-lbl" data-lang="es">Datos que recopilamos</span>
+      <span class="sec-lbl" data-lang="en">Data we collect</span>
     </div>
-    <div class="sec-body">
+    <div class="sec-bd">
       <div data-lang="es">
-        <div class="data-row"><div class="data-dot"></div><div class="data-text"><strong>Cuenta de Google o email:</strong> nombre, dirección de correo y foto de perfil, únicamente para identificar tu cuenta y sincronizar tus cajas.</div></div>
-        <div class="data-row"><div class="data-dot"></div><div class="data-text"><strong>Contenido de tus cajas:</strong> nombres de cajas, objetos, ubicaciones, fotos y notas. Esta información es <em>tuya</em> y se guarda en tu cuenta.</div></div>
-        <div class="data-row"><div class="data-dot green"></div><div class="data-text"><strong>Datos técnicos mínimos:</strong> versión del navegador y sistema operativo, solo para diagnosticar errores.</div></div>
-        <div class="data-row"><div class="data-dot orange"></div><div class="data-text"><strong>Feedback voluntario:</strong> si nos enviás un comentario, guardamos ese mensaje junto con tu email.</div></div>
+        <div class="dr"><div class="dd"></div><div class="dt"><strong>Cuenta Google o email:</strong> nombre, correo y foto de perfil, solo para identificar tu cuenta y sincronizar tus cajas.</div></div>
+        <div class="dr"><div class="dd"></div><div class="dt"><strong>Contenido de tus cajas:</strong> nombres, objetos, ubicaciones, fotos y notas. Esta información es <em>tuya</em> y se guarda en tu cuenta.</div></div>
+        <div class="dr"><div class="dd g"></div><div class="dt"><strong>Datos técnicos mínimos:</strong> versión del navegador y sistema operativo, solo para diagnosticar errores.</div></div>
+        <div class="dr"><div class="dd o"></div><div class="dt"><strong>Feedback voluntario:</strong> si nos enviás un comentario, guardamos ese mensaje junto con tu email.</div></div>
       </div>
       <div data-lang="en">
-        <div class="data-row"><div class="data-dot"></div><div class="data-text"><strong>Google account or email:</strong> name, email address and profile photo, only to identify your account and sync your boxes.</div></div>
-        <div class="data-row"><div class="data-dot"></div><div class="data-text"><strong>Box contents:</strong> box names, items, locations, photos and notes. This information is <em>yours</em> and is stored in your account.</div></div>
-        <div class="data-row"><div class="data-dot green"></div><div class="data-text"><strong>Minimal technical data:</strong> browser version and OS, only to diagnose errors if something breaks.</div></div>
-        <div class="data-row"><div class="data-dot orange"></div><div class="data-text"><strong>Voluntary feedback:</strong> if you send us a message from the app, we store that message along with your email.</div></div>
+        <div class="dr"><div class="dd"></div><div class="dt"><strong>Google account or email:</strong> name, email address and profile photo, only to identify your account and sync your boxes.</div></div>
+        <div class="dr"><div class="dd"></div><div class="dt"><strong>Box contents:</strong> box names, items, locations, photos and notes. This information is <em>yours</em> and is stored in your account.</div></div>
+        <div class="dr"><div class="dd g"></div><div class="dt"><strong>Minimal technical data:</strong> browser version and OS, only to diagnose errors.</div></div>
+        <div class="dr"><div class="dd o"></div><div class="dt"><strong>Voluntary feedback:</strong> if you send us a message from the app, we store that message along with your email.</div></div>
       </div>
     </div>
   </div>
 
-  <!-- HOW WE USE IT -->
-  <div class="sec">
-    <div class="sec-header">
-      <div class="sec-icon" style="background:rgba(52,199,89,.15);color:#34C759">🎯</div>
-      <div class="sec-title" data-lang="es">Para qué usamos tus datos</div>
-      <div class="sec-title" data-lang="en">How we use your data</div>
+  <!-- HOW WE USE -->
+  <div class="sec" id="s-uso">
+    <div class="sec-hd">
+      <div class="sec-ico" style="background:rgba(48,209,88,.12)">
+        <svg viewBox="0 0 24 24" stroke="#30d158"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M4.93 4.93a10 10 0 0 0 0 14.14"/></svg>
+      </div>
+      <span class="sec-lbl" data-lang="es">Para qué usamos tus datos</span>
+      <span class="sec-lbl" data-lang="en">How we use your data</span>
     </div>
-    <div class="sec-body">
+    <div class="sec-bd">
       <div data-lang="es">
         <ul>
           <li>Sincronizar tus cajas entre dispositivos</li>
           <li>Permitirte acceder a tu información desde cualquier celular</li>
           <li>Respaldos automáticos para que no pierdas nada</li>
-          <li>Responder a tu feedback si nos escribes</li>
+          <li>Responder a tu feedback si nos escribís</li>
           <li>Mejorar la app con datos agregados y anónimos</li>
         </ul>
-        <div class="highlight">🚫 <strong>Nunca usamos tus datos para:</strong> publicidad personalizada, perfiles de comportamiento, venta a terceros, ni ningún propósito fuera de hacer que BoxVision funcione mejor para ti.</div>
+        <div class="hl red">
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/></svg>
+          <div class="hl-content"><strong>Nunca usamos tus datos para:</strong> publicidad personalizada, perfiles de comportamiento ni venta a terceros.</div>
+        </div>
       </div>
       <div data-lang="en">
         <ul>
@@ -164,70 +293,85 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
           <li>Reply to your feedback if you write to us</li>
           <li>Improve the app using aggregated, anonymous data</li>
         </ul>
-        <div class="highlight">🚫 <strong>We never use your data for:</strong> personalized advertising, behavioral profiling, selling to third parties, or any purpose other than making BoxVision work better for you.</div>
+        <div class="hl red">
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/></svg>
+          <div class="hl-content"><strong>We never use your data for:</strong> personalized advertising, behavioral profiling, or selling to third parties.</div>
+        </div>
       </div>
     </div>
   </div>
 
-  <!-- STORAGE & SECURITY -->
-  <div class="sec">
-    <div class="sec-header">
-      <div class="sec-icon" style="background:rgba(255,149,0,.15);color:#FF9500">☁️</div>
-      <div class="sec-title" data-lang="es">Almacenamiento y seguridad</div>
-      <div class="sec-title" data-lang="en">Storage & security</div>
+  <!-- SECURITY -->
+  <div class="sec" id="s-seg">
+    <div class="sec-hd">
+      <div class="sec-ico" style="background:rgba(255,159,10,.12)">
+        <svg viewBox="0 0 24 24" stroke="#ff9f0a"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+      </div>
+      <span class="sec-lbl" data-lang="es">Almacenamiento y seguridad</span>
+      <span class="sec-lbl" data-lang="en">Storage & security</span>
     </div>
-    <div class="sec-body">
+    <div class="sec-bd">
       <div data-lang="es">
         <p>Tus datos se guardan en <strong>Google Firebase / Firestore</strong>, con encriptación en tránsito (HTTPS/TLS) y en reposo.</p>
         <p>Las reglas de Firestore están configuradas para que <strong>solo tú puedas leer y escribir tus datos</strong>.</p>
-        <div class="highlight yellow">⚠️ <strong>Fotos:</strong> si compartís un código QR, quien lo escanee podrá ver el contenido de esa caja.</div>
+        <div class="hl yellow">
+          <svg viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+          <div class="hl-content"><strong>Fotos:</strong> si compartís un QR, quien lo escanee podrá ver el contenido de esa caja.</div>
+        </div>
       </div>
       <div data-lang="en">
         <p>Your data is stored in <strong>Google Firebase / Firestore</strong>, with encryption in transit (HTTPS/TLS) and at rest.</p>
-        <p>Firestore security rules are configured so that <strong>only you can read and write your own data</strong>.</p>
-        <div class="highlight yellow">⚠️ <strong>Photos:</strong> if you share a QR code, anyone who scans it will be able to see the contents of that box.</div>
+        <p>Firestore security rules ensure <strong>only you can read and write your own data</strong>.</p>
+        <div class="hl yellow">
+          <svg viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+          <div class="hl-content"><strong>Photos:</strong> if you share a QR code, anyone who scans it will see the contents of that box.</div>
+        </div>
       </div>
     </div>
   </div>
 
-  <!-- YOUR RIGHTS -->
-  <div class="sec">
-    <div class="sec-header">
-      <div class="sec-icon" style="background:rgba(175,82,222,.15);color:#AF52DE">⚖️</div>
-      <div class="sec-title" data-lang="es">Tus derechos</div>
-      <div class="sec-title" data-lang="en">Your rights</div>
+  <!-- RIGHTS -->
+  <div class="sec" id="s-der">
+    <div class="sec-hd">
+      <div class="sec-ico" style="background:rgba(191,90,242,.12)">
+        <svg viewBox="0 0 24 24" stroke="#bf5af2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+      </div>
+      <span class="sec-lbl" data-lang="es">Tus derechos</span>
+      <span class="sec-lbl" data-lang="en">Your rights</span>
     </div>
-    <div class="sec-body">
+    <div class="sec-bd">
       <div data-lang="es">
-        <div class="data-row"><div class="data-dot"></div><div class="data-text"><strong>Acceso:</strong> podés ver todos tus datos directamente en la app.</div></div>
-        <div class="data-row"><div class="data-dot"></div><div class="data-text"><strong>Eliminación:</strong> desde Ajustes → "Borrar todos los datos" eliminás todo permanentemente, incluyendo en la nube.</div></div>
-        <div class="data-row"><div class="data-dot"></div><div class="data-text"><strong>Cierre de cuenta:</strong> si cerrás sesión y borrás tus datos, no conservamos nada tuyo.</div></div>
-        <div class="data-row"><div class="data-dot green"></div><div class="data-text"><strong>Contacto:</strong> escribinos a <strong>futbol1234now@gmail.com</strong>.</div></div>
+        <div class="dr"><div class="dd"></div><div class="dt"><strong>Acceso:</strong> podés ver todos tus datos directamente en la app en cualquier momento.</div></div>
+        <div class="dr"><div class="dd"></div><div class="dt"><strong>Eliminación:</strong> desde Ajustes → "Borrar todos los datos" eliminás todo permanentemente, incluyendo en la nube.</div></div>
+        <div class="dr"><div class="dd"></div><div class="dt"><strong>Cierre de cuenta:</strong> si cerrás sesión y borrás tus datos, no conservamos nada tuyo.</div></div>
+        <div class="dr"><div class="dd g"></div><div class="dt"><strong>Contacto:</strong> escribinos a <strong>futbol1234now@gmail.com</strong>.</div></div>
       </div>
       <div data-lang="en">
-        <div class="data-row"><div class="data-dot"></div><div class="data-text"><strong>Access:</strong> you can view all your data directly in the app at any time.</div></div>
-        <div class="data-row"><div class="data-dot"></div><div class="data-text"><strong>Deletion:</strong> go to Settings → "Delete all data" to permanently erase everything, including from the cloud.</div></div>
-        <div class="data-row"><div class="data-dot"></div><div class="data-text"><strong>Account closure:</strong> if you sign out and delete your data, we retain nothing.</div></div>
-        <div class="data-row"><div class="data-dot green"></div><div class="data-text"><strong>Contact:</strong> email us at <strong>futbol1234now@gmail.com</strong>.</div></div>
+        <div class="dr"><div class="dd"></div><div class="dt"><strong>Access:</strong> you can view all your data directly in the app at any time.</div></div>
+        <div class="dr"><div class="dd"></div><div class="dt"><strong>Deletion:</strong> go to Settings → "Delete all data" to permanently erase everything, including from the cloud.</div></div>
+        <div class="dr"><div class="dd"></div><div class="dt"><strong>Account closure:</strong> if you sign out and delete your data, we retain nothing.</div></div>
+        <div class="dr"><div class="dd g"></div><div class="dt"><strong>Contact:</strong> email us at <strong>futbol1234now@gmail.com</strong>.</div></div>
       </div>
     </div>
   </div>
 
-  <!-- COOKIES -->
+  <!-- THIRD PARTY -->
   <div class="sec">
-    <div class="sec-header">
-      <div class="sec-icon" style="background:rgba(255,59,48,.12);color:#FF3B30">🍪</div>
-      <div class="sec-title" data-lang="es">Servicios de terceros</div>
-      <div class="sec-title" data-lang="en">Third-party services</div>
+    <div class="sec-hd">
+      <div class="sec-ico" style="background:rgba(255,69,58,.1)">
+        <svg viewBox="0 0 24 24" stroke="#ff453a"><circle cx="18" cy="18" r="3"/><circle cx="6" cy="6" r="3"/><path d="M6 21V9a9 9 0 0 0 9 9"/></svg>
+      </div>
+      <span class="sec-lbl" data-lang="es">Servicios de terceros</span>
+      <span class="sec-lbl" data-lang="en">Third-party services</span>
     </div>
-    <div class="sec-body">
+    <div class="sec-bd">
       <div data-lang="es">
         <ul>
           <li><strong>Google Firebase</strong> — autenticación y base de datos en la nube</li>
           <li><strong>EmailJS</strong> — envío de feedback por correo (solo si lo activás)</li>
           <li><strong>Tabler Icons</strong> — librería de íconos (sin tracking)</li>
         </ul>
-        <p>No usamos cookies de rastreo, Google Analytics, ni píxeles de publicidad.</p>
+        <p>No usamos cookies de rastreo, Google Analytics ni píxeles de publicidad.</p>
       </div>
       <div data-lang="en">
         <ul>
@@ -242,12 +386,14 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
 
   <!-- MINORS -->
   <div class="sec">
-    <div class="sec-header">
-      <div class="sec-icon" style="background:rgba(255,204,0,.12);color:#FFCC00">👶</div>
-      <div class="sec-title" data-lang="es">Menores de edad</div>
-      <div class="sec-title" data-lang="en">Minors</div>
+    <div class="sec-hd">
+      <div class="sec-ico" style="background:rgba(255,214,10,.1)">
+        <svg viewBox="0 0 24 24" stroke="#ffd60a"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+      </div>
+      <span class="sec-lbl" data-lang="es">Menores de edad</span>
+      <span class="sec-lbl" data-lang="en">Minors</span>
     </div>
-    <div class="sec-body">
+    <div class="sec-bd">
       <div data-lang="es"><p>BoxVision está diseñado para mayores de 13 años. Si creés que un menor ha creado una cuenta, contactanos para eliminarla.</p></div>
       <div data-lang="en"><p>BoxVision is designed for users aged 13 and over. If you believe a minor has created an account, contact us to have it removed.</p></div>
     </div>
@@ -255,60 +401,80 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
 
   <!-- CHANGES -->
   <div class="sec">
-    <div class="sec-header">
-      <div class="sec-icon" style="background:rgba(255,255,255,.07);color:var(--muted)">🔄</div>
-      <div class="sec-title" data-lang="es">Cambios en esta política</div>
-      <div class="sec-title" data-lang="en">Changes to this policy</div>
+    <div class="sec-hd">
+      <div class="sec-ico" style="background:rgba(255,255,255,.06)">
+        <svg viewBox="0 0 24 24" stroke="#6e6e73"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.96"/></svg>
+      </div>
+      <span class="sec-lbl" data-lang="es">Cambios en esta política</span>
+      <span class="sec-lbl" data-lang="en">Changes to this policy</span>
     </div>
-    <div class="sec-body">
+    <div class="sec-bd">
       <div data-lang="es"><p>Si actualizamos esta política, lo notificaremos dentro de la app. La fecha de la última actualización siempre estará visible en la parte superior de esta página.</p></div>
       <div data-lang="en"><p>If we update this policy, we'll notify you inside the app. The date of the last update will always be visible at the top of this page.</p></div>
     </div>
   </div>
 
   <!-- CONTACT -->
-  <div class="sec" style="margin-bottom:0">
-    <div class="sec-header">
-      <div class="sec-icon" style="background:rgba(10,132,255,.15);color:#007AFF">✉️</div>
-      <div class="sec-title" data-lang="es">Contacto</div>
-      <div class="sec-title" data-lang="en">Contact</div>
+  <div class="sec" id="s-con" style="margin-bottom:0">
+    <div class="sec-hd">
+      <div class="sec-ico" style="background:rgba(41,151,255,.12)">
+        <svg viewBox="0 0 24 24" stroke="#2997FF"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+      </div>
+      <span class="sec-lbl" data-lang="es">Contacto</span>
+      <span class="sec-lbl" data-lang="en">Contact</span>
     </div>
     <a class="contact-row" href="mailto:futbol1234now@gmail.com?subject=Privacy BoxVision">
-      <div class="contact-icon" style="background:rgba(10,132,255,.15)">📧</div>
-      <div class="contact-label" data-lang="es">Escribirnos por email</div>
-      <div class="contact-label" data-lang="en">Send us an email</div>
-      <div class="contact-val">futbol1234now@gmail.com</div>
+      <div class="cico" style="background:rgba(41,151,255,.12)">
+        <svg viewBox="0 0 24 24" stroke="#2997FF"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+      </div>
+      <span class="clbl" data-lang="es">Escribirnos por email</span>
+      <span class="clbl" data-lang="en">Send us an email</span>
+      <span class="cval">futbol1234now@gmail.com</span>
+      <span class="cchev"><svg viewBox="0 0 7 12" stroke="currentColor"><path d="M1 1l5 5-5 5"/></svg></span>
     </a>
   </div>
 
-  <div class="page-footer">
-    <div style="font-size:24px;margin-bottom:8px">📦</div>
-    <strong style="color:#fff;font-size:14px">BoxVision</strong><br>
+  <div class="footer">
+    <div class="ficon">
+      <svg viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
+    </div>
+    <span class="fname">BoxVision</span>
     <span data-lang="es">Organizador inteligente de mudanzas</span>
-    <span data-lang="en">Smart moving box organizer</span><br><br>
+    <span data-lang="en">Smart moving box organizer</span>
+    <div class="fdiv"></div>
     © 2026 BoxVision ·
     <span data-lang="es">Todos los derechos reservados</span>
     <span data-lang="en">All rights reserved</span><br>
-    <a href="terms.html" target="_blank" data-lang="es">Términos de uso</a>
-    <a href="terms.html" target="_blank" data-lang="en">Terms of use</a>
-    · <a href="mailto:futbol1234now@gmail.com">Contacto</a>
+    <a href="terms.html" data-lang="es">Términos de uso</a>
+    <a href="terms.html" data-lang="en">Terms of use</a>
+    &nbsp;·&nbsp;<a href="mailto:futbol1234now@gmail.com">Contacto</a>
   </div>
 
 </div>
 
 <script>
-function setLang(lang){
-  document.querySelectorAll('[data-lang]').forEach(el=>{
-    el.classList.toggle('visible', el.dataset.lang === lang);
-  });
-  document.getElementById('btn-es').classList.toggle('active', lang==='es');
-  document.getElementById('btn-en').classList.toggle('active', lang==='en');
-  document.documentElement.lang = lang;
-  localStorage.setItem('bv_lang', lang);
+function setLang(l){
+  document.querySelectorAll('[data-lang]').forEach(el=>el.classList.toggle('v',el.dataset.lang===l));
+  document.getElementById('btn-es').classList.toggle('active',l==='es');
+  document.getElementById('btn-en').classList.toggle('active',l==='en');
+  document.documentElement.lang=l;
+  localStorage.setItem('bv_lang',l);
 }
-// Init
-const saved = localStorage.getItem('bv_lang') || 'es';
-setLang(saved);
+setLang(localStorage.getItem('bv_lang')||'es');
+
+window.addEventListener('scroll',()=>{
+  const d=document.documentElement;
+  document.getElementById('rpf').style.width=Math.min((d.scrollTop/(d.scrollHeight-d.clientHeight))*100,100)+'%';
+  document.getElementById('tb').classList.toggle('scrolled',d.scrollTop>4);
+},{passive:true});
+
+const io=new IntersectionObserver(es=>{es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target);}});},{threshold:.08,rootMargin:'0px 0px -20px 0px'});
+document.querySelectorAll('.sec').forEach((el,i)=>{el.style.transitionDelay=i*.035+'s';io.observe(el);});
+
+document.querySelectorAll('.tc').forEach(c=>c.addEventListener('click',function(e){
+  e.preventDefault();const t=document.querySelector(this.getAttribute('href'));
+  if(t)t.scrollIntoView({behavior:'smooth',block:'start'});
+}));
 </script>
 </body>
 </html>
