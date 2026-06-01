@@ -2,160 +2,275 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <title>Términos de Uso — BoxVision</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 :root{
-  --bg:#17171f;--card:#1e1e28;--text:#FFFFFF;--muted:#8E8E93;
-  --border:rgba(255,255,255,0.08);--accent:#007AFF;--green:#34C759;--red:#FF3B30;
-  --topbar:rgba(23,23,31,0.88);--topbarborder:rgba(255,255,255,0.07);
+  --bg:#111118;--card:#1c1c24;--card2:#232330;
+  --text:#f5f5f7;--muted:#6e6e73;--muted2:rgba(245,245,247,.45);
+  --border:rgba(255,255,255,0.07);--border2:rgba(255,255,255,0.04);
+  --accent:#2997FF;--accent2:#5e5ce6;
+  --green:#30d158;--red:#ff453a;--yellow:#ffd60a;--orange:#ff9f0a;
+  --topbar:rgba(17,17,24,0.92);
+  --r:18px;--rs:12px;
+  --ease:cubic-bezier(.32,1,.4,1);
 }
-body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','Segoe UI',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;}
-body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse 80% 50% at 15% 20%,rgba(88,86,214,0.07) 0%,transparent 60%),radial-gradient(ellipse 60% 40% at 85% 70%,rgba(10,132,255,0.06) 0%,transparent 60%);pointer-events:none;z-index:0;}
+html{scroll-behavior:smooth;}
+body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','SF Pro Text',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;-webkit-font-smoothing:antialiased;}
 
-.topbar{position:sticky;top:0;z-index:200;background:var(--topbar);border-bottom:0.5px solid var(--topbarborder);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);padding:14px 16px 12px;display:flex;align-items:center;gap:10px;}
-.topbar-back{width:36px;height:36px;border-radius:10px;background:rgba(255,255,255,.08);border:0.5px solid rgba(255,255,255,.1);display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--accent);font-size:18px;transition:background .15s;text-decoration:none;flex-shrink:0;}
-.topbar-back:active{background:rgba(255,255,255,.14);}
+/* subtle noise texture overlay */
+body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:1;opacity:.025;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");}
+
+/* ── Progress ─────────────────────────────── */
+#rp{position:fixed;top:0;left:0;right:0;height:2px;z-index:9000;pointer-events:none;}
+#rpf{height:100%;width:0%;background:linear-gradient(90deg,var(--accent2),var(--accent));transition:width .1s linear;}
+
+/* ── Topbar ───────────────────────────────── */
+.topbar{position:sticky;top:0;z-index:500;background:var(--topbar);border-bottom:0.5px solid var(--border);backdrop-filter:saturate(180%) blur(20px);-webkit-backdrop-filter:saturate(180%) blur(20px);padding:10px 16px;display:flex;align-items:center;gap:12px;transition:box-shadow .2s;}
+.topbar.scrolled{box-shadow:0 1px 0 var(--border),0 4px 16px rgba(0,0,0,.4);}
+.topbar-back{width:34px;height:34px;border-radius:10px;background:rgba(255,255,255,.06);border:0.5px solid rgba(255,255,255,.08);display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--accent);text-decoration:none;flex-shrink:0;transition:background .15s,transform .1s;}
+.topbar-back:active{background:rgba(255,255,255,.12);transform:scale(.88);}
 .topbar-info{flex:1;min-width:0;}
-.topbar-title{font-size:17px;font-weight:700;letter-spacing:-.3px}
-.topbar-sub{font-size:11px;color:var(--muted);margin-top:1px}
+.topbar-title{font-size:15px;font-weight:650;letter-spacing:-.25px;line-height:1.2;}
+.topbar-sub{font-size:11px;color:var(--muted);margin-top:1.5px;letter-spacing:.1px;}
+.lang-sw{display:flex;background:rgba(255,255,255,.06);border:0.5px solid rgba(255,255,255,.09);border-radius:9px;padding:2px;gap:2px;flex-shrink:0;}
+.lang-btn{padding:4px 11px;font-size:11px;font-weight:700;cursor:pointer;color:var(--muted);border:none;background:transparent;letter-spacing:.5px;border-radius:7px;transition:all .18s;}
+.lang-btn.active{background:var(--accent2);color:#fff;box-shadow:0 1px 6px rgba(94,92,230,.5);}
 
-.lang-switcher{display:flex;background:rgba(255,255,255,.08);border:0.5px solid rgba(255,255,255,.12);border-radius:10px;overflow:hidden;flex-shrink:0;}
-.lang-btn{padding:6px 11px;font-size:12px;font-weight:700;cursor:pointer;color:var(--muted);transition:all .18s;border:none;background:transparent;letter-spacing:.3px;}
-.lang-btn.active{background:var(--accent);color:#fff;border-radius:9px;}
+/* ── Hero ─────────────────────────────────── */
+.hero{padding:44px 20px 36px;text-align:center;position:relative;z-index:2;}
+.hero-icon{width:72px;height:72px;border-radius:22px;background:rgba(94,92,230,.14);border:0.5px solid rgba(94,92,230,.25);display:inline-flex;align-items:center;justify-content:center;margin-bottom:20px;animation:iconIn .55s cubic-bezier(.34,1.3,.64,1) both;box-shadow:0 0 0 8px rgba(94,92,230,.05);}
+.hero-icon svg{width:34px;height:34px;stroke:var(--accent2);stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round;fill:none;}
+@keyframes iconIn{from{transform:scale(.5) rotate(-8deg);opacity:0}to{transform:scale(1) rotate(0);opacity:1}}
+.hero-title{font-size:30px;font-weight:700;letter-spacing:-.7px;margin-bottom:9px;line-height:1.1;animation:txIn .4s .1s var(--ease) both;}
+.hero-sub{font-size:14px;color:var(--muted);line-height:1.6;max-width:280px;margin:0 auto;animation:txIn .4s .18s var(--ease) both;}
+.hero-meta{display:inline-flex;align-items:center;gap:6px;margin-top:18px;color:var(--muted2);font-size:12px;font-weight:500;letter-spacing:.2px;animation:txIn .4s .24s var(--ease) both;}
+.hero-meta span{width:4px;height:4px;border-radius:50%;background:var(--muted2);}
+@keyframes txIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
 
-.hero{position:relative;overflow:hidden;background:linear-gradient(135deg,#5856D6,#AF52DE 60%,#FF2D55);padding:32px 20px 28px;text-align:center;}
-.hero::after{content:'';position:absolute;inset:0;background:linear-gradient(180deg,transparent 40%,rgba(23,23,31,.6));pointer-events:none;}
-.hero-icon{font-size:52px;position:relative;z-index:1;margin-bottom:10px;line-height:1;filter:drop-shadow(0 4px 16px rgba(0,0,0,.4));}
-.hero-title{font-size:26px;font-weight:800;letter-spacing:-.5px;position:relative;z-index:1;margin-bottom:6px;}
-.hero-sub{font-size:13px;color:rgba(255,255,255,.7);position:relative;z-index:1;line-height:1.5;}
-.hero-badge{display:inline-flex;align-items:center;gap:6px;margin-top:14px;position:relative;z-index:1;background:rgba(255,255,255,.15);border:0.5px solid rgba(255,255,255,.2);backdrop-filter:blur(12px);border-radius:99px;padding:6px 14px;font-size:12px;font-weight:600;color:rgba(255,255,255,.9);}
+/* ── TOC ──────────────────────────────────── */
+.toc{display:flex;gap:6px;flex-wrap:wrap;padding:0 14px 4px;max-width:640px;margin:0 auto;position:relative;z-index:2;}
+.tc{display:inline-flex;align-items:center;gap:5px;background:var(--card);border:0.5px solid var(--border);border-radius:99px;padding:6px 12px;font-size:11.5px;font-weight:600;color:var(--muted);cursor:pointer;text-decoration:none;transition:background .15s,color .15s,transform .1s;letter-spacing:.1px;}
+.tc:active{transform:scale(.92);}
+.tc svg{width:12px;height:12px;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;fill:none;flex-shrink:0;}
 
-.page-body{padding:0 14px 80px;max-width:680px;margin:0 auto;position:relative;z-index:1;}
-.sec{background:var(--card);border-radius:20px;margin-top:14px;overflow:hidden;border:0.5px solid var(--border);box-shadow:0 2px 12px rgba(0,0,0,.12);}
-.sec-header{display:flex;align-items:center;gap:10px;padding:16px 18px 0;margin-bottom:4px;}
-.sec-icon{width:30px;height:30px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0;}
-.sec-title{font-size:13px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.6px;}
-.sec-body{padding:10px 18px 18px;font-size:15px;line-height:1.65;color:var(--text);}
-.sec-body p{margin-bottom:12px;}.sec-body p:last-child{margin-bottom:0;}
-.sec-body ul{padding-left:18px;margin-bottom:12px;}.sec-body ul li{margin-bottom:7px;color:rgba(255,255,255,.85);}
-.sec-body strong{color:#fff;font-weight:700;}
-.highlight{background:rgba(10,132,255,.1);border:0.5px solid rgba(10,132,255,.25);border-radius:14px;padding:14px 16px;margin:12px 0;font-size:14px;line-height:1.6;color:rgba(255,255,255,.85);}
-.highlight.green{background:rgba(52,199,89,.1);border-color:rgba(52,199,89,.25);}
-.highlight.red{background:rgba(255,59,48,.1);border-color:rgba(255,59,48,.25);}
-.highlight.yellow{background:rgba(255,204,0,.1);border-color:rgba(255,204,0,.25);}
-.clause{padding:12px 0;border-bottom:0.5px solid var(--border);display:flex;gap:12px;align-items:flex-start;}
-.clause:last-child{border:none;}
-.clause-num{width:26px;height:26px;border-radius:8px;background:rgba(88,86,214,.2);color:#7875FF;font-size:13px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;}
-.clause-text{font-size:14px;line-height:1.6;color:rgba(255,255,255,.85);}.clause-text strong{color:#fff;}
-.contact-row{display:flex;align-items:center;gap:12px;padding:14px 18px;border-bottom:0.5px solid var(--border);text-decoration:none;color:inherit;transition:background .12s;cursor:pointer;}
-.contact-row:last-child{border:none;}.contact-row:active{background:rgba(255,255,255,.04);}
-.contact-icon{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;}
-.contact-label{flex:1;font-size:15px;font-weight:500;}.contact-val{font-size:13px;color:var(--accent);}
-.page-footer{text-align:center;padding:32px 20px 20px;color:var(--muted);font-size:12px;line-height:1.7;}
-.page-footer a{color:var(--accent);text-decoration:none;}
+/* ── Page body ────────────────────────────── */
+.page-body{padding:10px 14px 100px;max-width:640px;margin:0 auto;position:relative;z-index:2;}
 
+/* ── Section card ─────────────────────────── */
+.sec{background:var(--card);border-radius:var(--r);margin-top:10px;overflow:hidden;border:0.5px solid var(--border);opacity:0;transform:translateY(12px);transition:opacity .35s var(--ease),transform .35s var(--ease);}
+.sec.in{opacity:1;transform:translateY(0);}
+.sec-hd{display:flex;align-items:center;gap:11px;padding:14px 16px 13px;border-bottom:0.5px solid var(--border2);}
+.sec-ico{width:30px;height:30px;border-radius:9px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.sec-ico svg{width:16px;height:16px;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round;fill:none;}
+.sec-lbl{font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;}
+.sec-bd{padding:14px 16px 16px;font-size:14.5px;line-height:1.7;}
+.sec-bd p{color:rgba(245,245,247,.8);margin-bottom:10px;}
+.sec-bd p:last-child{margin-bottom:0;}
+.sec-bd ul{list-style:none;padding:0;margin-bottom:10px;}
+.sec-bd ul li{color:rgba(245,245,247,.8);padding:5px 0 5px 18px;position:relative;font-size:14px;}
+.sec-bd ul li::before{content:'';position:absolute;left:4px;top:13px;width:5px;height:5px;border-radius:50%;background:var(--accent2);opacity:.7;}
+.sec-bd strong{color:var(--text);font-weight:650;}
+.sec-bd em{color:var(--muted);font-style:italic;}
+
+/* ── Highlight ────────────────────────────── */
+.hl{border-radius:var(--rs);padding:12px 14px;margin:10px 0;font-size:13.5px;line-height:1.65;color:rgba(245,245,247,.8);display:flex;align-items:flex-start;gap:10px;border-left:2.5px solid;}
+.hl svg{width:15px;height:15px;flex-shrink:0;margin-top:1px;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;fill:none;}
+.hl-content{flex:1;}
+.hl.blue{background:rgba(41,151,255,.07);border-left-color:var(--accent);}
+.hl.blue svg{stroke:var(--accent);}
+.hl.green{background:rgba(48,209,88,.07);border-left-color:var(--green);}
+.hl.green svg{stroke:var(--green);}
+.hl.red{background:rgba(255,69,58,.07);border-left-color:var(--red);}
+.hl.red svg{stroke:var(--red);}
+.hl.yellow{background:rgba(255,214,10,.07);border-left-color:var(--yellow);}
+.hl.yellow svg{stroke:var(--yellow);}
+
+/* ── Clause rows ──────────────────────────── */
+.clause{padding:11px 0;border-bottom:0.5px solid var(--border2);display:flex;gap:12px;align-items:flex-start;}
+.clause:last-child{border:none;padding-bottom:0;}
+.cn{width:22px;height:22px;border-radius:7px;background:rgba(94,92,230,.15);color:#8e8bff;font-size:11.5px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;}
+.ct{font-size:14px;line-height:1.6;color:rgba(245,245,247,.8);}
+.ct strong{color:var(--text);}
+
+/* ── Contact row ──────────────────────────── */
+.contact-row{display:flex;align-items:center;gap:12px;padding:14px 16px;border-top:0.5px solid var(--border2);text-decoration:none;color:inherit;transition:background .12s;-webkit-tap-highlight-color:transparent;}
+.contact-row:first-child{border-top:none;}
+.contact-row:active{background:rgba(255,255,255,.04);}
+.cico{width:34px;height:34px;border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.cico svg{width:17px;height:17px;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round;fill:none;}
+.clbl{flex:1;font-size:14.5px;font-weight:500;}
+.cval{font-size:12px;color:var(--accent);flex-shrink:0;}
+.cchev{color:rgba(255,255,255,.18);flex-shrink:0;}
+.cchev svg{width:7px;height:12px;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;fill:none;}
+
+/* ── Footer ───────────────────────────────── */
+.footer{text-align:center;padding:40px 20px 28px;color:var(--muted);font-size:12px;line-height:1.9;}
+.ficon{width:48px;height:48px;border-radius:14px;background:rgba(94,92,230,.12);border:0.5px solid rgba(94,92,230,.2);display:inline-flex;align-items:center;justify-content:center;margin-bottom:12px;}
+.ficon svg{width:24px;height:24px;stroke:var(--accent2);stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round;fill:none;}
+.fname{font-size:13px;font-weight:650;color:var(--text);display:block;margin-bottom:2px;}
+.fdiv{width:28px;height:0.5px;background:var(--border);margin:14px auto;}
+.footer a{color:var(--accent);text-decoration:none;}
+
+/* ── Lang ─────────────────────────────────── */
 [data-lang]{display:none;}
-[data-lang].visible{display:block;}
+[data-lang].v{display:block;}
+.clbl[data-lang]{display:none;}
+.clbl[data-lang].v{display:flex;flex:1;}
+.tc[data-lang]{display:none;}
+.tc[data-lang].v{display:inline-flex;}
 </style>
 </head>
 <body>
 
-<div class="topbar">
-  <a class="topbar-back" onclick="window.close()" href="javascript:history.back()">‹</a>
+<div id="rp"><div id="rpf"></div></div>
+
+<div class="topbar" id="tb">
+  <a class="topbar-back" href="javascript:history.back()">
+    <svg width="10" height="16" viewBox="0 0 10 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 1L1.5 8L8 15"/></svg>
+  </a>
   <div class="topbar-info">
     <div class="topbar-title" data-lang="es">Términos de Uso</div>
     <div class="topbar-title" data-lang="en">Terms of Use</div>
-    <div class="topbar-sub" data-lang="es">BoxVision · Última actualización: mayo 2026</div>
-    <div class="topbar-sub" data-lang="en">BoxVision · Last updated: May 2026</div>
+    <div class="topbar-sub" data-lang="es">BoxVision · Mayo 2026</div>
+    <div class="topbar-sub" data-lang="en">BoxVision · May 2026</div>
   </div>
-  <div class="lang-switcher">
+  <div class="lang-sw">
     <button class="lang-btn active" id="btn-es" onclick="setLang('es')">ES</button>
     <button class="lang-btn" id="btn-en" onclick="setLang('en')">EN</button>
   </div>
 </div>
 
+<!-- Hero -->
 <div class="hero">
-  <div class="hero-icon">📄</div>
-  <div class="hero-title" data-lang="es">Condiciones de uso</div>
-  <div class="hero-title" data-lang="en">Terms of use</div>
-  <div class="hero-sub" data-lang="es">Al usar BoxVision aceptás estas condiciones.<br>Están escritas en lenguaje claro, sin letra pequeña.</div>
-  <div class="hero-sub" data-lang="en">By using BoxVision you agree to these terms.<br>Written in plain language — no fine print.</div>
-  <div class="hero-badge">📅 2026</div>
+  <div class="hero-icon">
+    <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+  </div>
+  <h1 class="hero-title" data-lang="es">Condiciones de uso</h1>
+  <h1 class="hero-title" data-lang="en">Terms of use</h1>
+  <p class="hero-sub" data-lang="es">Al usar BoxVision aceptás estas condiciones. Escritas en lenguaje claro.</p>
+  <p class="hero-sub" data-lang="en">By using BoxVision you agree to these terms. Written in plain language.</p>
+  <div class="hero-meta">
+    <span></span>Mayo 2026<span></span>Gratis<span></span>Sin publicidad
+  </div>
+</div>
+
+<!-- TOC -->
+<div class="toc">
+  <a class="tc" data-lang="es" href="#s-intro">
+    <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>Intro
+  </a>
+  <a class="tc" data-lang="en" href="#s-intro">
+    <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>Intro
+  </a>
+  <a class="tc" data-lang="es" href="#s-cuenta">
+    <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>Cuenta
+  </a>
+  <a class="tc" data-lang="en" href="#s-cuenta">
+    <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>Account
+  </a>
+  <a class="tc" data-lang="es" href="#s-uso">
+    <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>Uso
+  </a>
+  <a class="tc" data-lang="en" href="#s-uso">
+    <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>Use
+  </a>
+  <a class="tc" data-lang="es" href="#s-datos">
+    <svg viewBox="0 0 24 24"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>Datos
+  </a>
+  <a class="tc" data-lang="en" href="#s-datos">
+    <svg viewBox="0 0 24 24"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>Data
+  </a>
+  <a class="tc" data-lang="es" href="#s-contacto">
+    <svg viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>Contacto
+  </a>
+  <a class="tc" data-lang="en" href="#s-contacto">
+    <svg viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>Contact
+  </a>
 </div>
 
 <div class="page-body">
 
   <!-- INTRO -->
-  <div class="sec">
-    <div class="sec-header">
-      <div class="sec-icon" style="background:rgba(88,86,214,.15);color:#5856D6">👋</div>
-      <div class="sec-title" data-lang="es">Introducción</div>
-      <div class="sec-title" data-lang="en">Introduction</div>
+  <div class="sec" id="s-intro">
+    <div class="sec-hd">
+      <div class="sec-ico" style="background:rgba(94,92,230,.12)">
+        <svg viewBox="0 0 24 24" stroke="#8e8bff"><path d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z"/></svg>
+      </div>
+      <span class="sec-lbl" data-lang="es">Introducción</span>
+      <span class="sec-lbl" data-lang="en">Introduction</span>
     </div>
-    <div class="sec-body">
+    <div class="sec-bd">
       <div data-lang="es">
-        <p>Bienvenido a <strong>BoxVision</strong>. Al acceder o usar esta aplicación, aceptás estos Términos de Uso. Si no estás de acuerdo, podés dejar de usar la app en cualquier momento.</p>
-        <div class="highlight green">✅ <strong>Lo importante:</strong> BoxVision es gratis, sin publicidad, y tus datos son tuyos.</div>
+        <p>Bienvenido a <strong>BoxVision</strong>. Al acceder o usar esta aplicación, aceptás estos Términos de Uso. Si no estás de acuerdo, podés dejar de usarla en cualquier momento.</p>
+        <div class="hl green">
+          <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+          <div class="hl-content"><strong>Lo importante:</strong> BoxVision es gratis, sin publicidad, y tus datos son tuyos.</div>
+        </div>
       </div>
       <div data-lang="en">
-        <p>Welcome to <strong>BoxVision</strong>. By accessing or using this app, you agree to these Terms of Use. If you disagree with any part, you may stop using the app at any time.</p>
-        <div class="highlight green">✅ <strong>The key point:</strong> BoxVision is free, ad-free, and your data belongs to you.</div>
+        <p>Welcome to <strong>BoxVision</strong>. By accessing or using this app, you agree to these Terms of Use. If you disagree, you may stop using the app at any time.</p>
+        <div class="hl green">
+          <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+          <div class="hl-content"><strong>The key point:</strong> BoxVision is free, ad-free, and your data belongs to you.</div>
+        </div>
       </div>
     </div>
   </div>
 
-  <!-- THE SERVICE -->
+  <!-- SERVICE -->
   <div class="sec">
-    <div class="sec-header">
-      <div class="sec-icon" style="background:rgba(10,132,255,.15);color:#007AFF">📦</div>
-      <div class="sec-title" data-lang="es">El servicio</div>
-      <div class="sec-title" data-lang="en">The service</div>
+    <div class="sec-hd">
+      <div class="sec-ico" style="background:rgba(41,151,255,.12)">
+        <svg viewBox="0 0 24 24" stroke="#2997FF"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
+      </div>
+      <span class="sec-lbl" data-lang="es">El servicio</span>
+      <span class="sec-lbl" data-lang="en">The service</span>
     </div>
-    <div class="sec-body">
-      <div data-lang="es">
-        <p>BoxVision te permite crear cajas virtuales, listar objetos, generar QR y sincronizar datos entre dispositivos. El servicio es <strong>gratuito</strong> y puede modificarse con aviso previo.</p>
-      </div>
-      <div data-lang="en">
-        <p>BoxVision lets you create virtual boxes, list items, generate QR codes and sync data across devices. The service is <strong>free</strong> and may be modified with prior notice.</p>
-      </div>
+    <div class="sec-bd">
+      <div data-lang="es"><p>BoxVision te permite crear cajas virtuales, listar objetos, generar QR y sincronizar datos entre dispositivos. El servicio es <strong>gratuito</strong> y puede modificarse con aviso previo.</p></div>
+      <div data-lang="en"><p>BoxVision lets you create virtual boxes, list items, generate QR codes and sync data across devices. The service is <strong>free</strong> and may be modified with prior notice.</p></div>
     </div>
   </div>
 
-  <!-- YOUR ACCOUNT -->
-  <div class="sec">
-    <div class="sec-header">
-      <div class="sec-icon" style="background:rgba(52,199,89,.15);color:#34C759">👤</div>
-      <div class="sec-title" data-lang="es">Tu cuenta</div>
-      <div class="sec-title" data-lang="en">Your account</div>
+  <!-- ACCOUNT -->
+  <div class="sec" id="s-cuenta">
+    <div class="sec-hd">
+      <div class="sec-ico" style="background:rgba(48,209,88,.12)">
+        <svg viewBox="0 0 24 24" stroke="#30d158"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+      </div>
+      <span class="sec-lbl" data-lang="es">Tu cuenta</span>
+      <span class="sec-lbl" data-lang="en">Your account</span>
     </div>
-    <div class="sec-body">
+    <div class="sec-bd">
       <div data-lang="es">
-        <div class="clause"><div class="clause-num">1</div><div class="clause-text"><strong>Registro:</strong> podés registrarte con Google o email. Sos responsable de mantener tu contraseña segura.</div></div>
-        <div class="clause"><div class="clause-num">2</div><div class="clause-text"><strong>Una cuenta por persona:</strong> cada cuenta es personal. No podés usar la cuenta de otra persona sin su permiso.</div></div>
-        <div class="clause"><div class="clause-num">3</div><div class="clause-text"><strong>Edad mínima:</strong> debés tener al menos 13 años para usar BoxVision.</div></div>
-        <div class="clause"><div class="clause-num">4</div><div class="clause-text"><strong>Cierre de cuenta:</strong> podés eliminar tu cuenta desde Ajustes → "Borrar todos los datos".</div></div>
+        <div class="clause"><div class="cn">1</div><div class="ct"><strong>Registro:</strong> podés registrarte con Google o email. Sos responsable de mantener tu contraseña segura.</div></div>
+        <div class="clause"><div class="cn">2</div><div class="ct"><strong>Una cuenta por persona:</strong> cada cuenta es personal. No podés usar la de otra persona sin permiso.</div></div>
+        <div class="clause"><div class="cn">3</div><div class="ct"><strong>Edad mínima:</strong> debés tener al menos 13 años para usar BoxVision.</div></div>
+        <div class="clause"><div class="cn">4</div><div class="ct"><strong>Cierre de cuenta:</strong> podés eliminarla desde Ajustes → "Borrar todos los datos".</div></div>
       </div>
       <div data-lang="en">
-        <div class="clause"><div class="clause-num">1</div><div class="clause-text"><strong>Registration:</strong> you can sign up with Google or email. You're responsible for keeping your password secure.</div></div>
-        <div class="clause"><div class="clause-num">2</div><div class="clause-text"><strong>One account per person:</strong> each account is personal. You may not use someone else's account without their explicit permission.</div></div>
-        <div class="clause"><div class="clause-num">3</div><div class="clause-text"><strong>Minimum age:</strong> you must be at least 13 years old to use BoxVision.</div></div>
-        <div class="clause"><div class="clause-num">4</div><div class="clause-text"><strong>Account closure:</strong> you can delete your account from Settings → "Delete all data".</div></div>
+        <div class="clause"><div class="cn">1</div><div class="ct"><strong>Registration:</strong> you can sign up with Google or email. You're responsible for keeping your password secure.</div></div>
+        <div class="clause"><div class="cn">2</div><div class="ct"><strong>One account per person:</strong> each account is personal. You may not use someone else's account without permission.</div></div>
+        <div class="clause"><div class="cn">3</div><div class="ct"><strong>Minimum age:</strong> you must be at least 13 years old to use BoxVision.</div></div>
+        <div class="clause"><div class="cn">4</div><div class="ct"><strong>Account closure:</strong> you can delete your account from Settings → "Delete all data".</div></div>
       </div>
     </div>
   </div>
 
   <!-- ACCEPTABLE USE -->
-  <div class="sec">
-    <div class="sec-header">
-      <div class="sec-icon" style="background:rgba(255,149,0,.15);color:#FF9500">✅</div>
-      <div class="sec-title" data-lang="es">Uso aceptable</div>
-      <div class="sec-title" data-lang="en">Acceptable use</div>
+  <div class="sec" id="s-uso">
+    <div class="sec-hd">
+      <div class="sec-ico" style="background:rgba(255,159,10,.12)">
+        <svg viewBox="0 0 24 24" stroke="#ff9f0a"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+      </div>
+      <span class="sec-lbl" data-lang="es">Uso aceptable</span>
+      <span class="sec-lbl" data-lang="en">Acceptable use</span>
     </div>
-    <div class="sec-body">
+    <div class="sec-bd">
       <div data-lang="es">
         <p>Al usar BoxVision te comprometés a:</p>
         <ul>
@@ -164,7 +279,10 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
           <li>No crear cuentas falsas ni hacerte pasar por otra persona</li>
           <li>No subir contenido que viole derechos de terceros</li>
         </ul>
-        <div class="highlight red">🚫 El uso abusivo puede resultar en la suspensión de tu cuenta.</div>
+        <div class="hl red">
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/></svg>
+          <div class="hl-content">El uso abusivo puede resultar en la suspensión de tu cuenta.</div>
+        </div>
       </div>
       <div data-lang="en">
         <p>By using BoxVision you agree to:</p>
@@ -174,59 +292,74 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
           <li>Not create fake accounts or impersonate others</li>
           <li>Not upload content that infringes third-party rights</li>
         </ul>
-        <div class="highlight red">🚫 Abusive use may result in account suspension.</div>
+        <div class="hl red">
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/></svg>
+          <div class="hl-content">Abusive use may result in account suspension.</div>
+        </div>
       </div>
     </div>
   </div>
 
-  <!-- YOUR DATA -->
-  <div class="sec">
-    <div class="sec-header">
-      <div class="sec-icon" style="background:rgba(175,82,222,.15);color:#AF52DE">🗂️</div>
-      <div class="sec-title" data-lang="es">Tus datos y contenido</div>
-      <div class="sec-title" data-lang="en">Your data & content</div>
+  <!-- DATA -->
+  <div class="sec" id="s-datos">
+    <div class="sec-hd">
+      <div class="sec-ico" style="background:rgba(191,90,242,.12)">
+        <svg viewBox="0 0 24 24" stroke="#bf5af2"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
+      </div>
+      <span class="sec-lbl" data-lang="es">Tus datos y contenido</span>
+      <span class="sec-lbl" data-lang="en">Your data & content</span>
     </div>
-    <div class="sec-body">
+    <div class="sec-bd">
       <div data-lang="es">
-        <div class="clause"><div class="clause-num">1</div><div class="clause-text"><strong>Tu contenido es tuyo:</strong> todo lo que cargás en BoxVision te pertenece. No reclamamos propiedad.</div></div>
-        <div class="clause"><div class="clause-num">2</div><div class="clause-text"><strong>Licencia de uso:</strong> nos autorizás a almacenar y procesar tu contenido solo para prestarte el servicio. Termina cuando eliminás tu cuenta.</div></div>
-        <div class="clause"><div class="clause-num">3</div><div class="clause-text"><strong>Backups:</strong> hacemos respaldos automáticos, pero recomendamos exportar datos importantes periódicamente.</div></div>
+        <div class="clause"><div class="cn">1</div><div class="ct"><strong>Tu contenido es tuyo:</strong> todo lo que cargás en BoxVision te pertenece. No reclamamos propiedad.</div></div>
+        <div class="clause"><div class="cn">2</div><div class="ct"><strong>Licencia de uso:</strong> nos autorizás a almacenar y procesar tu contenido solo para prestarte el servicio. Termina cuando eliminás tu cuenta.</div></div>
+        <div class="clause"><div class="cn">3</div><div class="ct"><strong>Backups:</strong> hacemos respaldos automáticos, pero recomendamos exportar datos importantes periódicamente.</div></div>
       </div>
       <div data-lang="en">
-        <div class="clause"><div class="clause-num">1</div><div class="clause-text"><strong>Your content is yours:</strong> everything you upload to BoxVision belongs to you. We make no ownership claims.</div></div>
-        <div class="clause"><div class="clause-num">2</div><div class="clause-text"><strong>License of use:</strong> you authorize us to store and process your content solely to provide the service. This license ends when you delete your account.</div></div>
-        <div class="clause"><div class="clause-num">3</div><div class="clause-text"><strong>Backups:</strong> we do automatic backups, but we recommend exporting important data periodically.</div></div>
+        <div class="clause"><div class="cn">1</div><div class="ct"><strong>Your content is yours:</strong> everything you upload belongs to you. We make no ownership claims.</div></div>
+        <div class="clause"><div class="cn">2</div><div class="ct"><strong>License of use:</strong> you authorize us to store and process your content solely to provide the service. This ends when you delete your account.</div></div>
+        <div class="clause"><div class="cn">3</div><div class="ct"><strong>Backups:</strong> we do automatic backups, but we recommend exporting important data periodically.</div></div>
       </div>
     </div>
   </div>
 
   <!-- LIABILITY -->
   <div class="sec">
-    <div class="sec-header">
-      <div class="sec-icon" style="background:rgba(255,59,48,.12);color:#FF3B30">⚖️</div>
-      <div class="sec-title" data-lang="es">Limitación de responsabilidad</div>
-      <div class="sec-title" data-lang="en">Limitation of liability</div>
+    <div class="sec-hd">
+      <div class="sec-ico" style="background:rgba(255,69,58,.12)">
+        <svg viewBox="0 0 24 24" stroke="#ff453a"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+      </div>
+      <span class="sec-lbl" data-lang="es">Limitación de responsabilidad</span>
+      <span class="sec-lbl" data-lang="en">Limitation of liability</span>
     </div>
-    <div class="sec-body">
+    <div class="sec-bd">
       <div data-lang="es">
         <p>BoxVision se provee <strong>"tal cual"</strong>. No somos responsables por pérdida de datos por fallas de conexión, daños indirectos, ni interrupciones de servicios de terceros.</p>
-        <div class="highlight yellow">💡 Recomendamos anotar el contenido de cajas importantes como respaldo adicional antes de una mudanza.</div>
+        <div class="hl yellow">
+          <svg viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+          <div class="hl-content">Recomendamos anotar el contenido de cajas importantes antes de una mudanza.</div>
+        </div>
       </div>
       <div data-lang="en">
-        <p>BoxVision is provided <strong>"as is"</strong>. We are not responsible for data loss due to connection failures, indirect damages, or third-party service outages.</p>
-        <div class="highlight yellow">💡 We recommend noting the contents of important boxes as an extra backup before moving day.</div>
+        <p>BoxVision is provided <strong>"as is"</strong>. We are not responsible for data loss due to connection failures, indirect damages, or third-party outages.</p>
+        <div class="hl yellow">
+          <svg viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+          <div class="hl-content">We recommend noting the contents of important boxes as a backup before moving day.</div>
+        </div>
       </div>
     </div>
   </div>
 
   <!-- IP -->
   <div class="sec">
-    <div class="sec-header">
-      <div class="sec-icon" style="background:rgba(255,204,0,.12);color:#FFCC00">🎨</div>
-      <div class="sec-title" data-lang="es">Propiedad intelectual</div>
-      <div class="sec-title" data-lang="en">Intellectual property</div>
+    <div class="sec-hd">
+      <div class="sec-ico" style="background:rgba(255,214,10,.1)">
+        <svg viewBox="0 0 24 24" stroke="#ffd60a"><circle cx="13.5" cy="6.5" r="3.5"/><circle cx="6.5" cy="16.5" r="3.5"/><path d="M21 17.5a3.5 3.5 0 0 1-7 0V17a3.5 3.5 0 0 1 7 0z"/></svg>
+      </div>
+      <span class="sec-lbl" data-lang="es">Propiedad intelectual</span>
+      <span class="sec-lbl" data-lang="en">Intellectual property</span>
     </div>
-    <div class="sec-body">
+    <div class="sec-bd">
       <div data-lang="es"><p>El diseño, código, íconos y nombre "BoxVision" son propiedad de sus creadores. No podés copiarlos ni distribuirlos sin autorización escrita.</p></div>
       <div data-lang="en"><p>The design, code, icons and name "BoxVision" are the property of their creators. You may not copy or distribute them without written authorization.</p></div>
     </div>
@@ -234,59 +367,80 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
 
   <!-- JURISDICTION -->
   <div class="sec">
-    <div class="sec-header">
-      <div class="sec-icon" style="background:rgba(10,132,255,.12);color:#007AFF">🌎</div>
-      <div class="sec-title" data-lang="es">Jurisdicción</div>
-      <div class="sec-title" data-lang="en">Jurisdiction</div>
+    <div class="sec-hd">
+      <div class="sec-ico" style="background:rgba(41,151,255,.12)">
+        <svg viewBox="0 0 24 24" stroke="#2997FF"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+      </div>
+      <span class="sec-lbl" data-lang="es">Jurisdicción</span>
+      <span class="sec-lbl" data-lang="en">Jurisdiction</span>
     </div>
-    <div class="sec-body">
+    <div class="sec-bd">
       <div data-lang="es"><p>Estos términos se rigen por las leyes de la <strong>República del Perú</strong>. Cualquier disputa se resolverá en los tribunales de Trujillo, La Libertad.</p></div>
       <div data-lang="en"><p>These terms are governed by the laws of the <strong>Republic of Peru</strong>. Any dispute will be resolved in the courts of Trujillo, La Libertad.</p></div>
     </div>
   </div>
 
   <!-- CONTACT -->
-  <div class="sec" style="margin-bottom:0">
-    <div class="sec-header">
-      <div class="sec-icon" style="background:rgba(10,132,255,.15);color:#007AFF">✉️</div>
-      <div class="sec-title" data-lang="es">Contacto</div>
-      <div class="sec-title" data-lang="en">Contact</div>
+  <div class="sec" id="s-contacto" style="margin-bottom:0">
+    <div class="sec-hd">
+      <div class="sec-ico" style="background:rgba(41,151,255,.12)">
+        <svg viewBox="0 0 24 24" stroke="#2997FF"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+      </div>
+      <span class="sec-lbl" data-lang="es">Contacto</span>
+      <span class="sec-lbl" data-lang="en">Contact</span>
     </div>
     <a class="contact-row" href="mailto:futbol1234now@gmail.com?subject=Terms BoxVision">
-      <div class="contact-icon" style="background:rgba(10,132,255,.15)">📧</div>
-      <div class="contact-label" data-lang="es">Preguntas sobre estos términos</div>
-      <div class="contact-label" data-lang="en">Questions about these terms</div>
-      <div class="contact-val">futbol1234now@gmail.com</div>
+      <div class="cico" style="background:rgba(41,151,255,.12)">
+        <svg viewBox="0 0 24 24" stroke="#2997FF"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+      </div>
+      <span class="clbl" data-lang="es">Preguntas sobre estos términos</span>
+      <span class="clbl" data-lang="en">Questions about these terms</span>
+      <span class="cval">futbol1234now@gmail.com</span>
+      <span class="cchev"><svg viewBox="0 0 7 12" stroke="currentColor"><path d="M1 1l5 5-5 5"/></svg></span>
     </a>
   </div>
 
-  <div class="page-footer">
-    <div style="font-size:24px;margin-bottom:8px">📦</div>
-    <strong style="color:#fff;font-size:14px">BoxVision</strong><br>
+  <div class="footer">
+    <div class="ficon">
+      <svg viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
+    </div>
+    <span class="fname">BoxVision</span>
     <span data-lang="es">Organizador inteligente de mudanzas</span>
-    <span data-lang="en">Smart moving box organizer</span><br><br>
+    <span data-lang="en">Smart moving box organizer</span>
+    <div class="fdiv"></div>
     © 2026 BoxVision ·
     <span data-lang="es">Todos los derechos reservados</span>
     <span data-lang="en">All rights reserved</span><br>
-    <a href="privacy.html" target="_blank" data-lang="es">Política de privacidad</a>
-    <a href="privacy.html" target="_blank" data-lang="en">Privacy policy</a>
-    · <a href="mailto:futbol1234now@gmail.com">Contacto</a>
+    <a href="privacy.html" data-lang="es">Política de privacidad</a>
+    <a href="privacy.html" data-lang="en">Privacy policy</a>
+    &nbsp;·&nbsp;<a href="mailto:futbol1234now@gmail.com">Contacto</a>
   </div>
 
 </div>
 
 <script>
-function setLang(lang){
-  document.querySelectorAll('[data-lang]').forEach(el=>{
-    el.classList.toggle('visible', el.dataset.lang === lang);
-  });
-  document.getElementById('btn-es').classList.toggle('active', lang==='es');
-  document.getElementById('btn-en').classList.toggle('active', lang==='en');
-  document.documentElement.lang = lang;
-  localStorage.setItem('bv_lang', lang);
+function setLang(l){
+  document.querySelectorAll('[data-lang]').forEach(el=>el.classList.toggle('v',el.dataset.lang===l));
+  document.getElementById('btn-es').classList.toggle('active',l==='es');
+  document.getElementById('btn-en').classList.toggle('active',l==='en');
+  document.documentElement.lang=l;
+  localStorage.setItem('bv_lang',l);
 }
-const saved = localStorage.getItem('bv_lang') || 'es';
-setLang(saved);
+setLang(localStorage.getItem('bv_lang')||'es');
+
+window.addEventListener('scroll',()=>{
+  const d=document.documentElement;
+  document.getElementById('rpf').style.width=Math.min((d.scrollTop/(d.scrollHeight-d.clientHeight))*100,100)+'%';
+  document.getElementById('tb').classList.toggle('scrolled',d.scrollTop>4);
+},{passive:true});
+
+const io=new IntersectionObserver(es=>{es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target);}});},{threshold:.08,rootMargin:'0px 0px -20px 0px'});
+document.querySelectorAll('.sec').forEach((el,i)=>{el.style.transitionDelay=i*.035+'s';io.observe(el);});
+
+document.querySelectorAll('.tc').forEach(c=>c.addEventListener('click',function(e){
+  e.preventDefault();const t=document.querySelector(this.getAttribute('href'));
+  if(t)t.scrollIntoView({behavior:'smooth',block:'start'});
+}));
 </script>
 </body>
 </html>
