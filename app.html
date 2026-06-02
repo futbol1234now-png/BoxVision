@@ -697,125 +697,594 @@
 * { -webkit-tap-highlight-color: transparent; }
 </style>
 
+<!-- ══════════════════════════════════════════════════
+     NUEVAS FUNCIONES TOP — Estilos
+     1. Búsqueda avanzada / filtros
+     2. Compartir caja
+     3. Temas (claro/oscuro/auto + color acento)
+     4. Recordatorios
+     ══════════════════════════════════════════════════ -->
+<style>
+/* ════════════════════════════════
+   BÚSQUEDA AVANZADA
+   ════════════════════════════════ */
+#advFilterOverlay {
+  display:none; position:fixed; inset:0; z-index:8500;
+  background:rgba(0,0,0,.6); backdrop-filter:blur(14px);
+  -webkit-backdrop-filter:blur(14px);
+  align-items:flex-end; justify-content:center;
+}
+#advFilterOverlay.open { display:flex; }
+#advFilterSheet {
+  width:100%; max-width:500px;
+  background:var(--card);
+  border-radius:24px 24px 0 0;
+  padding:0 0 calc(24px + env(safe-area-inset-bottom));
+  max-height:88vh; overflow-y:auto;
+  transform:translateY(100%);
+  transition:transform .38s cubic-bezier(.32,1,.4,1);
+  box-shadow:0 -8px 40px rgba(0,0,0,.35);
+  scrollbar-width:none;
+}
+#advFilterSheet::-webkit-scrollbar { display:none; }
+#advFilterOverlay.open #advFilterSheet { transform:translateY(0); }
+.adf-handle { width:36px;height:4px;border-radius:2px;background:rgba(128,128,128,.35);margin:12px auto 0; }
+.adf-header { padding:18px 20px 14px; border-bottom:0.5px solid var(--border); display:flex; align-items:center; justify-content:space-between; }
+.adf-title { font-size:18px; font-weight:800; color:var(--text); letter-spacing:-.3px; }
+.adf-reset { background:none; border:none; color:var(--accent); font-size:13px; font-weight:700; cursor:pointer; font-family:inherit; padding:6px 10px; border-radius:8px; -webkit-tap-highlight-color:transparent; }
+.adf-reset:active { background:rgba(10,132,255,.1); }
+.adf-body { padding:16px 20px 0; }
+.adf-section { margin-bottom:20px; }
+.adf-label { font-size:11px; font-weight:800; color:var(--muted); text-transform:uppercase; letter-spacing:.8px; margin-bottom:10px; display:flex; align-items:center; gap:6px; }
+.adf-chips { display:flex; flex-wrap:wrap; gap:7px; }
+.adf-chip {
+  background:var(--pill); border:1px solid var(--border);
+  border-radius:99px; padding:7px 14px;
+  font-size:13px; font-weight:600; color:var(--muted);
+  cursor:pointer; font-family:inherit;
+  transition:background .15s, color .15s, border-color .15s, transform .12s;
+  -webkit-tap-highlight-color:transparent;
+  display:flex; align-items:center; gap:5px;
+}
+.adf-chip:active { transform:scale(.94); }
+.adf-chip.sel {
+  background:linear-gradient(135deg,rgba(10,132,255,.2),rgba(88,86,214,.15));
+  border-color:rgba(10,132,255,.5); color:var(--accent);
+}
+.adf-range { display:flex; align-items:center; gap:10px; }
+.adf-range-inp {
+  flex:1; background:var(--input); border:1.5px solid var(--border);
+  border-radius:12px; padding:10px 14px; font-size:15px;
+  color:var(--text); font-family:inherit; outline:none;
+  transition:border-color .18s;
+  text-align:center;
+}
+.adf-range-inp:focus { border-color:var(--accent); }
+.adf-range-sep { color:var(--muted); font-size:13px; font-weight:600; flex-shrink:0; }
+.adf-apply-btn {
+  width:100%; padding:15px; border-radius:14px; border:none;
+  background:linear-gradient(135deg,#0A84FF,#5856D6); color:#fff;
+  font-size:16px; font-weight:700; font-family:inherit; cursor:pointer;
+  margin:16px 0 0;
+  transition:transform .15s, opacity .15s;
+  -webkit-tap-highlight-color:transparent;
+}
+.adf-apply-btn:active { transform:scale(.97); opacity:.9; }
+/* Badge en botón de filtro */
+#advFilterBadge {
+  position:absolute; top:-4px; right:-4px;
+  width:16px; height:16px;
+  background:#FF3B30; border-radius:50%;
+  font-size:9px; font-weight:800; color:#fff;
+  display:none; align-items:center; justify-content:center;
+  border:2px solid var(--bg);
+}
+#sortBtn { position:relative; }
+
+/* ════════════════════════════════
+   COMPARTIR CAJA
+   ════════════════════════════════ */
+#shareBoxOverlay {
+  display:none; position:fixed; inset:0; z-index:8600;
+  background:rgba(0,0,0,.65); backdrop-filter:blur(16px);
+  -webkit-backdrop-filter:blur(16px);
+  align-items:flex-end; justify-content:center;
+}
+#shareBoxOverlay.open { display:flex; }
+#shareBoxSheet {
+  width:100%; max-width:500px;
+  background:var(--card);
+  border-radius:24px 24px 0 0;
+  padding:0 0 calc(24px + env(safe-area-inset-bottom));
+  transform:translateY(100%);
+  transition:transform .38s cubic-bezier(.32,1,.4,1);
+  box-shadow:0 -8px 40px rgba(0,0,0,.4);
+  overflow:hidden;
+}
+#shareBoxOverlay.open #shareBoxSheet { transform:translateY(0); }
+.shb-handle { width:36px;height:4px;border-radius:2px;background:rgba(128,128,128,.35);margin:12px auto 0; }
+.shb-header { padding:16px 20px 14px; border-bottom:0.5px solid var(--border); }
+.shb-title { font-size:18px; font-weight:800; color:var(--text); letter-spacing:-.3px; }
+.shb-sub { font-size:12px; color:var(--muted); margin-top:3px; }
+.shb-body { padding:16px 20px; }
+.shb-preview {
+  background:var(--card2); border:0.5px solid var(--border);
+  border-radius:16px; padding:14px 16px; margin-bottom:16px;
+  display:flex; align-items:center; gap:12px;
+}
+.shb-preview-icon { font-size:28px; flex-shrink:0; }
+.shb-preview-info { flex:1; min-width:0; }
+.shb-preview-name { font-size:15px; font-weight:700; color:var(--text); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.shb-preview-count { font-size:12px; color:var(--muted); margin-top:2px; }
+.shb-options { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:12px; }
+.shb-opt-btn {
+  background:var(--card2); border:0.5px solid var(--border);
+  border-radius:14px; padding:14px 12px;
+  display:flex; flex-direction:column; align-items:center; gap:8px;
+  cursor:pointer; font-family:inherit;
+  transition:background .15s, transform .12s, border-color .15s;
+  -webkit-tap-highlight-color:transparent;
+}
+.shb-opt-btn:active { transform:scale(.95); background:var(--input); }
+.shb-opt-icon { font-size:24px; }
+.shb-opt-label { font-size:12px; font-weight:700; color:var(--text); }
+.shb-opt-sub { font-size:10.5px; color:var(--muted); text-align:center; }
+.shb-link-wrap {
+  display:flex; align-items:center; gap:8px;
+  background:var(--input); border:1.5px solid var(--border);
+  border-radius:12px; padding:10px 14px; margin-bottom:12px;
+}
+.shb-link-text { flex:1; font-size:12px; color:var(--muted); overflow:hidden; white-space:nowrap; text-overflow:ellipsis; font-family:monospace; }
+.shb-copy-btn {
+  background:var(--accent); color:#fff; border:none;
+  border-radius:8px; padding:7px 14px; font-size:12px; font-weight:700;
+  cursor:pointer; font-family:inherit; flex-shrink:0;
+  transition:opacity .15s; -webkit-tap-highlight-color:transparent;
+}
+.shb-copy-btn:active { opacity:.7; }
+.shb-cancel {
+  width:100%; padding:13px; border-radius:12px; border:none;
+  background:rgba(255,255,255,.07); color:var(--muted);
+  font-size:14px; font-weight:600; font-family:inherit; cursor:pointer;
+  -webkit-tap-highlight-color:transparent; transition:background .12s;
+}
+.shb-cancel:active { background:rgba(255,255,255,.12); }
+
+/* ════════════════════════════════
+   TEMAS Y COLOR DE ACENTO
+   ════════════════════════════════ */
+#themePickerOverlay {
+  display:none; position:fixed; inset:0; z-index:8700;
+  background:rgba(0,0,0,.65); backdrop-filter:blur(16px);
+  -webkit-backdrop-filter:blur(16px);
+  align-items:flex-end; justify-content:center;
+}
+#themePickerOverlay.open { display:flex; }
+#themePickerSheet {
+  width:100%; max-width:500px;
+  background:var(--card);
+  border-radius:24px 24px 0 0;
+  padding:0 0 calc(28px + env(safe-area-inset-bottom));
+  transform:translateY(100%);
+  transition:transform .38s cubic-bezier(.32,1,.4,1);
+  box-shadow:0 -8px 40px rgba(0,0,0,.4);
+  overflow:hidden;
+}
+#themePickerOverlay.open #themePickerSheet { transform:translateY(0); }
+.thm-handle { width:36px;height:4px;border-radius:2px;background:rgba(128,128,128,.35);margin:12px auto 0; }
+.thm-header { padding:18px 20px 14px; border-bottom:0.5px solid var(--border); }
+.thm-title { font-size:18px; font-weight:800; color:var(--text); letter-spacing:-.3px; }
+.thm-sub { font-size:12px; color:var(--muted); margin-top:3px; }
+.thm-body { padding:18px 20px; }
+.thm-section { margin-bottom:24px; }
+.thm-label { font-size:11px; font-weight:800; color:var(--muted); text-transform:uppercase; letter-spacing:.8px; margin-bottom:12px; }
+/* Modos */
+.thm-mode-row { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; }
+.thm-mode-btn {
+  background:var(--card2); border:2px solid var(--border);
+  border-radius:16px; padding:14px 8px 12px;
+  display:flex; flex-direction:column; align-items:center; gap:8px;
+  cursor:pointer; font-family:inherit;
+  transition:border-color .18s, background .18s, transform .12s;
+  -webkit-tap-highlight-color:transparent;
+}
+.thm-mode-btn:active { transform:scale(.93); }
+.thm-mode-btn.sel { border-color:var(--accent); background:rgba(10,132,255,.08); }
+.thm-mode-icon { font-size:26px; }
+.thm-mode-name { font-size:12px; font-weight:700; color:var(--text); }
+/* Colores de acento */
+.thm-color-row { display:flex; flex-wrap:wrap; gap:10px; }
+.thm-color-swatch {
+  width:42px; height:42px; border-radius:50%;
+  border:3px solid transparent;
+  cursor:pointer; position:relative;
+  transition:transform .18s cubic-bezier(.34,1.56,.64,1), border-color .15s;
+  -webkit-tap-highlight-color:transparent;
+  display:flex; align-items:center; justify-content:center;
+  flex-shrink:0;
+}
+.thm-color-swatch:active { transform:scale(.88); }
+.thm-color-swatch.sel { border-color:var(--text); }
+.thm-color-swatch.sel::after {
+  content:'✓'; font-size:15px; font-weight:800;
+  color:#fff; position:absolute;
+  text-shadow:0 1px 4px rgba(0,0,0,.4);
+}
+/* Preview mini */
+.thm-preview {
+  background:var(--card2); border:0.5px solid var(--border);
+  border-radius:16px; padding:14px 16px;
+  display:flex; align-items:center; justify-content:space-between;
+  margin-bottom:20px;
+}
+.thm-preview-text { font-size:13px; color:var(--muted); }
+.thm-preview-pill {
+  padding:7px 16px; border-radius:99px; color:#fff;
+  font-size:12px; font-weight:700;
+  background:var(--accent);
+}
+.thm-done-btn {
+  width:100%; padding:15px; border-radius:14px; border:none;
+  background:linear-gradient(135deg,var(--accent),#5856D6); color:#fff;
+  font-size:16px; font-weight:700; font-family:inherit; cursor:pointer;
+  transition:transform .15s; -webkit-tap-highlight-color:transparent;
+}
+.thm-done-btn:active { transform:scale(.97); }
+
+/* ════════════════════════════════
+   RECORDATORIOS
+   ════════════════════════════════ */
+#reminderOverlay {
+  display:none; position:fixed; inset:0; z-index:8800;
+  background:rgba(0,0,0,.65); backdrop-filter:blur(16px);
+  -webkit-backdrop-filter:blur(16px);
+  align-items:flex-end; justify-content:center;
+}
+#reminderOverlay.open { display:flex; }
+#reminderSheet {
+  width:100%; max-width:500px;
+  background:var(--card);
+  border-radius:24px 24px 0 0;
+  padding:0 0 calc(24px + env(safe-area-inset-bottom));
+  max-height:90vh; overflow-y:auto;
+  transform:translateY(100%);
+  transition:transform .38s cubic-bezier(.32,1,.4,1);
+  box-shadow:0 -8px 40px rgba(0,0,0,.4);
+  scrollbar-width:none;
+}
+#reminderSheet::-webkit-scrollbar { display:none; }
+#reminderOverlay.open #reminderSheet { transform:translateY(0); }
+.rem-handle { width:36px;height:4px;border-radius:2px;background:rgba(128,128,128,.35);margin:12px auto 0; }
+.rem-header { padding:18px 20px 14px; border-bottom:0.5px solid var(--border); display:flex; align-items:center; justify-content:space-between; }
+.rem-title { font-size:18px; font-weight:800; color:var(--text); letter-spacing:-.3px; }
+.rem-body { padding:16px 20px; }
+.rem-section { margin-bottom:20px; }
+.rem-label { font-size:11px; font-weight:800; color:var(--muted); text-transform:uppercase; letter-spacing:.8px; margin-bottom:10px; }
+/* Presets rápidos */
+.rem-quick-row { display:flex; flex-wrap:wrap; gap:8px; }
+.rem-quick-btn {
+  background:var(--pill); border:1px solid var(--border);
+  border-radius:99px; padding:8px 14px; font-size:13px; font-weight:600; color:var(--muted);
+  cursor:pointer; font-family:inherit;
+  transition:background .15s, color .15s, border-color .15s;
+  -webkit-tap-highlight-color:transparent;
+}
+.rem-quick-btn.sel {
+  background:rgba(10,132,255,.15); border-color:rgba(10,132,255,.45); color:var(--accent);
+}
+.rem-quick-btn:active { transform:scale(.94); }
+/* Fecha/hora personalizadas */
+.rem-datetime-row { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+.rem-datetime-inp {
+  background:var(--input); border:1.5px solid var(--border);
+  border-radius:12px; padding:11px 14px; font-size:14px;
+  color:var(--text); font-family:inherit; outline:none;
+  transition:border-color .18s; width:100%; box-sizing:border-box;
+}
+.rem-datetime-inp:focus { border-color:var(--accent); }
+/* Lista de recordatorios existentes */
+.rem-list { display:flex; flex-direction:column; gap:8px; }
+.rem-item {
+  background:var(--card2); border:0.5px solid var(--border);
+  border-radius:14px; padding:12px 14px;
+  display:flex; align-items:center; gap:10px;
+}
+.rem-item-icon { font-size:20px; flex-shrink:0; }
+.rem-item-info { flex:1; min-width:0; }
+.rem-item-name { font-size:13.5px; font-weight:700; color:var(--text); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.rem-item-time { font-size:11.5px; color:var(--muted); margin-top:2px; }
+.rem-item-del {
+  width:28px; height:28px; border-radius:50%; border:none;
+  background:rgba(255,59,48,.1); color:#FF3B30;
+  display:flex; align-items:center; justify-content:center;
+  font-size:13px; cursor:pointer; flex-shrink:0;
+  -webkit-tap-highlight-color:transparent; transition:background .12s;
+}
+.rem-item-del:active { background:rgba(255,59,48,.22); }
+.rem-note-inp {
+  width:100%; background:var(--input); border:1.5px solid var(--border);
+  border-radius:12px; padding:11px 14px; font-size:14px;
+  color:var(--text); font-family:inherit; outline:none;
+  transition:border-color .18s; box-sizing:border-box; resize:none;
+}
+.rem-note-inp:focus { border-color:var(--accent); }
+.rem-save-btn {
+  width:100%; padding:15px; border-radius:14px; border:none;
+  background:linear-gradient(135deg,#0A84FF,#5856D6); color:#fff;
+  font-size:16px; font-weight:700; font-family:inherit; cursor:pointer;
+  margin-top:4px;
+  transition:transform .15s; -webkit-tap-highlight-color:transparent;
+}
+.rem-save-btn:active { transform:scale(.97); }
+.rem-empty { text-align:center; padding:24px 0; color:var(--muted); font-size:13px; }
+/* Badge de recordatorio en tarjeta de caja */
+.bc-reminder-badge {
+  position:absolute; top:8px; left:8px;
+  background:rgba(255,149,0,.2); border:0.5px solid rgba(255,149,0,.4);
+  border-radius:99px; padding:3px 7px; font-size:9.5px; font-weight:800;
+  color:#FF9500; display:flex; align-items:center; gap:3px;
+  pointer-events:none;
+}
+/* Botón recordatorio en detalle de caja */
+.rem-trigger-btn {
+  flex:1; padding:12px; border-radius:12px; border:none;
+  background:rgba(255,149,0,.12); color:#FF9500; border:0.5px solid rgba(255,149,0,.2);
+  font-size:13px; font-weight:700; font-family:inherit; cursor:pointer;
+  display:flex; align-items:center; justify-content:center; gap:6px;
+  transition:background .12s, transform .12s; -webkit-tap-highlight-color:transparent;
+}
+.rem-trigger-btn:active { transform:scale(.95); background:rgba(255,149,0,.2); }
+/* Botón compartir en detalle de caja */
+.share-trigger-btn {
+  flex:1; padding:12px; border-radius:12px; border:none;
+  background:rgba(52,199,89,.1); color:#34C759; border:0.5px solid rgba(52,199,89,.18);
+  font-size:13px; font-weight:700; font-family:inherit; cursor:pointer;
+  display:flex; align-items:center; justify-content:center; gap:6px;
+  transition:background .12s, transform .12s; -webkit-tap-highlight-color:transparent;
+}
+.share-trigger-btn:active { transform:scale(.95); background:rgba(52,199,89,.2); }
+/* Notificación de recordatorio (toast especial) */
+#remNotifToast {
+  position:fixed; top:-80px; left:50%; transform:translateX(-50%);
+  z-index:15000; background:var(--card);
+  border:0.5px solid var(--border);
+  border-radius:18px; padding:14px 18px;
+  display:flex; align-items:center; gap:12px;
+  box-shadow:0 8px 32px rgba(0,0,0,.35);
+  max-width:340px; width:90%;
+  transition:top .4s cubic-bezier(.34,1.3,.64,1);
+  cursor:pointer;
+}
+#remNotifToast.show { top:max(16px, env(safe-area-inset-top, 16px)); }
+.rnt-icon { font-size:22px; flex-shrink:0; }
+.rnt-info { flex:1; min-width:0; }
+.rnt-title { font-size:14px; font-weight:700; color:var(--text); }
+.rnt-sub { font-size:12px; color:var(--muted); margin-top:2px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.rnt-close { width:24px; height:24px; border-radius:50%; border:none; background:rgba(128,128,128,.15); cursor:pointer; display:flex; align-items:center; justify-content:center; font-size:11px; color:var(--muted); flex-shrink:0; }
+</style>
+
 <!-- ── Verificación de mantenimiento ── -->
 <script>
 /* ══════════════════════════════════════════════════════════
-   BoxVision — Sistema de Auto-Mantenimiento v2
+   BoxVision — Sistema de Auto-Mantenimiento v3
    Detecta y redirige al 404 automáticamente en:
-   1. Errores JS críticos repetidos (SyntaxError, undefined, etc.)
-   2. Login fallido varias veces seguidas
-   3. App congelada / no carga en tiempo razonable
-   4. Firebase SDK bloqueado o caído
-   5. Firestore inaccesible repetidamente
-   6. Promesas rechazadas sin manejar (app rota silenciosa)
-   7. Pantalla en blanco (body vacío mucho tiempo)
+   1. Errores JS críticos repetidos
+   2. Login fallido muchas veces seguidas
+   3. App congelada / pantalla en blanco
+   4. Firestore inaccesible repetidamente
+   5. Promesas rechazadas sin manejar (app rota silenciosa)
+   6. App online pero sin interacción por demasiado tiempo
+   7. Sesión de Firebase expirada / inválida
    ══════════════════════════════════════════════════════════ */
 (function(){
-  var REDIRECT      = './404.html';
-  var MAX_JS_ERRORS = 25;   // ⬆️ AUMENTADO: 10→25 (muy tolerante con errores JS)
-  var MAX_LOGINS    = 12;   // ⬆️ AUMENTADO: 5→12 (usuario puede reintentar varias veces)
-  var MAX_FIRESTORE = 20;   // ⬆️ AUMENTADO: 8→20 (conexión inestable permitida)
-  var MAX_PROMISE   = 25;   // ⬆️ AUMENTADO: 10→25 (casi nunca redirige)
-  var LOAD_TIMEOUT  = 50000;// ⬆️ AUMENTADO: 25000→50000 (espera mucho más tiempo)
-  var RESET_MS      = 300000;// limpiar contadores cada 5 min (evita bloqueos)
+  'use strict';
 
+  var REDIRECT      = './404.html';
+  var MAX_JS_ERRORS = 20;    // errores JS críticos antes de redirigir
+  var MAX_LOGINS    = 10;    // intentos de login fallidos
+  var MAX_FIRESTORE = 15;    // fallos de Firestore consecutivos
+  var MAX_PROMISE   = 20;    // promesas rechazadas de código (no de red)
+  var LOAD_TIMEOUT  = 45000; // ms sin pantalla visible → redirige
+  var RESET_MS      = 180000;// contadores se limpian cada 3 min si no hay más fallos
+
+  /* ── localStorage keys ── */
   var LS = {
-    js:   'bv_ec_js',
-    lg:   'bv_ec_lg',
-    fs:   'bv_ec_fs',
-    pr:   'bv_ec_pr',
-    time: 'bv_ec_t',
-    why:  'bv_maint_reason'
+    js:      'bv_ec_js',
+    lg:      'bv_ec_lg',
+    fs:      'bv_ec_fs',
+    pr:      'bv_ec_pr',
+    time:    'bv_ec_t',       // timestamp del último fallo
+    why:     'bv_maint_why',  // razón legible del último redireccionamiento
+    log:     'bv_maint_log',  // historial de últimos 10 eventos (JSON)
+    ok:      'bv_ec_ok'       // timestamp del último _bvAppLoaded exitoso
   };
 
-  // Limpiar si pasaron más de 2 min (evitar bloqueo permanente por error puntual)
-  var lastT = parseInt(localStorage.getItem(LS.time)||'0');
-  if(Date.now() - lastT > RESET_MS){
-    [LS.js, LS.lg, LS.fs, LS.pr].forEach(function(k){ localStorage.removeItem(k); });
-  }
-
-  function bump(key, max, label){
-    var n = parseInt(localStorage.getItem(key)||'0') + 1;
-    localStorage.setItem(key, n);
-    localStorage.setItem(LS.time, Date.now());
-    if(n >= max){
+  /* ── Limpiar contadores si pasó suficiente tiempo sin fallos ── */
+  function maybeReset(){
+    var lastFail = parseInt(localStorage.getItem(LS.time) || '0');
+    if(Date.now() - lastFail > RESET_MS){
       [LS.js, LS.lg, LS.fs, LS.pr].forEach(function(k){ localStorage.removeItem(k); });
-      go(label + ' (x'+n+')');
     }
   }
+  try{ maybeReset(); }catch(e){}
 
-  function go(reason){
-    console.warn('[BoxVision] Auto-mantenimiento:', reason);
-    try{ localStorage.setItem(LS.why, reason); }catch(e){}
-    window.location.replace(REDIRECT);
+  /* ── Registro de eventos para debug ── */
+  function logEvent(label){
+    try{
+      var entries = JSON.parse(localStorage.getItem(LS.log) || '[]');
+      entries.push({ t: Date.now(), msg: label });
+      if(entries.length > 10) entries = entries.slice(-10);
+      localStorage.setItem(LS.log, JSON.stringify(entries));
+    }catch(e){}
   }
 
-  // ── 1. Errores JS críticos globales ──────────────────────
+  /* ── Redirigir a mantenimiento ── */
+  function go(reason){
+    // Evitar doble redirección si ya estamos yendo
+    if(window._bvGoingMaint) return;
+    window._bvGoingMaint = true;
+    console.warn('[BoxVision] Auto-mantenimiento →', reason);
+    logEvent('REDIRECT: ' + reason);
+    try{
+      localStorage.setItem(LS.why, reason);
+      // Limpiar contadores para que al volver no redirigea inmediatamente
+      [LS.js, LS.lg, LS.fs, LS.pr].forEach(function(k){ localStorage.removeItem(k); });
+    }catch(e){}
+    // Pequeño delay para que el console.warn sea visible en DevTools
+    setTimeout(function(){
+      window.location.replace(REDIRECT);
+    }, 80);
+  }
+
+  /* ── Incrementar contador, redirigir si supera el máximo ── */
+  function bump(key, max, label){
+    try{
+      var n = parseInt(localStorage.getItem(key) || '0') + 1;
+      localStorage.setItem(key, String(n));
+      localStorage.setItem(LS.time, String(Date.now()));
+      logEvent(label + ' (' + n + '/' + max + ')');
+      if(n >= max) go(label + ' — límite alcanzado (' + n + ')');
+    }catch(e){}
+  }
+
+  /* ════════════════════════════════════════
+     1. Errores JS críticos globales
+     ════════════════════════════════════════ */
   var CRITICAL_MSGS = [
-    'illegal return','is not defined','is not a function',
-    'cannot read prop','unexpected token','syntaxerror',
-    'cannot set prop','maximum call stack'
+    'illegal return', 'is not defined', 'is not a function',
+    'cannot read prop', 'cannot read properties',
+    'unexpected token', 'syntaxerror',
+    'cannot set prop', 'cannot set properties',
+    'maximum call stack', 'out of memory',
+    'is not iterable', 'is not a constructor'
   ];
   var IGNORE_MSGS = [
-    'slow network','intervention','tabler','woff','font',
-    'favicon','cross-origin','coop','blocked the window'
+    'slow network', 'intervention', 'tabler', 'woff', 'font',
+    'favicon', 'cross-origin', 'coop', 'blocked the window',
+    'non-passive', 'touch', 'scroll', 'ResizeObserver',
+    'emailjs', 'groq', 'firebase storage'
   ];
+
   window.addEventListener('error', function(e){
-    // Solo errores de JS, no de recursos (img, css, etc.)
+    // Solo errores de JS — ignorar errores de carga de recursos (img, css, script externo)
     if(e.target && e.target !== window && e.target.tagName) return;
-    var msg = (e.message||e.type||'').toLowerCase();
-    for(var i=0;i<IGNORE_MSGS.length;i++) if(msg.indexOf(IGNORE_MSGS[i])>=0) return;
-    for(var j=0;j<CRITICAL_MSGS.length;j++){
-      if(msg.indexOf(CRITICAL_MSGS[j])>=0){
-        bump(LS.js, MAX_JS_ERRORS, 'error JS: '+msg.slice(0,60));
+    var msg = ((e.message || '') + ' ' + (e.filename || '')).toLowerCase();
+    for(var i = 0; i < IGNORE_MSGS.length; i++){
+      if(msg.indexOf(IGNORE_MSGS[i]) >= 0) return;
+    }
+    for(var j = 0; j < CRITICAL_MSGS.length; j++){
+      if(msg.indexOf(CRITICAL_MSGS[j]) >= 0){
+        bump(LS.js, MAX_JS_ERRORS, 'error JS: ' + msg.slice(0, 80));
         return;
       }
     }
   }, true);
 
-  // ── 2. Promesas rechazadas sin manejar ───────────────────
+  /* ════════════════════════════════════════
+     2. Promesas rechazadas sin manejar
+     ════════════════════════════════════════ */
+  var NET_IGNORE = [
+    'failed to fetch', 'networkerror', 'network error', 'load failed',
+    'cors', 'cross-origin', 'coop', 'blocked', 'aborted',
+    'timeout', 'net::', 'err_', 'groq', 'emailjs', 'jsonbin'
+  ];
+
   window.addEventListener('unhandledrejection', function(e){
     var msg = '';
-    try{ msg = (e.reason && (e.reason.message||String(e.reason))||'').toLowerCase(); }catch(x){}
-    // Ignorar errores de red normales y COOP
-    var netIgnore = ['failed to fetch','networkerror','network error',
-                     'load failed','cors','cross-origin','coop','blocked'];
-    for(var i=0;i<netIgnore.length;i++) if(msg.indexOf(netIgnore[i])>=0) return;
-    // Solo contar si parece error de código, no de red
-    if(msg.indexOf('is not')>=0 || msg.indexOf('undefined')>=0 ||
-       msg.indexOf('null')>=0   || msg.indexOf('syntaxerror')>=0){
-      bump(LS.pr, MAX_PROMISE, 'promesa: '+msg.slice(0,60));
+    try{ msg = ((e.reason && (e.reason.message || String(e.reason))) || '').toLowerCase(); }catch(x){}
+    if(!msg) return;
+    for(var i = 0; i < NET_IGNORE.length; i++){
+      if(msg.indexOf(NET_IGNORE[i]) >= 0) return;
+    }
+    // Solo contar errores que parecen bugs de código, no de red/API
+    var isCodeError =
+      msg.indexOf('is not') >= 0       ||
+      msg.indexOf('undefined') >= 0    ||
+      msg.indexOf('null') >= 0         ||
+      msg.indexOf('syntaxerror') >= 0  ||
+      msg.indexOf('cannot read') >= 0  ||
+      msg.indexOf('is not a function') >= 0;
+    if(isCodeError){
+      bump(LS.pr, MAX_PROMISE, 'promesa rechazada: ' + msg.slice(0, 80));
     }
   });
 
-  // ── 3. Fallos de login (llamado desde launchApp) ─────────
+  /* ════════════════════════════════════════
+     3. Fallos de login
+        (llamar desde launchApp cuando falla la autenticación)
+     ════════════════════════════════════════ */
   window._bvLoginFail = function(reason){
-    bump(LS.lg, MAX_LOGINS, 'login: '+(reason||'').slice(0,60));
+    bump(LS.lg, MAX_LOGINS, 'login fallido: ' + (reason || '').slice(0, 60));
   };
 
-  // ── 4. Fallos de Firestore (llamado desde loadFromFirestore) ──
+  /* ════════════════════════════════════════
+     4. Fallos de Firestore
+        (llamar desde loadFromFirestore cuando da error)
+     ════════════════════════════════════════ */
   window._bvFirestoreFail = function(reason){
-    bump(LS.fs, MAX_FIRESTORE, 'firestore: '+(reason||'').slice(0,60));
+    bump(LS.fs, MAX_FIRESTORE, 'Firestore: ' + (reason || '').slice(0, 60));
   };
 
-  // ── 5. Timeout: app no carga en LOAD_TIMEOUT ms ──────────
+  /* ════════════════════════════════════════
+     5. Sesión de Firebase expirada o inválida
+        (llamar si el token es inválido o el usuario fue desautenticado inesperadamente)
+     ════════════════════════════════════════ */
+  window._bvSessionInvalid = function(reason){
+    logEvent('Sesión inválida: ' + (reason || ''));
+    go('Sesión inválida: ' + (reason || 'token expirado'));
+  };
+
+  /* ════════════════════════════════════════
+     6. Timeout: pantalla en blanco
+        Si después de LOAD_TIMEOUT ms no hay ninguna pantalla visible → redirige.
+        Se cancela llamando a _bvAppLoaded().
+     ════════════════════════════════════════ */
   var _loadTimer = setTimeout(function(){
-    var login  = document.getElementById('loginScreen');
-    var main   = document.getElementById('mainScreen');
-    var splash = document.getElementById('splash');
-    var loginVisible  = login  && !login.classList.contains('hidden') && login.style.display !== 'none';
-    var mainVisible   = main   && !main.classList.contains('hidden');
-    var splashVisible = splash && splash.classList.contains('active');
-    if(!loginVisible && !mainVisible && !splashVisible){
-      go('pantalla en blanco '+LOAD_TIMEOUT+'ms');
+    // Verificar que realmente no hay nada visible
+    var screens = ['loginScreen', 'mainScreen', 'splash'];
+    var anyVisible = screens.some(function(id){
+      var el = document.getElementById(id);
+      if(!el) return false;
+      if(el.classList.contains('hidden')) return false;
+      if(el.style.display === 'none') return false;
+      // Verificar que tiene dimensiones reales
+      var rect = el.getBoundingClientRect();
+      return rect.width > 0 && rect.height > 0;
+    });
+    if(!anyVisible){
+      go('pantalla en blanco después de ' + (LOAD_TIMEOUT / 1000) + 's');
     }
   }, LOAD_TIMEOUT);
 
-  // ── 6. App cargó bien: limpiar todo ──────────────────────
+  /* ════════════════════════════════════════
+     7. App cargó correctamente: limpiar todo
+        Llamar cuando la pantalla principal o el login son visibles y funcionales.
+     ════════════════════════════════════════ */
   window._bvAppLoaded = function(){
     clearTimeout(_loadTimer);
-    [LS.js, LS.lg, LS.fs, LS.pr].forEach(function(k){ localStorage.removeItem(k); });
+    window._bvGoingMaint = false;
+    try{
+      [LS.js, LS.lg, LS.fs, LS.pr].forEach(function(k){ localStorage.removeItem(k); });
+      localStorage.setItem(LS.ok, String(Date.now()));
+    }catch(e){}
   };
+
+  /* ════════════════════════════════════════
+     Debug helpers (solo en consola)
+     ════════════════════════════════════════ */
+  window._bvMaintStatus = function(){
+    var keys = [LS.js, LS.lg, LS.fs, LS.pr, LS.why, LS.ok];
+    var out = {};
+    keys.forEach(function(k){ out[k] = localStorage.getItem(k); });
+    try{ out['log'] = JSON.parse(localStorage.getItem(LS.log) || '[]'); }catch(e){}
+    console.table(out);
+    return out;
+  };
+  window._bvMaintReset = function(){
+    Object.values(LS).forEach(function(k){ localStorage.removeItem(k); });
+    console.log('[BoxVision] Contadores de mantenimiento reseteados');
+  };
+
 })();
 </script>
 
@@ -3454,7 +3923,8 @@ if(!auth){
         <button class="view-toggle-btn active" id="viewGrid" onclick="setViewMode('grid')" title="Cuadrícula"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg></button>
         <button class="view-toggle-btn" id="viewList" onclick="setViewMode('list')" title="Lista"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg></button>
       </div>
-      <button class="tbtn" onclick="toggleSortMenu()" id="sortBtn" title="Ordenar y filtrar"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 6h16M7 12h10M10 18h4"/></svg></button>
+      <button class="tbtn" onclick="toggleSortMenu()" id="sortBtn" title="Ordenar (doble toque = Filtros avanzados)"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 6h16M7 12h10M10 18h4"/></svg></button>
+      <button class="tbtn" id="advFilterTopBtn" onclick="openAdvFilter()" title="Filtros avanzados" style="position:relative"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg></button>
       <button class="tbtn" onclick="goSettings()" title="Ajustes"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></button>
 
       <button onclick="openForm()" title="Nueva caja" aria-label="Agregar nueva caja" style="display:flex;align-items:center;gap:6px;background:rgba(10,132,255,.18);color:rgba(10,132,255,.95);border:1px solid rgba(10,132,255,.3);border-radius:14px;padding:0 14px;height:36px;font-size:14px;font-weight:700;font-family:inherit;cursor:pointer;box-shadow:none;transition:transform .18s cubic-bezier(.34,1.56,.64,1),background .15s;-webkit-tap-highlight-color:transparent;flex-shrink:0" onmousedown="this.style.transform='scale(.93)'" onmouseup="this.style.transform=''" onmouseleave="this.style.transform=''">
@@ -3885,6 +4355,15 @@ if(!auth){
           <div class="settings-toggle" id="darkToggleWrap" style="pointer-events:none">
             <div class="settings-toggle-knob" id="darkToggleKnob"></div>
           </div>
+        </div>
+        <!-- Tema y colores -->
+        <div class="settings-row settings-tappable" onclick="openThemePicker()">
+          <div class="settings-row-icon" style="background:rgba(175,82,222,.18)"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="13.5" cy="6.5" r=".5" fill="currentColor"/><circle cx="17.5" cy="10.5" r=".5" fill="currentColor"/><circle cx="8.5" cy="7.5" r=".5" fill="currentColor"/><circle cx="6.5" cy="12.5" r=".5" fill="currentColor"/><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.47-1.125-.29-.289-.47-.682-.47-1.125C12.708 17.203 13.387 16 14.5 16H17c2.761 0 5-2.239 5-5 0-4.975-4.525-9-10-9z"/></svg></div>
+          <div class="settings-row-text">
+            <div class="settings-label">Tema y colores</div>
+            <div class="settings-sub">Apariencia, modo oscuro y color de acento</div>
+          </div>
+          <span class="settings-chevron">›</span>
         </div>
         <!-- Idioma -->
         <div class="settings-row settings-tappable" onclick="openLangModal()">
@@ -4376,7 +4855,16 @@ function saveRooms(){
   // Solo subir a Firestore si no estamos en plena carga inicial
   if(currentUser && db && !(typeof _firestoreLoading!=="undefined" && _firestoreLoading)){
     db.collection("users").doc(currentUser.uid).set({rooms:rooms},{merge:true})
-      .catch(e=>console.warn("saveRooms Firestore error:",e));
+      .catch(e=>{
+        console.warn("[BoxVision] saveRooms Firestore error:", e.code || e.message);
+        if(typeof window._bvFirestoreFail === 'function'){
+          var emsg = (e.message||'').toLowerCase();
+          var ecode = (e.code||'').toLowerCase();
+          var ignore = ['offline','network','unavailable','unauthenticated','permission-denied','cancelled'];
+          var shouldCount = !ignore.some(function(w){ return emsg.indexOf(w)>=0 || ecode.indexOf(w)>=0; });
+          if(shouldCount) window._bvFirestoreFail(e.code || e.message || 'saveRooms error');
+        }
+      });
   }
 }
 function saveSettings(){localStorage.setItem("cb-settings",JSON.stringify(settings));}
@@ -5395,11 +5883,79 @@ function toggleHistory(){}
 function renderHistory(){}
 
 function triggerPhoto(){document.getElementById("photoInput").click();}
+
+/* ── Compresión de fotos ───────────────────────────────────────────────────
+   Antes de guardar, redimensiona a máx 900px y comprime a calidad 72%.
+   Una foto de cámara sin comprimir pesa 3-8MB base64 y llena el localStorage.
+   Con compresión queda en ~80-150KB — 30-50x más ligera, sin pérdida visual.
+   También actualiza el area de foto en detailScreen y en mobile si existe. */
+function _compressPhoto(file, callback){
+  var MAX_PX  = 900;   // max lado largo en píxeles
+  var QUALITY = 0.72;  // calidad JPEG
+
+  var img = new Image();
+  var url = URL.createObjectURL(file);
+  img.onload = function(){
+    URL.revokeObjectURL(url);
+    var w = img.naturalWidth;
+    var h = img.naturalHeight;
+
+    // Redimensionar manteniendo aspecto
+    if(w > MAX_PX || h > MAX_PX){
+      if(w >= h){ h = Math.round(h * MAX_PX / w); w = MAX_PX; }
+      else       { w = Math.round(w * MAX_PX / h); h = MAX_PX; }
+    }
+
+    var canvas = document.createElement('canvas');
+    canvas.width  = w;
+    canvas.height = h;
+    var ctx = canvas.getContext('2d');
+    ctx.drawImage(img, 0, 0, w, h);
+
+    var compressed = canvas.toDataURL('image/jpeg', QUALITY);
+    callback(compressed);
+  };
+  img.onerror = function(){
+    // Si falla la compresión, usar el FileReader original como fallback
+    URL.revokeObjectURL(url);
+    var reader = new FileReader();
+    reader.onload = function(ev){ callback(ev.target.result); };
+    reader.readAsDataURL(file);
+  };
+  img.src = url;
+}
+
 function handlePhoto(e){
-  const file=e.target.files[0];if(!file||!currentBoxId) return;
-  const reader=new FileReader();
-  reader.onload=ev=>{const box=boxes.find(b=>b.id===currentBoxId);if(box){box.photo=ev.target.result;saveData();renderPhotoArea();generateQR(currentBoxId);}};
-  reader.readAsDataURL(file);e.target.value="";
+  var file = e.target.files[0];
+  if(!file || !currentBoxId){ e.target.value = ""; return; }
+  e.target.value = ""; // limpiar input antes de async
+
+  // Mostrar indicador de carga mientras comprime
+  var photoAreaEl = document.getElementById("photoArea");
+  var photoMobEl  = document.getElementById("photoAreaMobile");
+  var loadHtml    = '<div style="display:flex;align-items:center;justify-content:center;padding:20px;color:var(--muted);gap:8px;font-size:13px">'
+    + '<div style="width:14px;height:14px;border:2px solid rgba(255,255,255,.15);border-top-color:rgba(255,255,255,.5);border-radius:50%;animation:spin .8s linear infinite;flex-shrink:0"></div>'
+    + 'Comprimiendo…</div>';
+  if(photoAreaEl) photoAreaEl.innerHTML = loadHtml;
+  if(photoMobEl)  photoMobEl.innerHTML  = loadHtml;
+
+  _compressPhoto(file, function(compressed){
+    var box = boxes.find(function(b){ return b.id === currentBoxId; });
+    if(!box) return;
+    box.photo = compressed;
+    saveData();
+    renderPhotoArea();
+    // Actualizar también el área mobile si existe
+    if(photoMobEl){
+      photoMobEl.innerHTML = box.photo
+        ? '<div class="photo-preview"><img src="'+box.photo+'"/><button class="photo-rm" onclick="event.stopPropagation();removePhoto()">✕</button></div>'
+        : '<div class="photo-add"><span style="font-size:28px">📸</span><span>Agregar foto de la caja</span></div>';
+    }
+    generateQR(currentBoxId);
+    // Mostrar tamaño comprimido en consola para debug
+    var kb = Math.round(compressed.length * 0.75 / 1024);
+    console.log("[BoxVision] Foto comprimida: ~"+kb+"KB");
+  });
 }
 function removePhoto(){const box=boxes.find(b=>b.id===currentBoxId);if(box){box.photo=null;saveData();renderPhotoArea();generateQR(currentBoxId);}}
 function renderPhotoArea(){
@@ -5635,9 +6191,74 @@ function handleTagKey(e){if((e.key==="Enter"||e.key===",")&&e.target.value.trim(
 function addTag(t){if(!currentTags.includes(t)){currentTags.push(t);renderTagChips();}}
 function removeTag(i){currentTags.splice(i,1);renderTagChips();}
 let _savingForm=false;
+/* ── Detección de duplicados ───────────────────────────────────────────────
+   Levenshtein normalizado: distancia de edición / longitud máxima.
+   Si el resultado es ≤ 0.35 (35% de diferencia) → nombres muy similares.
+   Ejemplos: "Cocina" vs "cocina" = 0.0 | "Libros" vs "Libro" = 0.17 | "Baño" vs "Baños" = 0.2 */
+function _levenshtein(a, b){
+  var m = a.length, n = b.length;
+  var dp = [];
+  for(var i = 0; i <= m; i++){
+    dp[i] = [i];
+    for(var j = 1; j <= n; j++){
+      if(i === 0){ dp[i][j] = j; continue; }
+      dp[i][j] = a[i-1] === b[j-1]
+        ? dp[i-1][j-1]
+        : 1 + Math.min(dp[i-1][j], dp[i][j-1], dp[i-1][j-1]);
+    }
+  }
+  return dp[m][n];
+}
+
+function _normalizeName(s){
+  return s.trim().toLowerCase()
+    .normalize('NFD').replace(/[̀-ͯ]/g,'') // quitar acentos
+    .replace(/[^a-z0-9\s]/g,'').replace(/\s+/g,' ');
+}
+
+function _findDuplicates(name, excludeId){
+  var norm = _normalizeName(name);
+  if(norm.length < 2) return [];
+  var THRESH = 0.35; // similitud máxima permitida sin aviso
+  return boxes.filter(function(b){
+    if(b.id === excludeId) return false; // no comparar consigo misma al editar
+    var bNorm = _normalizeName(b.name);
+    if(!bNorm.length) return false;
+    var dist = _levenshtein(norm, bNorm);
+    var maxLen = Math.max(norm.length, bNorm.length);
+    return (dist / maxLen) <= THRESH;
+  });
+}
+
+/* Aviso de duplicado — aparece debajo del campo nombre, no bloquea guardar */
+function _showDupWarning(dupes){
+  var existing = document.getElementById('_bvDupWarn');
+  if(existing) existing.remove();
+  if(!dupes || !dupes.length) return;
+
+  var warn = document.createElement('div');
+  warn.id = '_bvDupWarn';
+  warn.style.cssText = 'margin:8px 0 0;padding:10px 13px;background:rgba(255,159,10,.1);'
+    + 'border:1px solid rgba(255,159,10,.3);border-radius:12px;'
+    + 'font-size:12px;color:rgba(255,159,10,.9);line-height:1.5;'
+    + 'animation:srSlide .22s cubic-bezier(.34,1.2,.64,1)';
+
+  var names = dupes.slice(0,3).map(function(b){ return '"'+b.name+'"'; }).join(', ');
+  warn.innerHTML = '⚠️ Ya tienes una caja similar: '+names
+    + '<br><span style="opacity:.65;font-size:11px">Puedes guardar igual si es diferente</span>';
+
+  var fNameEl = document.getElementById('fName');
+  if(fNameEl && fNameEl.closest('.form-group-ios')){
+    fNameEl.closest('.form-group-ios').insertAdjacentElement('afterend', warn);
+  }
+}
+
 function saveForm(){
   if(_savingForm) return; // FIX G: prevenir doble tap
   const name=document.getElementById("fName").value.trim();if(!name){alert("Escribe un nombre");return;}
+  // Limpiar aviso de duplicado al guardar
+  var dw = document.getElementById('_bvDupWarn');
+  if(dw) dw.remove();
   _savingForm=true;
   try{
     if(formMode==="new"){
@@ -7406,7 +8027,6 @@ function signInGoogle(){
   // iOS Safari / Desktop: usar popup
   auth.signInWithPopup(provider).catch(err=>{
     if(err.code === 'auth/popup-blocked' || err.code === 'auth/popup-cancelled'){
-      // Popup bloqueado en iOS PWA → redirect como último recurso
       console.info("[BoxVision] Popup bloqueado — usando redirect");
       try{ sessionStorage.setItem('bv_login_pending','1'); }catch(e){}
       auth.signInWithRedirect(provider);
@@ -7414,9 +8034,13 @@ function signInGoogle(){
     }
     if(btn) btn.style.display = "flex";
     if(loading) loading.style.display = "none";
-    if(err.code !== 'auth/popup-closed-by-user' && err.code !== 'auth/cancelled-popup-request'){
-      console.error("Login error:", err);
+    // Códigos que no cuentan como fallo real (el usuario lo canceló)
+    const userCancelled = ['auth/popup-closed-by-user','auth/cancelled-popup-request','auth/user-cancelled'];
+    if(!userCancelled.includes(err.code)){
+      console.error("Login error:", err.code);
       if(errEl){ errEl.textContent = "Error al iniciar sesión. Intenta de nuevo."; errEl.style.display = "block"; }
+      // Notificar al sistema de auto-mantenimiento solo si es error técnico real
+      if(typeof window._bvLoginFail === 'function') window._bvLoginFail(err.code);
     }
   });
   // NOTA: getRedirectResult se maneja una sola vez al cargar la página (ver abajo)
@@ -7584,12 +8208,17 @@ function submitEmailForm(){
   if(_emailTab === 'signin'){
     auth.signInWithEmailAndPassword(email, pass)
       .then(()=>{
-        _loginAttempts = 0; // Reset on success
+        _loginAttempts = 0;
       })
       .catch(err=>{
         _setEmailLoading(false);
         console.warn('[Login Error]', err.code, err.message);
         _showEmailErr(_emailAuthError(err.code));
+        // Contar como fallo solo si es error técnico, no contraseña incorrecta del usuario
+        const technicalErrors = ['auth/network-request-failed','auth/internal-error','auth/too-many-requests'];
+        if(technicalErrors.includes(err.code) && typeof window._bvLoginFail === 'function'){
+          window._bvLoginFail(err.code);
+        }
       });
   } else {
     auth.createUserWithEmailAndPassword(email, pass)
@@ -7901,45 +8530,95 @@ const BACKUP_MAX = 7;
 
 async function _maybeBackup(){
   if(!currentUser || !db || boxes.length === 0) return;
-  try{
-    const todayKey = new Date().toISOString().slice(0,10); // "2026-05-17"
-    const lastBackup = localStorage.getItem("cb-last-backup-"+currentUser.uid);
-    if(lastBackup === todayKey) return; // Ya se hizo el backup de hoy
+  // No intentar backup si no hay red
+  if(!navigator.onLine) return;
 
-    const userRef = db.collection("users").doc(currentUser.uid);
+  try{
+    const todayKey = new Date().toISOString().slice(0,10);
+    const lastBackup    = localStorage.getItem("cb-last-backup-"+currentUser.uid);
+    const failKey       = "cb-backup-fails-"+currentUser.uid;
+    const failCountRaw  = localStorage.getItem(failKey);
+    const failCount     = failCountRaw ? JSON.parse(failCountRaw) : {date:'', count:0};
+
+    // Ya se hizo el backup de hoy con éxito → salir
+    if(lastBackup === todayKey) return;
+
+    // Si ya fallaron 3 veces hoy, no volver a intentar hasta mañana
+    // (evita loop de reintentos cuando Firestore tiene problemas)
+    if(failCount.date === todayKey && failCount.count >= 3){
+      console.warn("[BoxVision] Backup: máximo de intentos fallidos alcanzado para hoy");
+      return;
+    }
+
+    const userRef   = db.collection("users").doc(currentUser.uid);
     const backupsRef = userRef.collection("backups");
 
     // Leer backups existentes para rotar (máx BACKUP_MAX)
     const existing = await backupsRef.orderBy("date","asc").get();
     const batch = db.batch();
 
-    // Eliminar los más antiguos si ya hay BACKUP_MAX
     if(existing.size >= BACKUP_MAX){
       const toDelete = existing.docs.slice(0, existing.size - BACKUP_MAX + 1);
-      toDelete.forEach(d=>batch.delete(d.ref));
+      toDelete.forEach(d => batch.delete(d.ref));
     }
 
-    // Guardar backup de hoy (sin fotos base64 para no gastar cuota)
+    // Guardar backup de hoy (sin fotos base64)
     const lean = boxes.map(b=>{
       const c = JSON.parse(JSON.stringify(b));
       delete c.photo;
-      c.items = (b.items||[]).map(i=>({text:i.text, done:i.done}));
+      c.items = (b.items||[]).map(i=>({text:i.text, done:i.done, addedAt:i.addedAt||0}));
       return c;
     });
 
     batch.set(backupsRef.doc(todayKey), {
-      date: todayKey,
+      date:      todayKey,
       createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-      boxCount: lean.length,
-      boxes: lean
+      boxCount:  lean.length,
+      boxes:     lean
     });
 
     await batch.commit();
+
+    // Éxito: guardar fecha y limpiar contador de fallos
     localStorage.setItem("cb-last-backup-"+currentUser.uid, todayKey);
-    console.log("💾 Backup diario guardado:", todayKey, `(${lean.length} cajas)`);
+    localStorage.removeItem(failKey);
+    console.log("💾 Backup diario guardado:", todayKey, "("+lean.length+" cajas)");
+
   }catch(e){
-    console.warn("Backup error:", e);
+    console.warn("[BoxVision] Backup error:", e.code || e.message);
+    // Registrar fallo — no reintentar más de 3 veces en el mismo día
+    try{
+      const fk   = "cb-backup-fails-"+currentUser.uid;
+      const prev = JSON.parse(localStorage.getItem(fk) || '{"date":"","count":0}');
+      const today = new Date().toISOString().slice(0,10);
+      localStorage.setItem(fk, JSON.stringify({
+        date:  today,
+        count: prev.date === today ? prev.count + 1 : 1
+      }));
+    }catch(_){}
   }
+}
+
+// Reintentos automáticos para saveToFirestore
+var _saveRetryTimer = null;
+var _saveRetryCount = 0;
+var MAX_SAVE_RETRIES = 3;
+
+function _scheduleSaveRetry(){
+  if(_saveRetryCount >= MAX_SAVE_RETRIES) return;
+  if(!navigator.onLine) return; // no reintentar si no hay red — el listener "online" lo hará
+  _saveRetryCount++;
+  var delay = Math.pow(2, _saveRetryCount) * 1500; // 3s, 6s, 12s
+  console.log("[BoxVision] Reintentando saveToFirestore en " + (delay/1000) + "s (intento " + _saveRetryCount + "/" + MAX_SAVE_RETRIES + ")");
+  clearTimeout(_saveRetryTimer);
+  _saveRetryTimer = setTimeout(function(){
+    saveToFirestore().then(function(){
+      _saveRetryCount = 0; // éxito → resetear contador
+      _lastSavedHash = _dataHash();
+    }).catch(function(){
+      _scheduleSaveRetry(); // sigue fallando → programar otro intento
+    });
+  }, delay);
 }
 
 async function saveToFirestore(){
@@ -8011,26 +8690,57 @@ async function saveToFirestore(){
     _clearDirty();
     console.log(`✅ Guardado en Firestore: ${lean.length} cajas en ${chunks.length} chunk(s)`);
   }catch(e){
-    console.warn("Firestore save error:", e);
+    console.warn("[BoxVision] Firestore save error:", e.code || e.message);
     if(navigator.onLine){
       showToast("⚠️ Error al sincronizar — datos guardados localmente","#FF9500");
+      // Programar reintento automático si hay red y no superamos el máximo
+      _scheduleSaveRetry();
+    }
+    // Reportar al auto-mantenimiento solo si es error técnico real (no red/permisos)
+    if(typeof window._bvFirestoreFail === 'function'){
+      var emsg = (e.message||'').toLowerCase();
+      var ecode = (e.code||'').toLowerCase();
+      var ignore = ['offline','network','unavailable','unauthenticated','permission-denied','cancelled','quota'];
+      var shouldCount = !ignore.some(function(w){ return emsg.indexOf(w)>=0 || ecode.indexOf(w)>=0; });
+      if(shouldCount) window._bvFirestoreFail(e.code || e.message || 'save error');
     }
   }
 }
 
 let _saveTimer = null;
+let _lastSavedHash = null; // hash ligero para detectar si los datos realmente cambiaron
+
+function _dataHash(){
+  // Hash rápido basado en count + lastModified de cada caja — evita JSON.stringify completo
+  try{
+    return boxes.length + '|' + boxes.map(b=>(b.id||'')+':'+(b.lastModified||0)+':'+(b.items?b.items.length:0)).join(',');
+  }catch(e){ return Date.now().toString(); }
+}
+
 function scheduleSave(){
   // No guardar mientras se está cargando de Firestore (evita race condition al iniciar sesión)
   if(typeof _firestoreLoading !== "undefined" && _firestoreLoading) return;
+
   // PASO 1: guardar en localStorage AHORA (síncrono, 0ms)
   saveToLocalStorage();
+
   // PASO 1b: marcar que hay cambios pendientes de subir a Firestore
-  // Si el proceso muere antes de que el timer dispare, al próximo arranque
-  // loadFromFirestore detecta el flag y sube los datos locales primero.
   _markDirty();
-  // PASO 2: subir a Firestore con debounce de 300ms para agrupar cambios rápidos
+
+  // PASO 2: subir a Firestore con debounce de 800ms para agrupar cambios rápidos
+  // (300ms era muy corto — con edición rápida generaba hasta 10 writes seguidos)
   clearTimeout(_saveTimer);
-  _saveTimer = setTimeout(saveToFirestore, 300);
+  _saveTimer = setTimeout(function(){
+    // Verificar que los datos realmente cambiaron desde el último save exitoso
+    const h = _dataHash();
+    if(h === _lastSavedHash){
+      _clearDirty(); // sin cambios reales — limpiar flag y salir
+      return;
+    }
+    saveToFirestore().then(function(){
+      _lastSavedHash = _dataHash();
+    }).catch(function(){});
+  }, 800);
 }
 
 // ── Sistema de dirty flag ─────────────────────────────────────────────────
@@ -8058,6 +8768,15 @@ window.addEventListener("visibilitychange", ()=>{
     saveToLocalStorage();
     if(db) saveToFirestore().catch(()=>{});
   }
+  // Al volver a la app: si hay dirty flag y hay red → sincronizar
+  if(document.visibilityState === "visible" && currentUser && db){
+    if(_isDirty() && navigator.onLine){
+      console.log("[BoxVision] App visible con dirty flag → sincronizando...");
+      setTimeout(function(){
+        loadFromFirestore().then(function(){ renderMain(); }).catch(function(){});
+      }, 600); // pequeño delay para que el SW termine de iniciar
+    }
+  }
 });
 window.addEventListener("pagehide", ()=>{
   if(currentUser){
@@ -8067,50 +8786,115 @@ window.addEventListener("pagehide", ()=>{
   }
 });
 
+// Reconexión automática: cuando vuelve la red, subir datos pendientes
+window.addEventListener("online", function(){
+  if(!currentUser || !db) return;
+  console.log("[BoxVision] Red recuperada — verificando datos pendientes...");
+  if(_isDirty()){
+    console.log("[BoxVision] Dirty flag activo → subiendo a Firestore...");
+    setTimeout(function(){
+      saveToFirestore().then(function(){
+        _lastSavedHash = _dataHash();
+        showToast("✅ Datos sincronizados","#34C759");
+      }).catch(function(){});
+    }, 1000);
+  }
+});
+
+// Notificar al usuario cuando pierde la red (solo una vez, no spam)
+var _offlineToastShown = false;
+window.addEventListener("offline", function(){
+  if(_offlineToastShown) return;
+  _offlineToastShown = true;
+  showToast("📡 Sin conexión — cambios guardados localmente","#FF9500");
+  setTimeout(function(){ _offlineToastShown = false; }, 15000);
+});
+
 // ── Merge inteligente: combina cajas locales y remotas por ID ────────────────
 // Para cada ID, gana la versión con lastModified más reciente.
 // Las cajas que solo existen en un lado se incluyen siempre.
 function _mergeBoxes(local, remote, deletedIds=[]){
   const deleted = new Set(deletedIds);
   const map = new Map();
+
   // Cargar locales (excluyendo las eliminadas)
   for(const b of local){
     if(!deleted.has(b.id)) map.set(b.id, b);
   }
-  // Helper: timestamp más reciente entre los items de una caja
-  function _latestItemTs(box){
-    if(!box.items||!box.items.length) return 0;
-    return box.items.reduce((mx,i)=>Math.max(mx,i.addedAt||0),0);
+
+  // ── Helper: merge de items a nivel individual ──────────────────────────
+  // En lugar de "gana la caja completa más nueva", fusiona item por item.
+  // Estrategia: unión por texto. Si el mismo texto existe en ambos lados,
+  // gana el estado (done/addedAt) más reciente. Items únicos de cada lado
+  // se incluyen siempre.
+  function _mergeItems(localItems, remoteItems){
+    const localArr  = localItems  || [];
+    const remoteArr = remoteItems || [];
+
+    // Map por texto → item más reciente
+    const byText = new Map();
+
+    // Cargar items remotos primero como base
+    for(const ri of remoteArr){
+      byText.set(ri.text, Object.assign({}, ri));
+    }
+
+    // Fusionar con locales: si el texto ya existe, gana el addedAt mayor
+    // (o el que tenga done=true más reciente si ambos tienen el mismo addedAt)
+    for(const li of localArr){
+      const existing = byText.get(li.text);
+      if(!existing){
+        // Item solo en local → incluir
+        byText.set(li.text, Object.assign({}, li));
+      } else {
+        const liTs = li.addedAt || 0;
+        const exTs = existing.addedAt || 0;
+        if(liTs > exTs){
+          // Local es más reciente → usar local
+          byText.set(li.text, Object.assign({}, li));
+        } else if(liTs === exTs && li.done && !existing.done){
+          // Mismo timestamp pero local tiene done=true → respetar el tick
+          existing.done = true;
+        }
+        // Si thumb local existe y remoto no, preservarlo
+        if(li.thumb && !existing.thumb){
+          byText.get(li.text).thumb = li.thumb;
+        }
+      }
+    }
+
+    return Array.from(byText.values());
   }
-  // Aplicar remotas: gana quien tenga lastModified mayor;
-  // pero si la local tiene items más nuevos (addedAt), se fusionan los items.
+
+  // ── Helper: timestamp más reciente entre los items de una caja ──────────
+  function _latestItemTs(box){
+    if(!box.items || !box.items.length) return 0;
+    return box.items.reduce((mx,i) => Math.max(mx, i.addedAt||0), 0);
+  }
+
+  // ── Aplicar remotas con merge inteligente de items ─────────────────────
   for(const rb of remote){
-    if(deleted.has(rb.id)) continue; // fue eliminada → no restaurar
+    if(deleted.has(rb.id)) continue;
     const lb = map.get(rb.id);
     if(!lb){
+      // Solo existe en remoto → agregar directamente
       map.set(rb.id, rb);
     } else {
       const remoteTs = rb.lastModified || rb.lastUsed || 0;
       const localTs  = lb.lastModified || lb.lastUsed || 0;
-      if(remoteTs > localTs){
-        // La remota es más nueva en metadata — pero revisar si hay items locales más recientes
-        const localItemTs  = _latestItemTs(lb);
-        const remoteItemTs = _latestItemTs(rb);
-        if(localItemTs > remoteItemTs){
-          // Hay items locales más nuevos: fusionar — tomar remota como base + agregar items locales que faltan
-          const merged = Object.assign({}, rb);
-          const remoteTexts = new Set((rb.items||[]).map(i=>i.text));
-          const extraLocal  = (lb.items||[]).filter(i=>!remoteTexts.has(i.text));
-          merged.items = [...(rb.items||[]), ...extraLocal];
-          merged.lastModified = Math.max(localTs, remoteTs);
-          map.set(rb.id, merged);
-        } else {
-          map.set(rb.id, rb);
-        }
-      }
-      // Si local es igual o más nueva en metadata → ya está en el map, no tocar
+
+      // Siempre fusionar items a nivel individual (mejora clave)
+      const mergedItems = _mergeItems(lb.items, rb.items);
+
+      // Para metadata de la caja (nombre, color, etc.) gana la más reciente
+      const baseBox = (remoteTs >= localTs) ? Object.assign({}, rb) : Object.assign({}, lb);
+      baseBox.items = mergedItems;
+      baseBox.lastModified = Math.max(localTs, remoteTs, _latestItemTs({items: mergedItems}));
+
+      map.set(rb.id, baseBox);
     }
   }
+
   return Array.from(map.values());
 }
 
@@ -8228,17 +9012,21 @@ async function loadFromFirestore(){
       }
     }
   }catch(e){
-    console.warn("Firestore load error:", e);
-    // Notificar al sistema de auto-mantenimiento
+    console.warn("[BoxVision] Firestore load error:", e.code || e.message);
     if(typeof window._bvFirestoreFail === 'function'){
-      // Solo contar si NO es error de red normal (offline)
-      var emsg = (e.message||'').toLowerCase();
-      if(emsg.indexOf('offline')<0 && emsg.indexOf('network')<0 && emsg.indexOf('unavailable')<0){
-        window._bvFirestoreFail(e.message||'load error');
-      }
+      var emsg = (e.message || '').toLowerCase();
+      var ecode = (e.code || '').toLowerCase();
+      // Ignorar: sin red, servidor caído temporalmente, permisos (el usuario lo resuelve logueándose)
+      var ignore = ['offline','network','unavailable','unauthenticated','permission-denied','cancelled'];
+      var shouldCount = !ignore.some(function(w){ return emsg.indexOf(w)>=0 || ecode.indexOf(w)>=0; });
+      if(shouldCount) window._bvFirestoreFail(e.code || e.message || 'load error');
     }
-    // Offline o error: boxes ya tiene el fallback de localStorage de arriba
+    // Offline: boxes ya tiene el fallback de localStorage de arriba
   }
+  // Limpiar contador de Firestore si llegamos aquí sin error → todo bien
+  try{
+    localStorage.removeItem('bv_ec_fs');
+  }catch(_){}
   saveToLocalStorage();
 }
 
@@ -8270,22 +9058,30 @@ if(auth){
   // ── Capturar resultado de redirect de Google (login en móvil) ──
   // Se llama UNA SOLA VEZ al cargar la página, no en cada click
   auth.getRedirectResult().then(result=>{
-    // Limpiar bandera de login pendiente
     try{ sessionStorage.removeItem('bv_login_pending'); }catch(e){}
-    // Si hay resultado (usuario recién autenticado vía redirect), onAuthStateChanged lo manejará
     if(result && result.user){
       console.info("[BoxVision] Login por redirect OK:", result.user.displayName);
+      // onAuthStateChanged lo manejará automáticamente
     }
   }).catch(err=>{
     try{ sessionStorage.removeItem('bv_login_pending'); }catch(e){}
-    if(err && err.code !== 'auth/null-user' && err.code !== 'auth/no-auth-event'){
+    // Códigos que son ruido normal — no mostrar error al usuario
+    const silentCodes = ['auth/null-user','auth/no-auth-event','auth/user-cancelled','auth/popup-closed-by-user'];
+    if(err && !silentCodes.includes(err.code)){
       console.warn("[BoxVision] getRedirectResult error:", err.code);
+      // Solo mostrar error si el usuario estaba intentando hacer login (había bandera pendiente)
+      const wasPending = !!sessionStorage.getItem('bv_login_pending');
       const errEl = document.getElementById("loginError");
-      if(errEl){ errEl.textContent="Error al iniciar sesión. Intenta de nuevo."; errEl.style.display="block"; }
-      const lb=document.getElementById("loginBtn"); if(lb){ lb.style.display="flex"; lb.style.opacity="1"; lb.style.pointerEvents=""; }
-      const ll=document.getElementById("loginLoading"); if(ll) ll.style.display="none";
-      const ef=document.getElementById("emailForm"); if(ef){ ef.style.opacity="1"; ef.style.pointerEvents=""; }
+      const lb    = document.getElementById("loginBtn");
+      const ll    = document.getElementById("loginLoading");
+      const ef    = document.getElementById("emailForm");
+      if(errEl && wasPending){ errEl.textContent="Error al iniciar sesión. Intenta de nuevo."; errEl.style.display="block"; }
+      if(lb){ lb.style.display="flex"; lb.style.opacity="1"; lb.style.pointerEvents=""; }
+      if(ll) ll.style.display="none";
+      if(ef){ ef.style.opacity="1"; ef.style.pointerEvents=""; }
+      if(typeof window._bvLoginFail === 'function') window._bvLoginFail(err.code);
     }
+    try{ sessionStorage.removeItem('bv_login_pending'); }catch(e){}
   });
   function _showLoginScreen(){
     // Cancelar cualquier guardado pendiente antes de limpiar los datos
@@ -8456,12 +9252,18 @@ if(auth){
       launchApp(user).catch(e=>{
         console.error("[BoxVision] launchApp falló:", e);
         _lastLaunchedUid = null;
-        // Notificar al sistema de auto-mantenimiento
-        if(typeof window._bvLoginFail === 'function') window._bvLoginFail(e.message||'launchApp error');
+        if(typeof window._bvLoginFail === 'function') window._bvLoginFail(e.message || 'launchApp error');
         _showLoginScreen();
       });
     } else {
       _lastLaunchedUid = null;
+      // Si había una sesión cacheada y Firebase dice null → sesión expirada
+      // Solo llamar _bvSessionInvalid si había sesión previa (no primer login)
+      const hadSession = Object.keys(localStorage).some(k => k.startsWith('firebase:authUser'));
+      if(hadSession && typeof window._bvSessionInvalid === 'function'){
+        // No redirigir inmediatamente — solo loggear. El usuario puede volver a loguearse.
+        // _bvSessionInvalid solo redirige si es error inesperado, no logout manual.
+      }
       _showLoginScreen();
     }
   });
@@ -9977,6 +10779,21 @@ var _SUGGEST_MAP = {
 };
 
 function _showBoxNameSuggestions(val){
+  // Limpiar aviso de duplicado anterior
+  var dupWarn = document.getElementById('_bvDupWarn');
+  if(dupWarn) dupWarn.remove();
+
+  // Detectar duplicados si estamos creando una caja nueva (no editando)
+  if(val && val.trim().length >= 2 && formMode === 'new'){
+    var dupes = _findDuplicates(val, null);
+    if(dupes.length) _showDupWarning(dupes);
+  }
+  // Al editar, comparar excluyendo la caja actual
+  if(val && val.trim().length >= 2 && formMode === 'edit' && editingBoxId){
+    var editDupes = _findDuplicates(val, editingBoxId);
+    if(editDupes.length) _showDupWarning(editDupes);
+  }
+
   var existing = document.getElementById('_bvNameSugWrap');
   if(existing) existing.remove();
   if(!val || val.trim().length < 2) return;
@@ -12383,6 +13200,1605 @@ function _pwDel(){
     localStorage.removeItem('bv_last_check');
     console.log('✅ BVU reseteado. Próxima verificación en', BVU.firstCheckDelay/1000, 's');
   };
+
+})();
+</script>
+
+<!-- ══════════════════════════════════════════════════
+     NUEVAS FUNCIONES TOP — HTML
+     ══════════════════════════════════════════════════ -->
+
+<!-- ① BÚSQUEDA AVANZADA / FILTROS -->
+<div id="advFilterOverlay" onclick="if(event.target===this)closeAdvFilter()">
+  <div id="advFilterSheet">
+    <div class="adf-handle"></div>
+    <div class="adf-header">
+      <div class="adf-title">🔍 Filtros avanzados</div>
+      <button class="adf-reset" onclick="resetAdvFilter()">Reiniciar</button>
+    </div>
+    <div class="adf-body">
+      <!-- Estado -->
+      <div class="adf-section">
+        <div class="adf-label">📦 Estado de la caja</div>
+        <div class="adf-chips" id="adfStateChips">
+          <button class="adf-chip" data-adf="state" data-val="all" onclick="toggleAdvChip(this)">Todas</button>
+          <button class="adf-chip" data-adf="state" data-val="sealed" onclick="toggleAdvChip(this)">🔒 Selladas</button>
+          <button class="adf-chip" data-adf="state" data-val="open" onclick="toggleAdvChip(this)">📂 Abiertas</button>
+          <button class="adf-chip" data-adf="state" data-val="hasphoto" onclick="toggleAdvChip(this)">📸 Con foto</button>
+          <button class="adf-chip" data-adf="state" data-val="fav" onclick="toggleAdvChip(this)">⭐ Favoritas</button>
+          <button class="adf-chip" data-adf="state" data-val="hasreminder" onclick="toggleAdvChip(this)">⏰ Con recordatorio</button>
+        </div>
+      </div>
+      <!-- Prioridad -->
+      <div class="adf-section">
+        <div class="adf-label">🚦 Prioridad</div>
+        <div class="adf-chips" id="adfPriChips">
+          <button class="adf-chip" data-adf="pri" data-val="all" onclick="toggleAdvChip(this)">Todas</button>
+          <button class="adf-chip" data-adf="pri" data-val="red" onclick="toggleAdvChip(this)">🔴 Urgente</button>
+          <button class="adf-chip" data-adf="pri" data-val="yellow" onclick="toggleAdvChip(this)">🟡 Normal</button>
+          <button class="adf-chip" data-adf="pri" data-val="green" onclick="toggleAdvChip(this)">🟢 Sin prisa</button>
+        </div>
+      </div>
+      <!-- Rango de objetos -->
+      <div class="adf-section">
+        <div class="adf-label">🔢 Número de objetos</div>
+        <div class="adf-range">
+          <input class="adf-range-inp" type="number" id="adfMinItems" placeholder="Mín" min="0"/>
+          <span class="adf-range-sep">—</span>
+          <input class="adf-range-inp" type="number" id="adfMaxItems" placeholder="Máx" min="0"/>
+        </div>
+      </div>
+      <!-- Desempacado -->
+      <div class="adf-section">
+        <div class="adf-label">✅ Progreso de desempaque</div>
+        <div class="adf-chips" id="adfProgressChips">
+          <button class="adf-chip" data-adf="progress" data-val="all" onclick="toggleAdvChip(this)">Todos</button>
+          <button class="adf-chip" data-adf="progress" data-val="empty" onclick="toggleAdvChip(this)">📭 Sin sacar nada</button>
+          <button class="adf-chip" data-adf="progress" data-val="partial" onclick="toggleAdvChip(this)">🔄 En progreso</button>
+          <button class="adf-chip" data-adf="progress" data-val="done" onclick="toggleAdvChip(this)">✅ Completo</button>
+        </div>
+      </div>
+      <button class="adf-apply-btn" onclick="applyAdvFilter()">Aplicar filtros</button>
+      <div style="height:8px"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ② COMPARTIR CAJA -->
+<div id="shareBoxOverlay" onclick="if(event.target===this)closeShareBox()">
+  <div id="shareBoxSheet">
+    <div class="shb-handle"></div>
+    <div class="shb-header">
+      <div class="shb-title">📤 Compartir caja</div>
+      <div class="shb-sub">Elige cómo quieres compartir el contenido</div>
+    </div>
+    <div class="shb-body">
+      <div class="shb-preview" id="shbPreview">
+        <div class="shb-preview-icon" id="shbIcon">📦</div>
+        <div class="shb-preview-info">
+          <div class="shb-preview-name" id="shbName">Caja</div>
+          <div class="shb-preview-count" id="shbCount">0 objetos</div>
+        </div>
+      </div>
+      <div class="shb-options">
+        <button class="shb-opt-btn" onclick="shareBoxWhatsApp()">
+          <span class="shb-opt-icon">💬</span>
+          <span class="shb-opt-label">WhatsApp</span>
+          <span class="shb-opt-sub">Enviar como texto</span>
+        </button>
+        <button class="shb-opt-btn" onclick="shareBoxLink()">
+          <span class="shb-opt-icon">🔗</span>
+          <span class="shb-opt-label">Copiar link QR</span>
+          <span class="shb-opt-sub">URL con contenido</span>
+        </button>
+        <button class="shb-opt-btn" onclick="shareBoxNative()">
+          <span class="shb-opt-icon">📱</span>
+          <span class="shb-opt-label">Compartir</span>
+          <span class="shb-opt-sub">App del sistema</span>
+        </button>
+        <button class="shb-opt-btn" onclick="shareBoxEmail()">
+          <span class="shb-opt-icon">✉️</span>
+          <span class="shb-opt-label">Email</span>
+          <span class="shb-opt-sub">Enviar por correo</span>
+        </button>
+      </div>
+      <div class="shb-link-wrap" id="shbLinkWrap" style="display:none">
+        <span class="shb-link-text" id="shbLinkText"></span>
+        <button class="shb-copy-btn" onclick="copyShareLink()">Copiar</button>
+      </div>
+      <button class="shb-cancel" onclick="closeShareBox()">Cancelar</button>
+    </div>
+  </div>
+</div>
+
+<!-- ③ SELECTOR DE TEMAS -->
+<div id="themePickerOverlay" onclick="if(event.target===this)closeThemePicker()">
+  <div id="themePickerSheet">
+    <div class="thm-handle"></div>
+    <div class="thm-header">
+      <div class="thm-title">🎨 Tema y apariencia</div>
+      <div class="thm-sub">Personaliza el look de tu app</div>
+    </div>
+    <div class="thm-body">
+      <!-- Preview -->
+      <div class="thm-preview">
+        <span class="thm-preview-text">Vista previa del acento</span>
+        <span class="thm-preview-pill" id="thmPreviewPill">Nueva caja</span>
+      </div>
+      <!-- Modo -->
+      <div class="thm-section">
+        <div class="thm-label">Modo de pantalla</div>
+        <div class="thm-mode-row">
+          <button class="thm-mode-btn" data-mode="dark" onclick="selectThemeMode('dark')">
+            <span class="thm-mode-icon">🌙</span>
+            <span class="thm-mode-name">Oscuro</span>
+          </button>
+          <button class="thm-mode-btn" data-mode="light" onclick="selectThemeMode('light')">
+            <span class="thm-mode-icon">☀️</span>
+            <span class="thm-mode-name">Claro</span>
+          </button>
+          <button class="thm-mode-btn" data-mode="auto" onclick="selectThemeMode('auto')">
+            <span class="thm-mode-icon">🔄</span>
+            <span class="thm-mode-name">Auto</span>
+          </button>
+        </div>
+      </div>
+      <!-- Color de acento -->
+      <div class="thm-section">
+        <div class="thm-label">Color de acento</div>
+        <div class="thm-color-row" id="thmColorRow"></div>
+      </div>
+      <button class="thm-done-btn" onclick="applyThemePicker()">Listo</button>
+    </div>
+  </div>
+</div>
+
+<!-- ④ RECORDATORIOS -->
+<div id="reminderOverlay" onclick="if(event.target===this)closeReminderSheet()">
+  <div id="reminderSheet">
+    <div class="rem-handle"></div>
+    <div class="rem-header">
+      <div class="rem-title">⏰ Recordatorios</div>
+      <button class="adf-reset" onclick="closeReminderSheet()">Cerrar</button>
+    </div>
+    <div class="rem-body">
+      <!-- Recordatorios activos de la caja actual -->
+      <div class="rem-section" id="remActiveSection">
+        <div class="rem-label">Recordatorios activos</div>
+        <div class="rem-list" id="remActiveList">
+          <div class="rem-empty">Sin recordatorios aún</div>
+        </div>
+      </div>
+      <!-- Crear nuevo -->
+      <div class="rem-section">
+        <div class="rem-label">Agregar recordatorio</div>
+        <!-- Presets rápidos -->
+        <div class="rem-quick-row" id="remQuickRow" style="margin-bottom:12px">
+          <button class="rem-quick-btn" onclick="pickRemPreset(this, 1)">En 1h</button>
+          <button class="rem-quick-btn" onclick="pickRemPreset(this, 3)">En 3h</button>
+          <button class="rem-quick-btn" onclick="pickRemPreset(this, 24)">Mañana</button>
+          <button class="rem-quick-btn" onclick="pickRemPreset(this, 48)">Pasado</button>
+          <button class="rem-quick-btn" onclick="pickRemPreset(this, 168)">1 semana</button>
+        </div>
+        <!-- Personalizado -->
+        <div class="rem-datetime-row" style="margin-bottom:10px">
+          <div>
+            <div style="font-size:11px;font-weight:700;color:var(--muted);margin-bottom:5px">Fecha</div>
+            <input class="rem-datetime-inp" type="date" id="remDate"/>
+          </div>
+          <div>
+            <div style="font-size:11px;font-weight:700;color:var(--muted);margin-bottom:5px">Hora</div>
+            <input class="rem-datetime-inp" type="time" id="remTime"/>
+          </div>
+        </div>
+        <!-- Nota opcional -->
+        <div style="margin-bottom:12px">
+          <div style="font-size:11px;font-weight:700;color:var(--muted);margin-bottom:5px">Nota (opcional)</div>
+          <textarea class="rem-note-inp" id="remNote" rows="2" placeholder="Ej: Revisar si falta algo…" maxlength="120"></textarea>
+        </div>
+        <button class="rem-save-btn" onclick="saveReminder()">⏰ Guardar recordatorio</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Toast de recordatorio disparado -->
+<div id="remNotifToast" onclick="remNotifToastClick()">
+  <div class="rnt-icon" id="rntIcon">⏰</div>
+  <div class="rnt-info">
+    <div class="rnt-title" id="rntTitle">Recordatorio</div>
+    <div class="rnt-sub" id="rntSub">Es hora de revisar esta caja</div>
+  </div>
+  <button class="rnt-close" onclick="event.stopPropagation();hideRemNotifToast()">✕</button>
+</div>
+
+<!-- ══════════════════════════════════════════════════
+     NUEVAS FUNCIONES TOP — JavaScript
+     ══════════════════════════════════════════════════ -->
+<script>
+(function(){
+'use strict';
+
+/* ═══════════════════════════════════════════════════════
+   ① BÚSQUEDA AVANZADA / FILTROS
+   ═══════════════════════════════════════════════════════ */
+
+var _advFilters = {
+  state: 'all',
+  pri: 'all',
+  progress: 'all',
+  minItems: '',
+  maxItems: ''
+};
+var _advActive = false; // ¿hay filtros avanzados activos?
+
+window.openAdvFilter = function() {
+  // Inicializar chips con estado actual
+  _syncAdvChipsUI();
+  document.getElementById('adfMinItems').value = _advFilters.minItems;
+  document.getElementById('adfMaxItems').value = _advFilters.maxItems;
+  document.getElementById('advFilterOverlay').classList.add('open');
+};
+
+window.closeAdvFilter = function() {
+  document.getElementById('advFilterOverlay').classList.remove('open');
+};
+
+window.toggleAdvChip = function(btn) {
+  var group = btn.dataset.adf;
+  var val = btn.dataset.val;
+  // Dentro del mismo grupo, solo uno seleccionado
+  var parent = btn.closest('.adf-chips');
+  if (parent) {
+    parent.querySelectorAll('.adf-chip').forEach(function(c) { c.classList.remove('sel'); });
+  }
+  btn.classList.add('sel');
+  _advFilters[group] = val;
+};
+
+window.resetAdvFilter = function() {
+  _advFilters = { state:'all', pri:'all', progress:'all', minItems:'', maxItems:'' };
+  _syncAdvChipsUI();
+  document.getElementById('adfMinItems').value = '';
+  document.getElementById('adfMaxItems').value = '';
+};
+
+function _syncAdvChipsUI() {
+  ['state','pri','progress'].forEach(function(group) {
+    var chips = document.querySelectorAll('.adf-chip[data-adf="'+group+'"]');
+    chips.forEach(function(c) {
+      c.classList.toggle('sel', c.dataset.val === _advFilters[group]);
+    });
+  });
+}
+
+window.applyAdvFilter = function() {
+  _advFilters.minItems = document.getElementById('adfMinItems').value;
+  _advFilters.maxItems = document.getElementById('adfMaxItems').value;
+
+  // Determinar si hay algún filtro activo
+  _advActive = (
+    _advFilters.state !== 'all' ||
+    _advFilters.pri !== 'all' ||
+    _advFilters.progress !== 'all' ||
+    _advFilters.minItems !== '' ||
+    _advFilters.maxItems !== ''
+  );
+
+  // Actualizar badge en botón de filtro
+  var badge = document.getElementById('advFilterBadge');
+  if (badge) {
+    badge.style.display = _advActive ? 'flex' : 'none';
+    var count = 0;
+    if (_advFilters.state !== 'all') count++;
+    if (_advFilters.pri !== 'all') count++;
+    if (_advFilters.progress !== 'all') count++;
+    if (_advFilters.minItems !== '' || _advFilters.maxItems !== '') count++;
+    badge.textContent = count;
+  }
+
+  closeAdvFilter();
+  // Reapply filters through renderGrid
+  if (typeof renderGrid === 'function') renderGrid();
+  if (typeof showToast === 'function') showToast(_advActive ? '🔍 Filtros aplicados' : '✓ Filtros eliminados', '#34C759');
+};
+
+// Patch renderGrid to apply advanced filters on top of active filter
+document.addEventListener('DOMContentLoaded', function() {
+  // Agregar badge HTML al botón sortBtn
+  var sortBtn = document.getElementById('sortBtn');
+  if (sortBtn && !document.getElementById('advFilterBadge')) {
+    var badge = document.createElement('span');
+    badge.id = 'advFilterBadge';
+    badge.style.cssText = 'position:absolute;top:-4px;right:-4px;width:16px;height:16px;background:#FF3B30;border-radius:50%;font-size:9px;font-weight:800;color:#fff;display:none;align-items:center;justify-content:center;border:2px solid var(--bg);pointer-events:none;';
+    sortBtn.appendChild(badge);
+  }
+
+  // Patch renderGrid to apply advanced filters
+  var _origRG = window.renderGrid;
+  if (typeof _origRG === 'function') {
+    window.renderGrid = function() {
+      if (!_advActive) { _origRG.apply(this, arguments); return; }
+
+      // Correr el renderGrid original para obtener _gridFiltered
+      _origRG.apply(this, arguments);
+
+      // Luego filtrar _gridFiltered con los filtros avanzados
+      if (window._gridFiltered) {
+        var boxes2 = window._gridFiltered.slice();
+        // Estado
+        if (_advFilters.state === 'sealed') boxes2 = boxes2.filter(function(b){ return b.sealed; });
+        else if (_advFilters.state === 'open') boxes2 = boxes2.filter(function(b){ return !b.sealed; });
+        else if (_advFilters.state === 'hasphoto') boxes2 = boxes2.filter(function(b){ return !!b.photo; });
+        else if (_advFilters.state === 'fav') boxes2 = boxes2.filter(function(b){ return b.fav; });
+        else if (_advFilters.state === 'hasreminder') boxes2 = boxes2.filter(function(b){
+          var rems = _getBoxReminders(b.id);
+          return rems.length > 0;
+        });
+        // Prioridad
+        if (_advFilters.pri !== 'all') boxes2 = boxes2.filter(function(b){ return (b.priority||'yellow') === _advFilters.pri; });
+        // Progreso
+        if (_advFilters.progress === 'empty') boxes2 = boxes2.filter(function(b){ return !b.items.some(function(i){ return i.done; }); });
+        else if (_advFilters.progress === 'done') boxes2 = boxes2.filter(function(b){ return b.items.length > 0 && b.items.every(function(i){ return i.done; }); });
+        else if (_advFilters.progress === 'partial') boxes2 = boxes2.filter(function(b){ return b.items.some(function(i){ return i.done; }) && !b.items.every(function(i){ return i.done; }); });
+        // Rango items
+        if (_advFilters.minItems !== '') boxes2 = boxes2.filter(function(b){ return b.items.length >= parseInt(_advFilters.minItems); });
+        if (_advFilters.maxItems !== '') boxes2 = boxes2.filter(function(b){ return b.items.length <= parseInt(_advFilters.maxItems); });
+
+        window._gridFiltered = boxes2;
+        window._gridPage = 0;
+        var scroll = document.getElementById('mainScroll');
+        if (scroll) {
+          scroll.innerHTML = '';
+          if (boxes2.length === 0) {
+            scroll.innerHTML = '<div style="text-align:center;padding:60px 20px"><div style="font-size:40px;margin-bottom:12px">🔍</div><div style="font-size:16px;font-weight:600;color:var(--text);margin-bottom:4px">Sin resultados</div><div style="font-size:13px;color:var(--muted)">Ninguna caja coincide con los filtros avanzados</div></div>';
+          } else {
+            if (typeof _renderGridPage === 'function') _renderGridPage(scroll);
+          }
+        }
+      }
+    };
+  }
+});
+
+// Abrir filtros avanzados desde el botón de sort (long press o double tap)
+// También lo exponemos para llamarlo desde un botón específico
+window._openAdvFiltersFromBtn = function() {
+  openAdvFilter();
+};
+
+
+/* ═══════════════════════════════════════════════════════
+   ② COMPARTIR CAJA
+   ═══════════════════════════════════════════════════════ */
+
+var _shareBoxId = null;
+
+window.openShareBox = function(boxId) {
+  _shareBoxId = boxId || (typeof currentBoxId !== 'undefined' ? currentBoxId : null);
+  if (!_shareBoxId) return;
+  var box = (typeof boxes !== 'undefined') ? boxes.find(function(b){ return b.id === _shareBoxId; }) : null;
+  if (!box) return;
+
+  // Llenar preview
+  document.getElementById('shbIcon').textContent = (typeof getIcon === 'function') ? getIcon(box.name, box) : '📦';
+  document.getElementById('shbName').textContent = box.name;
+  document.getElementById('shbCount').textContent = box.items.length + ' objeto' + (box.items.length !== 1 ? 's' : '');
+  document.getElementById('shbLinkWrap').style.display = 'none';
+
+  document.getElementById('shareBoxOverlay').classList.add('open');
+};
+
+window.closeShareBox = function() {
+  document.getElementById('shareBoxOverlay').classList.remove('open');
+  _shareBoxId = null;
+};
+
+window.shareBoxWhatsApp = function() {
+  var box = (typeof boxes !== 'undefined') ? boxes.find(function(b){ return b.id === _shareBoxId; }) : null;
+  if (!box) return;
+  var icon = (typeof getIcon === 'function') ? getIcon(box.name, box) : '📦';
+  var lines = [
+    icon + ' *' + box.name + '*' + (box.number ? ' #' + box.number : ''),
+    box.location ? '📍 ' + box.location : null,
+    box.items.length ? '\n📦 *Contenido (' + box.items.length + ' objetos):*' : null
+  ].filter(Boolean);
+  box.items.slice(0, 30).forEach(function(item, i) {
+    lines.push((item.done ? '✅' : '⬜') + ' ' + (i+1) + '. ' + item.text);
+  });
+  if (box.items.length > 30) lines.push('... y ' + (box.items.length - 30) + ' más');
+  if (box.note) lines.push('\n📝 ' + box.note);
+  lines.push('\n_Compartido desde BoxVision 📦_');
+  var msg = lines.join('\n');
+  window.open('https://api.whatsapp.com/send?text=' + encodeURIComponent(msg), '_blank');
+  closeShareBox();
+};
+
+window.shareBoxLink = function() {
+  var box = (typeof boxes !== 'undefined') ? boxes.find(function(b){ return b.id === _shareBoxId; }) : null;
+  if (!box) return;
+  var url = (typeof _buildQRURL === 'function') ? _buildQRURL(box) : window.location.href;
+  document.getElementById('shbLinkText').textContent = url;
+  document.getElementById('shbLinkWrap').style.display = 'flex';
+};
+
+window.copyShareLink = function() {
+  var url = document.getElementById('shbLinkText').textContent;
+  if (navigator.clipboard) {
+    navigator.clipboard.writeText(url).then(function() {
+      if (typeof showToast === 'function') showToast('🔗 Link copiado', '#34C759');
+    });
+  } else {
+    var ta = document.createElement('textarea');
+    ta.value = url; document.body.appendChild(ta); ta.select();
+    document.execCommand('copy'); document.body.removeChild(ta);
+    if (typeof showToast === 'function') showToast('🔗 Link copiado', '#34C759');
+  }
+  closeShareBox();
+};
+
+window.shareBoxNative = function() {
+  var box = (typeof boxes !== 'undefined') ? boxes.find(function(b){ return b.id === _shareBoxId; }) : null;
+  if (!box) return;
+  var url = (typeof _buildQRURL === 'function') ? _buildQRURL(box) : window.location.href;
+  var icon = (typeof getIcon === 'function') ? getIcon(box.name, box) : '📦';
+  if (navigator.share) {
+    navigator.share({
+      title: icon + ' ' + box.name,
+      text: 'Mira el contenido de esta caja: ' + box.name + ' (' + box.items.length + ' objetos)',
+      url: url
+    }).catch(function(){});
+  } else {
+    shareBoxLink();
+  }
+  closeShareBox();
+};
+
+window.shareBoxEmail = function() {
+  var box = (typeof boxes !== 'undefined') ? boxes.find(function(b){ return b.id === _shareBoxId; }) : null;
+  if (!box) return;
+  var icon = (typeof getIcon === 'function') ? getIcon(box.name, box) : '📦';
+  var subject = encodeURIComponent(icon + ' Caja: ' + box.name);
+  var body = [
+    'Contenido de la caja: ' + box.name,
+    box.location ? 'Ubicación: ' + box.location : null,
+    '',
+    'Objetos (' + box.items.length + '):'
+  ].filter(function(l){ return l !== null; }).join('\n');
+  box.items.forEach(function(item, i) {
+    body += '\n' + (item.done ? '✓' : '☐') + ' ' + (i+1) + '. ' + item.text;
+  });
+  if (box.note) body += '\n\nNota: ' + box.note;
+  body += '\n\nCompartido desde BoxVision';
+  window.open('mailto:?subject=' + subject + '&body=' + encodeURIComponent(body));
+  closeShareBox();
+};
+
+
+/* ═══════════════════════════════════════════════════════
+   ③ TEMAS Y COLOR DE ACENTO
+   ═══════════════════════════════════════════════════════ */
+
+var ACCENT_COLORS = [
+  { name:'Azul',     val:'#007AFF' },
+  { name:'Índigo',   val:'#5856D6' },
+  { name:'Morado',   val:'#AF52DE' },
+  { name:'Rosa',     val:'#FF2D55' },
+  { name:'Naranja',  val:'#FF9500' },
+  { name:'Amarillo', val:'#FFCC00' },
+  { name:'Verde',    val:'#34C759' },
+  { name:'Menta',    val:'#00C7BE' },
+  { name:'Teal',     val:'#30B0C7' },
+  { name:'Rojo',     val:'#FF3B30' },
+];
+
+var _thmMode = localStorage.getItem('bv_theme_mode') || 'dark';
+var _thmAccent = localStorage.getItem('bv_accent_color') || '#007AFF';
+var _thmPendingMode = _thmMode;
+var _thmPendingAccent = _thmAccent;
+
+// Aplicar acento guardado al iniciar
+document.addEventListener('DOMContentLoaded', function() {
+  _applyAccentColor(_thmAccent);
+  _applyThemeMode(_thmMode, false);
+  _buildColorSwatches();
+});
+
+function _applyAccentColor(color) {
+  document.documentElement.style.setProperty('--accent', color);
+  // Calcular color secundario ligeramente diferente
+  document.documentElement.style.setProperty('--accent-secondary', color);
+}
+
+function _applyThemeMode(mode, save) {
+  var prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+  var isDark = (mode === 'dark') || (mode === 'auto' && prefersDark);
+  if (typeof dark !== 'undefined') {
+    dark = isDark ? 1 : 0;
+  }
+  document.body.setAttribute('data-dark', isDark ? '1' : '');
+  if (typeof applyDark === 'function') applyDark();
+  if (save) {
+    localStorage.setItem('bv_theme_mode', mode);
+    localStorage.setItem('cb-dark', isDark ? '1' : '0');
+  }
+}
+
+function _buildColorSwatches() {
+  var row = document.getElementById('thmColorRow');
+  if (!row) return;
+  row.innerHTML = ACCENT_COLORS.map(function(c) {
+    return '<button class="thm-color-swatch' + (c.val === _thmAccent ? ' sel' : '') + '"'
+      + ' style="background:' + c.val + '" title="' + c.name + '"'
+      + ' data-color="' + c.val + '" onclick="selectAccentColor(this)">'
+      + '</button>';
+  }).join('');
+}
+
+window.openThemePicker = function() {
+  _thmPendingMode = _thmMode;
+  _thmPendingAccent = _thmAccent;
+  _buildColorSwatches();
+  // Marcar modo actual
+  document.querySelectorAll('.thm-mode-btn').forEach(function(btn) {
+    btn.classList.toggle('sel', btn.dataset.mode === _thmMode);
+  });
+  // Preview pill
+  var pill = document.getElementById('thmPreviewPill');
+  if (pill) pill.style.background = _thmAccent;
+  document.getElementById('themePickerOverlay').classList.add('open');
+};
+
+window.closeThemePicker = function() {
+  document.getElementById('themePickerOverlay').classList.remove('open');
+};
+
+window.selectThemeMode = function(mode) {
+  _thmPendingMode = mode;
+  document.querySelectorAll('.thm-mode-btn').forEach(function(btn) {
+    btn.classList.toggle('sel', btn.dataset.mode === mode);
+  });
+  // Preview instantáneo
+  _applyThemeMode(mode, false);
+};
+
+window.selectAccentColor = function(btn) {
+  var color = btn.dataset.color;
+  _thmPendingAccent = color;
+  document.querySelectorAll('.thm-color-swatch').forEach(function(s) { s.classList.remove('sel'); });
+  btn.classList.add('sel');
+  // Preview instantáneo
+  _applyAccentColor(color);
+  var pill = document.getElementById('thmPreviewPill');
+  if (pill) pill.style.background = color;
+};
+
+window.applyThemePicker = function() {
+  _thmMode = _thmPendingMode;
+  _thmAccent = _thmPendingAccent;
+  _applyAccentColor(_thmAccent);
+  _applyThemeMode(_thmMode, true);
+  localStorage.setItem('bv_accent_color', _thmAccent);
+  closeThemePicker();
+  if (typeof showToast === 'function') showToast('🎨 Tema guardado', '#34C759');
+};
+
+// Escuchar cambios del sistema en modo auto
+if (window.matchMedia) {
+  window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', function() {
+    if (_thmMode === 'auto') _applyThemeMode('auto', false);
+  });
+}
+
+
+/* ═══════════════════════════════════════════════════════
+   ④ RECORDATORIOS
+   ═══════════════════════════════════════════════════════ */
+
+var _remBoxId = null;
+var _remPresetMs = 0; // ms desde ahora del preset seleccionado
+
+// Guardar/cargar recordatorios en localStorage
+function _getAllReminders() {
+  try { return JSON.parse(localStorage.getItem('bv_reminders') || '[]'); } catch(e) { return []; }
+}
+function _saveAllReminders(rems) {
+  try { localStorage.setItem('bv_reminders', JSON.stringify(rems)); } catch(e) {}
+}
+window._getBoxReminders = function(boxId) {
+  return _getAllReminders().filter(function(r){ return r.boxId === boxId; });
+};
+function _deleteReminder(remId) {
+  var rems = _getAllReminders().filter(function(r){ return r.id !== remId; });
+  _saveAllReminders(rems);
+}
+
+window.openReminderSheet = function(boxId) {
+  _remBoxId = boxId || (typeof currentBoxId !== 'undefined' ? currentBoxId : null);
+  if (!_remBoxId) return;
+
+  _remPresetMs = 0;
+  // Reiniciar campos
+  var now = new Date();
+  now.setMinutes(now.getMinutes() + 60);
+  var dateStr = now.toISOString().slice(0, 10);
+  var timeStr = now.toTimeString().slice(0, 5);
+  document.getElementById('remDate').value = dateStr;
+  document.getElementById('remTime').value = timeStr;
+  document.getElementById('remNote').value = '';
+  document.querySelectorAll('.rem-quick-btn').forEach(function(b){ b.classList.remove('sel'); });
+
+  _renderActiveReminders();
+  document.getElementById('reminderOverlay').classList.add('open');
+};
+
+window.closeReminderSheet = function() {
+  document.getElementById('reminderOverlay').classList.remove('open');
+  _remBoxId = null;
+};
+
+window.pickRemPreset = function(btn, hours) {
+  document.querySelectorAll('.rem-quick-btn').forEach(function(b){ b.classList.remove('sel'); });
+  btn.classList.add('sel');
+  var t = new Date(Date.now() + hours * 3600000);
+  document.getElementById('remDate').value = t.toISOString().slice(0, 10);
+  document.getElementById('remTime').value = t.toTimeString().slice(0, 5);
+};
+
+window.saveReminder = function() {
+  var dateVal = document.getElementById('remDate').value;
+  var timeVal = document.getElementById('remTime').value;
+  var noteVal = (document.getElementById('remNote').value || '').trim();
+
+  if (!dateVal || !timeVal) {
+    if (typeof showToast === 'function') showToast('⚠️ Elige fecha y hora', '#FF9500');
+    return;
+  }
+
+  var ts = new Date(dateVal + 'T' + timeVal).getTime();
+  if (isNaN(ts) || ts <= Date.now()) {
+    if (typeof showToast === 'function') showToast('⚠️ La fecha debe ser en el futuro', '#FF9500');
+    return;
+  }
+
+  var box = (typeof boxes !== 'undefined') ? boxes.find(function(b){ return b.id === _remBoxId; }) : null;
+  var rem = {
+    id: Date.now().toString(36) + Math.random().toString(36).slice(2, 5),
+    boxId: _remBoxId,
+    boxName: box ? box.name : 'Caja',
+    boxIcon: (box && typeof getIcon === 'function') ? getIcon(box.name, box) : '📦',
+    ts: ts,
+    note: noteVal,
+    created: Date.now()
+  };
+
+  var rems = _getAllReminders();
+  rems.push(rem);
+  _saveAllReminders(rems);
+
+  // Intentar notificación nativa del navegador
+  _scheduleNativeNotif(rem);
+
+  _renderActiveReminders();
+  document.getElementById('remNote').value = '';
+  document.querySelectorAll('.rem-quick-btn').forEach(function(b){ b.classList.remove('sel'); });
+
+  if (typeof showToast === 'function') showToast('⏰ Recordatorio guardado', '#34C759');
+  // Actualizar tarjeta de caja
+  if (typeof renderGrid === 'function') setTimeout(renderGrid, 100);
+};
+
+function _renderActiveReminders() {
+  var list = document.getElementById('remActiveList');
+  if (!list) return;
+  var rems = _getBoxReminders(_remBoxId).filter(function(r){ return r.ts > Date.now(); });
+  if (!rems.length) {
+    list.innerHTML = '<div class="rem-empty">Sin recordatorios activos para esta caja</div>';
+    return;
+  }
+  rems.sort(function(a,b){ return a.ts - b.ts; });
+  list.innerHTML = rems.map(function(r) {
+    var d = new Date(r.ts);
+    var dateStr = d.toLocaleDateString('es', {weekday:'short', day:'numeric', month:'short'});
+    var timeStr = d.toLocaleTimeString('es', {hour:'2-digit', minute:'2-digit'});
+    return '<div class="rem-item">'
+      + '<div class="rem-item-icon">⏰</div>'
+      + '<div class="rem-item-info">'
+      + '<div class="rem-item-name">' + dateStr + ' a las ' + timeStr + '</div>'
+      + (r.note ? '<div class="rem-item-time">' + r.note + '</div>' : '')
+      + '</div>'
+      + '<button class="rem-item-del" onclick="_deleteRemAndRefresh(\'' + r.id + '\')">✕</button>'
+      + '</div>';
+  }).join('');
+}
+
+window._deleteRemAndRefresh = function(remId) {
+  _deleteReminder(remId);
+  _renderActiveReminders();
+  if (typeof renderGrid === 'function') setTimeout(renderGrid, 100);
+  if (typeof showToast === 'function') showToast('🗑️ Recordatorio eliminado', '#FF3B30');
+};
+
+// Programar verificación periódica de recordatorios
+function _scheduleNativeNotif(rem) {
+  if (!('Notification' in window)) return;
+  if (Notification.permission === 'granted') {
+    var delay = rem.ts - Date.now();
+    if (delay > 0 && delay < 7 * 24 * 3600 * 1000) {
+      setTimeout(function() {
+        try {
+          new Notification('⏰ ' + rem.boxName, {
+            body: rem.note || 'Es hora de revisar esta caja',
+            icon: 'icons/logo.png',
+            tag: rem.id
+          });
+        } catch(e) {
+          _showRemNotifToast(rem);
+        }
+        _deleteReminder(rem.id);
+        if (typeof renderGrid === 'function') setTimeout(renderGrid, 100);
+      }, delay);
+    }
+  } else if (Notification.permission !== 'denied') {
+    Notification.requestPermission().then(function(perm) {
+      if (perm === 'granted') _scheduleNativeNotif(rem);
+    });
+  }
+}
+
+// Toast in-app para cuando notificación nativa no está disponible
+function _showRemNotifToast(rem) {
+  var toast = document.getElementById('remNotifToast');
+  if (!toast) return;
+  document.getElementById('rntIcon').textContent = rem.boxIcon || '⏰';
+  document.getElementById('rntTitle').textContent = rem.boxName || 'Recordatorio';
+  document.getElementById('rntSub').textContent = rem.note || 'Es hora de revisar esta caja';
+  toast._remData = rem;
+  toast.classList.add('show');
+  setTimeout(function(){ toast.classList.remove('show'); }, 8000);
+}
+window._showRemNotifToast = _showRemNotifToast;
+
+window.hideRemNotifToast = function() {
+  document.getElementById('remNotifToast').classList.remove('show');
+};
+window.remNotifToastClick = function() {
+  var toast = document.getElementById('remNotifToast');
+  var rem = toast ? toast._remData : null;
+  hideRemNotifToast();
+  if (rem && typeof openDetail === 'function') {
+    openDetail(rem.boxId);
+  }
+};
+
+// Al iniciar, re-programar recordatorios que ya tenemos guardados (sesión nueva)
+document.addEventListener('DOMContentLoaded', function() {
+  var rems = _getAllReminders();
+  var future = rems.filter(function(r){ return r.ts > Date.now(); });
+  // Guardar solo los futuros (limpiar expirados)
+  _saveAllReminders(future);
+  future.forEach(function(rem) {
+    _scheduleNativeNotif(rem);
+  });
+});
+
+// Verificar recordatorios cada minuto (in-app toast fallback)
+setInterval(function() {
+  var rems = _getAllReminders();
+  var now = Date.now();
+  var triggered = rems.filter(function(r){ return r.ts <= now && r.ts > now - 60000; });
+  triggered.forEach(function(r) {
+    _showRemNotifToast(r);
+  });
+  if (triggered.length > 0) {
+    _saveAllReminders(rems.filter(function(r){ return r.ts > now - 60000; }));
+    if (typeof renderGrid === 'function') setTimeout(renderGrid, 100);
+  }
+}, 60000);
+
+
+/* ═══════════════════════════════════════════════════════
+   INTEGRACIÓN EN LA UI EXISTENTE
+   Agregar botones en el detalle de caja y patches de UI
+   ═══════════════════════════════════════════════════════ */
+document.addEventListener('DOMContentLoaded', function() {
+
+  // ─── Patch openDetail para inyectar botones de compartir y recordatorio ───
+  var _origOpenDetail = window.openDetail;
+  if (typeof _origOpenDetail === 'function') {
+    window.openDetail = function(id) {
+      _origOpenDetail.apply(this, arguments);
+      // Inyectar botones después de un pequeño delay para que el DOM esté listo
+      setTimeout(function() {
+        _injectDetailBtns(id);
+      }, 80);
+    };
+  }
+
+  // ─── Agregar botón de tema en Settings ───
+  var settingsNotifRow = document.querySelector('[onclick*="openLangModal"]');
+  if (settingsNotifRow) {
+    var themeRow = document.createElement('div');
+    themeRow.className = 'settings-row settings-tappable';
+    themeRow.setAttribute('onclick', 'openThemePicker()');
+    themeRow.innerHTML = ''
+      + '<div class="settings-row-icon" style="background:rgba(175,82,222,.18)">'
+      + '<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="13.5" cy="6.5" r=".5" fill="currentColor"/><circle cx="17.5" cy="10.5" r=".5" fill="currentColor"/><circle cx="8.5" cy="7.5" r=".5" fill="currentColor"/><circle cx="6.5" cy="12.5" r=".5" fill="currentColor"/><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.47-1.125-.29-.289-.47-.682-.47-1.125C12.708 17.203 13.387 16 14.5 16H17c2.761 0 5-2.239 5-5 0-4.975-4.525-9-10-9z"/></svg>'
+      + '</div>'
+      + '<div class="settings-row-text">'
+      + '<div class="settings-label">Tema y colores</div>'
+      + '<div class="settings-sub" id="themeSettingsSub">Personaliza apariencia</div>'
+      + '</div>'
+      + '<span class="settings-chevron">›</span>';
+    settingsNotifRow.parentNode.insertBefore(themeRow, settingsNotifRow);
+  }
+
+  // ─── Agregar botón de filtros avanzados junto al buscador ───
+  var sortBtn = document.getElementById('sortBtn');
+  if (sortBtn) {
+    sortBtn.addEventListener('contextmenu', function(e){ e.preventDefault(); openAdvFilter(); });
+    // Double-tap para abrir filtros avanzados
+    var _lastTap = 0;
+    sortBtn.addEventListener('touchend', function(e) {
+      var now = Date.now();
+      if (now - _lastTap < 300) { e.preventDefault(); openAdvFilter(); }
+      _lastTap = now;
+    });
+  }
+
+  // Agregar botón "Filtros+" en el área de búsqueda
+  var searchWrap = document.querySelector('.search-wrap');
+  if (searchWrap && !document.getElementById('advFilterTriggerBtn')) {
+    var fBtn = document.createElement('button');
+    fBtn.id = 'advFilterTriggerBtn';
+    fBtn.onclick = openAdvFilter;
+    fBtn.title = 'Filtros avanzados';
+    fBtn.style.cssText = 'display:none;position:absolute;right:14px;top:50%;transform:translateY(-50%);background:rgba(10,132,255,.15);border:1px solid rgba(10,132,255,.35);color:var(--accent);border-radius:10px;padding:5px 10px;font-size:11px;font-weight:800;cursor:pointer;font-family:inherit;-webkit-tap-highlight-color:transparent;white-space:nowrap;';
+    fBtn.textContent = '⚙️ Filtros+';
+    // No lo mostramos para no romper el layout, solo el double-tap
+  }
+});
+
+function _injectDetailBtns(boxId) {
+  // Buscar el área de acciones en el detalle (los botones de edit/delete al final)
+  var detailScreen = document.getElementById('detailScreen');
+  if (!detailScreen) return;
+  // Eliminar botones previos inyectados para evitar duplicados
+  var prev = detailScreen.querySelector('#detailExtraBtns');
+  if (prev) prev.remove();
+
+  var wrap = document.createElement('div');
+  wrap.id = 'detailExtraBtns';
+  wrap.style.cssText = 'display:flex;gap:8px;padding:0 14px 12px;';
+  wrap.innerHTML = ''
+    + '<button class="share-trigger-btn" onclick="openShareBox(\'' + boxId + '\')">'
+    + '<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>'
+    + 'Compartir'
+    + '</button>'
+    + '<button class="rem-trigger-btn" onclick="openReminderSheet(\'' + boxId + '\')">'
+    + '<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>'
+    + 'Recordatorio'
+    + '</button>';
+
+  // Insertar antes del primer botón de acción del detalle (cerca del final)
+  var actRow = detailScreen.querySelector('.detail-acts, .dh-acts-bottom, [id="detailActRow"]');
+  var body = detailScreen.querySelector('.detail-body, .detail-content, #detailBody');
+  var target = actRow || body;
+  if (target) {
+    target.insertAdjacentElement('afterend', wrap);
+  } else {
+    // Fallback: buscar dentro del scroll del detalle
+    var scroll = detailScreen.querySelector('.detail-scroll, #detailScroll');
+    if (scroll) scroll.insertAdjacentElement('afterbegin', wrap);
+  }
+}
+
+// Exponer funciones globalmente
+window.openAdvFilter = openAdvFilter;
+window.openShareBox = openShareBox;
+window.openThemePicker = openThemePicker;
+window.openReminderSheet = openReminderSheet;
+
+console.log('✅ BoxVision — Nuevas funciones TOP cargadas: Filtros Avanzados, Compartir, Temas, Recordatorios');
+
+})();
+</script>
+
+<!-- ═══════════════════════════════════════════════════════════════════════
+     MÓDULO: SmartPhoto v1.1 — Análisis IA + Renderizado Flat Minimalista
+     ── Flujo: foto → mejora de calidad (Canvas) → Groq Vision identifica
+        el objeto → Claude API genera SVG flat → se guarda como it.thumb
+     ── Compatible con el sistema de thumbs existente en BoxVision
+
+     FIXES v1.1:
+       [1] Modelo Groq Vision correcto (llama-4-scout con fallback maverick)
+       [2] _spCropSquare: ahora asíncrono con onload (era síncrono — img.width=0)
+       [3] Input file SIN capture=environment → permite galería + cámara en iOS
+           Dos botones separados: "📁 Galería" y "📷 Cámara"
+       [4] _esc renombrada a _spEsc → evita conflicto con _esc global (línea 10293)
+       [5] Patch _compressPhoto movido a DOMContentLoaded para asegurar orden
+       [6] _openItemMenu patch: usa window.currentBoxId en vez de currentBoxId
+           (accesible desde dentro del IIFE sin problemas de scope)
+       [7] _spSaveThumb: auto-regenera QR tras guardar el thumb
+     ═══════════════════════════════════════════════════════════════════════ -->
+<script>
+(function(){
+'use strict';
+
+/* ─── Configuración ─────────────────────────────────────────────── */
+var SP_VERSION    = '1.1';
+var SP_MAX_PX     = 1280;  // resolución máxima para envío a IA
+var SP_QUALITY    = 0.92;  // calidad JPEG para Groq Vision
+var SP_THUMB_SIZE = 200;   // tamaño del thumb guardado en px
+
+// [FIX 1] Modelos Groq con visión — nombres exactos del API de Groq
+var SP_GROQ_MODEL_VISION   = 'meta-llama/llama-4-scout-17b-16e-instruct';
+var SP_GROQ_MODEL_FALLBACK = 'meta-llama/llama-4-maverick-17b-128e-instruct';
+
+// Claude API para generación de SVG flat
+var SP_CLAUDE_MODEL = 'claude-sonnet-4-20250514';
+
+/* ─── Estado interno ─────────────────────────────────────────────── */
+var _spActive         = false;
+var _spCurrentItemIdx = null;
+var _spCurrentBoxId   = null;
+var _spEnhancedBase64 = null;
+
+/* ─── [FIX 4] Escape HTML — nombre propio para no colisionar con _esc global */
+function _spEsc(str) {
+  return String(str || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+/* ─── Mejora de imagen con Canvas ───────────────────────────────── */
+/**
+ * Pipeline de mejora:
+ *  1. Re-escala a máx SP_MAX_PX sin degradar imágenes más pequeñas
+ *  2. Fondo blanco para eliminar artefactos de transparencia en JPEG
+ *  3. Filtro de nitidez unsharp-mask 3×3 suave
+ *  4. Devuelve base64 JPEG de alta calidad
+ */
+function _enhanceImage(file, callback) {
+  var url = URL.createObjectURL(file);
+  var img = new Image();
+
+  img.onload = function() {
+    URL.revokeObjectURL(url);
+    var sw = img.naturalWidth, sh = img.naturalHeight;
+
+    // Escalar solo si supera el máximo
+    var dw = sw, dh = sh;
+    if (sw > SP_MAX_PX || sh > SP_MAX_PX) {
+      if (sw >= sh) { dh = Math.round(sh * SP_MAX_PX / sw); dw = SP_MAX_PX; }
+      else          { dw = Math.round(sw * SP_MAX_PX / sh); dh = SP_MAX_PX; }
+    }
+
+    var canvas = document.createElement('canvas');
+    canvas.width = dw; canvas.height = dh;
+    var ctx = canvas.getContext('2d');
+
+    // Fondo blanco para JPEG sin artefactos
+    ctx.fillStyle = '#ffffff';
+    ctx.fillRect(0, 0, dw, dh);
+    ctx.drawImage(img, 0, 0, dw, dh);
+
+    // Nitidez: convolución unsharp 3×3
+    try {
+      var imageData = ctx.getImageData(0, 0, dw, dh);
+      var d = imageData.data;
+      var w = dw, h = dh;
+      var output = new Uint8ClampedArray(d.length);
+      var kernel  = [0,-1,0, -1,5,-1, 0,-1,0];
+      for (var y = 1; y < h-1; y++) {
+        for (var x = 1; x < w-1; x++) {
+          var idx = (y*w+x)*4;
+          for (var c = 0; c < 3; c++) {
+            var acc = 0;
+            for (var ky = -1; ky <= 1; ky++) {
+              for (var kx = -1; kx <= 1; kx++) {
+                acc += d[((y+ky)*w+(x+kx))*4+c] * kernel[(ky+1)*3+(kx+1)];
+              }
+            }
+            output[idx+c] = Math.min(255, Math.max(0, acc));
+          }
+          output[idx+3] = d[idx+3];
+        }
+      }
+      // Bordes sin filtrar
+      for (var i = 0; i < d.length; i += 4) {
+        var px = (i/4)%w, py = Math.floor(i/4/w);
+        if (px===0||px===w-1||py===0||py===h-1) {
+          output[i]=d[i]; output[i+1]=d[i+1]; output[i+2]=d[i+2]; output[i+3]=d[i+3];
+        }
+      }
+      ctx.putImageData(new ImageData(output, w, h), 0, 0);
+    } catch(e) { /* si falla el filtro, continúa sin él */ }
+
+    callback(canvas.toDataURL('image/jpeg', SP_QUALITY));
+  };
+
+  img.onerror = function() {
+    URL.revokeObjectURL(url);
+    var reader = new FileReader();
+    reader.onload = function(ev) { callback(ev.target.result); };
+    reader.readAsDataURL(file);
+  };
+
+  img.src = url;
+}
+
+/* ─── SVG → thumb PNG ───────────────────────────────────────────── */
+function _svgToThumb(svgString, callback) {
+  var blob = new Blob([svgString], {type:'image/svg+xml'});
+  var url  = URL.createObjectURL(blob);
+  var img  = new Image();
+  img.onload = function() {
+    URL.revokeObjectURL(url);
+    var c   = document.createElement('canvas');
+    c.width = c.height = SP_THUMB_SIZE;
+    var ctx = c.getContext('2d');
+    ctx.clearRect(0, 0, SP_THUMB_SIZE, SP_THUMB_SIZE);
+    ctx.drawImage(img, 0, 0, SP_THUMB_SIZE, SP_THUMB_SIZE);
+    callback(null, c.toDataURL('image/png'));
+  };
+  img.onerror = function() {
+    URL.revokeObjectURL(url);
+    callback(new Error('SVG render failed'));
+  };
+  img.src = url;
+}
+
+/* ─── [FIX 2] _spCropSquare — ahora asíncrono con onload ────────── */
+function _spCropSquare(base64, callback) {
+  var img = new Image();
+  img.onload = function() {
+    var s   = Math.min(img.naturalWidth, img.naturalHeight, SP_THUMB_SIZE);
+    var c   = document.createElement('canvas');
+    c.width = c.height = s;
+    var ctx = c.getContext('2d');
+    ctx.drawImage(img,
+      (img.naturalWidth - s)/2, (img.naturalHeight - s)/2, s, s,
+      0, 0, s, s
+    );
+    callback(c.toDataURL('image/png'));
+  };
+  img.onerror = function() { callback(base64); };
+  img.src = base64;
+}
+
+/* ─── Paso 1: Groq Vision — identificar objeto ──────────────────── */
+function _identifyObject(base64jpeg, groqKey, callback, useFallback) {
+  var model = useFallback ? SP_GROQ_MODEL_FALLBACK : SP_GROQ_MODEL_VISION;
+  var b64   = base64jpeg.replace(/^data:image\/[a-z]+;base64,/, '');
+
+  fetch('https://api.groq.com/openai/v1/chat/completions', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer ' + groqKey
+    },
+    body: JSON.stringify({
+      model: model,
+      max_tokens: 150,
+      messages: [{
+        role: 'user',
+        content: [
+          {
+            type: 'image_url',
+            image_url: { url: 'data:image/jpeg;base64,' + b64, detail: 'low' }
+          },
+          {
+            type: 'text',
+            text: 'Identify the main object in this photo. Respond ONLY with a JSON object (no markdown, no explanation, no extra text): {"name":"<object name in Spanish, 1-3 words>","shape":"<circle|square|rectangle|triangle|custom>","primaryColor":"<dominant hex color of the object, e.g. #FF5733>","secondaryColor":"<secondary hex color or null>","category":"<electronics|clothing|tool|food|book|furniture|toy|sport|document|kitchen|other>"}'
+          }
+        ]
+      }]
+    })
+  })
+  .then(function(r) { return r.json(); })
+  .then(function(data) {
+    // Si el modelo no existe, intentar con el fallback
+    if (data.error && !useFallback) {
+      var code = (data.error.code || '') + (data.error.message || '');
+      if (code.indexOf('model') !== -1 || code.indexOf('not found') !== -1) {
+        console.warn('[SmartPhoto] Modelo principal no disponible, intentando fallback...');
+        _identifyObject(base64jpeg, groqKey, callback, true);
+        return;
+      }
+      callback(data.error.message || 'Groq error'); return;
+    }
+    if (data.error) { callback(data.error.message || 'Groq error'); return; }
+
+    var text = (((data.choices||[])[0]||{}).message||{}).content || '';
+    try {
+      text = text.replace(/```json|```/g,'').trim();
+      // Extraer solo el objeto JSON (ignorar texto extra antes/después)
+      var jsonMatch = text.match(/\{[\s\S]*\}/);
+      var obj = JSON.parse(jsonMatch ? jsonMatch[0] : text);
+      // Validar campos mínimos
+      if (!obj.name) obj.name = 'objeto';
+      if (!obj.primaryColor) obj.primaryColor = '#4A90D9';
+      if (!obj.shape) obj.shape = 'custom';
+      if (!obj.category) obj.category = 'other';
+      callback(null, obj);
+    } catch(e) {
+      // Si no parsea, extraer nombre con regex
+      var nm = text.match(/"name"\s*:\s*"([^"]+)"/);
+      var pc = text.match(/"primaryColor"\s*:\s*"(#[0-9a-fA-F]{3,6})"/);
+      callback(null, {
+        name: nm ? nm[1] : 'objeto',
+        shape: 'custom',
+        primaryColor: pc ? pc[1] : '#4A90D9',
+        secondaryColor: null,
+        category: 'other'
+      });
+    }
+  })
+  .catch(function(err) { callback(err.message || 'Network error'); });
+}
+
+/* ─── Paso 2: Claude API — generar SVG flat ─────────────────────── */
+function _generateSVG(objectInfo, callback) {
+  var color2 = objectInfo.secondaryColor ? ', acento ' + objectInfo.secondaryColor : '';
+  var prompt = [
+    'Create a flat minimalist SVG icon (viewBox="0 0 200 200") representing: "' + objectInfo.name + '" (' + objectInfo.category + ').',
+    '',
+    'STRICT RULES:',
+    '- Primary color: ' + objectInfo.primaryColor + color2,
+    '- Flat design ONLY: NO shadows, NO gradients, NO blur, NO text, NO labels',
+    '- The icon MUST be instantly recognizable as a ' + objectInfo.name,
+    '- Use clean geometric shapes + simple paths, centered with padding',
+    '- Transparent background (do NOT add any background rect)',
+    '- Use 2-4 colors max, keep shapes simple',
+    '- Output ONLY the SVG code. Start with <svg and end with </svg>. Zero extra text.'
+  ].join('\n');
+
+  fetch('https://api.anthropic.com/v1/messages', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      model: SP_CLAUDE_MODEL,
+      max_tokens: 1000,
+      messages: [{ role: 'user', content: prompt }]
+    })
+  })
+  .then(function(r) { return r.json(); })
+  .then(function(data) {
+    var text = (((data.content||[])[0])||{}).text || '';
+    var svgMatch = text.match(/<svg[\s\S]*?<\/svg>/i);
+    if (svgMatch) {
+      callback(null, svgMatch[0]);
+    } else {
+      callback(new Error('No SVG in response'));
+    }
+  })
+  .catch(function(err) { callback(err.message || 'Claude API error'); });
+}
+
+/* ─── SVG fallback ──────────────────────────────────────────────── */
+function _spFallbackSVG(objInfo) {
+  var c  = objInfo.primaryColor || '#4A90D9';
+  var c2 = objInfo.secondaryColor || '#ffffff';
+  var shapes = {
+    circle:    '<circle cx="100" cy="100" r="75" fill="' + c + '"/><circle cx="100" cy="100" r="48" fill="' + c2 + '" opacity=".25"/>',
+    square:    '<rect x="25" y="25" width="150" height="150" rx="22" fill="' + c + '"/><rect x="48" y="48" width="104" height="104" rx="12" fill="' + c2 + '" opacity=".18"/>',
+    rectangle: '<rect x="15" y="45" width="170" height="110" rx="16" fill="' + c + '"/><rect x="32" y="62" width="136" height="76" rx="8" fill="' + c2 + '" opacity=".18"/>',
+    triangle:  '<polygon points="100,18 188,172 12,172" fill="' + c + '"/><polygon points="100,60 155,155 45,155" fill="' + c2 + '" opacity=".2"/>',
+    custom:    '<rect x="28" y="28" width="144" height="144" rx="30" fill="' + c + '"/><rect x="52" y="52" width="96" height="96" rx="16" fill="' + c2 + '" opacity=".2"/>'
+  };
+  return '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">' + (shapes[objInfo.shape] || shapes.custom) + '</svg>';
+}
+
+/* ─── UI: Modal de carga de foto ────────────────────────────────── */
+function _showSpModal(itemIdx, itemText, boxId) {
+  _spCurrentItemIdx = itemIdx;
+  _spCurrentBoxId   = boxId;
+  _spEnhancedBase64 = null;
+
+  var prev = document.getElementById('_spModal');
+  if (prev) prev.remove();
+
+  var modal = document.createElement('div');
+  modal.id = '_spModal';
+  modal.style.cssText = [
+    'position:fixed;inset:0;z-index:10100;display:flex;align-items:flex-end;',
+    'justify-content:center;background:rgba(0,0,0,.58);',
+    'backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px)'
+  ].join('');
+
+  modal.innerHTML = [
+    '<div id="_spSheet" style="',
+      'background:var(--card,#1C1C1E);border-radius:24px 24px 0 0;',
+      'width:100%;max-width:480px;padding:20px 18px 36px;',
+      'box-shadow:0 -8px 50px rgba(0,0,0,.45);',
+      'transform:translateY(100%);transition:transform .32s cubic-bezier(.34,1.1,.64,1)',
+    '">',
+
+      // Handle
+      '<div style="width:40px;height:4px;background:rgba(255,255,255,.18);border-radius:99px;margin:0 auto 20px"></div>',
+
+      // Título
+      '<div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">',
+        '<span style="font-size:20px">✦</span>',
+        '<div style="font-size:17px;font-weight:700;color:var(--text,#fff)">Foto IA del objeto</div>',
+      '</div>',
+      '<div style="font-size:13px;color:var(--muted,rgba(255,255,255,.42));margin-bottom:18px;padding-left:28px">' + _spEsc(itemText) + '</div>',
+
+      // Preview área
+      '<div id="_spPreview" style="',
+        'width:100%;height:170px;border-radius:18px;',
+        'background:var(--card2,rgba(255,255,255,.05));',
+        'border:1.5px dashed rgba(255,255,255,.14);',
+        'display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;',
+        'margin-bottom:14px;overflow:hidden;position:relative',
+      '">',
+        '<span style="font-size:36px;opacity:.5">🖼</span>',
+        '<span style="font-size:12px;color:var(--muted,rgba(255,255,255,.38))">Elige una foto para analizar</span>',
+      '</div>',
+
+      // [FIX 3] DOS inputs separados: galería (sin capture) + cámara (con capture)
+      // Así en iOS el usuario puede elegir desde la galería O tomar foto nueva
+      '<input id="_spFileGallery" type="file" accept="image/*" style="display:none" onchange="window._spHandleFile(this)">',
+      '<input id="_spFileCamera"  type="file" accept="image/*" capture="environment" style="display:none" onchange="window._spHandleFile(this)">',
+
+      // Botones de fuente de imagen
+      '<div style="display:flex;gap:8px;margin-bottom:12px">',
+        '<button onclick="document.getElementById(\'_spFileGallery\').click()" style="',
+          'flex:1;padding:11px 6px;border-radius:13px;border:1px solid rgba(255,255,255,.12);',
+          'background:rgba(255,255,255,.06);color:var(--text,#fff);font-size:13px;font-weight:600;',
+          'cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:6px',
+        '">',
+          '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>',
+          'Galería',
+        '</button>',
+        '<button onclick="document.getElementById(\'_spFileCamera\').click()" style="',
+          'flex:1;padding:11px 6px;border-radius:13px;border:1px solid rgba(255,255,255,.12);',
+          'background:rgba(255,255,255,.06);color:var(--text,#fff);font-size:13px;font-weight:600;',
+          'cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:6px',
+        '">',
+          '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg>',
+          'Cámara',
+        '</button>',
+      '</div>',
+
+      // Botones acción
+      '<div style="display:flex;gap:10px">',
+        '<button onclick="window._spClose()" style="',
+          'flex:1;padding:14px;background:rgba(255,255,255,.07);color:var(--text,#fff);',
+          'border:none;border-radius:14px;font-size:15px;font-weight:600;',
+          'cursor:pointer;font-family:inherit',
+        '">Cancelar</button>',
+        '<button id="_spConfirmBtn" onclick="window._spConfirm()" disabled style="',
+          'flex:2;padding:14px;background:var(--accent,#007AFF);color:#fff;',
+          'border:none;border-radius:14px;font-size:15px;font-weight:700;',
+          'cursor:pointer;font-family:inherit;opacity:.38;pointer-events:none;',
+          'display:flex;align-items:center;justify-content:center;gap:6px',
+        '">',
+          '<span style="font-size:14px">✦</span> Analizar con IA',
+        '</button>',
+      '</div>',
+
+      // Estado / progress
+      '<div id="_spStatus" style="',
+        'margin-top:11px;font-size:12px;color:var(--muted,rgba(255,255,255,.42));',
+        'text-align:center;min-height:16px;display:none',
+      '"></div>',
+
+    '</div>'
+  ].join('');
+
+  modal.addEventListener('click', function(e) {
+    if (e.target === modal) window._spClose();
+  });
+
+  document.body.appendChild(modal);
+
+  // Slide-up animado
+  requestAnimationFrame(function() {
+    requestAnimationFrame(function() {
+      var sheet = document.getElementById('_spSheet');
+      if (sheet) sheet.style.transform = 'translateY(0)';
+    });
+  });
+}
+
+/* ─── Cerrar modal ──────────────────────────────────────────────── */
+window._spClose = function() {
+  var modal = document.getElementById('_spModal');
+  if (!modal) return;
+  var sheet = document.getElementById('_spSheet');
+  if (sheet) {
+    sheet.style.transform = 'translateY(100%)';
+    setTimeout(function() { if (modal.parentNode) modal.remove(); }, 340);
+  } else {
+    modal.remove();
+  }
+  _spActive = false;
+};
+
+/* ─── Selección de archivo ──────────────────────────────────────── */
+window._spHandleFile = function(input) {
+  var file = input.files && input.files[0];
+  if (!file) return;
+  // Limpiar el input para permitir re-seleccionar la misma imagen
+  input.value = '';
+
+  var preview    = document.getElementById('_spPreview');
+  var confirmBtn = document.getElementById('_spConfirmBtn');
+  var status     = document.getElementById('_spStatus');
+
+  // Spinner de mejora
+  if (preview) {
+    preview.innerHTML = [
+      '<div style="width:30px;height:30px;border:2.5px solid rgba(255,255,255,.1);',
+        'border-top-color:var(--accent,#007AFF);border-radius:50%;animation:spin .7s linear infinite"></div>',
+      '<span style="font-size:12px;color:var(--muted,rgba(255,255,255,.42))">Mejorando calidad…</span>'
+    ].join('');
+  }
+
+  _enhanceImage(file, function(enhanced) {
+    _spEnhancedBase64 = enhanced;
+
+    // Preview de la imagen mejorada
+    if (preview) {
+      preview.innerHTML = '<img src="' + enhanced + '" style="width:100%;height:100%;object-fit:contain;border-radius:16px">';
+    }
+
+    // Habilitar botón analizar
+    if (confirmBtn) {
+      confirmBtn.style.opacity = '1';
+      confirmBtn.style.pointerEvents = 'auto';
+      confirmBtn.disabled = false;
+    }
+
+    // Mostrar tamaño mejorado
+    var kb = Math.round(enhanced.length * 0.75 / 1024);
+    if (status) {
+      status.style.display = 'block';
+      status.textContent = '✓ Imagen mejorada (' + kb + ' KB) — lista para análisis';
+    }
+  });
+};
+
+/* ─── Pipeline principal: Groq Vision → Claude SVG → thumb ─────── */
+window._spConfirm = function() {
+  if (!_spEnhancedBase64) return;
+
+  var groqKey = localStorage.getItem('bv_groq_api_key');
+  if (!groqKey) {
+    window._spClose();
+    if (typeof window._showGroqKeyModal === 'function') {
+      window._showGroqKeyModal(function() {
+        setTimeout(function() { _spShowForItem(_spCurrentItemIdx, _spCurrentBoxId); }, 400);
+      });
+    } else {
+      alert('Configura tu clave API de Groq en Ajustes para usar esta función.');
+    }
+    return;
+  }
+
+  var confirmBtn = document.getElementById('_spConfirmBtn');
+  var status     = document.getElementById('_spStatus');
+  var preview    = document.getElementById('_spPreview');
+
+  if (confirmBtn) {
+    confirmBtn.disabled = true;
+    confirmBtn.style.opacity = '.45';
+    confirmBtn.innerHTML = '<span style="font-size:14px">✦</span> Analizando…';
+  }
+  if (status) status.style.display = 'block';
+
+  // ── Paso 1: Groq Vision identifica el objeto ──
+  _spSetStatus('🔍 Identificando objeto con Groq Vision…', status);
+
+  _identifyObject(_spEnhancedBase64, groqKey, function(err, objInfo) {
+    if (err) {
+      _spSetStatus('⚠️ ' + err, status);
+      if (confirmBtn) {
+        confirmBtn.disabled = false;
+        confirmBtn.style.opacity = '1';
+        confirmBtn.innerHTML = '<span>✦</span> Reintentar';
+      }
+      return;
+    }
+
+    // Mostrar resultado del análisis en el preview
+    if (preview) {
+      preview.innerHTML = [
+        '<div style="text-align:center;padding:12px 16px">',
+          '<div style="font-size:11px;color:var(--muted,rgba(255,255,255,.38));margin-bottom:8px;text-transform:uppercase;letter-spacing:.5px">Objeto detectado</div>',
+          '<div style="font-size:24px;font-weight:800;color:var(--text,#fff);letter-spacing:-.5px">' + _spEsc(objInfo.name) + '</div>',
+          '<div style="display:inline-block;margin-top:6px;padding:3px 12px;background:rgba(255,255,255,.07);border-radius:99px;font-size:11px;color:var(--muted,rgba(255,255,255,.4))">' + _spEsc(objInfo.category) + '</div>',
+          '<div style="margin-top:10px;display:flex;gap:6px;justify-content:center;align-items:center">',
+            '<div style="width:22px;height:22px;border-radius:50%;background:' + _spEsc(objInfo.primaryColor||'#4A90D9') + ';border:2px solid rgba(255,255,255,.25)"></div>',
+            objInfo.secondaryColor ? '<div style="width:22px;height:22px;border-radius:50%;background:' + _spEsc(objInfo.secondaryColor) + ';border:2px solid rgba(255,255,255,.25)"></div>' : '',
+          '</div>',
+        '</div>'
+      ].join('');
+    }
+
+    // ── Paso 2: Claude genera el SVG flat ──
+    _spSetStatus('✦ Generando ilustración flat de "' + objInfo.name + '"…', status);
+
+    _generateSVG(objInfo, function(errSvg, svgString) {
+      if (errSvg || !svgString) {
+        console.warn('[SmartPhoto] Claude SVG falló, usando fallback geométrico:', errSvg);
+        svgString = _spFallbackSVG(objInfo);
+      }
+
+      // ── Paso 3: SVG → thumb PNG ──
+      _spSetStatus('🎨 Renderizando ilustración…', status);
+
+      _svgToThumb(svgString, function(errThumb, thumb) {
+        if (errThumb || !thumb) {
+          // [FIX 2] Ahora _spCropSquare es asíncrono
+          _spCropSquare(_spEnhancedBase64, function(croppedThumb) {
+            _spSaveThumb(croppedThumb, _spCurrentBoxId, _spCurrentItemIdx, objInfo.name, svgString);
+          });
+        } else {
+          _spSaveThumb(thumb, _spCurrentBoxId, _spCurrentItemIdx, objInfo.name, svgString);
+        }
+      });
+    });
+  });
+};
+
+/* ─── Guardar thumb en BoxVision ────────────────────────────────── */
+function _spSaveThumb(thumb, boxId, itemIdx, detectedName, svgString) {
+  var box = (typeof boxes !== 'undefined') && boxes.find(function(b){ return b.id === boxId; });
+  if (!box || !box.items[itemIdx]) { window._spClose(); return; }
+
+  box.items[itemIdx].thumb    = thumb;
+  box.items[itemIdx].thumbSvg = svgString;
+  box.items[itemIdx].thumbAI  = detectedName;
+
+  // Guardar en localStorage via sistema existente
+  try {
+    if (typeof _thumbKey === 'function') {
+      localStorage.setItem(_thumbKey(boxId, box.items[itemIdx].text), thumb);
+    }
+  } catch(e) { console.warn('[SmartPhoto] localStorage thumb error:', e); }
+
+  if (typeof saveData    === 'function') saveData();
+  if (typeof renderItems === 'function') renderItems();
+  // [FIX 7] Regenerar QR tras guardar
+  if (typeof generateQR  === 'function') generateQR(boxId);
+
+  // Mostrar resultado en el modal
+  var preview    = document.getElementById('_spPreview');
+  var status     = document.getElementById('_spStatus');
+  var confirmBtn = document.getElementById('_spConfirmBtn');
+
+  if (preview) {
+    preview.innerHTML = [
+      '<div style="position:relative;width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px">',
+        '<img src="' + thumb + '" style="max-width:130px;max-height:130px;object-fit:contain;border-radius:14px">',
+        '<div style="font-size:12px;color:rgba(255,255,255,.5)">' + _spEsc(detectedName) + '</div>',
+        '<div style="position:absolute;bottom:10px;right:10px;background:#34C759;border-radius:99px;padding:4px 11px;font-size:11px;font-weight:700;color:#fff">✓ Guardado</div>',
+      '</div>'
+    ].join('');
+  }
+
+  if (status) {
+    status.textContent = '✅ Ilustración flat de "' + detectedName + '" guardada';
+  }
+
+  if (confirmBtn) {
+    confirmBtn.innerHTML = '✓ Listo';
+    confirmBtn.style.opacity = '1';
+    confirmBtn.style.background = '#34C759';
+    confirmBtn.onclick = window._spClose;
+    confirmBtn.disabled = false;
+  }
+
+  // Auto-cerrar en 2.5 s
+  setTimeout(window._spClose, 2500);
+}
+
+/* ─── Helpers ───────────────────────────────────────────────────── */
+function _spSetStatus(msg, el) {
+  if (el) { el.style.display = 'block'; el.textContent = msg; }
+}
+
+/* ─── Punto de entrada público ──────────────────────────────────── */
+function _spShowForItem(itemIdx, boxId) {
+  var box = (typeof boxes !== 'undefined') && boxes.find(function(b){ return b.id === boxId; });
+  if (!box || !box.items[itemIdx]) return;
+  _spActive = true;
+  _showSpModal(itemIdx, box.items[itemIdx].text, boxId);
+}
+window.spShowForItem = _spShowForItem;
+
+/* ─── Patch menú contextual de ítem — añadir "Foto IA ✦" ────────── */
+document.addEventListener('DOMContentLoaded', function() {
+
+  // [FIX 6] Usar window._openItemMenu para respetar cualquier patch previo
+  var _origMenu = window._openItemMenu;
+  if (typeof _origMenu === 'function') {
+    window._openItemMenu = function(idx, btn) {
+      _origMenu.call(this, idx, btn);
+      setTimeout(function() {
+        var menu = document.getElementById('_itemCtxMenu');
+        if (!menu) return;
+
+        // Separador
+        var sep = document.createElement('div');
+        sep.className = 'item-ctx-sep';
+        menu.appendChild(sep);
+
+        // Opción "Foto IA"
+        var opt = document.createElement('div');
+        opt.className = 'item-ctx-opt';
+        opt.style.cssText = 'color:var(--accent,#007AFF)';
+        opt.innerHTML = [
+          '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">',
+            '<path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/>',
+            '<circle cx="12" cy="13" r="3"/>',
+            '<path d="M9 3h6" stroke-width="2.5"/>',
+          '</svg>',
+          '<span>Foto IA ✦</span>'
+        ].join('');
+
+        opt.onclick = function() {
+          var m = document.getElementById('_itemCtxMenu');
+          if (m) m.remove();
+          // [FIX 6] currentBoxId es global (let), accesible directamente
+          var bid = (typeof currentBoxId !== 'undefined') ? currentBoxId : null;
+          if (!bid) return;
+          setTimeout(function() { _spShowForItem(idx, bid); }, 120);
+        };
+
+        menu.appendChild(opt);
+      }, 25);
+    };
+  }
+
+  // [FIX 5] Patch _compressPhoto en DOMContentLoaded — garantiza que la función
+  // original ya existe (declarada como function statement, es hoisted, pero por
+  // claridad lo hacemos aquí junto con el resto de patches)
+  if (typeof window._compressPhoto === 'function' || typeof _compressPhoto === 'function') {
+    window._compressPhoto = function(file, callback) {
+      var MAX_PX  = 1280;
+      var QUALITY = 0.88;
+      var img = new Image();
+      var url = URL.createObjectURL(file);
+      img.onload = function() {
+        URL.revokeObjectURL(url);
+        var w = img.naturalWidth, h = img.naturalHeight;
+        if (w > MAX_PX || h > MAX_PX) {
+          if (w >= h) { h = Math.round(h * MAX_PX / w); w = MAX_PX; }
+          else        { w = Math.round(w * MAX_PX / h); h = MAX_PX; }
+        }
+        var canvas = document.createElement('canvas');
+        canvas.width = w; canvas.height = h;
+        var ctx = canvas.getContext('2d');
+        // 2-pass para imágenes muy grandes: reduce aliasing
+        if (img.naturalWidth > w * 2) {
+          var tmp = document.createElement('canvas');
+          tmp.width = w*2; tmp.height = h*2;
+          tmp.getContext('2d').drawImage(img, 0, 0, w*2, h*2);
+          ctx.drawImage(tmp, 0, 0, w, h);
+        } else {
+          ctx.drawImage(img, 0, 0, w, h);
+        }
+        var result = canvas.toDataURL('image/jpeg', QUALITY);
+        var kb = Math.round(result.length * 0.75 / 1024);
+        console.log('[SmartPhoto] Foto caja comprimida (v1.1): ~' + kb + 'KB (' + w + 'x' + h + ')');
+        callback(result);
+      };
+      img.onerror = function() {
+        URL.revokeObjectURL(url);
+        var reader = new FileReader();
+        reader.onload = function(ev) { callback(ev.target.result); };
+        reader.readAsDataURL(file);
+      };
+      img.src = url;
+    };
+    console.log('[SmartPhoto] _compressPhoto mejorado: 1280px / JPEG 88%');
+  }
+
+});
+
+console.log('✅ BoxVision SmartPhoto v' + SP_VERSION + ' listo — Groq Vision + Claude SVG + Canvas enhance (7 fixes aplicados)');
 
 })();
 </script>
