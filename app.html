@@ -11852,5 +11852,540 @@ function _pwDel(){
 })();
 </script>
 
+
+<!-- ══════════════════════════════════════════════════════════
+     BoxVision — Sistema de Actualización Automática v1
+     Detecta nuevos commits en GitHub Pages y muestra una
+     notificación minimalista estilo iOS para recargar la app.
+     ══════════════════════════════════════════════════════════ -->
+<style>
+/* ── Update overlay backdrop ── */
+#bvUpdateOverlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9900;
+  background: rgba(0,0,0,0);
+  backdrop-filter: blur(0px);
+  -webkit-backdrop-filter: blur(0px);
+  pointer-events: none;
+  transition: background .35s ease, backdrop-filter .35s ease, -webkit-backdrop-filter .35s ease;
+}
+#bvUpdateOverlay.open {
+  background: rgba(0,0,0,.45);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  pointer-events: all;
+}
+
+/* ── Sheet de actualización ── */
+#bvUpdateSheet {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 9999;
+  background: rgba(28,28,30,0.97);
+  border-radius: 22px 22px 0 0;
+  padding: 0 0 max(28px, env(safe-area-inset-bottom, 28px));
+  transform: translateY(100%);
+  transition: transform .48s cubic-bezier(.2,1.1,.5,1);
+  box-shadow:
+    0 -1px 0 rgba(255,255,255,.08),
+    0 -12px 60px rgba(0,0,0,.65);
+  will-change: transform;
+  overflow: hidden;
+}
+#bvUpdateSheet.open {
+  transform: translateY(0);
+}
+@media (min-width: 600px) {
+  #bvUpdateSheet {
+    left: 50%;
+    right: auto;
+    transform: translateX(-50%) translateY(100%);
+    width: 420px;
+    border-radius: 22px 22px 0 0;
+    bottom: 0;
+  }
+  #bvUpdateSheet.open {
+    transform: translateX(-50%) translateY(0);
+  }
+}
+
+/* ── Handle ── */
+.bvu-handle {
+  width: 36px;
+  height: 5px;
+  border-radius: 99px;
+  background: rgba(255,255,255,.15);
+  margin: 12px auto 0;
+}
+
+/* ── Ícono animado ── */
+.bvu-icon-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 22px auto 16px;
+}
+.bvu-icon-bg {
+  width: 72px;
+  height: 72px;
+  border-radius: 22px;
+  background: linear-gradient(145deg, #0A84FF, #5856D6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 34px;
+  box-shadow:
+    0 8px 28px rgba(10,132,255,.45),
+    0 0 0 1px rgba(255,255,255,.08),
+    inset 0 1px 0 rgba(255,255,255,.18);
+  animation: bvuIconPop .55s .1s cubic-bezier(.34,1.45,.64,1) both;
+  position: relative;
+}
+@keyframes bvuIconPop {
+  from { transform: scale(.5) rotate(-12deg); opacity: 0; }
+  to   { transform: scale(1) rotate(0deg);   opacity: 1; }
+}
+/* Anillo giratorio alrededor del ícono */
+.bvu-ring {
+  position: absolute;
+  inset: -8px;
+  border-radius: 30px;
+  border: 1.5px solid rgba(10,132,255,.3);
+  animation: bvuRingSpin 6s linear infinite;
+}
+.bvu-ring::before {
+  content: '';
+  position: absolute;
+  width: 7px; height: 7px;
+  background: #0A84FF;
+  border-radius: 50%;
+  top: -3.5px; left: 50%;
+  transform: translateX(-50%);
+  box-shadow: 0 0 8px 2px rgba(10,132,255,.7);
+}
+@keyframes bvuRingSpin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+
+/* ── Textos ── */
+.bvu-body {
+  padding: 0 24px 20px;
+  text-align: center;
+  animation: bvuFadeUp .4s .18s cubic-bezier(.34,1.2,.64,1) both;
+}
+@keyframes bvuFadeUp {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.bvu-title {
+  font-size: 20px;
+  font-weight: 800;
+  color: #fff;
+  letter-spacing: -.4px;
+  margin-bottom: 7px;
+}
+.bvu-sub {
+  font-size: 14px;
+  color: rgba(255,255,255,.5);
+  line-height: 1.55;
+  margin-bottom: 4px;
+}
+.bvu-version-row {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin: 10px auto 20px;
+  background: rgba(255,255,255,.06);
+  border: 0.5px solid rgba(255,255,255,.1);
+  border-radius: 99px;
+  padding: 6px 16px;
+}
+.bvu-version-old {
+  font-size: 12px;
+  color: rgba(255,255,255,.35);
+  font-weight: 600;
+  text-decoration: line-through;
+}
+.bvu-arrow {
+  font-size: 11px;
+  color: rgba(255,255,255,.2);
+}
+.bvu-version-new {
+  font-size: 12px;
+  color: #34C759;
+  font-weight: 700;
+}
+
+/* ── Changelog lista ── */
+.bvu-changes {
+  background: rgba(255,255,255,.04);
+  border: 0.5px solid rgba(255,255,255,.07);
+  border-radius: 14px;
+  padding: 12px 14px;
+  text-align: left;
+  margin-bottom: 22px;
+}
+.bvu-change-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  font-size: 13px;
+  color: rgba(255,255,255,.65);
+  line-height: 1.45;
+  margin-bottom: 7px;
+}
+.bvu-change-item:last-child { margin-bottom: 0; }
+.bvu-change-dot {
+  width: 6px; height: 6px;
+  background: #0A84FF;
+  border-radius: 50%;
+  flex-shrink: 0;
+  margin-top: 5px;
+}
+
+/* ── Botones ── */
+.bvu-btn-update {
+  width: 100%;
+  padding: 16px;
+  border-radius: 16px;
+  border: none;
+  background: linear-gradient(135deg, #0A84FF 0%, #5856D6 100%);
+  color: #fff;
+  font-size: 16px;
+  font-weight: 700;
+  font-family: inherit;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  box-shadow:
+    0 4px 20px rgba(10,132,255,.4),
+    inset 0 1px 0 rgba(255,255,255,.18);
+  transition: transform .16s cubic-bezier(.34,1.56,.64,1), opacity .15s;
+  -webkit-tap-highlight-color: transparent;
+  margin-bottom: 10px;
+}
+.bvu-btn-update:active { transform: scale(.97); opacity: .9; }
+.bvu-btn-later {
+  width: 100%;
+  padding: 14px;
+  border-radius: 16px;
+  border: none;
+  background: rgba(255,255,255,.06);
+  color: rgba(255,255,255,.5);
+  font-size: 15px;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  transition: background .15s;
+  -webkit-tap-highlight-color: transparent;
+}
+.bvu-btn-later:active { background: rgba(255,255,255,.1); }
+
+/* ── Toast de "comprobando" ── */
+#bvuCheckToast {
+  position: fixed;
+  top: max(16px, env(safe-area-inset-top, 16px));
+  left: 50%;
+  transform: translateX(-50%) translateY(-80px);
+  z-index: 9800;
+  background: rgba(28,28,30,.95);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 0.5px solid rgba(255,255,255,.1);
+  border-radius: 99px;
+  padding: 9px 18px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  color: rgba(255,255,255,.7);
+  box-shadow: 0 4px 20px rgba(0,0,0,.4);
+  transition: transform .4s cubic-bezier(.34,1.3,.64,1), opacity .3s;
+  white-space: nowrap;
+  pointer-events: none;
+}
+#bvuCheckToast.show {
+  transform: translateX(-50%) translateY(0);
+}
+.bvu-toast-dot {
+  width: 7px; height: 7px;
+  border-radius: 50%;
+  background: #34C759;
+  animation: bvuDotPulse 1.4s ease-in-out infinite;
+  flex-shrink: 0;
+}
+@keyframes bvuDotPulse {
+  0%,100% { transform: scale(.7); opacity: .5; }
+  50%      { transform: scale(1.2); opacity: 1; }
+}
+</style>
+
+<!-- Overlay backdrop -->
+<div id="bvUpdateOverlay" onclick="_bvuDismiss()"></div>
+
+<!-- Sheet de actualización -->
+<div id="bvUpdateSheet" role="dialog" aria-modal="true" aria-label="Actualización disponible">
+  <div class="bvu-handle"></div>
+
+  <div class="bvu-icon-wrap">
+    <div class="bvu-icon-bg">
+      <div class="bvu-ring"></div>
+      📦
+    </div>
+  </div>
+
+  <div class="bvu-body">
+    <div class="bvu-title">Nueva actualización</div>
+    <div class="bvu-sub">BoxVision se ha mejorado.<br>Recarga para obtener la última versión.</div>
+
+    <div class="bvu-version-row">
+      <span class="bvu-version-old" id="bvuVerOld">—</span>
+      <span class="bvu-arrow">›</span>
+      <span class="bvu-version-new" id="bvuVerNew">Nueva</span>
+    </div>
+
+    <div class="bvu-changes" id="bvuChangeList">
+      <div class="bvu-change-item">
+        <div class="bvu-change-dot"></div>
+        <span>Mejoras de rendimiento y estabilidad</span>
+      </div>
+      <div class="bvu-change-item">
+        <div class="bvu-change-dot"></div>
+        <span>Corrección de errores menores</span>
+      </div>
+    </div>
+
+    <button class="bvu-btn-update" id="bvuBtnUpdate" onclick="_bvuReload()">
+      <span>🔄</span>
+      <span>Actualizar ahora</span>
+    </button>
+    <button class="bvu-btn-later" onclick="_bvuDismiss()">Más tarde</button>
+  </div>
+</div>
+
+<!-- Toast de verificación -->
+<div id="bvuCheckToast">
+  <div class="bvu-toast-dot"></div>
+  <span>Buscando actualizaciones…</span>
+</div>
+
+<script>
+(function(){
+  'use strict';
+
+  /* ════════════════════════════════════════════════════
+     CONFIGURACIÓN — ajusta solo estos valores
+     ════════════════════════════════════════════════════ */
+  var BVU = {
+    // URL base del repo en GitHub Pages — sin barra final
+    repoBase: 'https://futbol1234now-png.github.io/BoxVision',
+    // Nombre del archivo principal de la app
+    appFile:  'app.html',
+    // Con qué frecuencia verificar (ms). 30 min por defecto.
+    interval: 30 * 60 * 1000,
+    // Primera verificación después de X ms al cargar
+    firstCheckDelay: 8000,
+    // Clave en localStorage para guardar la versión conocida
+    storageKey: 'bv_known_etag',
+    // Mostrar toast "Buscando actualizaciones…" (true/false)
+    showToast: false
+  };
+
+  /* ════════════════════════════════════════════════════
+     Helpers UI
+     ════════════════════════════════════════════════════ */
+  function openSheet(etag){
+    var overlay = document.getElementById('bvUpdateOverlay');
+    var sheet   = document.getElementById('bvUpdateSheet');
+    if(!overlay || !sheet) return;
+
+    // Mostrar versión vieja (guardada) vs nueva (actual)
+    var old = localStorage.getItem(BVU.storageKey) || '—';
+    var verOld = document.getElementById('bvuVerOld');
+    var verNew = document.getElementById('bvuVerNew');
+    if(verOld) verOld.textContent = _shortEtag(old);
+    if(verNew) verNew.textContent = _shortEtag(etag);
+
+    overlay.classList.add('open');
+    requestAnimationFrame(function(){
+      requestAnimationFrame(function(){
+        sheet.classList.add('open');
+        // Haptic en iOS PWA
+        try{ if(window.navigator && window.navigator.vibrate) window.navigator.vibrate(10); }catch(e){}
+      });
+    });
+  }
+
+  window._bvuDismiss = function(){
+    var overlay = document.getElementById('bvUpdateOverlay');
+    var sheet   = document.getElementById('bvUpdateSheet');
+    if(sheet)   sheet.classList.remove('open');
+    if(overlay) overlay.classList.remove('open');
+  };
+
+  window._bvuReload = function(){
+    var btn = document.getElementById('bvuBtnUpdate');
+    if(btn){ btn.innerHTML = '<span>⏳</span><span>Actualizando…</span>'; btn.style.opacity = '.7'; btn.style.pointerEvents = 'none'; }
+    // Pequeña pausa para que el usuario vea el feedback
+    setTimeout(function(){
+      // Limpia caché del SW si existe
+      try{
+        if('serviceWorker' in navigator && navigator.serviceWorker.controller){
+          navigator.serviceWorker.controller.postMessage({ type: 'SKIP_WAITING' });
+        }
+      }catch(e){}
+      // Recarga forzada sin caché
+      window.location.reload(true);
+    }, 350);
+  };
+
+  function _showCheckToast(){
+    if(!BVU.showToast) return;
+    var t = document.getElementById('bvuCheckToast');
+    if(!t) return;
+    t.classList.add('show');
+    setTimeout(function(){ t.classList.remove('show'); }, 2200);
+  }
+
+  /* ETag truncado para mostrarlo bonito */
+  function _shortEtag(etag){
+    if(!etag || etag === '—') return '—';
+    // Quita comillas del ETag y muestra los últimos 8 chars
+    var clean = etag.replace(/"/g,'');
+    return clean.length > 8 ? '…' + clean.slice(-8) : clean;
+  }
+
+  /* ════════════════════════════════════════════════════
+     Lógica de detección de actualización
+     Estrategia: HEAD request al archivo app.html
+     Compara el ETag (o Last-Modified) con el guardado.
+     Si cambió → hay una actualización disponible.
+     ════════════════════════════════════════════════════ */
+  function checkForUpdate(){
+    _showCheckToast();
+
+    var url = BVU.repoBase + '/' + BVU.appFile + '?_bvu=' + Date.now();
+
+    fetch(url, {
+      method: 'HEAD',
+      cache: 'no-store',
+      headers: { 'Cache-Control': 'no-cache', 'Pragma': 'no-cache' }
+    })
+    .then(function(res){
+      if(!res.ok) return; // No molestar al usuario si la red falla
+
+      // Usar ETag si existe, si no usar Last-Modified
+      var etag = res.headers.get('ETag') || res.headers.get('Last-Modified') || '';
+      if(!etag) return; // Sin encabezado de versión, no podemos detectar
+
+      var known = localStorage.getItem(BVU.storageKey);
+
+      if(!known){
+        // Primera visita: guardar y no avisar
+        localStorage.setItem(BVU.storageKey, etag);
+        return;
+      }
+
+      if(etag !== known){
+        // ¡Hay actualización! Mostrar sheet
+        openSheet(etag);
+        // Guardar el nuevo ETag solo cuando el usuario actualice
+        // (así seguirá mostrando hasta que recargue)
+      }
+    })
+    .catch(function(){ /* silencioso — puede ser offline */ });
+  }
+
+  /* Al actualizar, guardar el nuevo ETag para no volver a avisar */
+  var _origReload = window._bvuReload;
+  window._bvuReload = function(){
+    // Intenta leer el ETag actual antes de recargar
+    var url = BVU.repoBase + '/' + BVU.appFile + '?_bvu=' + Date.now();
+    fetch(url, { method: 'HEAD', cache: 'no-store' })
+      .then(function(res){
+        var etag = res.headers.get('ETag') || res.headers.get('Last-Modified') || '';
+        if(etag) localStorage.setItem(BVU.storageKey, etag);
+      })
+      .catch(function(){})
+      .finally(function(){
+        _origReload();
+      });
+  };
+
+  /* ════════════════════════════════════════════════════
+     Inicialización
+     ════════════════════════════════════════════════════ */
+  function init(){
+    // Primera verificación con delay para no bloquear el arranque
+    setTimeout(checkForUpdate, BVU.firstCheckDelay);
+    // Verificaciones periódicas
+    setInterval(checkForUpdate, BVU.interval);
+    // También verificar cuando la app vuelve al foco (usuario regresa a la pestaña)
+    document.addEventListener('visibilitychange', function(){
+      if(document.visibilityState === 'visible'){
+        // Solo verificar si pasaron al menos 5 min desde la última vez
+        var lastCheck = parseInt(localStorage.getItem('bv_last_check') || '0');
+        if(Date.now() - lastCheck > 5 * 60 * 1000){
+          localStorage.setItem('bv_last_check', Date.now());
+          checkForUpdate();
+        }
+      }
+    });
+
+    /* ── Integración con Service Worker ─────────────────────────────
+       1. Registrar el ETag conocido en el SW para que él también
+          pueda detectar cambios cuando intercepta peticiones HTML.
+       2. Escuchar mensajes del SW: si avisa de actualización,
+          mostrar el sheet directamente sin hacer una petición HEAD. */
+    if('serviceWorker' in navigator && navigator.serviceWorker.controller){
+      var knownEtag = localStorage.getItem(BVU.storageKey);
+      if(knownEtag){
+        // Informar al SW cuál es nuestra versión conocida
+        navigator.serviceWorker.controller.postMessage({
+          type: 'BVU_REGISTER_ETAG',
+          etag: knownEtag
+        });
+      }
+    }
+
+    // Escuchar mensajes del SW (actualización detectada por el SW)
+    if('serviceWorker' in navigator){
+      navigator.serviceWorker.addEventListener('message', function(event){
+        var data = event.data || {};
+        if(data.type === 'BVU_UPDATE_AVAILABLE' && data.etag){
+          // El SW ya detectó el cambio — mostrar sheet directamente
+          openSheet(data.etag);
+        }
+        if(data.type === 'SW_ACTIVATED'){
+          // Un nuevo SW se activó — forzar verificación inmediata
+          checkForUpdate();
+        }
+      });
+    }
+  }
+
+  // Arrancar después de que el DOM esté listo
+  if(document.readyState === 'loading'){
+    document.addEventListener('DOMContentLoaded', init);
+  } else {
+    init();
+  }
+
+  /* ── Exponer para testing manual desde consola ── */
+  window._bvuCheckNow = checkForUpdate;
+  window._bvuForceShow = function(){ openSheet('"testEtag123"'); };
+  window._bvuReset    = function(){
+    localStorage.removeItem(BVU.storageKey);
+    localStorage.removeItem('bv_last_check');
+    console.log('✅ BVU reseteado. Próxima verificación en', BVU.firstCheckDelay/1000, 's');
+  };
+
+})();
+</script>
+
 </body>
 </html>
