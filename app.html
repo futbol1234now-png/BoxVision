@@ -9220,10 +9220,18 @@ if(auth){
   });
 
   // ── Spinner inicial mientras Firebase verifica sesión ──
+  // Si hay sesion cacheada, ocultar loginScreen completo — usuario logueado nunca ve el login
+  const _hasCachedSession = Object.keys(localStorage).some(k => k.startsWith("firebase:authUser"));
+  const _ls0 = document.getElementById("loginScreen");
   const _lb0 = document.getElementById("loginBtn");
   const _ll0 = document.getElementById("loginLoading");
-  if(_lb0) _lb0.style.display = "none";
-  if(_ll0) _ll0.style.display = "flex";
+  if(_hasCachedSession && _ls0){
+    _ls0.style.display = "none"; // ocultar todo el login — Firebase confirmara en onAuthStateChanged
+  } else {
+    // Primera vez o sin sesion: spinner normal dentro del login
+    if(_lb0) _lb0.style.display = "none";
+    if(_ll0) _ll0.style.display = "flex";
+  }
 
   // ── Timeout offline: 5s sin respuesta de Firebase → mostrar login ──
   let _authReady = false;
@@ -14800,6 +14808,560 @@ document.addEventListener('DOMContentLoaded', function() {
 
 console.log('✅ BoxVision SmartPhoto v' + SP_VERSION + ' listo — Groq Vision + Claude SVG + Canvas enhance (7 fixes aplicados)');
 
+})();
+</script>
+
+
+<!-- ═══════════════════════════════════════════════════════════════════════
+     MÓDULO: GlobalTags v1.0 — Explorador de etiquetas entre todas las cajas
+     ── Panel lateral con todos los tags, contador por tag, filtrado rápido
+     ── Integra con el buscador existente via #tag y con renderFilters()
+     ═══════════════════════════════════════════════════════════════════════ -->
+<style>
+/* ── Panel Global Tags ─────────────────────────────────────────────── */
+#gtPanel{
+  position:fixed;inset:0;z-index:10200;
+  display:flex;align-items:flex-end;justify-content:center;
+  background:rgba(0,0,0,.55);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
+  opacity:0;pointer-events:none;transition:opacity .25s;
+}
+#gtPanel.open{opacity:1;pointer-events:auto;}
+#gtSheet{
+  background:var(--card,#1C1C1E);border-radius:22px 22px 0 0;
+  width:100%;max-width:500px;
+  max-height:82vh;display:flex;flex-direction:column;
+  box-shadow:0 -8px 40px rgba(0,0,0,.45);
+  transform:translateY(100%);transition:transform .32s cubic-bezier(.34,1.1,.64,1);
+}
+#gtPanel.open #gtSheet{transform:translateY(0);}
+.gt-handle{width:38px;height:4px;background:rgba(255,255,255,.18);border-radius:99px;margin:14px auto 0;}
+.gt-head{padding:16px 20px 12px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;}
+.gt-title{font-size:17px;font-weight:700;color:var(--text,#fff);}
+.gt-close{background:rgba(255,255,255,.08);border:none;color:var(--muted,rgba(255,255,255,.45));width:28px;height:28px;border-radius:50%;font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center;}
+.gt-search-wrap{padding:0 16px 12px;flex-shrink:0;}
+.gt-search{
+  width:100%;padding:9px 12px;border-radius:11px;
+  background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);
+  color:var(--text,#fff);font-size:14px;font-family:inherit;outline:none;
+}
+.gt-search::placeholder{color:var(--muted,rgba(255,255,255,.35));}
+.gt-search:focus{border-color:var(--accent,#007AFF);}
+.gt-list{overflow-y:auto;padding:0 12px 24px;flex:1;}
+.gt-empty{text-align:center;padding:40px 20px;color:var(--muted,rgba(255,255,255,.4));font-size:14px;}
+.gt-row{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:12px 10px;border-radius:12px;cursor:pointer;
+  transition:background .15s;margin-bottom:2px;
+}
+.gt-row:hover,.gt-row:active{background:rgba(255,255,255,.06);}
+.gt-row.active-tag{background:var(--blue-lo,rgba(10,132,255,.12));}
+.gt-tag-left{display:flex;align-items:center;gap:10px;}
+.gt-tag-icon{
+  width:34px;height:34px;border-radius:10px;
+  background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);
+  display:flex;align-items:center;justify-content:center;
+  font-size:14px;font-weight:700;color:var(--accent,#007AFF);flex-shrink:0;
+}
+.gt-tag-name{font-size:15px;font-weight:500;color:var(--text,#fff);}
+.gt-tag-count{
+  background:rgba(255,255,255,.08);border-radius:99px;
+  padding:3px 10px;font-size:12px;font-weight:600;color:var(--muted,rgba(255,255,255,.45));
+  flex-shrink:0;
+}
+.gt-fab{
+  position:fixed;bottom:88px;right:20px;z-index:9900;
+  width:44px;height:44px;border-radius:50%;
+  background:var(--card,#1C1C1E);border:1px solid rgba(255,255,255,.14);
+  box-shadow:0 4px 16px rgba(0,0,0,.4);
+  display:none;align-items:center;justify-content:center;
+  font-size:16px;cursor:pointer;transition:transform .15s,box-shadow .15s;
+  color:var(--text,#fff);
+}
+.gt-fab:hover{transform:scale(1.08);box-shadow:0 6px 24px rgba(0,0,0,.5);}
+.gt-fab-badge{
+  position:absolute;top:-4px;right:-4px;
+  min-width:18px;height:18px;border-radius:99px;
+  background:var(--accent,#007AFF);color:#fff;
+  font-size:10px;font-weight:800;
+  display:flex;align-items:center;justify-content:center;
+  padding:0 4px;
+}
+/* Barra de búsqueda con #tag activo */
+.gt-active-bar{
+  display:none;align-items:center;gap:8px;
+  padding:6px 14px;margin:0 14px 8px;
+  background:var(--blue-lo,rgba(10,132,255,.1));
+  border:1px solid rgba(10,132,255,.25);border-radius:10px;
+}
+.gt-active-bar.show{display:flex;}
+.gt-active-tag-chip{
+  font-size:13px;font-weight:600;color:var(--accent,#007AFF);flex:1;
+}
+.gt-active-clear{
+  background:none;border:none;color:var(--muted,rgba(255,255,255,.4));
+  font-size:13px;cursor:pointer;padding:2px 4px;font-family:inherit;
+}
+</style>
+
+<!-- FAB de tags (se muestra en mainScreen cuando hay tags) -->
+<div id="gtFab" class="gt-fab" onclick="window.openGlobalTags()" title="Explorar etiquetas">
+  🏷️
+  <div class="gt-fab-badge" id="gtFabBadge">0</div>
+</div>
+
+<!-- Barra de tag activo (debajo del buscador) -->
+<div id="gtActiveBar" class="gt-active-bar">
+  <span class="gt-active-tag-chip" id="gtActiveChip"></span>
+  <button class="gt-active-clear" onclick="window.clearGlobalTag()">✕ limpiar</button>
+</div>
+
+<!-- Panel de tags -->
+<div id="gtPanel" onclick="if(event.target===this)window.closeGlobalTags()">
+  <div id="gtSheet">
+    <div class="gt-handle"></div>
+    <div class="gt-head">
+      <div class="gt-title">🏷️ Etiquetas</div>
+      <button class="gt-close" onclick="window.closeGlobalTags()">✕</button>
+    </div>
+    <div class="gt-search-wrap">
+      <input class="gt-search" id="gtSearchInput" placeholder="Buscar etiqueta…" oninput="window._gtFilterList(this.value)"/>
+    </div>
+    <div class="gt-list" id="gtList"></div>
+  </div>
+</div>
+
+<script>
+(function(){
+'use strict';
+
+/* ─── Obtener todos los tags con conteo ─────────────────────────── */
+function _gtGetAllTags() {
+  var map = {};
+  if (typeof boxes === 'undefined') return [];
+  boxes.forEach(function(b) {
+    (b.tags || []).forEach(function(t) {
+      map[t] = (map[t] || 0) + 1;
+    });
+  });
+  return Object.keys(map)
+    .sort(function(a,b){ return map[b]-map[a]; }) // más usados primero
+    .map(function(t){ return { tag:t, count:map[t] }; });
+}
+
+/* ─── Render lista de tags ──────────────────────────────────────── */
+var _gtCurrentFilter = '';
+window._gtFilterList = function(q) {
+  _gtCurrentFilter = q;
+  _gtRenderList(q);
+};
+
+function _gtRenderList(q) {
+  var list    = document.getElementById('gtList');
+  var active  = (typeof activeFilter !== 'undefined') ? activeFilter : '';
+  var allTags = _gtGetAllTags();
+  var filtered = q
+    ? allTags.filter(function(x){ return x.tag.toLowerCase().includes(q.toLowerCase()); })
+    : allTags;
+
+  if (!filtered.length) {
+    list.innerHTML = '<div class="gt-empty">' + (q ? 'No hay etiquetas con "'+q+'"' : 'Aún no tienes etiquetas.<br><span style="font-size:12px">Agrégalas al crear o editar una caja.</span>') + '</div>';
+    return;
+  }
+
+  list.innerHTML = filtered.map(function(x) {
+    var isActive = active === x.tag;
+    var letter   = x.tag.charAt(0).toUpperCase();
+    return [
+      '<div class="gt-row' + (isActive?' active-tag':'') + '" onclick="window._gtSelectTag(\'' + x.tag.replace(/'/g,"\\'") + '\')">',
+        '<div class="gt-tag-left">',
+          '<div class="gt-tag-icon">' + letter + '</div>',
+          '<div class="gt-tag-name">#' + x.tag + '</div>',
+        '</div>',
+        '<div class="gt-tag-count">' + x.count + ' caja' + (x.count!==1?'s':'') + '</div>',
+      '</div>'
+    ].join('');
+  }).join('');
+}
+
+/* ─── Seleccionar tag → filtrar grid ────────────────────────────── */
+window._gtSelectTag = function(tag) {
+  window.closeGlobalTags();
+  // Usar el sistema de filtros existente
+  if (typeof setFilter === 'function') setFilter(tag);
+  // Mostrar barra de tag activo
+  var bar  = document.getElementById('gtActiveBar');
+  var chip = document.getElementById('gtActiveChip');
+  if (bar && chip) {
+    chip.textContent = '#' + tag + ' — filtrando cajas';
+    bar.classList.add('show');
+  }
+  // Inyectar el tag en el buscador para feedback visual
+  var si = document.getElementById('searchInput');
+  if (si) { si.value = ''; } // no contaminar el buscador
+};
+
+/* ─── Limpiar filtro de tag ─────────────────────────────────────── */
+window.clearGlobalTag = function() {
+  if (typeof setFilter === 'function') setFilter('todo');
+  var bar = document.getElementById('gtActiveBar');
+  if (bar) bar.classList.remove('show');
+};
+
+/* ─── Abrir / Cerrar panel ──────────────────────────────────────── */
+window.openGlobalTags = function() {
+  var panel = document.getElementById('gtPanel');
+  var input = document.getElementById('gtSearchInput');
+  if (!panel) return;
+  _gtCurrentFilter = '';
+  if (input) input.value = '';
+  _gtRenderList('');
+  panel.classList.add('open');
+};
+
+window.closeGlobalTags = function() {
+  var panel = document.getElementById('gtPanel');
+  if (panel) panel.classList.remove('open');
+};
+
+/* ─── FAB: mostrar solo en mainScreen cuando hay tags ───────────── */
+function _gtUpdateFab() {
+  var fab    = document.getElementById('gtFab');
+  var badge  = document.getElementById('gtFabBadge');
+  var main   = document.getElementById('mainScreen');
+  if (!fab) return;
+  var tags   = _gtGetAllTags();
+  var isMain = main && !main.classList.contains('hidden');
+  if (isMain && tags.length > 0) {
+    fab.style.display = 'flex';
+    if (badge) badge.textContent = tags.length;
+  } else {
+    fab.style.display = 'none';
+  }
+}
+
+/* ─── Parchear renderGrid y showScreen para actualizar el FAB ────── */
+document.addEventListener('DOMContentLoaded', function() {
+  // Parchear renderGrid para actualizar FAB tras cada render
+  var _origRG = window.renderGrid;
+  if (typeof _origRG === 'function') {
+    window.renderGrid = function() {
+      _origRG.apply(this, arguments);
+      setTimeout(_gtUpdateFab, 60);
+    };
+  }
+
+  // Parchear showScreen para mostrar/ocultar FAB según pantalla
+  var _origSS = window.showScreen;
+  if (typeof _origSS === 'function') {
+    window.showScreen = function(id) {
+      _origSS.apply(this, arguments);
+      setTimeout(_gtUpdateFab, 80);
+    };
+  }
+
+  // Parchear setFilter para actualizar barra activa cuando se limpia desde pills
+  var _origSF = window.setFilter;
+  if (typeof _origSF === 'function') {
+    window.setFilter = function(f) {
+      _origSF.apply(this, arguments);
+      // Si ya no es un tag de caja, ocultar la barra
+      var staticFilters = ['todo','fav','red','done0'];
+      var isStatic = staticFilters.includes(f) || f.startsWith('loc:');
+      if (isStatic) {
+        var bar = document.getElementById('gtActiveBar');
+        if (bar) bar.classList.remove('show');
+      }
+    };
+  }
+
+  // Insertar barra de tag activo justo encima del filterRow
+  var filterRow = document.getElementById('filterRow');
+  var activeBar = document.getElementById('gtActiveBar');
+  if (filterRow && activeBar && filterRow.parentNode) {
+    filterRow.parentNode.insertBefore(activeBar, filterRow);
+  }
+});
+
+console.log('✅ BoxVision GlobalTags v1.0 cargado');
+})();
+</script>
+
+<!-- ═══════════════════════════════════════════════════════════════════════
+     MÓDULO: SmartPush v1.0 — Notificaciones mejoradas vía Service Worker
+     ── Las notificaciones se delegan al SW cuando está disponible,
+        permitiendo que funcionen con la pantalla apagada / app en bg.
+     ── Fallback completo al sistema anterior si el SW no está disponible.
+     ── Mejora la UI de permisos y añade gestión de notificaciones pendientes.
+     ═══════════════════════════════════════════════════════════════════════ -->
+<style>
+/* ── Banner de permiso de notificaciones ──────────────────────── */
+#pushPermBanner{
+  position:fixed;bottom:0;left:0;right:0;z-index:10050;
+  background:var(--card,#1C1C1E);border-top:1px solid rgba(255,255,255,.1);
+  padding:16px 20px 28px;
+  display:none;flex-direction:column;gap:12px;
+  box-shadow:0 -8px 30px rgba(0,0,0,.4);
+  animation:slideUp .3s cubic-bezier(.34,1.1,.64,1);
+}
+#pushPermBanner.show{display:flex;}
+@keyframes slideUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
+.ppb-title{font-size:16px;font-weight:700;color:var(--text,#fff);display:flex;align-items:center;gap:8px;}
+.ppb-sub{font-size:13px;color:var(--muted,rgba(255,255,255,.45));line-height:1.5;}
+.ppb-actions{display:flex;gap:10px;}
+.ppb-allow{
+  flex:1;padding:12px;border-radius:12px;border:none;
+  background:var(--accent,#007AFF);color:#fff;
+  font-size:15px;font-weight:600;cursor:pointer;font-family:inherit;
+}
+.ppb-later{
+  padding:12px 18px;border-radius:12px;
+  background:rgba(255,255,255,.07);border:none;
+  color:var(--muted,rgba(255,255,255,.45));
+  font-size:14px;cursor:pointer;font-family:inherit;
+}
+
+/* ── Indicador de notificaciones activas en el header del reminder ── */
+.rem-push-status{
+  display:flex;align-items:center;gap:6px;
+  font-size:12px;padding:6px 12px;border-radius:10px;
+  margin-bottom:12px;
+}
+.rem-push-status.granted{background:rgba(52,199,89,.12);color:#34C759;}
+.rem-push-status.denied{background:rgba(255,59,48,.12);color:#FF3B30;}
+.rem-push-status.default{background:rgba(255,149,0,.12);color:#FF9500;}
+</style>
+
+<!-- Banner de permiso push -->
+<div id="pushPermBanner">
+  <div class="ppb-title">🔔 Notificaciones</div>
+  <div class="ppb-sub">Activa las notificaciones para recibir recordatorios de tus cajas aunque la app esté en segundo plano.</div>
+  <div class="ppb-actions">
+    <button class="ppb-allow" onclick="window._spushRequestPerm()">Activar notificaciones</button>
+    <button class="ppb-later" onclick="window._spushDismissBanner()">Ahora no</button>
+  </div>
+</div>
+
+<script>
+(function(){
+'use strict';
+
+var SP_KEY_DISMISSED = 'bv_push_banner_dismissed';
+var SP_KEY_SCHEDULED = 'bv_push_sw_scheduled';  // recordatorios delegados al SW
+
+/* ─── Verificar si el SW puede manejar notificaciones ───────────── */
+function _swAvailable() {
+  return 'serviceWorker' in navigator &&
+         'Notification' in window &&
+         navigator.serviceWorker.controller !== null;
+}
+
+/* ─── Delegar recordatorio al SW ────────────────────────────────── */
+function _delegateToSW(rem) {
+  if (!_swAvailable()) return false;
+  try {
+    navigator.serviceWorker.controller.postMessage({
+      type: 'SCHEDULE_NOTIFICATION',
+      payload: {
+        id:      rem.id,
+        title:   '⏰ ' + (rem.boxName || 'Recordatorio'),
+        body:    rem.note || 'Es hora de revisar esta caja',
+        icon:    'icons/logo.png',
+        tag:     rem.id,
+        delayMs: rem.ts - Date.now(),
+        data:    { boxId: rem.boxId }
+      }
+    });
+    // Guardar en localStorage para poder cancelar
+    var scheduled = _getScheduled();
+    scheduled[rem.id] = { ts: rem.ts, boxId: rem.boxId };
+    _saveScheduled(scheduled);
+    return true;
+  } catch(e) {
+    console.warn('[SmartPush] Error delegando al SW:', e);
+    return false;
+  }
+}
+
+function _getScheduled() {
+  try { return JSON.parse(localStorage.getItem(SP_KEY_SCHEDULED) || '{}'); } catch(e) { return {}; }
+}
+function _saveScheduled(obj) {
+  try { localStorage.setItem(SP_KEY_SCHEDULED, JSON.stringify(obj)); } catch(e) {}
+}
+
+/* ─── Cancelar notificación en el SW ───────────────────────────── */
+function _cancelInSW(remId) {
+  if (!_swAvailable()) return;
+  try {
+    navigator.serviceWorker.controller.postMessage({
+      type: 'CANCEL_NOTIFICATION',
+      payload: { tag: remId }
+    });
+    var scheduled = _getScheduled();
+    delete scheduled[remId];
+    _saveScheduled(scheduled);
+  } catch(e) {}
+}
+
+/* ─── Reemplazar _scheduleNativeNotif con versión mejorada ──────── */
+// Preservar la original como fallback
+var _origSchedule = window._scheduleNativeNotif;
+
+window._scheduleNativeNotif = function(rem) {
+  if (!('Notification' in window)) return;
+
+  if (Notification.permission === 'granted') {
+    // Intentar SW primero (funciona con pantalla apagada / app en bg)
+    var delegated = _delegateToSW(rem);
+    if (delegated) {
+      console.log('[SmartPush] Recordatorio delegado al SW:', rem.id);
+      return;
+    }
+    // Fallback: setTimeout (solo funciona con app abierta)
+    if (typeof _origSchedule === 'function') {
+      _origSchedule(rem);
+    }
+  } else if (Notification.permission === 'default') {
+    // Mostrar banner propio en vez de pedir permisos de golpe
+    _spushShowBanner(rem);
+  }
+  // Si es 'denied', no hacer nada (no molestar)
+};
+
+/* ─── Banner de permiso ─────────────────────────────────────────── */
+var _pendingRemAfterPerm = null;
+
+function _spushShowBanner(rem) {
+  var dismissed = localStorage.getItem(SP_KEY_DISMISSED);
+  // No mostrar si fue descartado en las últimas 24h
+  if (dismissed && Date.now() - parseInt(dismissed) < 86400000) return;
+  _pendingRemAfterPerm = rem;
+  var banner = document.getElementById('pushPermBanner');
+  if (banner) banner.classList.add('show');
+}
+
+window._spushDismissBanner = function() {
+  var banner = document.getElementById('pushPermBanner');
+  if (banner) banner.classList.remove('show');
+  localStorage.setItem(SP_KEY_DISMISSED, Date.now().toString());
+  _pendingRemAfterPerm = null;
+};
+
+window._spushRequestPerm = function() {
+  var banner = document.getElementById('pushPermBanner');
+  if (banner) banner.classList.remove('show');
+
+  Notification.requestPermission().then(function(perm) {
+    if (perm === 'granted') {
+      // Programar el recordatorio pendiente
+      if (_pendingRemAfterPerm) {
+        window._scheduleNativeNotif(_pendingRemAfterPerm);
+        _pendingRemAfterPerm = null;
+      }
+      // Reprogramar todos los recordatorios futuros pendientes
+      _respawnAllReminders();
+      // Toast de confirmación
+      if (typeof showToast === 'function') showToast('🔔 Notificaciones activadas', 'success');
+    } else {
+      if (typeof showToast === 'function') showToast('Notificaciones desactivadas en este dispositivo', 'warn');
+    }
+    // Actualizar UI del sheet de recordatorios si está abierto
+    _spushUpdateStatusUI();
+  });
+};
+
+/* ─── Reprogramar todos los recordatorios futuros en el SW ─────── */
+function _respawnAllReminders() {
+  if (!_swAvailable() || Notification.permission !== 'granted') return;
+  try {
+    var rems = JSON.parse(localStorage.getItem('bv_reminders') || '[]');
+    var now  = Date.now();
+    rems.filter(function(r){ return r.ts > now; }).forEach(function(rem) {
+      _delegateToSW(rem);
+    });
+    if (rems.length) console.log('[SmartPush] ' + rems.length + ' recordatorios reprogramados en SW');
+  } catch(e) {}
+}
+
+/* ─── UI de estado de notificaciones en el reminder sheet ──────── */
+function _spushUpdateStatusUI() {
+  // Buscar el rem-sheet abierto e inyectar indicador
+  var sheet = document.getElementById('_remSheet') || document.querySelector('.rem-sheet-inner');
+  if (!sheet) return;
+
+  var existing = sheet.querySelector('.rem-push-status');
+  if (existing) existing.remove();
+
+  if (!('Notification' in window)) return;
+
+  var perm  = Notification.permission;
+  var label = { granted:'🔔 Notificaciones activas', denied:'🔕 Notificaciones bloqueadas', default:'🔔 Notificaciones desactivadas' };
+  var cls   = perm;
+
+  var div = document.createElement('div');
+  div.className = 'rem-push-status ' + cls;
+  div.innerHTML = label[perm] || '';
+  if (perm !== 'granted') {
+    div.innerHTML += '<button onclick="window._spushRequestPerm()" style="margin-left:auto;background:none;border:none;color:inherit;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit">Activar →</button>';
+  }
+
+  // Insertar al principio del sheet
+  var firstChild = sheet.firstElementChild;
+  if (firstChild) sheet.insertBefore(div, firstChild);
+  else sheet.appendChild(div);
+}
+
+/* ─── Parchear openReminderSheet para mostrar el status ────────── */
+document.addEventListener('DOMContentLoaded', function() {
+  var _origORS = window.openReminderSheet;
+  if (typeof _origORS === 'function') {
+    window.openReminderSheet = function(boxId) {
+      _origORS.call(this, boxId);
+      setTimeout(_spushUpdateStatusUI, 80);
+    };
+  }
+
+  // Parchear _deleteReminder para cancelar en el SW también
+  var _origDR = window._deleteReminder || (typeof _deleteReminder !== 'undefined' ? _deleteReminder : null);
+  if (typeof _origDR === 'function') {
+    window._deleteReminder = function(remId) {
+      _cancelInSW(remId);
+      _origDR(remId);
+    };
+  }
+
+  // Cuando el SW se activa/cambia, reprogramar notificaciones
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.addEventListener('controllerchange', function() {
+      setTimeout(_respawnAllReminders, 500);
+    });
+
+    // Escuchar mensajes del SW (click en notificación)
+    navigator.serviceWorker.addEventListener('message', function(event) {
+      var data = event.data;
+      if (!data) return;
+      if (data.type === 'NOTIF_CLICKED' && data.boxId) {
+        // Abrir la caja correspondiente
+        if (typeof openDetail === 'function') {
+          setTimeout(function() { openDetail(data.boxId); }, 300);
+        }
+      }
+      if (data.type === 'NOTIF_FIRED') {
+        // El SW disparó la notificación — limpiar el recordatorio
+        if (data.remId && typeof _deleteReminder === 'function') {
+          _deleteReminder(data.remId);
+        }
+      }
+    });
+  }
+
+  // Al cargar, reprogramar recordatorios futuros si ya hay permiso
+  if (typeof Notification !== 'undefined' && Notification.permission === 'granted') {
+    setTimeout(_respawnAllReminders, 2000);
+  }
+});
+
+console.log('✅ BoxVision SmartPush v1.0 cargado — SW delegate + banner de permisos');
 })();
 </script>
 
