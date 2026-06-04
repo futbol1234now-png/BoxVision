@@ -782,6 +782,156 @@
 #sortBtn { position:relative; }
 
 /* ════════════════════════════════
+   🏷️ ETIQUETAS / TAGS GLOBALES
+   ════════════════════════════════ */
+
+/* ── Tag pills en las tarjetas ── */
+.box-tags-row {
+  display:flex; flex-wrap:wrap; gap:4px;
+  margin-top:5px;
+}
+.box-tag-pill {
+  display:inline-flex; align-items:center; gap:3px;
+  background:rgba(10,132,255,.13); border:0.5px solid rgba(10,132,255,.28);
+  color:var(--accent); border-radius:99px;
+  padding:2px 8px; font-size:10.5px; font-weight:700;
+  letter-spacing:.1px; white-space:nowrap;
+}
+.box-tag-pill.tag-fragil  { background:rgba(255,59,48,.12);  border-color:rgba(255,59,48,.3);  color:#FF453A; }
+.box-tag-pill.tag-electronica { background:rgba(88,86,214,.14); border-color:rgba(88,86,214,.3); color:#7B79F7; }
+.box-tag-pill.tag-ropa    { background:rgba(52,199,89,.12);  border-color:rgba(52,199,89,.3);  color:#30D158; }
+.box-tag-pill.tag-cocina  { background:rgba(255,149,0,.14);  border-color:rgba(255,149,0,.3);  color:#FF9F0A; }
+.box-tag-pill.tag-importante { background:rgba(255,204,0,.13); border-color:rgba(255,204,0,.3); color:#FFD60A; }
+.box-tag-pill.tag-libros  { background:rgba(175,82,222,.14); border-color:rgba(175,82,222,.3); color:#BF5AF2; }
+.box-tag-pill.tag-documentos { background:rgba(0,199,190,.13); border-color:rgba(0,199,190,.3); color:#00C7BE; }
+.box-tag-pill.tag-herramientas { background:rgba(100,100,100,.14); border-color:rgba(160,160,160,.3); color:#AEAEB2; }
+.box-tag-pill.tag-bano    { background:rgba(50,173,230,.13); border-color:rgba(50,173,230,.3); color:#32ADE6; }
+.box-tag-pill.tag-decoracion { background:rgba(255,45,85,.13); border-color:rgba(255,45,85,.3); color:#FF2D55; }
+
+/* ── Overlay de búsqueda por tag ── */
+#tagSearchOverlay {
+  display:none; position:fixed; inset:0; z-index:8700;
+  background:rgba(0,0,0,.6); backdrop-filter:blur(14px);
+  -webkit-backdrop-filter:blur(14px);
+  align-items:flex-end; justify-content:center;
+}
+#tagSearchOverlay.open { display:flex; }
+#tagSearchSheet {
+  width:100%; max-width:500px;
+  background:var(--card);
+  border-radius:24px 24px 0 0;
+  padding:0 0 calc(24px + env(safe-area-inset-bottom));
+  max-height:90vh; overflow-y:auto;
+  transform:translateY(100%);
+  transition:transform .38s cubic-bezier(.32,1,.4,1);
+  box-shadow:0 -8px 40px rgba(0,0,0,.35);
+  scrollbar-width:none;
+}
+#tagSearchSheet::-webkit-scrollbar { display:none; }
+#tagSearchOverlay.open #tagSearchSheet { transform:translateY(0); }
+.tgs-handle { width:36px;height:4px;border-radius:2px;background:rgba(128,128,128,.35);margin:12px auto 0; }
+.tgs-header { padding:18px 20px 12px; border-bottom:0.5px solid var(--border); }
+.tgs-title { font-size:18px;font-weight:800;color:var(--text);letter-spacing:-.3px;margin-bottom:2px; }
+.tgs-sub   { font-size:13px;color:var(--muted); }
+.tgs-body  { padding:16px 20px 0; }
+.tgs-section-label { font-size:11px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;margin-bottom:10px; }
+.tgs-tag-grid { display:flex;flex-wrap:wrap;gap:8px;margin-bottom:20px; }
+.tgs-tag-btn {
+  display:flex;align-items:center;gap:5px;
+  background:var(--pill);border:1.5px solid var(--border);
+  border-radius:99px;padding:8px 14px;
+  font-size:13px;font-weight:700;color:var(--text);
+  cursor:pointer;font-family:inherit;
+  transition:background .15s,border-color .15s,color .15s,transform .12s;
+  -webkit-tap-highlight-color:transparent;
+}
+.tgs-tag-btn:active { transform:scale(.93); }
+.tgs-tag-btn.active {
+  background:linear-gradient(135deg,rgba(10,132,255,.22),rgba(88,86,214,.16));
+  border-color:rgba(10,132,255,.55); color:var(--accent);
+}
+.tgs-result-item {
+  display:flex;align-items:center;gap:12px;
+  padding:13px 0;
+  border-bottom:0.5px solid var(--border);
+  cursor:pointer;
+  -webkit-tap-highlight-color:transparent;
+}
+.tgs-result-item:last-child { border-bottom:none; }
+.tgs-result-item:active { opacity:.7; }
+.tgs-result-icon { font-size:28px;flex-shrink:0;width:42px;text-align:center; }
+.tgs-result-info { flex:1;min-width:0; }
+.tgs-result-name { font-size:15px;font-weight:700;color:var(--text);letter-spacing:-.2px; }
+.tgs-result-meta { font-size:12px;color:var(--muted);margin-top:2px; }
+.tgs-result-tags { display:flex;gap:4px;flex-wrap:wrap;margin-top:4px; }
+.tgs-empty {
+  text-align:center;padding:40px 0 20px;
+  color:var(--muted);font-size:14px;
+}
+.tgs-empty-icon { font-size:40px;margin-bottom:10px; }
+
+/* ── Overlay editar tags de una caja ── */
+#tagEditOverlay {
+  display:none;position:fixed;inset:0;z-index:8800;
+  background:rgba(0,0,0,.65);backdrop-filter:blur(16px);
+  -webkit-backdrop-filter:blur(16px);
+  align-items:flex-end;justify-content:center;
+}
+#tagEditOverlay.open { display:flex; }
+#tagEditSheet {
+  width:100%;max-width:500px;
+  background:var(--card);
+  border-radius:24px 24px 0 0;
+  padding:0 0 calc(24px + env(safe-area-inset-bottom));
+  transform:translateY(100%);
+  transition:transform .38s cubic-bezier(.32,1,.4,1);
+  box-shadow:0 -8px 40px rgba(0,0,0,.35);
+}
+#tagEditOverlay.open #tagEditSheet { transform:translateY(0); }
+.tge-handle { width:36px;height:4px;border-radius:2px;background:rgba(128,128,128,.35);margin:12px auto 0; }
+.tge-header { padding:18px 20px 14px;border-bottom:0.5px solid var(--border);display:flex;align-items:center;justify-content:space-between; }
+.tge-title  { font-size:18px;font-weight:800;color:var(--text);letter-spacing:-.3px; }
+.tge-save   { background:var(--accent);border:none;border-radius:10px;padding:7px 16px;color:#fff;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;-webkit-tap-highlight-color:transparent; }
+.tge-save:active { opacity:.8; }
+.tge-body   { padding:16px 20px; }
+.tge-section-label { font-size:11px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;margin-bottom:10px; }
+.tge-chips  { display:flex;flex-wrap:wrap;gap:8px;margin-bottom:20px; }
+.tge-chip {
+  display:flex;align-items:center;gap:5px;
+  background:var(--pill);border:1.5px solid var(--border);
+  border-radius:99px;padding:8px 14px;
+  font-size:13px;font-weight:700;color:var(--text);
+  cursor:pointer;font-family:inherit;
+  transition:background .15s,border-color .15s,color .15s,transform .12s;
+  -webkit-tap-highlight-color:transparent;
+}
+.tge-chip:active { transform:scale(.93); }
+.tge-chip.sel {
+  background:linear-gradient(135deg,rgba(10,132,255,.22),rgba(88,86,214,.16));
+  border-color:rgba(10,132,255,.55);color:var(--accent);
+}
+.tge-custom-row {
+  display:flex;gap:8px;align-items:center;
+  margin-top:4px;
+}
+.tge-custom-inp {
+  flex:1;background:var(--input);border:1.5px solid var(--border);
+  border-radius:12px;padding:10px 14px;font-size:14px;
+  color:var(--text);font-family:inherit;outline:none;
+  transition:border-color .18s;
+}
+.tge-custom-inp:focus { border-color:var(--accent); }
+.tge-custom-inp::placeholder { color:var(--muted); opacity:.55; }
+.tge-custom-add {
+  background:var(--accent);border:none;border-radius:12px;
+  padding:10px 16px;color:#fff;font-size:14px;font-weight:700;
+  cursor:pointer;font-family:inherit;
+  -webkit-tap-highlight-color:transparent;
+  flex-shrink:0;
+}
+.tge-custom-add:active { opacity:.8; }
+
+/* ════════════════════════════════
    COMPARTIR CAJA
    ════════════════════════════════ */
 #shareBoxOverlay {
@@ -3925,6 +4075,7 @@ if(!auth){
       </div>
       <button class="tbtn" onclick="toggleSortMenu()" id="sortBtn" title="Ordenar (doble toque = Filtros avanzados)"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 6h16M7 12h10M10 18h4"/></svg></button>
       <button class="tbtn" id="advFilterTopBtn" onclick="openAdvFilter()" title="Filtros avanzados" style="position:relative"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg></button>
+      <button class="tbtn" onclick="openTagSearch()" title="Buscar por etiqueta" style="font-size:17px;line-height:1">🏷️</button>
       <button class="tbtn" onclick="goSettings()" title="Ajustes"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></button>
 
       <button onclick="openForm()" title="Nueva caja" aria-label="Agregar nueva caja" style="display:flex;align-items:center;gap:6px;background:rgba(10,132,255,.18);color:rgba(10,132,255,.95);border:1px solid rgba(10,132,255,.3);border-radius:14px;padding:0 14px;height:36px;font-size:14px;font-weight:700;font-family:inherit;cursor:pointer;box-shadow:none;transition:transform .18s cubic-bezier(.34,1.56,.64,1),background .15s;-webkit-tap-highlight-color:transparent;flex-shrink:0" onmousedown="this.style.transform='scale(.93)'" onmouseup="this.style.transform=''" onmouseleave="this.style.transform=''">
@@ -3973,6 +4124,7 @@ if(!auth){
     <button class="dh-back" onclick="goMain()" title="Volver" aria-label="Volver"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="15 18 9 12 15 6" style="pointer-events:none"/></svg></i></button>
     <div class="dh-acts">
       <button class="dh-act" id="favBtn" onclick="toggleFav()" title="Favorito" aria-label="Marcar favorito"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" style="pointer-events:none"/></svg></i></button>
+      <button class="dh-act" onclick="if(typeof currentBoxId!=='undefined'&&currentBoxId)openTagEdit(currentBoxId)" title="Etiquetas" aria-label="Etiquetas" style="font-size:15px;line-height:1">🏷️</button>
       <button class="dh-act" onclick="showQuickQR()" title="QR rápido" aria-label="Ver QR"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="6" height="6" rx="1" style="pointer-events:none"/><rect x="15" y="3" width="6" height="6" rx="1"/><rect x="3" y="15" width="6" height="6" rx="1"/><rect x="5" y="5" width="2" height="2" fill="currentColor" stroke="none"/><rect x="17" y="5" width="2" height="2" fill="currentColor" stroke="none"/><rect x="5" y="17" width="2" height="2" fill="currentColor" stroke="none"/><line x1="15" y1="15" x2="15" y2="15.01"/><line x1="18" y1="15" x2="21" y2="15"/><line x1="21" y1="18" x2="21" y2="21"/><line x1="15" y1="18" x2="18" y2="21"/></svg></i></button>
       <button class="dh-act" onclick="openEditForm()" title="Editar caja" aria-label="Editar caja"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" style="pointer-events:none"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></i></button>
     </div>
@@ -4385,6 +4537,25 @@ if(!auth){
           <div class="settings-toggle on" id="notifToggleWrap" style="pointer-events:none">
             <div class="settings-toggle-knob"></div>
           </div>
+        </div>
+        <!-- Web Push real -->
+        <div class="settings-row settings-tappable" onclick="openWebPushPanel()">
+          <div class="settings-row-icon" style="background:rgba(10,132,255,.18)"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/><line x1="12" y1="2" x2="12" y2="1"/></svg></div>
+          <div class="settings-row-text">
+            <div class="settings-label">Push con app cerrada</div>
+            <div class="settings-sub">Recordatorios aunque cierres la app</div>
+          </div>
+          <span class="wp-status-badge default" id="wpStatusBadge" style="font-size:10px">○ Sin activar</span>
+          <span class="settings-chevron">›</span>
+        </div>
+        <!-- Etiquetas globales -->
+        <div class="settings-row settings-tappable" onclick="openTagSearch()">
+          <div class="settings-row-icon" style="background:rgba(255,149,0,.18)"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg></div>
+          <div class="settings-row-text">
+            <div class="settings-label">Buscar por etiqueta</div>
+            <div class="settings-sub">Filtra cajas por tag globalmente</div>
+          </div>
+          <span class="settings-chevron">›</span>
         </div>
         <!-- Sonido de escaneo -->
         <div class="settings-row settings-tappable" onclick="this.querySelector('.settings-toggle').classList.toggle('on');_saveSettingsToggle('sound',this.querySelector('.settings-toggle').classList.contains('on'))">
@@ -13266,6 +13437,14 @@ function _pwDel(){
           <button class="adf-chip" data-adf="progress" data-val="done" onclick="toggleAdvChip(this)">✅ Completo</button>
         </div>
       </div>
+      <!-- Etiquetas / Tags -->
+      <div class="adf-section">
+        <div class="adf-label">🏷️ Etiqueta</div>
+        <div class="adf-chips" id="adfTagChips">
+          <button class="adf-chip" data-adf="tag" data-val="all" onclick="toggleAdvChip(this)">Todas</button>
+          <!-- se rellena dinámicamente con renderTagFilterChips() -->
+        </div>
+      </div>
       <button class="adf-apply-btn" onclick="applyAdvFilter()">Aplicar filtros</button>
       <div style="height:8px"></div>
     </div>
@@ -13436,12 +13615,36 @@ var _advFilters = {
   pri: 'all',
   progress: 'all',
   minItems: '',
-  maxItems: ''
+  maxItems: '',
+  tag: 'all'
 };
 var _advActive = false; // ¿hay filtros avanzados activos?
 
+/* Helper: rellena los chips de etiquetas en el filtro avanzado */
+function _renderTagFilterChips(){
+  var el = document.getElementById('adfTagChips');
+  if(!el) return;
+  var usedTags = [];
+  if(typeof boxes !== 'undefined'){
+    var seen = {};
+    boxes.forEach(function(box){
+      (Array.isArray(box.tags)?box.tags:[]).forEach(function(tag){ seen[tag]=true; });
+    });
+    usedTags = Object.keys(seen);
+  }
+  // Mantener el chip "Todas" y agregar los usados
+  var html = '<button class="adf-chip' + (_advFilters.tag==='all'?' sel':'') + '" data-adf="tag" data-val="all" onclick="toggleAdvChip(this)">Todas</button>';
+  usedTags.forEach(function(tag){
+    var lbl = (typeof _tagLabel === 'function') ? _tagLabel(tag) : tag;
+    var sel = _advFilters.tag === tag ? ' sel' : '';
+    html += '<button class="adf-chip' + sel + '" data-adf="tag" data-val="' + tag + '" onclick="toggleAdvChip(this)">' + lbl + '</button>';
+  });
+  el.innerHTML = html;
+}
+
 window.openAdvFilter = function() {
   // Inicializar chips con estado actual
+  _renderTagFilterChips();
   _syncAdvChipsUI();
   document.getElementById('adfMinItems').value = _advFilters.minItems;
   document.getElementById('adfMaxItems').value = _advFilters.maxItems;
@@ -13465,7 +13668,8 @@ window.toggleAdvChip = function(btn) {
 };
 
 window.resetAdvFilter = function() {
-  _advFilters = { state:'all', pri:'all', progress:'all', minItems:'', maxItems:'' };
+  _advFilters = { state:'all', pri:'all', progress:'all', minItems:'', maxItems:'', tag:'all' };
+  _renderTagFilterChips();
   _syncAdvChipsUI();
   document.getElementById('adfMinItems').value = '';
   document.getElementById('adfMaxItems').value = '';
@@ -13490,7 +13694,8 @@ window.applyAdvFilter = function() {
     _advFilters.pri !== 'all' ||
     _advFilters.progress !== 'all' ||
     _advFilters.minItems !== '' ||
-    _advFilters.maxItems !== ''
+    _advFilters.maxItems !== '' ||
+    _advFilters.tag !== 'all'
   );
 
   // Actualizar badge en botón de filtro
@@ -13502,6 +13707,7 @@ window.applyAdvFilter = function() {
     if (_advFilters.pri !== 'all') count++;
     if (_advFilters.progress !== 'all') count++;
     if (_advFilters.minItems !== '' || _advFilters.maxItems !== '') count++;
+    if (_advFilters.tag !== 'all') count++;
     badge.textContent = count;
   }
 
@@ -13552,6 +13758,12 @@ document.addEventListener('DOMContentLoaded', function() {
         // Rango items
         if (_advFilters.minItems !== '') boxes2 = boxes2.filter(function(b){ return b.items.length >= parseInt(_advFilters.minItems); });
         if (_advFilters.maxItems !== '') boxes2 = boxes2.filter(function(b){ return b.items.length <= parseInt(_advFilters.maxItems); });
+        // Etiqueta / Tag
+        if (_advFilters.tag && _advFilters.tag !== 'all'){
+          boxes2 = boxes2.filter(function(b){
+            return Array.isArray(b.tags) && b.tags.indexOf(_advFilters.tag) !== -1;
+          });
+        }
 
         window._gridFiltered = boxes2;
         window._gridPage = 0;
@@ -15362,6 +15574,717 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 console.log('✅ BoxVision SmartPush v1.0 cargado — SW delegate + banner de permisos');
+})();
+</script>
+
+<!-- ══════════════════════════════════════════════════
+     🔔 WEB PUSH REAL — Estilos del panel de activación
+     ══════════════════════════════════════════════════ -->
+<style>
+#webPushOverlay {
+  display:none;position:fixed;inset:0;z-index:9500;
+  background:rgba(0,0,0,.65);backdrop-filter:blur(16px);
+  -webkit-backdrop-filter:blur(16px);
+  align-items:flex-end;justify-content:center;
+}
+#webPushOverlay.open { display:flex; }
+#webPushSheet {
+  width:100%;max-width:500px;
+  background:var(--card);
+  border-radius:28px 28px 0 0;
+  padding:0 0 calc(28px + env(safe-area-inset-bottom));
+  transform:translateY(100%);
+  transition:transform .42s cubic-bezier(.32,1,.4,1);
+  box-shadow:0 -8px 48px rgba(0,0,0,.45),0 -1px 0 rgba(255,255,255,.07);
+}
+#webPushOverlay.open #webPushSheet { transform:translateY(0); }
+.wp-handle { width:36px;height:5px;border-radius:99px;background:rgba(128,128,128,.3);margin:12px auto 0; }
+.wp-hero {
+  padding:28px 24px 20px;text-align:center;
+  background:linear-gradient(160deg,rgba(10,132,255,.12),rgba(88,86,214,.1));
+  border-bottom:0.5px solid var(--border);
+  margin-bottom:0;
+}
+.wp-hero-icon { font-size:52px;margin-bottom:12px;display:block;
+  animation:wpIconPop .5s cubic-bezier(.34,1.56,.64,1) both; }
+@keyframes wpIconPop { from{transform:scale(.5);opacity:0} to{transform:scale(1);opacity:1} }
+.wp-hero-title { font-size:20px;font-weight:900;color:var(--text);letter-spacing:-.4px;margin-bottom:6px; }
+.wp-hero-sub   { font-size:13.5px;color:var(--muted);line-height:1.5;max-width:300px;margin:0 auto; }
+.wp-body  { padding:20px 24px 0; }
+.wp-features { display:flex;flex-direction:column;gap:12px;margin-bottom:24px; }
+.wp-feat {
+  display:flex;align-items:center;gap:14px;
+  background:rgba(255,255,255,.04);border:0.5px solid var(--border);
+  border-radius:14px;padding:13px 14px;
+}
+.wp-feat-icon { font-size:26px;flex-shrink:0;width:36px;text-align:center; }
+.wp-feat-text { flex:1;min-width:0; }
+.wp-feat-name { font-size:14px;font-weight:700;color:var(--text);letter-spacing:-.2px; }
+.wp-feat-desc { font-size:12px;color:var(--muted);margin-top:1px;line-height:1.4; }
+.wp-enable-btn {
+  width:100%;padding:16px;border-radius:16px;border:none;
+  background:linear-gradient(135deg,#0A84FF,#5856D6);color:#fff;
+  font-size:16px;font-weight:700;font-family:inherit;cursor:pointer;
+  box-shadow:0 6px 24px rgba(10,132,255,.4);
+  transition:transform .15s,opacity .15s;
+  -webkit-tap-highlight-color:transparent;
+  margin-bottom:10px;
+}
+.wp-enable-btn:active { transform:scale(.97);opacity:.9; }
+.wp-skip-btn {
+  width:100%;padding:13px;border-radius:16px;border:none;
+  background:transparent;color:var(--muted);
+  font-size:14px;font-weight:600;font-family:inherit;cursor:pointer;
+  -webkit-tap-highlight-color:transparent;
+}
+.wp-skip-btn:active { background:rgba(255,255,255,.06); }
+/* Status badge en settings */
+.wp-status-badge {
+  display:inline-flex;align-items:center;gap:5px;
+  border-radius:99px;padding:3px 10px;
+  font-size:11px;font-weight:700;
+}
+.wp-status-badge.granted { background:rgba(52,199,89,.15);color:#30D158; }
+.wp-status-badge.denied  { background:rgba(255,59,48,.13);color:#FF453A; }
+.wp-status-badge.default { background:rgba(142,142,147,.15);color:#8E8E93; }
+</style>
+
+<!-- ══════════════════════════════════════════════════
+     🏷️ ETIQUETAS — HTML: Buscar por tag + Editar tags
+     ══════════════════════════════════════════════════ -->
+
+<!-- ── Sheet: Buscar por etiqueta global ── -->
+<div id="tagSearchOverlay" onclick="if(event.target===this)closeTagSearch()">
+  <div id="tagSearchSheet">
+    <div class="tgs-handle"></div>
+    <div class="tgs-header">
+      <div class="tgs-title">🏷️ Buscar por etiqueta</div>
+      <div class="tgs-sub">Toca un tag para ver todas las cajas que lo tienen</div>
+    </div>
+    <div class="tgs-body">
+      <div class="tgs-section-label">Etiquetas usadas</div>
+      <div class="tgs-tag-grid" id="tgsTagGrid"></div>
+      <div class="tgs-section-label" id="tgsResultsLabel" style="display:none">Cajas encontradas</div>
+      <div id="tgsResults"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ── Sheet: Editar tags de una caja ── -->
+<div id="tagEditOverlay" onclick="if(event.target===this)closeTagEdit()">
+  <div id="tagEditSheet">
+    <div class="tge-handle"></div>
+    <div class="tge-header">
+      <div class="tge-title">🏷️ Etiquetas</div>
+      <button class="tge-save" onclick="saveTagEdit()">Guardar</button>
+    </div>
+    <div class="tge-body">
+      <div class="tge-section-label">Etiquetas predefinidas</div>
+      <div class="tge-chips" id="tgeChips"></div>
+      <div class="tge-section-label">Etiqueta personalizada</div>
+      <div class="tge-custom-row">
+        <input class="tge-custom-inp" id="tgeCustomInp" type="text" placeholder="Ej: mudanza, bodega..."
+          maxlength="24"
+          onkeydown="if(event.key==='Enter'){event.preventDefault();_tgeAddCustom();}"
+        />
+        <button class="tge-custom-add" onclick="_tgeAddCustom()">+ Agregar</button>
+      </div>
+      <div id="tgeCustomList" style="display:flex;flex-wrap:wrap;gap:7px;margin-top:12px"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════
+     🔔 WEB PUSH REAL — HTML del panel de activación
+     ══════════════════════════════════════════════════ -->
+<div id="webPushOverlay" onclick="if(event.target===this)closeWebPushPanel()">
+  <div id="webPushSheet">
+    <div class="wp-handle"></div>
+    <div class="wp-hero">
+      <span class="wp-hero-icon">🔔</span>
+      <div class="wp-hero-title">Notificaciones reales</div>
+      <div class="wp-hero-sub">Recibe recordatorios de tus cajas aunque la app esté cerrada</div>
+    </div>
+    <div class="wp-body">
+      <div class="wp-features">
+        <div class="wp-feat">
+          <div class="wp-feat-icon">📴</div>
+          <div class="wp-feat-text">
+            <div class="wp-feat-name">App cerrada = sin problema</div>
+            <div class="wp-feat-desc">Las alertas llegan aunque no tengas BoxVision abierta</div>
+          </div>
+        </div>
+        <div class="wp-feat">
+          <div class="wp-feat-icon">⏰</div>
+          <div class="wp-feat-text">
+            <div class="wp-feat-name">Recordatorios puntuales</div>
+            <div class="wp-feat-desc">Conecta directamente a la caja cuando tocas la notificación</div>
+          </div>
+        </div>
+        <div class="wp-feat">
+          <div class="wp-feat-icon">🔒</div>
+          <div class="wp-feat-text">
+            <div class="wp-feat-name">Sin spam — solo lo que pides</div>
+            <div class="wp-feat-desc">Solo recibes las alertas de recordatorios que tú configurás</div>
+          </div>
+        </div>
+      </div>
+      <button class="wp-enable-btn" id="wpEnableBtn" onclick="requestWebPushPermission()">
+        🔔 Activar notificaciones
+      </button>
+      <button class="wp-skip-btn" onclick="closeWebPushPanel()">Ahora no</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════
+     🏷️ FEATURE 2: ETIQUETAS/TAGS — JavaScript
+     ══════════════════════════════════════════════════════ -->
+<script>
+(function(){
+'use strict';
+
+/* ── Catálogo de tags predefinidos ─────────────────── */
+var PRESET_TAGS = [
+  { id:'fragil',       label:'🫧 Frágil',         cls:'tag-fragil'       },
+  { id:'electronica',  label:'💻 Electrónica',     cls:'tag-electronica'  },
+  { id:'ropa',         label:'👕 Ropa',            cls:'tag-ropa'         },
+  { id:'cocina',       label:'🍳 Cocina',          cls:'tag-cocina'       },
+  { id:'importante',   label:'⭐ Importante',      cls:'tag-importante'   },
+  { id:'libros',       label:'📚 Libros',          cls:'tag-libros'       },
+  { id:'documentos',   label:'📄 Documentos',      cls:'tag-documentos'   },
+  { id:'herramientas', label:'🔧 Herramientas',    cls:'tag-herramientas' },
+  { id:'bano',         label:'🚿 Baño',            cls:'tag-bano'         },
+  { id:'decoracion',   label:'🎨 Decoración',      cls:'tag-decoracion'   },
+];
+
+/* Obtener tags de una caja (siempre array) */
+function _boxTags(box){ return Array.isArray(box.tags) ? box.tags : []; }
+
+/* CSS class para un tag (preset o custom) */
+function _tagCls(tagId){
+  var p = PRESET_TAGS.find(function(t){ return t.id === tagId; });
+  return p ? p.cls : '';
+}
+
+/* Label visible de un tag */
+function _tagLabel(tagId){
+  var p = PRESET_TAGS.find(function(t){ return t.id === tagId; });
+  if(p) return p.label;
+  return '🏷️ ' + tagId.charAt(0).toUpperCase() + tagId.slice(1);
+}
+
+/* ── Renderiza pills de tags en tarjetas/detail ──── */
+window.renderBoxTagPills = function(tags, container){
+  if(!container) return;
+  if(!tags || !tags.length){ container.innerHTML=''; return; }
+  container.innerHTML = tags.map(function(tag){
+    var cls = _tagCls(tag);
+    var lbl = _tagLabel(tag);
+    return '<span class="box-tag-pill' + (cls ? ' '+cls : '') + '">' + lbl + '</span>';
+  }).join('');
+};
+
+/* ── Hook en renderGrid para mostrar tags en tarjetas ─ */
+(function patchRenderGrid(){
+  var orig = window.renderGrid;
+  if(typeof orig !== 'function') return;
+  window.renderGrid = function(){
+    orig.apply(this, arguments);
+    // Después del render, inyectar tags en cada card
+    setTimeout(function(){
+      if(typeof boxes === 'undefined') return;
+      boxes.forEach(function(box){
+        var tags = _boxTags(box);
+        if(!tags.length) return;
+        // Buscar card del box por data-id
+        var card = document.querySelector('.box-card[data-id="' + box.id + '"]');
+        if(!card) return;
+        var existing = card.querySelector('.box-tags-row');
+        if(existing) existing.remove();
+        var row = document.createElement('div');
+        row.className = 'box-tags-row';
+        tags.forEach(function(tag){
+          var pill = document.createElement('span');
+          pill.className = 'box-tag-pill' + (_tagCls(tag) ? ' '+_tagCls(tag) : '');
+          pill.textContent = _tagLabel(tag);
+          row.appendChild(pill);
+        });
+        // Insertar antes del pie de la tarjeta
+        var footer = card.querySelector('.bc-footer') || card.querySelector('.bc-meta') || card.lastElementChild;
+        if(footer) card.insertBefore(row, footer);
+        else card.appendChild(row);
+      });
+    }, 60);
+  };
+})();
+
+/* ── EDITAR TAGS DE UNA CAJA ─────────────────────── */
+var _tgeBoxId = null;
+var _tgeSelected = [];
+
+window.openTagEdit = function(boxId){
+  var box = (typeof boxes !== 'undefined') && boxes.find(function(b){ return b.id === boxId; });
+  if(!box) return;
+  _tgeBoxId = boxId;
+  _tgeSelected = _boxTags(box).slice();
+
+  // Render preset chips
+  var chipsEl = document.getElementById('tgeChips');
+  if(chipsEl){
+    chipsEl.innerHTML = PRESET_TAGS.map(function(t){
+      var sel = _tgeSelected.indexOf(t.id) !== -1;
+      return '<button class="tge-chip' + (sel?' sel':'') + '" data-tagid="' + t.id + '" onclick="_tgeToggle(this)">' + t.label + '</button>';
+    }).join('');
+  }
+
+  // Render custom tags already on this box
+  _renderCustomList();
+
+  // Clear input
+  var inp = document.getElementById('tgeCustomInp');
+  if(inp) inp.value = '';
+
+  var ov = document.getElementById('tagEditOverlay');
+  var sh = document.getElementById('tagEditSheet');
+  if(ov){ ov.style.display='flex'; requestAnimationFrame(function(){ ov.classList.add('open'); }); }
+  setTimeout(function(){ var i=document.getElementById('tgeCustomInp'); if(i) i.focus(); }, 400);
+};
+
+window.closeTagEdit = function(){
+  var ov = document.getElementById('tagEditOverlay');
+  if(ov){ ov.classList.remove('open'); setTimeout(function(){ ov.style.display='none'; }, 400); }
+};
+
+window._tgeToggle = function(btn){
+  var id = btn.dataset.tagid;
+  var idx = _tgeSelected.indexOf(id);
+  if(idx === -1){ _tgeSelected.push(id); btn.classList.add('sel'); }
+  else { _tgeSelected.splice(idx,1); btn.classList.remove('sel'); }
+};
+
+function _renderCustomList(){
+  var el = document.getElementById('tgeCustomList');
+  if(!el) return;
+  // Custom = tags NOT in preset list
+  var custom = _tgeSelected.filter(function(id){
+    return !PRESET_TAGS.find(function(p){ return p.id === id; });
+  });
+  el.innerHTML = custom.map(function(tag){
+    return '<span style="display:inline-flex;align-items:center;gap:5px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);border-radius:99px;padding:5px 10px 5px 12px;font-size:12px;font-weight:700;color:var(--text)">'
+      + '🏷️ ' + _escTag(tag)
+      + '<button onclick="_tgeRemoveCustom(\'' + _escAttr(tag) + '\')" style="background:none;border:none;color:var(--muted);cursor:pointer;font-size:14px;padding:0 0 0 2px;line-height:1;-webkit-tap-highlight-color:transparent">×</button>'
+      + '</span>';
+  }).join('');
+}
+
+window._tgeAddCustom = function(){
+  var inp = document.getElementById('tgeCustomInp');
+  if(!inp) return;
+  var val = inp.value.trim().toLowerCase().replace(/[^a-z0-9áéíóúüñ\s\-_]/gi,'').slice(0,24);
+  if(!val){ inp.focus(); return; }
+  if(_tgeSelected.indexOf(val) === -1) _tgeSelected.push(val);
+  inp.value = '';
+  _renderCustomList();
+  inp.focus();
+};
+
+window._tgeRemoveCustom = function(tag){
+  var idx = _tgeSelected.indexOf(tag);
+  if(idx !== -1) _tgeSelected.splice(idx,1);
+  _renderCustomList();
+};
+
+window.saveTagEdit = function(){
+  if(!_tgeBoxId || typeof boxes === 'undefined') return;
+  var box = boxes.find(function(b){ return b.id === _tgeBoxId; });
+  if(!box) return;
+  box.tags = _tgeSelected.slice();
+  if(typeof saveData === 'function') saveData();
+  if(typeof renderGrid === 'function') renderGrid();
+  // Update detail screen if open
+  _updateDetailTags(box);
+  closeTagEdit();
+  if(typeof showToast === 'function'){
+    var n = box.tags.length;
+    showToast(n ? '🏷️ ' + n + ' etiqueta' + (n!==1?'s':'') + ' guardada' + (n!==1?'s':'') : '🏷️ Etiquetas eliminadas', '#34C759');
+  }
+};
+
+function _updateDetailTags(box){
+  var el = document.getElementById('detailTagsRow');
+  if(!el) return;
+  var tags = _boxTags(box);
+  if(!tags.length){ el.style.display='none'; return; }
+  el.style.display='flex';
+  var pils = el.querySelector('.dtr-pills');
+  if(pils) window.renderBoxTagPills(tags, pils);
+}
+
+/* ── BUSCAR POR ETIQUETA ─────────────────────────── */
+var _tgsActiveTag = null;
+
+window.openTagSearch = function(){
+  _tgsActiveTag = null;
+  _renderTagGrid();
+  _renderTagResults(null);
+  var ov = document.getElementById('tagSearchOverlay');
+  if(ov){ ov.style.display='flex'; requestAnimationFrame(function(){ ov.classList.add('open'); }); }
+};
+
+window.closeTagSearch = function(){
+  var ov = document.getElementById('tagSearchOverlay');
+  if(ov){ ov.classList.remove('open'); setTimeout(function(){ ov.style.display='none'; }, 400); }
+};
+
+function _getAllUsedTags(){
+  if(typeof boxes === 'undefined') return [];
+  var all = {};
+  boxes.forEach(function(box){
+    _boxTags(box).forEach(function(tag){
+      all[tag] = (all[tag]||0) + 1;
+    });
+  });
+  return Object.keys(all).map(function(id){ return { id:id, count:all[id] }; })
+    .sort(function(a,b){ return b.count - a.count; });
+}
+
+function _renderTagGrid(){
+  var el = document.getElementById('tgsTagGrid');
+  if(!el) return;
+  var tags = _getAllUsedTags();
+  if(!tags.length){
+    el.innerHTML = '<div style="font-size:13px;color:var(--muted);padding:8px 0">Aún no hay etiquetas. Edita una caja y agrégalas.</div>';
+    return;
+  }
+  el.innerHTML = tags.map(function(t){
+    var lbl = _tagLabel(t.id);
+    var cls = _tagCls(t.id);
+    var active = _tgsActiveTag === t.id;
+    return '<button class="tgs-tag-btn' + (active?' active':'') + '" data-tagid="' + t.id + '" onclick="_tgsSelectTag(this)">'
+      + lbl
+      + ' <span style="opacity:.55;font-weight:600;font-size:11px">(' + t.count + ')</span>'
+      + '</button>';
+  }).join('');
+}
+
+window._tgsSelectTag = function(btn){
+  var id = btn.dataset.tagid;
+  _tgsActiveTag = (_tgsActiveTag === id) ? null : id;
+  // update active class
+  document.querySelectorAll('.tgs-tag-btn').forEach(function(b){
+    b.classList.toggle('active', b.dataset.tagid === _tgsActiveTag);
+  });
+  _renderTagResults(_tgsActiveTag);
+};
+
+function _renderTagResults(tagId){
+  var lbl = document.getElementById('tgsResultsLabel');
+  var el  = document.getElementById('tgsResults');
+  if(!el) return;
+  if(!tagId){ if(lbl) lbl.style.display='none'; el.innerHTML=''; return; }
+  if(lbl) lbl.style.display='block';
+  var matches = (typeof boxes !== 'undefined') ? boxes.filter(function(box){
+    return _boxTags(box).indexOf(tagId) !== -1;
+  }) : [];
+  if(!matches.length){
+    el.innerHTML = '<div class="tgs-empty"><div class="tgs-empty-icon">🔍</div>No hay cajas con esta etiqueta</div>';
+    return;
+  }
+  el.innerHTML = matches.map(function(box){
+    var icon = (typeof getIcon === 'function') ? getIcon(box.name, box) : '📦';
+    var tagHtml = _boxTags(box).map(function(t){
+      var cls = _tagCls(t);
+      return '<span class="box-tag-pill' + (cls?' '+cls:'') + '">' + _tagLabel(t) + '</span>';
+    }).join('');
+    return '<div class="tgs-result-item" onclick="closeTagSearch();if(typeof openDetail===\'function\') openDetail(\'' + box.id + '\')">'
+      + '<div class="tgs-result-icon">' + icon + '</div>'
+      + '<div class="tgs-result-info">'
+      +   '<div class="tgs-result-name">' + _escTag(box.name) + '</div>'
+      +   '<div class="tgs-result-meta">' + box.items.length + ' objeto' + (box.items.length!==1?'s':'') + (box.location ? ' · ' + _escTag(box.location) : '') + '</div>'
+      +   '<div class="tgs-result-tags">' + tagHtml + '</div>'
+      + '</div>'
+      + '<span style="color:var(--muted);font-size:18px">›</span>'
+      + '</div>';
+  }).join('');
+}
+
+/* ── Botón 🏷️ en detail screen (inyectar si no existe) ── */
+document.addEventListener('DOMContentLoaded', function(){
+  // Inyectar fila de tags en el detail screen
+  var noteSec = document.getElementById('noteSec') || document.querySelector('.dsec');
+  if(noteSec && !document.getElementById('detailTagsRow')){
+    var row = document.createElement('div');
+    row.id = 'detailTagsRow';
+    row.style.cssText = 'display:none;flex-direction:row;align-items:center;gap:8px;padding:12px 16px;margin:0 16px 10px;background:rgba(255,255,255,.04);border:0.5px solid var(--border);border-radius:16px;cursor:pointer;-webkit-tap-highlight-color:transparent;';
+    row.innerHTML = '<span style="font-size:18px">🏷️</span>'
+      + '<div class="dtr-pills" style="display:flex;flex-wrap:wrap;gap:4px;flex:1"></div>'
+      + '<span style="font-size:13px;color:var(--muted)">Editar ›</span>';
+    row.onclick = function(){
+      if(typeof currentBoxId !== 'undefined' && currentBoxId) openTagEdit(currentBoxId);
+    };
+    noteSec.parentNode.insertBefore(row, noteSec);
+  }
+
+  // Parchear openDetail para mostrar tags
+  var origOpen = window.openDetail;
+  if(typeof origOpen === 'function'){
+    window.openDetail = function(id){
+      origOpen.apply(this, arguments);
+      setTimeout(function(){
+        var box = (typeof boxes !== 'undefined') && boxes.find(function(b){ return b.id === id; });
+        if(box) _updateDetailTags(box);
+      }, 80);
+    };
+  }
+});
+
+/* ── Helpers de escape ── */
+function _escTag(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function _escAttr(s){ return String(s||'').replace(/'/g,"\\'"); }
+
+/* ── Exponer para llamar desde la UI existente ── */
+window.PRESET_TAGS = PRESET_TAGS;
+
+console.log('✅ BoxVision Tags v1.0 — etiquetas globales activas');
+})();
+</script>
+
+<!-- ══════════════════════════════════════════════════════
+     🔔 FEATURE 4: WEB PUSH REAL — JavaScript
+     ══════════════════════════════════════════════════════ -->
+<script>
+(function(){
+'use strict';
+
+/* ═══════════════════════════════════════════════════════
+   BoxVision WebPush v2.0
+   Estrategia:
+   1. Intentar Web Push nativo (Notification API + SW)
+      → funciona con app cerrada en Android/Chrome/Edge
+   2. Fallback a setTimeout (app en primer plano)
+      → siempre funciona, igual que antes
+   
+   NOTA: Las notificaciones con app cerrada requieren que
+   el sitio sea servido por HTTPS y que el SW esté activo.
+   En GitHub Pages esto funciona por defecto.
+   ═══════════════════════════════════════════════════════ */
+
+var WP_PERM_KEY    = 'bv_wp_perm_asked';   // cuándo se preguntó por última vez
+var WP_ENABLED_KEY = 'bv_wp_enabled';       // usuario lo activó
+
+/* ── Estado actual de permisos ── */
+function _wpPerm(){
+  return ('Notification' in window) ? Notification.permission : 'unsupported';
+}
+
+/* ── Abrir panel de activación ── */
+window.openWebPushPanel = function(){
+  var perm = _wpPerm();
+  if(perm === 'granted'){
+    if(typeof showToast === 'function') showToast('🔔 Las notificaciones ya están activadas','#34C759');
+    return;
+  }
+  if(perm === 'denied'){
+    if(typeof showToast === 'function')
+      showToast('🔕 Notificaciones bloqueadas — actívalas en ajustes del navegador','#FF9500');
+    return;
+  }
+  var ov = document.getElementById('webPushOverlay');
+  if(ov){ ov.style.display='flex'; requestAnimationFrame(function(){ ov.classList.add('open'); }); }
+};
+
+window.closeWebPushPanel = function(){
+  var ov = document.getElementById('webPushOverlay');
+  if(ov){ ov.classList.remove('open'); setTimeout(function(){ ov.style.display='none'; }, 420); }
+  try{ localStorage.setItem(WP_PERM_KEY, Date.now().toString()); }catch(e){}
+};
+
+/* ── Solicitar permiso ── */
+window.requestWebPushPermission = function(){
+  if(!('Notification' in window)){
+    closeWebPushPanel();
+    if(typeof showToast === 'function') showToast('Tu navegador no soporta notificaciones push','#FF9500');
+    return;
+  }
+  var btn = document.getElementById('wpEnableBtn');
+  if(btn){ btn.textContent = 'Solicitando…'; btn.style.opacity = '.7'; btn.disabled = true; }
+
+  Notification.requestPermission().then(function(perm){
+    if(btn){ btn.textContent = '🔔 Activar notificaciones'; btn.style.opacity = ''; btn.disabled = false; }
+    closeWebPushPanel();
+    if(perm === 'granted'){
+      try{ localStorage.setItem(WP_ENABLED_KEY, '1'); }catch(e){}
+      // Reprogramar todos los recordatorios futuros usando el SW
+      _wpRespawnAll();
+      if(typeof showToast === 'function') showToast('🔔 Notificaciones activadas — recibirás alertas aunque cierres la app','#34C759');
+      _updateWpSettingsUI();
+    } else if(perm === 'denied'){
+      if(typeof showToast === 'function') showToast('🔕 Notificaciones bloqueadas','#FF9500');
+    }
+  }).catch(function(){
+    if(btn){ btn.textContent = '🔔 Activar notificaciones'; btn.style.opacity = ''; btn.disabled = false; }
+    closeWebPushPanel();
+  });
+};
+
+/* ── Programar notificación vía SW (con app cerrada) ── */
+window._wpScheduleNotification = function(rem){
+  if(!rem || !rem.ts) return false;
+  var delayMs = rem.ts - Date.now();
+  if(delayMs <= 0) return false;
+
+  if(_wpPerm() !== 'granted') return false;
+
+  // 1️⃣ Intentar delegar al Service Worker (funciona con app cerrada)
+  if('serviceWorker' in navigator && navigator.serviceWorker.controller){
+    try{
+      navigator.serviceWorker.controller.postMessage({
+        type: 'WP_SCHEDULE',
+        payload: {
+          id:      rem.id,
+          title:   '⏰ ' + (rem.boxName || 'BoxVision'),
+          body:    rem.note || 'Es hora de revisar esta caja',
+          icon:    'icons/logo.png',
+          tag:     'bv-rem-' + rem.id,
+          delayMs: delayMs,
+          data:    { boxId: rem.boxId, remId: rem.id }
+        }
+      });
+      console.log('[WebPush] Recordatorio delegado al SW:', rem.id, 'en', Math.round(delayMs/1000)+'s');
+      return true;
+    }catch(e){
+      console.warn('[WebPush] SW delegate falló:', e);
+    }
+  }
+
+  // 2️⃣ Fallback: setTimeout (solo funciona con app abierta)
+  console.log('[WebPush] Fallback setTimeout para recordatorio:', rem.id);
+  setTimeout(function(){
+    if(_wpPerm() === 'granted'){
+      try{
+        var n = new Notification('⏰ ' + (rem.boxName || 'BoxVision'), {
+          body:  rem.note || 'Es hora de revisar esta caja',
+          icon:  'icons/logo.png',
+          tag:   'bv-rem-' + rem.id,
+          data:  { boxId: rem.boxId }
+        });
+        n.onclick = function(){
+          window.focus();
+          if(typeof openDetail === 'function' && rem.boxId) openDetail(rem.boxId);
+          n.close();
+        };
+      }catch(e){ console.warn('[WebPush] Notification falló:', e); }
+    }
+  }, delayMs);
+  return false; // indica que fue setTimeout, no SW
+};
+
+/* ── Cancelar notificación en el SW ── */
+window._wpCancelNotification = function(remId){
+  if('serviceWorker' in navigator && navigator.serviceWorker.controller){
+    try{
+      navigator.serviceWorker.controller.postMessage({
+        type: 'WP_CANCEL',
+        payload: { tag: 'bv-rem-' + remId }
+      });
+    }catch(e){}
+  }
+};
+
+/* ── Reprogramar todos los recordatorios futuros ── */
+function _wpRespawnAll(){
+  if(_wpPerm() !== 'granted') return;
+  try{
+    var rems = JSON.parse(localStorage.getItem('bv_reminders') || '[]');
+    var now  = Date.now();
+    var count = 0;
+    rems.filter(function(r){ return r.ts > now; }).forEach(function(rem){
+      window._wpScheduleNotification(rem);
+      count++;
+    });
+    if(count) console.log('[WebPush] ' + count + ' recordatorios reprogramados');
+  }catch(e){}
+}
+
+/* ── Parchear _scheduleNativeNotif existente ────────
+   Si ya existe (del SmartPush), lo envolvemos para que
+   use también nuestro sistema Web Push mejorado.        */
+document.addEventListener('DOMContentLoaded', function(){
+  var origSchedule = window._scheduleNativeNotif;
+  window._scheduleNativeNotif = function(rem){
+    // Intentar primero con nuestro sistema Web Push
+    var delegated = window._wpScheduleNotification(rem);
+    // Si no se pudo delegar al SW, usar el original (SmartPush fallback)
+    if(!delegated && typeof origSchedule === 'function'){
+      origSchedule(rem);
+    }
+  };
+
+  // Parchear _deleteReminder para cancelar también en el SW
+  var origDelete = window._deleteReminder;
+  if(typeof origDelete === 'function'){
+    window._deleteReminder = function(remId){
+      window._wpCancelNotification(remId);
+      origDelete(remId);
+    };
+  }
+
+  // Cuando el SW se activa/cambia, reprogramar
+  if('serviceWorker' in navigator){
+    navigator.serviceWorker.addEventListener('controllerchange', function(){
+      setTimeout(_wpRespawnAll, 800);
+    });
+
+    // Escuchar clicks en notificaciones enviadas por el SW
+    navigator.serviceWorker.addEventListener('message', function(event){
+      var data = event.data || {};
+      if(data.type === 'WP_NOTIF_CLICKED' && data.boxId){
+        setTimeout(function(){ if(typeof openDetail === 'function') openDetail(data.boxId); }, 300);
+      }
+      if(data.type === 'WP_NOTIF_FIRED' && data.remId){
+        if(typeof _deleteReminder === 'function') _deleteReminder(data.remId);
+      }
+    });
+  }
+
+  // Si ya había permiso, reprogramar al arrancar
+  if(_wpPerm() === 'granted'){
+    setTimeout(_wpRespawnAll, 2500);
+  }
+
+  // Ofrecer activar después de 30s si el usuario tiene recordatorios y nunca preguntamos
+  setTimeout(function(){
+    if(_wpPerm() !== 'default') return;
+    try{
+      var rems = JSON.parse(localStorage.getItem('bv_reminders') || '[]');
+      if(!rems.length) return;
+      var lastAsked = parseInt(localStorage.getItem(WP_PERM_KEY) || '0');
+      // Solo preguntar si no lo hicimos en las últimas 48h
+      if(Date.now() - lastAsked < 48 * 3600 * 1000) return;
+      openWebPushPanel();
+    }catch(e){}
+  }, 30000);
+
+  // UI en settings
+  _updateWpSettingsUI();
+});
+
+/* ── Actualizar indicador de estado en Ajustes ── */
+function _updateWpSettingsUI(){
+  var badge = document.getElementById('wpStatusBadge');
+  if(!badge) return;
+  var perm = _wpPerm();
+  badge.className = 'wp-status-badge ' + perm;
+  var labels = { granted:'🔔 Activadas', denied:'🔕 Bloqueadas', default:'○ Sin activar', unsupported:'No disponible' };
+  badge.textContent = labels[perm] || perm;
+}
+
+/* Exponer para la UI de settings */
+window.openWebPushPanel    = window.openWebPushPanel;
+window._updateWpSettingsUI = _updateWpSettingsUI;
+
+console.log('✅ BoxVision WebPush v2.0 cargado — SW-first, setTimeout fallback');
 })();
 </script>
 
