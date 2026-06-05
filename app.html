@@ -2115,10 +2115,35 @@ input,button,textarea,select{font-family:inherit}
 }
 .dh-meta{display:flex;flex-wrap:wrap;gap:5px;position:relative;z-index:1;margin-top:9px}
 .dh-tag{
-  font-size:11px;background:rgba(255,255,255,.18);color:rgba(255,255,255,.92);
-  padding:3px 10px;border-radius:99px;
-  backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
-  border:0.5px solid rgba(255,255,255,.15);
+  font-size:11.5px;font-weight:600;letter-spacing:-.1px;
+  background:rgba(255,255,255,.14);color:rgba(255,255,255,.88);
+  padding:5px 11px;border-radius:99px;
+  backdrop-filter:blur(12px) saturate(160%);-webkit-backdrop-filter:blur(12px) saturate(160%);
+  border:0.5px solid rgba(255,255,255,.18);
+  display:inline-flex;align-items:center;gap:4px;
+  box-shadow:0 1px 4px rgba(0,0,0,.18),inset 0 1px 0 rgba(255,255,255,.12);
+}
+/* Tag de fecha — identidad propia */
+.dh-tag-date{
+  background:rgba(10,132,255,.22) !important;
+  border-color:rgba(10,132,255,.38) !important;
+  color:#fff !important;
+  font-size:12px !important;
+  font-weight:700 !important;
+  letter-spacing:-.2px !important;
+  padding:5px 12px 5px 9px !important;
+  box-shadow:
+    0 2px 8px rgba(10,132,255,.28),
+    inset 0 1px 0 rgba(255,255,255,.18) !important;
+}
+.dh-tag-date::before{
+  content:"";
+  display:inline-block;
+  width:14px;height:14px;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='rgba(255,255,255,0.9)' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='3' y='4' width='18' height='18' rx='3'/%3E%3Cline x1='16' y1='2' x2='16' y2='6'/%3E%3Cline x1='8' y1='2' x2='8' y2='6'/%3E%3Cline x1='3' y1='10' x2='21' y2='10'/%3E%3C/svg%3E");
+  background-size:contain;background-repeat:no-repeat;background-position:center;
+  flex-shrink:0;
+  opacity:.92;
 }
 /* Body del detalle */
 .detail-body{padding:0 14px 100px;max-width:680px;margin:0 auto}
@@ -3115,6 +3140,7 @@ input[type=file]{display:none}
 @keyframes slideUpScreen{from{opacity:0;transform:translateY(40px)}to{opacity:1;transform:translateY(0)}}
 
 @keyframes toastIn{from{transform:translateX(-50%) translateY(20px);opacity:0}to{transform:translateX(-50%) translateY(0);opacity:1}}
+/* toastSpring — legacy, reemplazado por bv-ios-in */
 
 
 
@@ -3263,12 +3289,7 @@ button{-webkit-tap-highlight-color:transparent;outline:none}
 
 /* Cube overlay */
 
-/* Toast - more springy */
-.toast-anim{animation:toastSpring .4s var(--ease-spring) both}
-@keyframes toastSpring{
-  from{transform:translateX(-50%) translateY(30px) scale(.8);opacity:0}
-  to{transform:translateX(-50%) translateY(0) scale(1);opacity:1}
-}
+/* Toast spring — legacy, ahora usa bv-toast-ios */
 
 /* Topbar blur already in main CSS */
 
@@ -3787,14 +3808,86 @@ button:not(:active), [role="button"]:not(:active) {
   to   { transform: scale(1) rotate(0deg);   opacity: 1; }
 }
 
-/* ── 14. TOASTS — entrada y salida más elegantes ── */
-.toast-anim {
-  animation: bv-toast-in 380ms cubic-bezier(0.34, 1.3, 0.64, 1) both !important;
+/* ── 14. TOASTS iOS-style — notificación desde arriba ── */
+.bv-toast-ios {
+  position: fixed;
+  top: max(16px, env(safe-area-inset-top, 16px));
+  left: 50%;
+  transform: translateX(-50%) translateY(-120%) scale(0.92);
+  z-index: 99999;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: rgba(30, 30, 34, 0.82);
+  backdrop-filter: blur(28px) saturate(180%);
+  -webkit-backdrop-filter: blur(28px) saturate(180%);
+  border: 0.5px solid rgba(255,255,255,0.10);
+  border-radius: 99px;
+  padding: 11px 18px 11px 13px;
+  min-width: 160px;
+  max-width: min(320px, 88vw);
+  width: max-content;
+  box-shadow:
+    0 8px 32px rgba(0,0,0,0.38),
+    0 2px 8px rgba(0,0,0,0.22),
+    inset 0 1px 0 rgba(255,255,255,0.08);
+  pointer-events: none;
+  will-change: transform, opacity;
+  transition: none;
 }
-@keyframes bv-toast-in {
-  from { transform: translateX(-50%) translateY(24px) scale(0.88); opacity: 0; }
-  to   { transform: translateX(-50%) translateY(0)    scale(1);    opacity: 1; }
+.bv-toast-ios.bv-toast-show {
+  animation: bv-ios-in 480ms cubic-bezier(0.32, 1.28, 0.54, 1) both;
 }
+.bv-toast-ios.bv-toast-hide {
+  animation: bv-ios-out 320ms cubic-bezier(0.4, 0, 1, 1) forwards;
+}
+@keyframes bv-ios-in {
+  0%   { transform: translateX(-50%) translateY(-110%) scale(0.88); opacity: 0; }
+  60%  { opacity: 1; }
+  100% { transform: translateX(-50%) translateY(0)     scale(1);    opacity: 1; }
+}
+@keyframes bv-ios-out {
+  0%   { transform: translateX(-50%) translateY(0)     scale(1);    opacity: 1; }
+  100% { transform: translateX(-50%) translateY(-110%) scale(0.88); opacity: 0; }
+}
+.bv-toast-dot {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  flex-shrink: 0;
+}
+.bv-toast-text {
+  font-size: 13.5px;
+  font-weight: 600;
+  color: #fff;
+  line-height: 1.3;
+  letter-spacing: -0.2px;
+  flex: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+/* Undo toast con botón */
+.bv-toast-undo-btn {
+  flex-shrink: 0;
+  background: rgba(255,255,255,0.13);
+  border: none;
+  border-radius: 99px;
+  color: #fff;
+  font-size: 12px;
+  font-weight: 700;
+  padding: 5px 12px;
+  cursor: pointer;
+  font-family: inherit;
+  pointer-events: all;
+  -webkit-tap-highlight-color: transparent;
+  transition: background 0.12s;
+}
+.bv-toast-undo-btn:active { background: rgba(255,255,255,0.24); }
 
 /* ── 15. SEARCH RESULTS DROP ── */
 .sr-wrap.open {
@@ -4459,7 +4552,19 @@ if(!auth){
       </div>
       
       <div class="suggestions-wrap" id="suggestionsWrap"><span class="sug-label">💡</span></div>
-    </div>
+      <!-- Hint de cómo agregar objetos — se oculta al cerrarlo -->
+      <div class="add-search-hint" id="addSearchHint" style="display:none">
+        <span class="add-search-hint-icon">💡</span>
+        <div class="add-search-hint-body">
+          <div class="add-search-hint-title">¿Cómo agregar objetos?</div>
+          <div class="add-search-hint-steps">
+            <div class="add-search-hint-step"><b>1.</b> Escribe el nombre y pulsa Enter (o el botón +)</div>
+            <div class="add-search-hint-step"><b>2.</b> Luego añade una foto tocando ··· → Foto</div>
+            <div class="add-search-hint-step"><b>3.</b> Usa la IA 🤖 para describir todo de una vez</div>
+          </div>
+        </div>
+        <button class="add-hint-close" onclick="document.getElementById('addSearchHint').style.display='none';localStorage.setItem('bv-hint-add','0')" aria-label="Cerrar">×</button>
+      </div>
     <div class="dsec" id="relatedSec">
       <div class="dsec-title"><span class="dsec-title-icon dsec-icon-rel"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg></i></span>CAJA RELACIONADA</div>
       <div id="relatedList"></div>
@@ -4865,6 +4970,28 @@ if(!auth){
           <span class="settings-val" id="viewModeLabel">Cuadrícula</span>
           <span class="settings-chevron">›</span>
         </div>
+        <!-- Barra de progreso de desempaque -->
+        <div class="settings-row settings-tappable" id="progressToggleRow" onclick="(function(row){var tog=row.querySelector('.settings-toggle');tog.classList.toggle('on');var on=tog.classList.contains('on');_saveSettingsToggle('showProgress',on);if(typeof renderProgress==='function')renderProgress();})(this)">
+          <div class="settings-row-icon sri-blue"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/><line x1="2" y1="20" x2="22" y2="20"/></svg></div>
+          <div class="settings-row-text">
+            <div class="settings-label">Barra de progreso</div>
+            <div class="settings-sub">Muestra avance de desempaque en cada caja</div>
+          </div>
+          <div class="settings-toggle on" id="progressToggleWrap" style="pointer-events:none">
+            <div class="settings-toggle-knob"></div>
+          </div>
+        </div>
+        <!-- Círculo de marcar objetos -->
+        <div class="settings-row settings-tappable" id="checkToggleRow" onclick="(function(row){var tog=row.querySelector('.settings-toggle');tog.classList.toggle('on');var on=tog.classList.contains('on');_saveSettingsToggle('showCheck',on);document.body.classList.toggle('hide-item-check',!on);})(this)">
+          <div class="settings-row-icon sri-green"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="9 12 11 14 15 10"/></svg></div>
+          <div class="settings-row-text">
+            <div class="settings-label">Círculo para sacar objetos</div>
+            <div class="settings-sub">Toca el círculo en cada objeto para marcarlo</div>
+          </div>
+          <div class="settings-toggle on" id="checkToggleWrap" style="pointer-events:none">
+            <div class="settings-toggle-knob"></div>
+          </div>
+        </div>
       </div>
     </div>
 
@@ -5025,6 +5152,54 @@ if(!auth){
           </div>
           <div class="settings-row-text">
             <div class="settings-label" style="color:var(--red)">Eliminar clave</div>
+            <div class="settings-sub">Borra la clave de este dispositivo</div>
+          </div>
+          <span class="settings-chevron" style="color:var(--red)">›</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- API KEY GEMINI (SmartPhoto IA) -->
+    <div class="settings-sec">
+      <div class="settings-sec-label">Foto IA — Gemini Vision</div>
+      <div class="settings-card">
+        <div class="settings-row" style="padding:12px 14px 10px">
+          <div class="settings-row-icon" style="background:linear-gradient(135deg,#4285F4,#0F9D58)">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          </div>
+          <div class="settings-row-text">
+            <div class="settings-label">Gemini Vision</div>
+            <div class="settings-sub" style="font-size:11px;line-height:1.4">
+              Reconoce objetos en fotos y genera íconos SVG flat. Usa tu propia clave de Google AI Studio.
+            </div>
+          </div>
+        </div>
+        <div class="settings-row" id="geminiKeyStatusRow">
+          <div class="settings-row-icon" style="background:linear-gradient(135deg,#4285F4,#34A853)">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"/></svg>
+          </div>
+          <div class="settings-row-text">
+            <div class="settings-label">API Key de Gemini</div>
+            <div class="settings-sub" id="geminiKeyStatusSub">Sin clave configurada</div>
+          </div>
+          <span class="settings-val" id="geminiKeyStatusVal" style="font-size:18px">⚠️</span>
+        </div>
+        <div class="settings-row settings-tappable" onclick="_openGeminiKeySettings()">
+          <div class="settings-row-icon sri-green">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+          </div>
+          <div class="settings-row-text">
+            <div class="settings-label" id="geminiKeyActionLabel">Configurar clave</div>
+            <div class="settings-sub">Obtén tu clave gratis en aistudio.google.com</div>
+          </div>
+          <span class="settings-chevron">›</span>
+        </div>
+        <div class="settings-row settings-tappable" id="geminiKeyDeleteRow" onclick="_deleteGeminiKey()" style="display:none">
+          <div class="settings-row-icon sri-red">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>
+          </div>
+          <div class="settings-row-text">
+            <div class="settings-label" style="color:var(--red)">Eliminar clave Gemini</div>
             <div class="settings-sub">Borra la clave de este dispositivo</div>
           </div>
           <span class="settings-chevron" style="color:var(--red)">›</span>
@@ -5289,6 +5464,9 @@ function loadSettingsOnly(){
   try{settings=JSON.parse(localStorage.getItem("cb-settings")||'{"brand":""}');}catch(e){settings={brand:""};}
   dark=localStorage.getItem("cb-dark")==="0"?0:1;
   document.body.setAttribute("data-dark",dark?"1":"");
+  // Aplicar estado del círculo de check desde el arranque
+  if(localStorage.getItem('bv-toggle-showCheck')==='0') document.body.classList.add('hide-item-check');
+  else document.body.classList.remove('hide-item-check');
   applyDark();
 }
 window.loadSettingsOnly = loadSettingsOnly;
@@ -6177,14 +6355,17 @@ function _doOpenDetail(id){
   const fb=document.getElementById("favBtn");
   if(fb) fb.classList.toggle("active", !!box.fav);
   const meta=[];
-  if(box.location) meta.push("📍 "+box.location);
-  if(box.weight) meta.push("⚖️ "+box.weight+"kg");
-  if(box.date) meta.push("📅 "+box.date);
-  (box.tags||[]).forEach(t=>meta.push(t));
-  document.getElementById("dMeta").innerHTML=meta.map(m=>`<span class="dh-tag">${esc(m)}</span>`).join("");
+  if(box.location) meta.push({text:"📍 "+box.location, cls:""});
+  if(box.weight) meta.push({text:"⚖️ "+box.weight+"kg", cls:""});
+  if(box.date) meta.push({text:box.date, cls:"dh-tag-date"});
+  (box.tags||[]).forEach(t=>meta.push({text:t, cls:""}));
+  document.getElementById("dMeta").innerHTML=meta.map(m=>`<span class="dh-tag${m.cls?" "+m.cls:""}">${esc(m.text)}</span>`).join("");
   document.getElementById("noteArea").value=box.note||"";
   document.getElementById("detailDate").textContent="Creada el "+(box.date||"—");
   renderProgress();renderItems();renderPhotoArea();renderRelated();renderHistory();generateQR(id);
+  // Mostrar hint de agregar objetos la primera vez
+  var hintEl=document.getElementById('addSearchHint');
+  if(hintEl && localStorage.getItem('bv-hint-add')!=='0') hintEl.style.display='flex';
   setTimeout(syncMobileElements, 100);
 }
 
@@ -6192,7 +6373,8 @@ function renderProgress(){
   const box=boxes.find(b=>b.id===currentBoxId);if(!box) return;
   const done=box.items.filter(i=>i.done).length,total=box.items.length,pct=total?Math.round(done/total*100):0;
   const col=box.color||"#007AFF";
-  document.getElementById("progSec").style.display=total?"block":"none";
+  const showProg=localStorage.getItem('bv-toggle-showProgress')!=='0';
+  document.getElementById("progSec").style.display=(total&&showProg)?"block":"none";
   document.getElementById("progFill").style.cssText=`width:${pct}%;background:${col}`;
   document.getElementById("progLbl").textContent=done+" sacado"+(done!==1?"s":"")+" de "+total;
   document.getElementById("progPct").textContent=pct+"%";
@@ -7340,6 +7522,14 @@ function goSettings(){ if(typeof _updateFabVisibility==='function') _updateFabVi
   _updateSyncBadge();
   _calcStorageStats();
 
+  // Inicializar toggle de barra de progreso
+  var progT=document.getElementById('progressToggleWrap');
+  if(progT){ var sp=localStorage.getItem('bv-toggle-showProgress'); if(sp==='0') progT.classList.remove('on'); else progT.classList.add('on'); }
+
+  // Inicializar toggle de círculo de check
+  var chkT=document.getElementById('checkToggleWrap');
+  if(chkT){ var sc=localStorage.getItem('bv-toggle-showCheck'); if(sc==='0'){ chkT.classList.remove('on'); document.body.classList.add('hide-item-check'); } else { chkT.classList.add('on'); document.body.classList.remove('hide-item-check'); } }
+
   // Estado del canal de feedback
   const fbSub = document.getElementById('feedbackStatusSub');
   if(fbSub){
@@ -8064,35 +8254,134 @@ function launchConfetti(){
 }
 
 
-function showToast(msg, color){
-  const t=document.createElement("div");
-  t.style.cssText=`position:fixed;bottom:32px;left:50%;transform:translateX(-50%);background:${color||"#1C1C1E"};color:#fff;padding:13px 22px;border-radius:16px;font-size:14px;font-weight:600;z-index:9999;max-width:300px;width:max-content;text-align:center;box-shadow:0 8px 32px rgba(0,0,0,.35),0 1px 0 rgba(255,255,255,.1) inset;animation:toastSpring .4s var(--ease-spring,cubic-bezier(.175,.885,.32,1.275)) both;letter-spacing:-.1px;backdrop-filter:blur(16px)`;
-  t.textContent=msg;
-  document.body.appendChild(t);
-  setTimeout(()=>{t.style.opacity="0";t.style.transition="opacity .3s";setTimeout(()=>t.remove(),300);},3500);
-}
+/* ─────────────────────────────────────────────────
+   showToast — notificación estilo iOS (desde arriba)
+   color: hex o null  |  icon: emoji o null
+   ───────────────────────────────────────────────── */
+(function(){
+  var _queue = [];
+  var _active = null;
+  var _timer  = null;
+
+  /* Mapeo automático de color → icono si no se pasa uno */
+  function _autoIcon(msg, color){
+    if(!color) return '📦';
+    var c = color.toLowerCase();
+    if(c === '#34c759' || c === '#30d158') return '✓';
+    if(c === '#ff3b30' || c === '#ff453a') return '✕';
+    if(c === '#ff9500') return '⚠';
+    if(c === '#0a84ff' || c === '#007aff') return 'ℹ';
+    if(c === '#5856d6' || c === '#af52de') return '✦';
+    if(c === '#ffd60a' || c === '#ffcc00') return '★';
+    if(c === '#8e8e93' || c === '#636366') return '✓';
+    return '📦';
+  }
+
+  /* Extraer el emoji del inicio del mensaje si existe */
+  function _splitMsg(msg){
+    // Detectar si empieza con emoji
+    var emojiRx = /^(\p{Emoji_Presentation}|\p{Extended_Pictographic})\s*/u;
+    var m = msg.match(emojiRx);
+    if(m){ return { icon: m[0].trim(), text: msg.slice(m[0].length).trim() }; }
+    return { icon: null, text: msg };
+  }
+
+  function _dotColor(color){
+    if(!color) return '#636366';
+    var c = color.toLowerCase();
+    if(c === '#34c759' || c === '#30d158') return '#34C759';
+    if(c === '#ff3b30' || c === '#ff453a') return '#FF3B30';
+    if(c === '#ff9500') return '#FF9500';
+    if(c === '#0a84ff' || c === '#007aff') return '#0A84FF';
+    if(c === '#5856d6' || c === '#af52de') return '#5856D6';
+    if(c === '#ffd60a' || c === '#ffcc00') return '#FFD60A';
+    return '#8E8E93';
+  }
+
+  function _show(item){
+    if(_active) _dismiss(_active, true);
+    var parsed = _splitMsg(item.msg);
+    var icon   = item.icon || parsed.icon || _autoIcon(parsed.text, item.color);
+    var dotBg  = _dotColor(item.color);
+
+    var el = document.createElement('div');
+    el.className = 'bv-toast-ios';
+
+    var dot = document.createElement('div');
+    dot.className = 'bv-toast-dot';
+    dot.style.background = dotBg + '22';
+    dot.textContent = icon;
+
+    var txt = document.createElement('div');
+    txt.className = 'bv-toast-text';
+    txt.textContent = parsed.text || item.msg;
+
+    el.appendChild(dot);
+    el.appendChild(txt);
+
+    if(item.undoFn){
+      var undoBtn = document.createElement('button');
+      undoBtn.className = 'bv-toast-undo-btn';
+      undoBtn.textContent = 'Deshacer';
+      var _undone = false;
+      undoBtn.onclick = function(){
+        if(!_undone){ _undone = true; item.undoFn(); _dismiss(el, false); }
+      };
+      el.appendChild(undoBtn);
+      el.style.pointerEvents = 'all';
+    }
+
+    document.body.appendChild(el);
+    /* Forzar reflow antes de animar */
+    void el.offsetWidth;
+    el.classList.add('bv-toast-show');
+    _active = el;
+
+    var dur = item.undoFn ? 4200 : 2800;
+    _timer = setTimeout(function(){ _dismiss(el, false); }, dur);
+  }
+
+  function _dismiss(el, immediate){
+    if(!el) return;
+    clearTimeout(_timer);
+    if(immediate){
+      el.remove();
+    } else {
+      el.classList.remove('bv-toast-show');
+      el.classList.add('bv-toast-hide');
+      setTimeout(function(){ el.remove(); }, 340);
+    }
+    if(_active === el) _active = null;
+    /* Siguiente en cola */
+    if(_queue.length){
+      setTimeout(function(){ _show(_queue.shift()); }, immediate ? 0 : 80);
+    }
+  }
+
+  window.showToast = function(msg, color, icon){
+    var item = { msg: msg||'', color: color||null, icon: icon||null, undoFn: null };
+    if(_active){
+      /* Si ya hay uno visible, encolar */
+      _queue.push(item);
+    } else {
+      _show(item);
+    }
+  };
+
+  window.showToastUndo = function(msg, onUndo){
+    var item = { msg: msg||'', color: null, icon: null, undoFn: onUndo };
+    if(_active){
+      _dismiss(_active, true);
+    }
+    _show(item);
+  };
+
+})();
 
 const ANIMO_MSGS=["¡Uno menos! 💪","¡Vas genial! 🚀","¡Qué crack! ✨","¡Sigue así! 🔥","¡Casi! 🎯","¡Imparable! ⚡","¡Boom! 💥","¡Eso es! 👊","¡Top! 🏆","¡La rompes! 🎸"];
 function animoToast(){const m=ANIMO_MSGS[Math.floor(Math.random()*ANIMO_MSGS.length)];showToast(m,"#34C759");}
 
-// Toast con botón deshacer (7)
-function showToastUndo(msg, onUndo){
-  // Eliminar toast anterior si existe
-  document.getElementById("toastUndo")?.remove();
-  const t=document.createElement("div");
-  t.id="toastUndo";
-  t.style.cssText=`position:fixed;bottom:32px;left:50%;transform:translateX(-50%);background:#1C1C1E;color:#fff;padding:12px 8px 12px 18px;border-radius:16px;font-size:14px;font-weight:600;z-index:9999;max-width:320px;width:max-content;display:flex;align-items:center;gap:12px;box-shadow:0 8px 32px rgba(0,0,0,.35),0 1px 0 rgba(255,255,255,.1) inset;animation:toastSpring .4s cubic-bezier(.175,.885,.32,1.275) both;backdrop-filter:blur(16px)`;
-  const span=document.createElement("span");span.textContent=msg;
-  const btn=document.createElement("button");
-  btn.textContent="Deshacer";
-  btn.style.cssText="background:rgba(255,255,255,.15);border:none;color:#fff;border-radius:10px;padding:6px 12px;font-size:13px;font-weight:700;cursor:pointer;white-space:nowrap;font-family:inherit;flex-shrink:0";
-  let undone=false;
-  btn.onclick=()=>{if(!undone){undone=true;onUndo();t.remove();}};
-  t.appendChild(span);t.appendChild(btn);
-  document.body.appendChild(t);
-  const timer=setTimeout(()=>{t.style.opacity="0";t.style.transition="opacity .3s";setTimeout(()=>t.remove(),300);},4000);
-  btn.addEventListener("click",()=>clearTimeout(timer));
-}
+// showToastUndo — definido arriba en el bloque iOS unificado
 
 // Barra de progreso global de mudanza (9)
 function renderGlobalProgress(){
@@ -10142,18 +10431,172 @@ if(auth){
 </style>
 
 <!-- Modal HTML -->
-<!-- El modal se construye dinámicamente desde config.json -->
+<!-- ════════════════════════════════════════════════════
+     CHANGELOG MODAL — contenido embebido (sin config.json)
+     ════════════════════════════════════════════════════ -->
+<style>
+/* ── Shimmer en hero ── */
+@keyframes cl-shimmer {
+  0%   { background-position: -200% center; }
+  100% { background-position:  200% center; }
+}
+.cl-hero-shimmer {
+  position:absolute;inset:0;
+  background: linear-gradient(105deg,
+    transparent 40%,
+    rgba(255,255,255,.12) 50%,
+    transparent 60%);
+  background-size: 200% 100%;
+  animation: cl-shimmer 3.5s linear infinite;
+}
+/* ── Item entrada escalonada ── */
+@keyframes cl-item-in {
+  from { opacity:0; transform:translateY(10px); }
+  to   { opacity:1; transform:translateY(0); }
+}
+.cl-item {
+  animation: cl-item-in 320ms cubic-bezier(.22,1,.36,1) both;
+}
+.cl-item:nth-child(1) { animation-delay: 60ms; }
+.cl-item:nth-child(2) { animation-delay:120ms; }
+.cl-item:nth-child(3) { animation-delay:180ms; }
+.cl-item:nth-child(4) { animation-delay:240ms; }
+.cl-item:nth-child(5) { animation-delay:300ms; }
+.cl-item:nth-child(6) { animation-delay:360ms; }
+.cl-item:nth-child(7) { animation-delay:420ms; }
+.cl-item:nth-child(8) { animation-delay:480ms; }
+/* ── Separador de sección mejorado ── */
+.cl-section-row {
+  display:flex;align-items:center;gap:10px;
+  margin:18px 0 10px;
+}
+.cl-section-row:first-child { margin-top:0; }
+.cl-section-line {
+  flex:1;height:0.5px;background:var(--border);opacity:.5;
+}
+.cl-section-label-v2 {
+  font-size:10px;font-weight:800;color:var(--muted);
+  text-transform:uppercase;letter-spacing:1.2px;
+  opacity:.6;white-space:nowrap;
+}
+/* ── Item más compacto y moderno ── */
+.cl-item-v2 {
+  display:flex;align-items:center;gap:12px;
+  padding:11px 0;
+  border-bottom:0.5px solid var(--border);
+}
+.cl-item-v2:last-child { border-bottom:none; }
+.cl-item-icon-v2 {
+  width:36px;height:36px;border-radius:10px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:17px;flex-shrink:0;
+}
+.cl-item-title-v2 {
+  font-size:13.5px;font-weight:700;color:var(--text);
+  letter-spacing:-.2px;line-height:1.3;
+}
+.cl-item-desc-v2 {
+  font-size:12px;color:var(--muted);
+  margin-top:1px;line-height:1.45;
+}
+.cl-pill {
+  display:inline-flex;align-items:center;
+  border-radius:5px;
+  font-size:9px;font-weight:800;letter-spacing:.4px;
+  text-transform:uppercase;padding:2px 6px;margin-right:5px;
+  vertical-align:middle;
+}
+.cl-pill-new { background:rgba(52,199,89,.15);  color:#30D158; }
+.cl-pill-fix { background:rgba(255,59,48,.15);  color:#FF453A; }
+.cl-pill-imp { background:rgba(10,132,255,.15); color:#0A84FF; }
+</style>
+
 <div id="changelogOverlay" onclick="if(event.target===this)closeChangelog()">
   <div id="changelogSheet">
     <div class="cl-handle"></div>
     <div class="cl-hero">
+      <div class="cl-hero-shimmer"></div>
       <div class="cl-hero-icon">📦</div>
-      <div class="cl-hero-title">BoxVision actualizado</div>
-      <div class="cl-hero-sub">Acá están los cambios de esta versión</div>
-      <div class="cl-version-badge" id="clVersionBadge">✦ cargando…</div>
+      <div class="cl-hero-title">Novedades de BoxVision</div>
+      <div class="cl-hero-sub">Todo lo que mejoró en esta versión</div>
+      <div class="cl-version-badge" id="clVersionBadge">✦ v2.6.0</div>
     </div>
     <div class="cl-body" id="clBody">
-      <!-- se rellena con JS desde config.json -->
+
+      <div class="cl-section-row">
+        <div class="cl-section-line"></div>
+        <div class="cl-section-label-v2">✨ Nuevo</div>
+        <div class="cl-section-line"></div>
+      </div>
+
+      <div class="cl-item-v2 cl-item">
+        <div class="cl-item-icon-v2" style="background:rgba(52,199,89,.15)">🔔</div>
+        <div class="cl-item-text">
+          <div class="cl-item-title-v2"><span class="cl-pill cl-pill-new">Nuevo</span>Notificaciones iOS</div>
+          <div class="cl-item-desc-v2">Las alertas ahora aparecen desde arriba como notificaciones nativas del iPhone.</div>
+        </div>
+      </div>
+
+      <div class="cl-item-v2 cl-item">
+        <div class="cl-item-icon-v2" style="background:rgba(10,132,255,.15)">🤖</div>
+        <div class="cl-item-text">
+          <div class="cl-item-title-v2"><span class="cl-pill cl-pill-new">Nuevo</span>Asistente IA con acciones</div>
+          <div class="cl-item-desc-v2">La IA ahora puede crear cajas, agregar objetos y marcar items con solo pedírselo.</div>
+        </div>
+      </div>
+
+      <div class="cl-item-v2 cl-item">
+        <div class="cl-item-icon-v2" style="background:rgba(175,82,222,.15)">✦</div>
+        <div class="cl-item-text">
+          <div class="cl-item-title-v2"><span class="cl-pill cl-pill-new">Nuevo</span>Sugerencias inteligentes</div>
+          <div class="cl-item-desc-v2">Al crear una caja, te sugiere objetos típicos según el nombre que elijas.</div>
+        </div>
+      </div>
+
+      <div class="cl-section-row">
+        <div class="cl-section-line"></div>
+        <div class="cl-section-label-v2">🔧 Correcciones</div>
+        <div class="cl-section-line"></div>
+      </div>
+
+      <div class="cl-item-v2 cl-item">
+        <div class="cl-item-icon-v2" style="background:rgba(255,59,48,.15)">🖨️</div>
+        <div class="cl-item-text">
+          <div class="cl-item-title-v2"><span class="cl-pill cl-pill-fix">Fix</span>Impresión de etiquetas</div>
+          <div class="cl-item-desc-v2">Se mostraba código fuente al imprimir. Corregido — ahora abre la etiqueta limpia.</div>
+        </div>
+      </div>
+
+      <div class="cl-item-v2 cl-item">
+        <div class="cl-item-icon-v2" style="background:rgba(255,59,48,.15)">📄</div>
+        <div class="cl-item-text">
+          <div class="cl-item-title-v2"><span class="cl-pill cl-pill-fix">Fix</span>Código visible en pantalla</div>
+          <div class="cl-item-desc-v2">Varios bloques de JS se renderizaban como texto. Todos los scripts están correctamente cerrados.</div>
+        </div>
+      </div>
+
+      <div class="cl-section-row">
+        <div class="cl-section-line"></div>
+        <div class="cl-section-label-v2">⚡ Mejoras</div>
+        <div class="cl-section-line"></div>
+      </div>
+
+      <div class="cl-item-v2 cl-item">
+        <div class="cl-item-icon-v2" style="background:rgba(255,149,0,.15)">⚡</div>
+        <div class="cl-item-text">
+          <div class="cl-item-title-v2"><span class="cl-pill cl-pill-imp">Mejora</span>Animaciones más fluidas</div>
+          <div class="cl-item-desc-v2">Sistema FluidPress v2 con física de resorte en todos los botones y tarjetas.</div>
+        </div>
+      </div>
+
+      <div class="cl-item-v2 cl-item">
+        <div class="cl-item-icon-v2" style="background:rgba(10,132,255,.15)">💬</div>
+        <div class="cl-item-text">
+          <div class="cl-item-title-v2"><span class="cl-pill cl-pill-imp">Mejora</span>Cola de notificaciones</div>
+          <div class="cl-item-desc-v2">Si hay varias alertas seguidas, se muestran en orden sin pisarse entre sí.</div>
+        </div>
+      </div>
+
     </div>
     <div class="cl-footer">
       <button class="cl-close-btn" onclick="closeChangelog()">¡Entendido!</button>
@@ -10163,95 +10606,83 @@ if(auth){
 
 <script>
 /* ══════════════════════════════════════════════════════
-   Sistema de changelog dinámico — lee config.json
-   Para publicar una nueva versión:
-     1. Editá config.json en GitHub (version + changelog)
-     2. Subí el app.html nuevo
-     3. Los usuarios verán el modal automáticamente
+   Sistema de changelog — contenido embebido + opcional config.json
    ══════════════════════════════════════════════════════ */
 
 (function(){
   'use strict';
 
-  // Colores por tipo de cambio
+  var CURRENT_VERSION = '2.6.0';
+
+  // ── Intentar enriquecer con config.json (opcional) ──────
+  function _tryFetchConfig(){
+    fetch('./config.json?_=' + Date.now(), { cache:'no-store' })
+      .then(function(r){ return r.json(); })
+      .then(function(cfg){
+        if(!cfg || !cfg.version) return;
+        // Actualizar badge de versión si hay config
+        var badge = document.getElementById('clVersionBadge');
+        if(badge) badge.textContent = '✦ v' + cfg.version;
+        window._changelogVersion = cfg.version;
+        // Si config tiene changelog propio, reemplazar el contenido
+        if(cfg.changelog && cfg.changelog.length){
+          _buildFromConfig(cfg);
+        }
+      })
+      .catch(function(){ /* Sin red o archivo no existe — usar contenido embebido */ });
+  }
+
   var TYPE_STYLE = {
-    fix: { bg:'rgba(255,59,48,.15)',  tag:'cl-tag-fix', label:'Fix'    },
-    imp: { bg:'rgba(10,132,255,.15)', tag:'cl-tag-imp', label:'Mejora' },
-    new: { bg:'rgba(52,199,89,.15)',  tag:'cl-tag-new', label:'Nuevo'  },
+    fix: { bg:'rgba(255,59,48,.15)',  pill:'cl-pill-fix', label:'Fix',    icon_bg:'rgba(255,59,48,.15)'  },
+    imp: { bg:'rgba(10,132,255,.15)', pill:'cl-pill-imp', label:'Mejora', icon_bg:'rgba(10,132,255,.15)' },
+    new: { bg:'rgba(52,199,89,.15)',  pill:'cl-pill-new', label:'Nuevo',  icon_bg:'rgba(52,199,89,.15)'  },
   };
 
-  // Construye el HTML del modal con los datos de config.json
-  function _buildChangelog(cfg){
-    var badge  = document.getElementById('clVersionBadge');
-    var body   = document.getElementById('clBody');
-    if(!badge || !body) return;
+  function _esc(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 
-    badge.textContent = '✦ v' + cfg.version;
-
+  function _buildFromConfig(cfg){
+    var body = document.getElementById('clBody');
+    if(!body) return;
     var fixes = (cfg.changelog||[]).filter(function(i){ return i.type==='fix'; });
-    var imps  = (cfg.changelog||[]).filter(function(i){ return i.type!=='fix'; });
+    var news  = (cfg.changelog||[]).filter(function(i){ return i.type==='new'; });
+    var imps  = (cfg.changelog||[]).filter(function(i){ return i.type==='imp'; });
 
-    function itemHTML(item){
+    function sectionRow(label){
+      return '<div class="cl-section-row">'
+        +'<div class="cl-section-line"></div>'
+        +'<div class="cl-section-label-v2">'+label+'</div>'
+        +'<div class="cl-section-line"></div>'
+        +'</div>';
+    }
+    function itemRow(item){
       var s = TYPE_STYLE[item.type] || TYPE_STYLE.imp;
-      return '<div class="cl-item">'
-        + '<div class="cl-item-icon" style="background:'+s.bg+'">'+item.icon+'</div>'
-        + '<div class="cl-item-text">'
-        +   '<div class="cl-item-title"><span class="cl-tag '+s.tag+'">'+s.label+'</span>'+_esc(item.title)+'</div>'
-        +   '<div class="cl-item-desc">'+_esc(item.desc)+'</div>'
-        + '</div>'
-        + '</div>';
+      return '<div class="cl-item-v2 cl-item">'
+        +'<div class="cl-item-icon-v2" style="background:'+s.icon_bg+'">'+(item.icon||'✦')+'</div>'
+        +'<div class="cl-item-text">'
+        +'<div class="cl-item-title-v2"><span class="cl-pill '+s.pill+'">'+s.label+'</span>'+_esc(item.title)+'</div>'
+        +'<div class="cl-item-desc-v2">'+_esc(item.desc)+'</div>'
+        +'</div></div>';
     }
-
     var html = '';
-    if(fixes.length){
-      html += '<div class="cl-section-label">Correcciones</div>';
-      html += fixes.map(itemHTML).join('');
-    }
-    if(imps.length){
-      html += '<div class="cl-section-label" style="margin-top:16px">Mejoras</div>';
-      html += imps.map(itemHTML).join('');
-    }
+    if(news.length)  html += sectionRow('✨ Nuevo')       + news.map(itemRow).join('');
+    if(fixes.length) html += sectionRow('🔧 Correcciones') + fixes.map(itemRow).join('');
+    if(imps.length)  html += sectionRow('⚡ Mejoras')      + imps.map(itemRow).join('');
     body.innerHTML = html;
   }
 
-  function _esc(s){
-    return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  // ── Comprueba si esta versión ya fue vista ────────────
+  function _isNewVersion(){
+    var seen = '';
+    try{ seen = localStorage.getItem('bv_changelog_seen') || ''; }catch(e){}
+    return seen !== CURRENT_VERSION;
   }
 
-  // Carga config.json con cache-bust para siempre leer la versión más nueva
-  function _fetchConfig(cb){
-    fetch('./config.json?_=' + Date.now(), { cache:'no-store' })
-      .then(function(r){ return r.json(); })
-      .then(cb)
-      .catch(function(){ cb(null); });
-  }
-
-  // Compara versión del servidor con la guardada en localStorage
-  function _checkVersion(){
-    _fetchConfig(function(cfg){
-      if(!cfg || !cfg.version) return;
-      var seen = '';
-      try{ seen = localStorage.getItem('bv_changelog_seen') || ''; }catch(e){}
-
-      if(seen !== cfg.version){
-        // Versión nueva — preparar modal y marcarlo como pendiente
-        _buildChangelog(cfg);
-        window._changelogVersion  = cfg.version;
-        window._changelogPending  = true;
-      }
-    });
-  }
-
-  // ── API pública ──────────────────────────────────────
-
+  // ── API pública ───────────────────────────────────────
   window.openChangelog = function(){
     var ov = document.getElementById('changelogOverlay');
     if(!ov) return;
-    // Si el body está vacío (ej: abierto desde settings), cargar config primero
-    var body = document.getElementById('clBody');
-    if(body && !body.children.length){
-      _fetchConfig(function(cfg){ if(cfg) _buildChangelog(cfg); });
-    }
+    // Intentar enriquecer con config.json (no bloquea si falla)
+    _tryFetchConfig();
     ov.style.display = 'flex';
     requestAnimationFrame(function(){ requestAnimationFrame(function(){
       ov.classList.add('open');
@@ -10263,18 +10694,21 @@ if(auth){
     if(!ov) return;
     ov.classList.remove('open');
     setTimeout(function(){ ov.style.display = 'none'; }, 400);
-    // Marcar esta versión como vista
-    try{
-      var v = window._changelogVersion || '';
-      if(v) localStorage.setItem('bv_changelog_seen', v);
-    }catch(e){}
+    try{ localStorage.setItem('bv_changelog_seen', CURRENT_VERSION); }catch(e){}
+    window._changelogVersion = CURRENT_VERSION;
   };
 
-  // Alias para compatibilidad con el sistema de actualizaciones (SW)
   window.showChangelog = window.openChangelog;
+  window._changelogVersion = CURRENT_VERSION;
 
-  // Al cargar la página: chequear si hay versión nueva
-  document.addEventListener('DOMContentLoaded', _checkVersion);
+  // ── Al cargar: mostrar si es versión nueva ────────────
+  document.addEventListener('DOMContentLoaded', function(){
+    if(_isNewVersion()){
+      window._changelogPending = true;
+    }
+    // Intentar config.json para actualizar badge/contenido en segundo plano
+    _tryFetchConfig();
+  });
 
 })();
 </script>
@@ -11231,13 +11665,166 @@ function printBoxLabel(){
     + '</div>'
     + (qrDataURL ? '<div class="qr-row"><img class="qr-img" src="'+qrDataURL+'"/><div class="qr-hint">Escanea para ver<br>el contenido en vivo<br>con BoxVision</div></div>' : '')
     + '<div class="footer">Generado con BoxVision · '+ new Date().toLocaleDateString('es-PE') +'</div>'
-    + '</div></body></html>';
+    + '</div>'
+    + '</body></html>';
 
   var win = window.open('', '_blank', 'width=480,height=700');
   if(win){ win.document.write(html); win.document.close(); }
   else { showToast('Permite ventanas emergentes para imprimir', '#FF9500'); }
 }
+</script>
 
+<!-- ══════════════════════════════════════════════════════
+     GEMINI KEY MODAL — igual estilo que Groq Key Modal
+══════════════════════════════════════════════════════ -->
+<div id="geminiKeyOverlay" style="display:none;position:fixed;inset:0;z-index:12000;background:rgba(0,0,0,.7);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);align-items:flex-end;justify-content:center;">
+  <div id="geminiKeySheet" style="width:100%;max-width:500px;background:#1c1c1e;border-radius:24px 24px 0 0;padding:0 0 calc(env(safe-area-inset-bottom,0px) + 20px);animation:slideUpSheet .32s cubic-bezier(.4,0,.2,1) both;box-shadow:0 -4px 48px rgba(0,0,0,.6);overflow:hidden;">
+    <div class="gkm-handle"></div>
+    <div class="gkm-header">
+      <div class="gkm-title" id="gkgTitle">✦ API Key de Gemini</div>
+      <div class="gkm-sub" id="gkgSub">Necesitas tu clave de Google AI Studio para la Foto IA</div>
+    </div>
+    <div class="gkm-body">
+      <div class="gkm-info">
+        <span class="gkm-info-icon">🛡️</span>
+        <div class="gkm-info-text">
+          Cada usuario usa su propia API Key de Gemini.
+          <strong>BoxVision no almacena claves en servidores.</strong>
+          Tu clave se guarda solo en este dispositivo.
+        </div>
+      </div>
+      <div class="gkm-error" id="gkgError"></div>
+      <div class="gkm-label">Tu API Key de Google AI</div>
+      <div class="gkm-input-wrap" style="background:#2c2c2e;border:1.5px solid rgba(255,255,255,.1);border-radius:14px;overflow:hidden;display:flex;align-items:center;margin-bottom:16px;">
+        <input type="password" id="geminiKeyInput" placeholder="AIza..." autocomplete="off" autocorrect="off" spellcheck="false"
+          style="flex:1;background:transparent;border:none;outline:none;padding:13px 14px;font-size:14.5px;color:#fff;font-family:inherit;letter-spacing:.5px;"
+          onkeydown="if(event.key==='Enter') _gkgSave()">
+        <button onclick="_gkgToggleVis()" id="gkgVisBtn" class="gkm-toggle-vis">Ver</button>
+      </div>
+      <a class="gkm-link" href="https://aistudio.google.com/app/apikey" target="_blank" rel="noopener noreferrer">
+        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+        Obtener clave gratis en aistudio.google.com
+      </a>
+      <div class="gkm-btns">
+        <button class="gkm-btn-save" id="gkgSaveBtn" onclick="_gkgSave()">Guardar y usar</button>
+        <button class="gkm-btn-cancel" id="gkgCancelBtn" onclick="_gkgClose()">Cancelar</button>
+      </div>
+      <div class="gkm-privacy-note">
+        🔒 La clave se almacena solo en localStorage de este dispositivo.<br>
+        Nunca se envía a servidores de BoxVision.
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+  'use strict';
+  var _gkgCallback   = null;
+  var _gkgKeyVisible = false;
+
+  window._showGeminiKeyModal = function(callback, isInvalid) {
+    _gkgCallback = callback || null;
+    var overlay = document.getElementById('geminiKeyOverlay');
+    var inp     = document.getElementById('geminiKeyInput');
+    var errDiv  = document.getElementById('gkgError');
+    var title   = document.getElementById('gkgTitle');
+    var sub     = document.getElementById('gkgSub');
+    if (!overlay) return;
+    if (inp)    { inp.value = ''; inp.type = 'password'; }
+    if (errDiv) { errDiv.style.display = 'none'; errDiv.textContent = ''; }
+    _gkgKeyVisible = false;
+    var visBtn = document.getElementById('gkgVisBtn');
+    if (visBtn) visBtn.textContent = 'Ver';
+    if (isInvalid) {
+      if (title) title.textContent = '⚠️ Clave inválida';
+      if (sub)   sub.textContent   = 'La clave no es válida. Ingresa una nueva.';
+      if (errDiv){ errDiv.textContent = '❌ Tu API Key de Gemini es inválida o expiró.'; errDiv.style.display = 'block'; }
+    } else {
+      if (title) title.textContent = '✦ API Key de Gemini';
+      if (sub)   sub.textContent   = 'Necesitas tu clave de Google AI Studio para la Foto IA';
+    }
+    overlay.style.display = 'flex';
+    setTimeout(function(){ if (inp) inp.focus(); }, 350);
+  };
+
+  window._gkgSave = function() {
+    var inp     = document.getElementById('geminiKeyInput');
+    var errDiv  = document.getElementById('gkgError');
+    var saveBtn = document.getElementById('gkgSaveBtn');
+    var key     = (inp ? inp.value : '').trim();
+    if (!key) {
+      if (errDiv){ errDiv.textContent = '⚠️ Pega tu API Key antes de continuar.'; errDiv.style.display = 'block'; }
+      if (inp) inp.focus();
+      return;
+    }
+    if (!key.startsWith('AIza')) {
+      if (errDiv){ errDiv.textContent = '⚠️ La clave de Gemini empieza con "AIza". Verifica que copiaste bien.'; errDiv.style.display = 'block'; }
+      if (inp) inp.focus();
+      return;
+    }
+    try { localStorage.setItem('bv_gemini_api_key', key); }
+    catch(e) {
+      if (errDiv){ errDiv.textContent = '❌ No se pudo guardar la clave.'; errDiv.style.display = 'block'; }
+      return;
+    }
+    _updateGeminiKeySettingsUI();
+    if (saveBtn){ saveBtn.textContent = '✅ Guardada'; saveBtn.style.background = 'linear-gradient(135deg,#34C759,#30A84E)'; }
+    setTimeout(function(){
+      _gkgClose();
+      if (typeof showToast === 'function') showToast('✦ API Key de Gemini guardada', '#34C759');
+      if (_gkgCallback){ var cb = _gkgCallback; _gkgCallback = null; cb(); }
+      if (saveBtn){ saveBtn.textContent = 'Guardar y usar'; saveBtn.style.background = ''; }
+    }, 600);
+  };
+
+  window._gkgClose = function() {
+    var overlay = document.getElementById('geminiKeyOverlay');
+    if (overlay) overlay.style.display = 'none';
+    _gkgCallback = null;
+  };
+
+  window._gkgToggleVis = function() {
+    _gkgKeyVisible = !_gkgKeyVisible;
+    var inp    = document.getElementById('geminiKeyInput');
+    var visBtn = document.getElementById('gkgVisBtn');
+    if (inp)    inp.type              = _gkgKeyVisible ? 'text' : 'password';
+    if (visBtn) visBtn.textContent    = _gkgKeyVisible ? 'Ocultar' : 'Ver';
+  };
+
+  window._openGeminiKeySettings = function() {
+    var hasKey = !!localStorage.getItem('bv_gemini_api_key');
+    window._showGeminiKeyModal(function(){ _updateGeminiKeySettingsUI(); });
+  };
+
+  window._deleteGeminiKey = function() {
+    if (!confirm('¿Eliminar tu API Key de Gemini de este dispositivo?')) return;
+    localStorage.removeItem('bv_gemini_api_key');
+    _updateGeminiKeySettingsUI();
+    if (typeof showToast === 'function') showToast('🗑 Clave de Gemini eliminada', '#FF9500');
+  };
+
+  function _updateGeminiKeySettingsUI() {
+    var hasKey  = !!localStorage.getItem('bv_gemini_api_key');
+    var subEl   = document.getElementById('geminiKeyStatusSub');
+    var valEl   = document.getElementById('geminiKeyStatusVal');
+    var actEl   = document.getElementById('geminiKeyActionLabel');
+    var delRow  = document.getElementById('geminiKeyDeleteRow');
+    if (subEl)  subEl.textContent  = hasKey ? '✓ Clave configurada en este dispositivo' : 'Sin clave configurada';
+    if (valEl)  valEl.textContent  = hasKey ? '✅' : '⚠️';
+    if (actEl)  actEl.textContent  = hasKey ? 'Cambiar clave' : 'Configurar clave';
+    if (delRow) delRow.style.display = hasKey ? '' : 'none';
+  }
+
+  // Inicializar UI al cargar
+  document.addEventListener('DOMContentLoaded', function() {
+    _updateGeminiKeySettingsUI();
+  });
+
+})();
+</script>
+
+<script>
 /* ══════════════════════════════════════════════════════
    2. SUGERENCIAS DE OBJETOS AL ESCRIBIR NOMBRE DE CAJA
    ══════════════════════════════════════════════════════ */
@@ -12009,7 +12596,7 @@ window._addSuggestedItem = function(btn, item){
 #pwCancelBtn:active{background:rgba(255,255,255,.07);color:var(--text)}
 </style>
 
-<div id="pwOverlay">
+<div id="pwOverlay" onclick="if(event.target===this)closePwModal()">
   <div id="pwCard">
     <div id="pwBoxIcon">📦</div>
     <div id="pwBoxName">Caja</div>
@@ -12458,6 +13045,20 @@ function _pwDel(){
   syncPwDots(inp.value);
   if(navigator.vibrate) navigator.vibrate(6);
 }
+// Cerrar modales con Escape
+document.addEventListener('keydown', function(e){
+  if(e.key !== 'Escape') return;
+  var pw = document.getElementById('pwOverlay');
+  if(pw && pw.style.display !== 'none') { closePwModal(); return; }
+  if(typeof _bvuDismiss === 'function'){
+    var upd = document.getElementById('bvUpdateSheet');
+    if(upd && upd.classList.contains('open')) { _bvuDismiss(); return; }
+  }
+  if(typeof closeChangelog === 'function'){
+    var cl = document.getElementById('changelogOverlay');
+    if(cl && cl.classList.contains('open')) { closeChangelog(); return; }
+  }
+});
 </script>
 
 <!-- ══════════════════════════════════════════════════
@@ -13429,6 +14030,7 @@ function _pwDel(){
 <!-- Sheet de actualización -->
 <div id="bvUpdateSheet" role="dialog" aria-modal="true" aria-label="Actualización disponible">
   <div class="bvu-handle"></div>
+  <button onclick="_bvuDismiss()" aria-label="Cerrar" style="position:absolute;top:18px;right:18px;background:rgba(255,255,255,.1);border:none;border-radius:50%;width:30px;height:30px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:rgba(255,255,255,.7);font-size:16px;-webkit-tap-highlight-color:transparent;z-index:10">×</button>
 
   <div class="bvu-icon-wrap">
     <div class="bvu-icon-bg">
@@ -13502,6 +14104,12 @@ function _pwDel(){
     var sheet   = document.getElementById('bvUpdateSheet');
     if(!overlay || !sheet) return;
 
+    // Si el usuario ya cerró hace menos de 24h, no volver a molestar
+    try{
+      var lastDismiss = parseInt(localStorage.getItem('bv_last_dismiss') || '0');
+      if(Date.now() - lastDismiss < 24 * 60 * 60 * 1000) return;
+    }catch(e){}
+
     // Mostrar versión vieja (guardada) vs nueva (actual)
     var old = localStorage.getItem(BVU.storageKey) || '—';
     var verOld = document.getElementById('bvuVerOld');
@@ -13524,6 +14132,8 @@ function _pwDel(){
     var sheet   = document.getElementById('bvUpdateSheet');
     if(sheet)   sheet.classList.remove('open');
     if(overlay) overlay.classList.remove('open');
+    // Guardar ETag actual para no volver a molestar en esta sesión
+    try{ localStorage.setItem('bv_last_dismiss', Date.now()); }catch(e){}
   };
 
   window._bvuReload = function(){
@@ -14628,635 +15238,744 @@ console.log('✅ BoxVision — Nuevas funciones TOP cargadas: Filtros Avanzados,
 </script>
 
 <!-- ═══════════════════════════════════════════════════════════════════════
-     MÓDULO: SmartPhoto v1.1 — Análisis IA + Renderizado Flat Minimalista
-     ── Flujo: foto → mejora de calidad (Canvas) → Groq Vision identifica
-        el objeto → Claude API genera SVG flat → se guarda como it.thumb
-     ── Compatible con el sistema de thumbs existente en BoxVision
-
-     FIXES v1.1:
-       [1] Modelo Groq Vision correcto (llama-4-scout con fallback maverick)
-       [2] _spCropSquare: ahora asíncrono con onload (era síncrono — img.width=0)
-       [3] Input file SIN capture=environment → permite galería + cámara en iOS
-           Dos botones separados: "📁 Galería" y "📷 Cámara"
-       [4] _esc renombrada a _spEsc → evita conflicto con _esc global (línea 10293)
-       [5] Patch _compressPhoto movido a DOMContentLoaded para asegurar orden
-       [6] _openItemMenu patch: usa window.currentBoxId en vez de currentBoxId
-           (accesible desde dentro del IIFE sin problemas de scope)
-       [7] _spSaveThumb: auto-regenera QR tras guardar el thumb
+     MÓDULO: SmartPhoto v2.0 — Análisis IA premium + UI enriquecida
+     ── Flujo: foto → Canvas enhance → Claude Vision identifica objeto
+        con colores + detalles → Claude SVG genera ícono flat expresivo
+        → tarjeta de resultado editable → guarda thumb en ítem
+     ── v2.0: UI rediseñada, tarjeta de resultado rica, prompt SVG mejorado,
+        nombre editable antes de confirmar, Claude como Vision primario,
+        Groq como fallback, animaciones fluidas en todos los estados
      ═══════════════════════════════════════════════════════════════════════ -->
+<style>
+/* ── SmartPhoto v2 — estilos del modal ── */
+#_spModal {
+  animation: _sp-fade-in 220ms ease both;
+}
+@keyframes _sp-fade-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+#_spSheet {
+  animation: _sp-slide-up 340ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+@keyframes _sp-slide-up {
+  from { transform: translateY(100%); }
+  to   { transform: translateY(0); }
+}
+._sp-step {
+  animation: _sp-step-in 300ms cubic-bezier(0.34, 1.2, 0.64, 1) both;
+}
+@keyframes _sp-step-in {
+  from { opacity: 0; transform: translateY(16px) scale(0.97); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+._sp-spin {
+  animation: spin .75s linear infinite;
+}
+._sp-result-card {
+  background: rgba(255,255,255,.05);
+  border: 1.5px solid rgba(255,255,255,.1);
+  border-radius: 18px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  animation: _sp-step-in 320ms cubic-bezier(0.34, 1.15, 0.64, 1) both;
+}
+._sp-name-edit {
+  background: rgba(255,255,255,.08);
+  border: 1.5px solid rgba(255,255,255,.15);
+  border-radius: 12px;
+  color: #fff;
+  font-size: 18px;
+  font-weight: 700;
+  font-family: inherit;
+  padding: 10px 14px;
+  width: 100%;
+  box-sizing: border-box;
+  text-align: center;
+  letter-spacing: -.3px;
+  outline: none;
+  transition: border-color 220ms ease, box-shadow 220ms ease;
+}
+._sp-name-edit:focus {
+  border-color: var(--accent, #007AFF);
+  box-shadow: 0 0 0 3px rgba(0,122,255,.18);
+}
+._sp-category-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 12px;
+  border-radius: 99px;
+  background: rgba(255,255,255,.08);
+  font-size: 11px;
+  font-weight: 600;
+  color: rgba(255,255,255,.55);
+  text-transform: uppercase;
+  letter-spacing: .4px;
+  align-self: center;
+}
+._sp-colors-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+._sp-swatch {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  border: 2.5px solid rgba(255,255,255,.2);
+  transition: transform 300ms cubic-bezier(0.175, 0.885, 0.32, 1.4);
+  cursor: default;
+}
+._sp-swatch:hover { transform: scale(1.2); }
+._sp-details-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  justify-content: center;
+}
+._sp-detail-chip {
+  padding: 3px 10px;
+  border-radius: 99px;
+  background: rgba(255,255,255,.06);
+  border: 1px solid rgba(255,255,255,.1);
+  font-size: 11px;
+  color: rgba(255,255,255,.5);
+}
+._sp-svg-preview {
+  width: 80px;
+  height: 80px;
+  border-radius: 16px;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  align-self: center;
+  background: rgba(255,255,255,.04);
+  border: 1px solid rgba(255,255,255,.08);
+  animation: _sp-step-in 400ms cubic-bezier(0.34, 1.25, 0.64, 1) both;
+}
+._sp-progress-bar {
+  height: 3px;
+  border-radius: 99px;
+  background: rgba(255,255,255,.08);
+  overflow: hidden;
+  margin-top: 4px;
+}
+._sp-progress-fill {
+  height: 100%;
+  border-radius: 99px;
+  background: var(--accent, #007AFF);
+  transition: width 400ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+</style>
+
 <script>
 (function(){
 'use strict';
 
-/* ─── Configuración ─────────────────────────────────────────────── */
-var SP_VERSION    = '1.1';
-var SP_MAX_PX     = 1280;  // resolución máxima para envío a IA
-var SP_QUALITY    = 0.92;  // calidad JPEG para Groq Vision
-var SP_THUMB_SIZE = 200;   // tamaño del thumb guardado en px
+var SP_VERSION    = '2.0';
+var SP_MAX_PX     = 1280;
+var SP_QUALITY    = 0.92;
+var SP_THUMB_SIZE = 200;
 
-// [FIX 1] Modelos Groq con visión — nombres exactos del API de Groq
+// Gemini como Vision primario + generación SVG (clave en localStorage 'bv_gemini_api_key')
+var SP_GEMINI_MODEL = 'gemini-2.0-flash';
+var SP_GEMINI_URL   = 'https://generativelanguage.googleapis.com/v1beta/models/';
+// Groq como fallback de visión si no hay clave Gemini
 var SP_GROQ_MODEL_VISION   = 'meta-llama/llama-4-scout-17b-16e-instruct';
 var SP_GROQ_MODEL_FALLBACK = 'meta-llama/llama-4-maverick-17b-128e-instruct';
 
-// Claude API para generación de SVG flat
-var SP_CLAUDE_MODEL = 'claude-sonnet-4-20250514';
-
-/* ─── Estado interno ─────────────────────────────────────────────── */
+/* ─── Estado ─────────────────────────────────────────────── */
 var _spActive         = false;
 var _spCurrentItemIdx = null;
 var _spCurrentBoxId   = null;
 var _spEnhancedBase64 = null;
+var _spDetectedInfo   = null;   // resultado del análisis
+var _spGeneratedSVG   = null;   // SVG generado
 
-/* ─── [FIX 4] Escape HTML — nombre propio para no colisionar con _esc global */
 function _spEsc(str) {
   return String(str || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
 
-/* ─── Mejora de imagen con Canvas ───────────────────────────────── */
-/**
- * Pipeline de mejora:
- *  1. Re-escala a máx SP_MAX_PX sin degradar imágenes más pequeñas
- *  2. Fondo blanco para eliminar artefactos de transparencia en JPEG
- *  3. Filtro de nitidez unsharp-mask 3×3 suave
- *  4. Devuelve base64 JPEG de alta calidad
- */
+/* ─── Emojis de categoría ─────────────────────────────────── */
+var CAT_EMOJI = {
+  electronics:'📱', clothing:'👕', tool:'🔧', food:'🍽️',
+  book:'📚', furniture:'🪑', toy:'🧸', sport:'⚽',
+  document:'📄', kitchen:'🍳', cleaning:'🧹', beauty:'💄',
+  bag:'👜', shoe:'👟', other:'📦'
+};
+function _spCatEmoji(cat) { return CAT_EMOJI[cat] || '📦'; }
+
+/* ─── Mejora de imagen con Canvas ────────────────────────── */
 function _enhanceImage(file, callback) {
   var url = URL.createObjectURL(file);
   var img = new Image();
-
   img.onload = function() {
     URL.revokeObjectURL(url);
     var sw = img.naturalWidth, sh = img.naturalHeight;
-
-    // Escalar solo si supera el máximo
     var dw = sw, dh = sh;
     if (sw > SP_MAX_PX || sh > SP_MAX_PX) {
       if (sw >= sh) { dh = Math.round(sh * SP_MAX_PX / sw); dw = SP_MAX_PX; }
       else          { dw = Math.round(sw * SP_MAX_PX / sh); dh = SP_MAX_PX; }
     }
-
     var canvas = document.createElement('canvas');
     canvas.width = dw; canvas.height = dh;
     var ctx = canvas.getContext('2d');
-
-    // Fondo blanco para JPEG sin artefactos
     ctx.fillStyle = '#ffffff';
     ctx.fillRect(0, 0, dw, dh);
     ctx.drawImage(img, 0, 0, dw, dh);
-
-    // Nitidez: convolución unsharp 3×3
+    // Unsharp mask 3×3
     try {
-      var imageData = ctx.getImageData(0, 0, dw, dh);
-      var d = imageData.data;
-      var w = dw, h = dh;
-      var output = new Uint8ClampedArray(d.length);
-      var kernel  = [0,-1,0, -1,5,-1, 0,-1,0];
-      for (var y = 1; y < h-1; y++) {
-        for (var x = 1; x < w-1; x++) {
-          var idx = (y*w+x)*4;
-          for (var c = 0; c < 3; c++) {
-            var acc = 0;
-            for (var ky = -1; ky <= 1; ky++) {
-              for (var kx = -1; kx <= 1; kx++) {
-                acc += d[((y+ky)*w+(x+kx))*4+c] * kernel[(ky+1)*3+(kx+1)];
-              }
-            }
-            output[idx+c] = Math.min(255, Math.max(0, acc));
-          }
-          output[idx+3] = d[idx+3];
+      var id = ctx.getImageData(0, 0, dw, dh), d = id.data;
+      var w = dw, h = dh, out = new Uint8ClampedArray(d.length);
+      var k = [0,-1,0,-1,5,-1,0,-1,0];
+      for (var y=1;y<h-1;y++) for (var x=1;x<w-1;x++) {
+        var i=(y*w+x)*4;
+        for (var c=0;c<3;c++) {
+          var acc=0;
+          for (var ky=-1;ky<=1;ky++) for (var kx=-1;kx<=1;kx++)
+            acc += d[((y+ky)*w+(x+kx))*4+c] * k[(ky+1)*3+(kx+1)];
+          out[i+c]=Math.min(255,Math.max(0,acc));
         }
+        out[i+3]=d[i+3];
       }
-      // Bordes sin filtrar
-      for (var i = 0; i < d.length; i += 4) {
-        var px = (i/4)%w, py = Math.floor(i/4/w);
-        if (px===0||px===w-1||py===0||py===h-1) {
-          output[i]=d[i]; output[i+1]=d[i+1]; output[i+2]=d[i+2]; output[i+3]=d[i+3];
-        }
+      for (var j=0;j<d.length;j+=4) {
+        var px=(j/4)%w, py=Math.floor(j/4/w);
+        if(px===0||px===w-1||py===0||py===h-1){out[j]=d[j];out[j+1]=d[j+1];out[j+2]=d[j+2];out[j+3]=d[j+3];}
       }
-      ctx.putImageData(new ImageData(output, w, h), 0, 0);
-    } catch(e) { /* si falla el filtro, continúa sin él */ }
-
+      ctx.putImageData(new ImageData(out, w, h), 0, 0);
+    } catch(e){}
     callback(canvas.toDataURL('image/jpeg', SP_QUALITY));
   };
-
   img.onerror = function() {
     URL.revokeObjectURL(url);
-    var reader = new FileReader();
-    reader.onload = function(ev) { callback(ev.target.result); };
-    reader.readAsDataURL(file);
+    var r = new FileReader();
+    r.onload = function(e){ callback(e.target.result); };
+    r.readAsDataURL(file);
   };
-
   img.src = url;
 }
 
-/* ─── SVG → thumb PNG ───────────────────────────────────────────── */
+/* ─── SVG → thumb PNG ────────────────────────────────────── */
 function _svgToThumb(svgString, callback) {
   var blob = new Blob([svgString], {type:'image/svg+xml'});
   var url  = URL.createObjectURL(blob);
   var img  = new Image();
   img.onload = function() {
     URL.revokeObjectURL(url);
-    var c   = document.createElement('canvas');
+    var c = document.createElement('canvas');
     c.width = c.height = SP_THUMB_SIZE;
     var ctx = c.getContext('2d');
-    ctx.clearRect(0, 0, SP_THUMB_SIZE, SP_THUMB_SIZE);
-    ctx.drawImage(img, 0, 0, SP_THUMB_SIZE, SP_THUMB_SIZE);
+    ctx.clearRect(0,0,SP_THUMB_SIZE,SP_THUMB_SIZE);
+    ctx.drawImage(img,0,0,SP_THUMB_SIZE,SP_THUMB_SIZE);
     callback(null, c.toDataURL('image/png'));
   };
-  img.onerror = function() {
-    URL.revokeObjectURL(url);
-    callback(new Error('SVG render failed'));
-  };
+  img.onerror = function(){ URL.revokeObjectURL(url); callback(new Error('SVG render failed')); };
   img.src = url;
 }
 
-/* ─── [FIX 2] _spCropSquare — ahora asíncrono con onload ────────── */
 function _spCropSquare(base64, callback) {
   var img = new Image();
   img.onload = function() {
-    var s   = Math.min(img.naturalWidth, img.naturalHeight, SP_THUMB_SIZE);
-    var c   = document.createElement('canvas');
-    c.width = c.height = s;
-    var ctx = c.getContext('2d');
-    ctx.drawImage(img,
-      (img.naturalWidth - s)/2, (img.naturalHeight - s)/2, s, s,
-      0, 0, s, s
-    );
+    var s=Math.min(img.naturalWidth,img.naturalHeight,SP_THUMB_SIZE);
+    var c=document.createElement('canvas'); c.width=c.height=s;
+    c.getContext('2d').drawImage(img,(img.naturalWidth-s)/2,(img.naturalHeight-s)/2,s,s,0,0,s,s);
     callback(c.toDataURL('image/png'));
   };
-  img.onerror = function() { callback(base64); };
+  img.onerror = function(){ callback(base64); };
   img.src = base64;
 }
 
-/* ─── Paso 1: Groq Vision — identificar objeto ──────────────────── */
-function _identifyObject(base64jpeg, groqKey, callback, useFallback) {
-  var model = useFallback ? SP_GROQ_MODEL_FALLBACK : SP_GROQ_MODEL_VISION;
+/* ─── Paso 1A: Gemini Vision — identificar objeto (primario) ─ */
+function _identifyWithGemini(base64jpeg, geminiKey, callback) {
   var b64   = base64jpeg.replace(/^data:image\/[a-z]+;base64,/, '');
+  var mtype = base64jpeg.match(/^data:(image\/[a-z]+);base64,/);
+  var mime  = mtype ? mtype[1] : 'image/jpeg';
+  var prompt = 'Analiza esta imagen e identifica el objeto principal. Responde ÚNICAMENTE con un objeto JSON válido, sin markdown, sin explicaciones:\n{"name":"<nombre específico en español, 1-4 palabras, ej: zapatilla deportiva, lámpara de escritorio, botella térmica>","primaryColor":"<color hex dominante del cuerpo principal>","secondaryColor":"<segundo color hex visible, o null>","accentColor":"<tercer color hex de detalle, o null>","category":"<electronics|clothing|tool|food|book|furniture|toy|sport|document|kitchen|cleaning|beauty|bag|shoe|other>","keyDetails":"<lista separada por comas de 3-5 características visuales específicas>","confidence":"<high|medium|low>"}';
 
-  fetch('https://api.groq.com/openai/v1/chat/completions', {
+  fetch(SP_GEMINI_URL + SP_GEMINI_MODEL + ':generateContent?key=' + geminiKey, {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': 'Bearer ' + groqKey
-    },
+    headers: {'Content-Type': 'application/json'},
     body: JSON.stringify({
-      model: model,
-      max_tokens: 150,
-      messages: [{
-        role: 'user',
-        content: [
-          {
-            type: 'image_url',
-            image_url: { url: 'data:image/jpeg;base64,' + b64, detail: 'low' }
-          },
-          {
-            type: 'text',
-            text: 'Identify the main object in this photo. Respond ONLY with a JSON object (no markdown, no explanation, no extra text): {"name":"<object name in Spanish, 1-3 words, be specific e.g. zapatilla, lampara de escritorio, botella de agua>","primaryColor":"<dominant hex color of the object body>","secondaryColor":"<second most visible hex color or null>","accentColor":"<third detail color or null>","category":"<electronics|clothing|tool|food|book|furniture|toy|sport|document|kitchen|other>","keyDetails":"<2-4 visible features that make the object recognizable, e.g. for shoe: laces,rubber sole,heel>"}'
-          }
+      contents: [{
+        parts: [
+          { inline_data: { mime_type: mime, data: b64 } },
+          { text: prompt }
         ]
-      }]
+      }],
+      generationConfig: { maxOutputTokens: 300, temperature: 0.1 }
     })
   })
-  .then(function(r) { return r.json(); })
-  .then(function(data) {
-    // Si el modelo no existe, intentar con el fallback
-    if (data.error && !useFallback) {
-      var code = (data.error.code || '') + (data.error.message || '');
-      if (code.indexOf('model') !== -1 || code.indexOf('not found') !== -1) {
-        console.warn('[SmartPhoto] Modelo principal no disponible, intentando fallback...');
-        _identifyObject(base64jpeg, groqKey, callback, true);
-        return;
-      }
-      callback(data.error.message || 'Groq error'); return;
-    }
-    if (data.error) { callback(data.error.message || 'Groq error'); return; }
-
-    var text = (((data.choices||[])[0]||{}).message||{}).content || '';
+  .then(function(r){ return r.json(); })
+  .then(function(data){
+    if (data.error) { callback(data.error.message || 'Gemini error'); return; }
+    var part = (((data.candidates||[])[0]||{}).content||{});
+    var text = ((part.parts||[])[0]||{}).text || '';
     try {
       text = text.replace(/```json|```/g,'').trim();
-      // Extraer solo el objeto JSON (ignorar texto extra antes/después)
-      var jsonMatch = text.match(/\{[\s\S]*\}/);
-      var obj = JSON.parse(jsonMatch ? jsonMatch[0] : text);
-      // Validar campos mínimos
+      var m = text.match(/\{[\s\S]*\}/);
+      var obj = JSON.parse(m ? m[0] : text);
       if (!obj.name) obj.name = 'objeto';
       if (!obj.primaryColor) obj.primaryColor = '#4A90D9';
-      if (!obj.shape) obj.shape = 'custom';
       if (!obj.category) obj.category = 'other';
       callback(null, obj);
     } catch(e) {
-      // Si no parsea, extraer nombre con regex
       var nm = text.match(/"name"\s*:\s*"([^"]+)"/);
       var pc = text.match(/"primaryColor"\s*:\s*"(#[0-9a-fA-F]{3,6})"/);
-      callback(null, {
-        name: nm ? nm[1] : 'objeto',
-        shape: 'custom',
-        primaryColor: pc ? pc[1] : '#4A90D9',
-        secondaryColor: null,
-        category: 'other'
-      });
+      callback(null, { name: nm ? nm[1] : 'objeto', primaryColor: pc ? pc[1] : '#4A90D9', category: 'other', confidence: 'low' });
     }
   })
-  .catch(function(err) { callback(err.message || 'Network error'); });
+  .catch(function(err){ callback(err.message || 'Gemini Vision error'); });
 }
 
-/* ─── Paso 2: Claude API — generar SVG flat ─────────────────────── */
-function _generateSVG(objectInfo, callback) {
-  var colorLine = '- Colors: main body ' + objectInfo.primaryColor;
-  if (objectInfo.secondaryColor) colorLine += ', secondary ' + objectInfo.secondaryColor;
-  if (objectInfo.accentColor)    colorLine += ', accent ' + objectInfo.accentColor;
-  var detailLine = objectInfo.keyDetails
-    ? '- Key visual details to draw: ' + objectInfo.keyDetails
-    : '- Draw the key details that make the object instantly recognizable (buttons, handles, seams, labels, etc.)';
-
-  var prompt = [
-    'Create a flat minimalist SVG icon (viewBox="0 0 200 200") of a "' + objectInfo.name + '" (' + objectInfo.category + ').',
-    '',
-    'DESIGN REQUIREMENTS:',
-    colorLine,
-    '- The silhouette/shape must be INSTANTLY recognizable as a ' + objectInfo.name + ' — draw the actual object with its real shape, not a generic square or circle',
-    '- Flat design: NO drop shadows, NO blur, NO text, NO labels, NO gradients (solid fills only)',
-    detailLine,
-    '- Use 3–5 solid colors: primary color for the main body, lighter/darker tints for depth and shadows, near-white (#f0f0f0) for highlights',
-    '- All shapes centered, ~14px padding from the edges',
-    '- Transparent background — do NOT include any background <rect>',
-    '- Output ONLY the SVG code. Start exactly with <svg and end with </svg>. No markdown, no explanation, no preamble.'
-  ].join('\n');
-
-  fetch('https://api.anthropic.com/v1/messages', {
+/* ─── Paso 1B: Groq Vision — fallback ───────────────────── */
+function _identifyWithGroq(base64jpeg, groqKey, callback, useFallback) {
+  var model = useFallback ? SP_GROQ_MODEL_FALLBACK : SP_GROQ_MODEL_VISION;
+  var b64   = base64jpeg.replace(/^data:image\/[a-z]+;base64,/, '');
+  fetch('https://api.groq.com/openai/v1/chat/completions', {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers: {'Content-Type':'application/json','Authorization':'Bearer '+groqKey},
     body: JSON.stringify({
-      model: SP_CLAUDE_MODEL,
-      max_tokens: 1500,
-      messages: [{ role: 'user', content: prompt }]
+      model: model, max_tokens: 200,
+      messages:[{role:'user',content:[
+        {type:'image_url',image_url:{url:'data:image/jpeg;base64,'+b64,detail:'low'}},
+        {type:'text',text:'Identify the main object. Respond ONLY JSON: {"name":"<Spanish 1-4 words>","primaryColor":"<hex>","secondaryColor":"<hex or null>","accentColor":"<hex or null>","category":"<electronics|clothing|tool|food|book|furniture|toy|sport|document|kitchen|other>","keyDetails":"<3-5 visual features comma separated>","confidence":"<high|medium|low>"}'}
+      ]}]
     })
   })
-  .then(function(r) { return r.json(); })
-  .then(function(data) {
-    var text = (((data.content||[])[0])||{}).text || '';
-    var svgMatch = text.match(/<svg[\s\S]*?<\/svg>/i);
-    if (svgMatch) {
-      callback(null, svgMatch[0]);
-    } else {
-      callback(new Error('No SVG in response'));
+  .then(function(r){return r.json();})
+  .then(function(data){
+    if(data.error && !useFallback){
+      var c=(data.error.code||'')+(data.error.message||'');
+      if(c.indexOf('model')!==-1||c.indexOf('not found')!==-1){
+        _identifyWithGroq(base64jpeg,groqKey,callback,true); return;
+      }
+      callback(data.error.message||'Groq error'); return;
+    }
+    if(data.error){callback(data.error.message||'Groq error');return;}
+    var text=(((data.choices||[])[0]||{}).message||{}).content||'';
+    try{
+      text=text.replace(/```json|```/g,'').trim();
+      var m=text.match(/\{[\s\S]*\}/);
+      var obj=JSON.parse(m?m[0]:text);
+      if(!obj.name)obj.name='objeto';
+      if(!obj.primaryColor)obj.primaryColor='#4A90D9';
+      if(!obj.category)obj.category='other';
+      callback(null,obj);
+    }catch(e){
+      var nm=text.match(/"name"\s*:\s*"([^"]+)"/);
+      var pc=text.match(/"primaryColor"\s*:\s*"(#[0-9a-fA-F]{3,6})"/);
+      callback(null,{name:nm?nm[1]:'objeto',primaryColor:pc?pc[1]:'#4A90D9',category:'other',confidence:'low'});
     }
   })
-  .catch(function(err) { callback(err.message || 'Claude API error'); });
+  .catch(function(err){callback(err.message||'Groq error');});
 }
 
-/* ─── SVG fallback ──────────────────────────────────────────────── */
-function _spFallbackSVG(objInfo) {
-  var c  = objInfo.primaryColor || '#4A90D9';
-  var c2 = objInfo.secondaryColor || '#ffffff';
-  var cat = objInfo.category || 'other';
-
-  // Helper: lighten a hex color slightly for detail
-  function lighten(hex, amt) {
-    var n = parseInt(hex.replace('#',''), 16);
-    var r = Math.min(255, (n >> 16) + amt);
-    var g = Math.min(255, ((n >> 8) & 0xff) + amt);
-    var b = Math.min(255, (n & 0xff) + amt);
-    return '#' + ((1 << 24) | (r << 16) | (g << 8) | b).toString(16).slice(1);
+/* ─── Identificar: Gemini primero, Groq si no hay key Gemini ─ */
+function _identifyObject(base64jpeg, callback) {
+  var geminiKey = localStorage.getItem('bv_gemini_api_key');
+  if (geminiKey) {
+    _identifyWithGemini(base64jpeg, geminiKey, function(err, obj) {
+      if (!err && obj && obj.name !== 'objeto') {
+        callback(null, obj);
+      } else {
+        // Gemini falló o genérico → intentar Groq
+        var groqKey = localStorage.getItem('bv_groq_api_key');
+        if (groqKey) {
+          _identifyWithGroq(base64jpeg, groqKey, function(errG, objG) {
+            callback(null, (!errG && objG) ? objG : (obj || { name: 'objeto', primaryColor: '#4A90D9', category: 'other' }));
+          });
+        } else {
+          callback(null, obj || { name: 'objeto', primaryColor: '#4A90D9', category: 'other' });
+        }
+      }
+    });
+  } else {
+    // Sin key Gemini → pedir configuración o usar Groq directo
+    var groqKey = localStorage.getItem('bv_groq_api_key');
+    if (groqKey) {
+      _identifyWithGroq(base64jpeg, groqKey, callback);
+    } else {
+      // Sin ninguna key → mostrar modal para configurar
+      _spClose();
+      _showGeminiKeyModal(function() {
+        setTimeout(function() { _spShowForItem(_spCurrentItemIdx, _spCurrentBoxId); }, 400);
+      });
+    }
   }
-  function darken(hex, amt) { return lighten(hex, -amt); }
-
-  var light = lighten(c, 50);
-  var dark  = darken(c, 40);
-
-  var icons = {
-    electronics: // TV / monitor shape
-      '<rect x="30" y="40" width="140" height="90" rx="10" fill="' + c + '"/>' +
-      '<rect x="38" y="48" width="124" height="74" rx="6" fill="' + dark + '"/>' +
-      '<rect x="44" y="54" width="112" height="62" rx="4" fill="#1a1a2e"/>' +
-      '<rect x="80" y="133" width="40" height="10" rx="3" fill="' + c + '"/>' +
-      '<rect x="65" y="143" width="70" height="6" rx="3" fill="' + dark + '"/>',
-
-    clothing: // shirt / folded garment
-      '<path d="M60 50 L30 80 L55 88 L55 155 L145 155 L145 88 L170 80 L140 50 C130 65 115 72 100 72 C85 72 70 65 60 50Z" fill="' + c + '"/>' +
-      '<path d="M60 50 C70 65 85 72 100 72 C115 72 130 65 140 50 L125 44 C118 58 110 64 100 64 C90 64 82 58 75 44Z" fill="' + dark + '"/>' +
-      '<path d="M55 90 L55 155" stroke="' + light + '" stroke-width="2" opacity=".4"/>',
-
-    tool: // wrench
-      '<path d="M148 36 C130 30 110 38 103 55 C97 70 102 86 113 95 L58 158 C53 163 53 171 58 176 C63 181 71 181 76 176 L131 113 C142 120 157 120 168 110 C181 98 181 76 168 64 L152 80 L142 70 L157 54 Z" fill="' + c + '"/>' +
-      '<circle cx="68" cy="168" r="6" fill="' + light + '"/>',
-
-    food: // bowl / plate
-      '<ellipse cx="100" cy="115" rx="72" ry="18" fill="' + dark + '"/>' +
-      '<ellipse cx="100" cy="112" rx="72" ry="18" fill="' + c + '"/>' +
-      '<ellipse cx="100" cy="95" rx="65" ry="30" fill="' + light + '"/>' +
-      '<ellipse cx="100" cy="92" rx="50" ry="22" fill="' + c + '"/>' +
-      '<ellipse cx="100" cy="90" rx="38" ry="16" fill="' + dark + '" opacity=".6"/>',
-
-    book: // open book
-      '<rect x="28" y="45" width="68" height="110" rx="4" fill="' + dark + '"/>' +
-      '<rect x="30" y="47" width="64" height="106" rx="3" fill="' + c + '"/>' +
-      '<rect x="104" y="45" width="68" height="110" rx="4" fill="' + dark + '"/>' +
-      '<rect x="106" y="47" width="64" height="106" rx="3" fill="' + light + '"/>' +
-      '<rect x="95" y="45" width="10" height="110" fill="' + dark + '"/>' +
-      '<line x1="38" y1="68" x2="88" y2="68" stroke="' + light + '" stroke-width="3" opacity=".5"/>' +
-      '<line x1="38" y1="80" x2="88" y2="80" stroke="' + light + '" stroke-width="3" opacity=".5"/>' +
-      '<line x1="38" y1="92" x2="88" y2="92" stroke="' + light + '" stroke-width="3" opacity=".5"/>',
-
-    furniture: // chair
-      '<rect x="55" y="55" width="90" height="55" rx="8" fill="' + c + '"/>' +
-      '<rect x="55" y="55" width="90" height="12" rx="6" fill="' + dark + '"/>' +
-      '<rect x="55" y="110" width="14" height="50" rx="5" fill="' + c + '"/>' +
-      '<rect x="131" y="110" width="14" height="50" rx="5" fill="' + c + '"/>' +
-      '<rect x="42" y="55" width="12" height="80" rx="5" fill="' + dark + '"/>',
-
-    toy: // star / playful shape
-      '<polygon points="100,25 112,72 158,72 122,98 135,145 100,118 65,145 78,98 42,72 88,72" fill="' + c + '"/>' +
-      '<polygon points="100,42 109,72 138,72 115,89 124,119 100,102 76,119 85,89 62,72 91,72" fill="' + light + '" opacity=".5"/>',
-
-    sport: // ball
-      '<circle cx="100" cy="100" r="72" fill="' + c + '"/>' +
-      '<path d="M100 28 C80 50 80 80 100 100 C120 120 140 138 160 148" stroke="' + dark + '" stroke-width="6" fill="none"/>' +
-      '<path d="M28 100 C50 80 80 80 100 100 C120 120 120 148 100 172" stroke="' + dark + '" stroke-width="6" fill="none"/>' +
-      '<circle cx="100" cy="100" r="72" fill="none" stroke="' + dark + '" stroke-width="4"/>',
-
-    document: // paper / document
-      '<rect x="45" y="30" width="110" height="140" rx="8" fill="' + c + '"/>' +
-      '<rect x="50" y="35" width="100" height="130" rx="6" fill="' + light + '"/>' +
-      '<rect x="60" y="55" width="80" height="6" rx="3" fill="' + c + '" opacity=".6"/>' +
-      '<rect x="60" y="70" width="80" height="5" rx="2.5" fill="' + c + '" opacity=".4"/>' +
-      '<rect x="60" y="83" width="60" height="5" rx="2.5" fill="' + c + '" opacity=".4"/>' +
-      '<rect x="60" y="100" width="80" height="5" rx="2.5" fill="' + c + '" opacity=".3"/>' +
-      '<rect x="60" y="113" width="50" height="5" rx="2.5" fill="' + c + '" opacity=".3"/>',
-
-    kitchen: // mug / cup
-      '<rect x="55" y="65" width="90" height="80" rx="12" fill="' + c + '"/>' +
-      '<rect x="60" y="70" width="80" height="10" rx="4" fill="' + light + '" opacity=".5"/>' +
-      '<path d="M145 85 Q170 85 170 105 Q170 125 145 125" stroke="' + dark + '" stroke-width="10" fill="none" stroke-linecap="round"/>' +
-      '<ellipse cx="100" cy="65" rx="45" ry="10" fill="' + dark + '"/>' +
-      '<ellipse cx="100" cy="145" rx="48" ry="9" fill="' + dark + '" opacity=".7"/>',
-
-    other: // generic box / package
-      '<rect x="30" y="75" width="140" height="95" rx="8" fill="' + c + '"/>' +
-      '<path d="M30 75 L100 45 L170 75" fill="' + light + '"/>' +
-      '<path d="M30 75 L100 45 L170 75 L170 80 L100 50 L30 80Z" fill="' + dark + '"/>' +
-      '<rect x="85" y="85" width="30" height="50" rx="4" fill="' + light + '" opacity=".5"/>' +
-      '<line x1="85" y1="110" x2="115" y2="110" stroke="' + dark + '" stroke-width="2" opacity=".5"/>'
-  };
-
-  var body = icons[cat] || icons.other;
-  return '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">' + body + '</svg>';
 }
 
-/* ─── UI: Modal de carga de foto ────────────────────────────────── */
+/* ─── Paso 2: Gemini — generar SVG flat expresivo ─────────── */
+function _generateSVG(objectInfo, callback) {
+  var geminiKey = localStorage.getItem('bv_gemini_api_key');
+  if (!geminiKey) { callback(new Error('No Gemini key')); return; }
+
+  var colorDesc = 'color principal del cuerpo ' + objectInfo.primaryColor;
+  if (objectInfo.secondaryColor) colorDesc += ', color secundario ' + objectInfo.secondaryColor;
+  if (objectInfo.accentColor)    colorDesc += ', acento/detalle ' + objectInfo.accentColor;
+
+  var detailsDesc = objectInfo.keyDetails
+    ? objectInfo.keyDetails
+    : 'los elementos más característicos del objeto';
+
+  var prompt = [
+    'Crea un ícono SVG flat minimalista (viewBox="0 0 200 200") del objeto: "' + objectInfo.name + '" (categoría: ' + objectInfo.category + ').',
+    '',
+    'REQUISITOS ESTRICTOS:',
+    '1. FORMA: La silueta debe ser INMEDIATAMENTE reconocible como "' + objectInfo.name + '". Dibuja el objeto real con su forma característica.',
+    '2. COLORES: ' + colorDesc + '. Usa tintes más claros y oscuros para crear profundidad y sombras planas.',
+    '3. DETALLES CLAVE a dibujar: ' + detailsDesc,
+    '4. ESTILO: flat design, SIN drop shadows, SIN blur, SIN texto/labels, SIN gradientes (solo fills sólidos).',
+    '5. COMPOSICIÓN: centrado, ~12px de padding en todos los bordes.',
+    '6. FONDO: transparente — NO incluyas ningún <rect> de fondo.',
+    '7. COMPLEJIDAD: 8-15 formas SVG. Lo suficiente para ser expresivo y reconocible, no un cuadrado genérico.',
+    '',
+    'RESPONDE ÚNICAMENTE con el código SVG. Empieza exactamente con <svg y termina con </svg>. Sin markdown, sin explicaciones.'
+  ].join('\n');
+
+  fetch(SP_GEMINI_URL + SP_GEMINI_MODEL + ':generateContent?key=' + geminiKey, {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({
+      contents: [{ parts: [{ text: prompt }] }],
+      generationConfig: { maxOutputTokens: 2500, temperature: 0.4 }
+    })
+  })
+  .then(function(r){ return r.json(); })
+  .then(function(data){
+    if (data.error) { callback(new Error(data.error.message || 'Gemini SVG error')); return; }
+    var text = (((data.candidates||[])[0]||{}).content||{});
+    text = ((text.parts||[])[0]||{}).text || '';
+    var svgMatch = text.match(/<svg[\s\S]*?<\/svg>/i);
+    if (svgMatch) callback(null, svgMatch[0]);
+    else callback(new Error('No SVG in response'));
+  })
+  .catch(function(err){ callback(err.message || 'Gemini SVG error'); });
+}
+
+/* ─── Fallback SVG geométrico mejorado ──────────────────── */
+function _spFallbackSVG(objInfo) {
+  var c=objInfo.primaryColor||'#4A90D9';
+  var c2=objInfo.secondaryColor||'#ffffff';
+  var cat=objInfo.category||'other';
+  function lighten(hex,a){var n=parseInt(hex.replace('#',''),16);return '#'+((1<<24)|(Math.min(255,(n>>16)+a)<<16)|(Math.min(255,((n>>8)&255)+a)<<8)|Math.min(255,(n&255)+a)).toString(16).slice(1);}
+  function darken(hex,a){return lighten(hex,-a);}
+  var light=lighten(c,55), dark=darken(c,45);
+  var icons={
+    electronics:'<rect x="28" y="38" width="144" height="92" rx="12" fill="'+c+'"/><rect x="36" y="46" width="128" height="76" rx="8" fill="'+dark+'"/><rect x="42" y="52" width="116" height="64" rx="5" fill="#0d1117"/><rect x="84" y="133" width="32" height="8" rx="3" fill="'+c+'"/><rect x="68" y="141" width="64" height="5" rx="2.5" fill="'+dark+'"/><circle cx="156" cy="64" r="5" fill="'+light+'" opacity=".7"/>',
+    clothing:'<path d="M62 48 L30 82 L56 90 L56 158 L144 158 L144 90 L170 82 L138 48 C128 64 115 72 100 72 C85 72 72 64 62 48Z" fill="'+c+'"/><path d="M62 48 C72 64 85 72 100 72 C115 72 128 64 138 48 L124 42 C117 57 110 63 100 63 C90 63 83 57 76 42Z" fill="'+dark+'"/><path d="M56 92 L56 158" stroke="'+light+'" stroke-width="2.5" opacity=".35"/><path d="M100 72 L100 158" stroke="'+light+'" stroke-width="1.5" opacity=".2"/>',
+    tool:'<path d="M150 34 C132 28 111 36 104 54 C98 70 103 87 115 96 L56 162 C51 167 51 175 56 180 C61 185 69 185 74 180 L133 116 C145 124 160 123 171 112 C184 99 183 76 169 63 L153 80 L141 68 L157 52 Z" fill="'+c+'"/><circle cx="65" cy="171" r="7" fill="'+light+'"/><rect x="105" y="60" width="30" height="8" rx="3" fill="'+light+'" opacity=".4" transform="rotate(-45 120 64)"/>',
+    food:'<ellipse cx="100" cy="118" rx="74" ry="19" fill="'+dark+'"/><ellipse cx="100" cy="115" rx="74" ry="19" fill="'+c+'"/><ellipse cx="100" cy="97" rx="67" ry="32" fill="'+light+'"/><ellipse cx="100" cy="94" rx="52" ry="24" fill="'+c+'"/><ellipse cx="100" cy="91" rx="40" ry="17" fill="'+dark+'" opacity=".55"/>',
+    book:'<rect x="26" y="43" width="68" height="114" rx="5" fill="'+dark+'"/><rect x="29" y="46" width="62" height="108" rx="4" fill="'+c+'"/><rect x="103" y="43" width="71" height="114" rx="5" fill="'+dark+'"/><rect x="106" y="46" width="65" height="108" rx="4" fill="'+light+'"/><rect x="93" y="43" width="14" height="114" fill="'+darken(c,60)+'"/><line x1="38" y1="68" x2="85" y2="68" stroke="'+light+'" stroke-width="3" opacity=".45"/><line x1="38" y1="80" x2="85" y2="80" stroke="'+light+'" stroke-width="3" opacity=".45"/><line x1="38" y1="92" x2="85" y2="92" stroke="'+light+'" stroke-width="3" opacity=".45"/>',
+    furniture:'<rect x="53" y="52" width="94" height="60" rx="10" fill="'+c+'"/><rect x="53" y="52" width="94" height="14" rx="7" fill="'+dark+'"/><rect x="53" y="112" width="15" height="52" rx="6" fill="'+c+'"/><rect x="132" y="112" width="15" height="52" rx="6" fill="'+c+'"/><rect x="40" y="52" width="13" height="85" rx="6" fill="'+dark+'"/>',
+    toy:'<polygon points="100,22 114,72 162,72 124,99 138,149 100,120 62,149 76,99 38,72 86,72" fill="'+c+'"/><polygon points="100,42 111,72 141,72 117,90 127,120 100,103 73,120 83,90 59,72 89,72" fill="'+light+'" opacity=".45"/>',
+    sport:'<circle cx="100" cy="100" r="73" fill="'+c+'"/><path d="M100 27 C78 52 78 80 100 100 C122 120 143 138 163 150" stroke="'+dark+'" stroke-width="7" fill="none"/><path d="M27 100 C52 78 80 78 100 100 C120 122 120 150 100 173" stroke="'+dark+'" stroke-width="7" fill="none"/><circle cx="100" cy="100" r="73" fill="none" stroke="'+dark+'" stroke-width="4"/>',
+    document:'<rect x="42" y="28" width="116" height="144" rx="10" fill="'+c+'"/><rect x="48" y="34" width="104" height="132" rx="8" fill="'+light+'"/><rect x="58" y="54" width="84" height="7" rx="3.5" fill="'+c+'" opacity=".65"/><rect x="58" y="70" width="84" height="5" rx="2.5" fill="'+c+'" opacity=".38"/><rect x="58" y="83" width="64" height="5" rx="2.5" fill="'+c+'" opacity=".38"/><rect x="58" y="100" width="84" height="5" rx="2.5" fill="'+c+'" opacity=".28"/><rect x="58" y="113" width="50" height="5" rx="2.5" fill="'+c+'" opacity=".28"/>',
+    kitchen:'<rect x="52" y="62" width="96" height="84" rx="14" fill="'+c+'"/><rect x="58" y="68" width="84" height="12" rx="5" fill="'+light+'" opacity=".45"/><path d="M148 82 Q176 82 176 106 Q176 130 148 130" stroke="'+dark+'" stroke-width="11" fill="none" stroke-linecap="round"/><ellipse cx="100" cy="62" rx="48" ry="11" fill="'+dark+'"/><ellipse cx="100" cy="146" rx="50" ry="10" fill="'+dark+'" opacity=".7"/>',
+    shoe:'<path d="M25 140 L25 120 Q25 100 45 95 L90 80 L120 65 Q145 55 162 62 C178 69 178 88 162 95 L130 105 Q118 110 112 122 L108 140 Z" fill="'+c+'"/><path d="M25 140 L108 140 L112 122 Q118 110 130 105 L162 95" stroke="'+light+'" stroke-width="4" fill="none" opacity=".4"/><ellipse cx="155" cy="72" rx="18" ry="10" fill="'+light+'" opacity=".5" transform="rotate(-20 155 72)"/><rect x="28" y="134" width="80" height="9" rx="4.5" fill="'+dark+'"/>',
+    bag:'<path d="M65 80 L65 60 Q65 40 100 40 Q135 40 135 60 L135 80 L155 80 L165 160 L35 160 L45 80 Z" fill="'+c+'"/><path d="M75 80 L75 65 Q75 52 100 52 Q125 52 125 65 L125 80" stroke="'+dark+'" stroke-width="6" fill="none" stroke-linecap="round"/><rect x="37" y="84" width="126" height="5" rx="2.5" fill="'+dark+'" opacity=".4"/><rect x="82" y="105" width="36" height="28" rx="6" fill="'+dark+'" opacity=".3"/>',
+    other:'<rect x="28" y="80" width="144" height="98" rx="10" fill="'+c+'"/><path d="M28 80 L100 46 L172 80" fill="'+light+'"/><path d="M28 80 L100 46 L172 80 L172 86 L100 52 L28 86Z" fill="'+dark+'"/><rect x="84" y="92" width="32" height="52" rx="5" fill="'+light+'" opacity=".45"/><line x1="84" y1="118" x2="116" y2="118" stroke="'+dark+'" stroke-width="2.5" opacity=".45"/>'
+  };
+  var body=icons[cat]||icons.other;
+  return '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">'+body+'</svg>';
+}
+
+/* ─── UI: Modal principal ──────────────────────────────────── */
 function _showSpModal(itemIdx, itemText, boxId) {
   _spCurrentItemIdx = itemIdx;
   _spCurrentBoxId   = boxId;
   _spEnhancedBase64 = null;
+  _spDetectedInfo   = null;
+  _spGeneratedSVG   = null;
 
   var prev = document.getElementById('_spModal');
   if (prev) prev.remove();
 
   var modal = document.createElement('div');
   modal.id = '_spModal';
-  modal.style.cssText = [
-    'position:fixed;inset:0;z-index:10100;display:flex;align-items:flex-end;',
-    'justify-content:center;background:rgba(0,0,0,.58);',
-    'backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px)'
-  ].join('');
+  modal.style.cssText = 'position:fixed;inset:0;z-index:10100;display:flex;align-items:flex-end;justify-content:center;background:rgba(0,0,0,.62);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px)';
 
   modal.innerHTML = [
     '<div id="_spSheet" style="',
-      'background:var(--card,#1C1C1E);border-radius:24px 24px 0 0;',
-      'width:100%;max-width:480px;padding:20px 18px 36px;',
-      'box-shadow:0 -8px 50px rgba(0,0,0,.45);',
-      'transform:translateY(100%);transition:transform .32s cubic-bezier(.34,1.1,.64,1)',
+      'background:var(--card,#1C1C1E);border-radius:28px 28px 0 0;',
+      'width:100%;max-width:480px;padding:14px 18px env(safe-area-inset-bottom,28px);',
+      'box-shadow:0 -12px 60px rgba(0,0,0,.5);',
+      'max-height:92vh;overflow-y:auto;',
     '">',
 
       // Handle
-      '<div style="width:40px;height:4px;background:rgba(255,255,255,.18);border-radius:99px;margin:0 auto 20px"></div>',
+      '<div style="width:36px;height:4px;background:rgba(255,255,255,.16);border-radius:99px;margin:0 auto 18px"></div>',
 
-      // Título
-      '<div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">',
-        '<span style="font-size:20px">✦</span>',
-        '<div style="font-size:17px;font-weight:700;color:var(--text,#fff)">Foto IA del objeto</div>',
+      // Header
+      '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:3px">',
+        '<div style="display:flex;align-items:center;gap:8px">',
+          '<div style="width:28px;height:28px;border-radius:8px;background:linear-gradient(135deg,#007AFF,#5856D6);display:flex;align-items:center;justify-content:center;font-size:14px">✦</div>',
+          '<span style="font-size:16px;font-weight:700;color:var(--text,#fff)">Reconocimiento IA</span>',
+        '</div>',
+        '<button onclick="window._spClose()" style="width:30px;height:30px;border-radius:50%;background:rgba(255,255,255,.08);border:none;color:rgba(255,255,255,.5);font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-family:inherit">✕</button>',
       '</div>',
-      '<div style="font-size:13px;color:var(--muted,rgba(255,255,255,.42));margin-bottom:18px;padding-left:28px">' + _spEsc(itemText) + '</div>',
+      '<div style="font-size:12px;color:var(--muted,rgba(255,255,255,.38));margin-bottom:16px;padding-left:36px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">' + _spEsc(itemText) + '</div>',
 
-      // Preview área
-      '<div id="_spPreview" style="',
-        'width:100%;height:170px;border-radius:18px;',
-        'background:var(--card2,rgba(255,255,255,.05));',
-        'border:1.5px dashed rgba(255,255,255,.14);',
-        'display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;',
-        'margin-bottom:14px;overflow:hidden;position:relative',
+      // Contenido dinámico (se reemplaza por _spRenderStep)
+      '<div id="_spBody">',
+        _buildStepUpload(),
+      '</div>',
+
+      // Barra de progreso
+      '<div class="_sp-progress-bar" id="_spProgressBar" style="margin:12px 0 4px">',
+        '<div class="_sp-progress-fill" id="_spProgressFill" style="width:0%"></div>',
+      '</div>',
+
+      // Status text
+      '<div id="_spStatus" style="font-size:11px;color:var(--muted,rgba(255,255,255,.38));text-align:center;min-height:16px;margin-bottom:12px"></div>',
+
+      // Botón principal
+      '<button id="_spActionBtn" onclick="window._spAction()" style="',
+        'width:100%;padding:14px;border-radius:16px;border:none;',
+        'background:var(--accent,#007AFF);color:#fff;font-size:15px;font-weight:700;',
+        'cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:8px;',
+        'opacity:.4;pointer-events:none;',
+        'transition:opacity 220ms ease,background 220ms ease,transform 300ms cubic-bezier(.175,.885,.32,1.275)',
       '">',
-        '<span style="font-size:36px;opacity:.5">🖼</span>',
-        '<span style="font-size:12px;color:var(--muted,rgba(255,255,255,.38))">Elige una foto para analizar</span>',
-      '</div>',
+        '<span id="_spActionIcon">✦</span>',
+        '<span id="_spActionLabel">Analizar imagen</span>',
+      '</button>',
 
-      // [FIX 3] DOS inputs separados: galería (sin capture) + cámara (con capture)
-      // Así en iOS el usuario puede elegir desde la galería O tomar foto nueva
+      // Inputs de archivo ocultos
       '<input id="_spFileGallery" type="file" accept="image/*" style="display:none" onchange="window._spHandleFile(this)">',
       '<input id="_spFileCamera"  type="file" accept="image/*" capture="environment" style="display:none" onchange="window._spHandleFile(this)">',
-
-      // Botones de fuente de imagen
-      '<div style="display:flex;gap:8px;margin-bottom:12px">',
-        '<button onclick="document.getElementById(\'_spFileGallery\').click()" style="',
-          'flex:1;padding:11px 6px;border-radius:13px;border:1px solid rgba(255,255,255,.12);',
-          'background:rgba(255,255,255,.06);color:var(--text,#fff);font-size:13px;font-weight:600;',
-          'cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:6px',
-        '">',
-          '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>',
-          'Galería',
-        '</button>',
-        '<button onclick="document.getElementById(\'_spFileCamera\').click()" style="',
-          'flex:1;padding:11px 6px;border-radius:13px;border:1px solid rgba(255,255,255,.12);',
-          'background:rgba(255,255,255,.06);color:var(--text,#fff);font-size:13px;font-weight:600;',
-          'cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:6px',
-        '">',
-          '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg>',
-          'Cámara',
-        '</button>',
-      '</div>',
-
-      // Botones acción
-      '<div style="display:flex;gap:10px">',
-        '<button onclick="window._spClose()" style="',
-          'flex:1;padding:14px;background:rgba(255,255,255,.07);color:var(--text,#fff);',
-          'border:none;border-radius:14px;font-size:15px;font-weight:600;',
-          'cursor:pointer;font-family:inherit',
-        '">Cancelar</button>',
-        '<button id="_spConfirmBtn" onclick="window._spConfirm()" disabled style="',
-          'flex:2;padding:14px;background:var(--accent,#007AFF);color:#fff;',
-          'border:none;border-radius:14px;font-size:15px;font-weight:700;',
-          'cursor:pointer;font-family:inherit;opacity:.38;pointer-events:none;',
-          'display:flex;align-items:center;justify-content:center;gap:6px',
-        '">',
-          '<span style="font-size:14px">✦</span> Analizar con IA',
-        '</button>',
-      '</div>',
-
-      // Estado / progress
-      '<div id="_spStatus" style="',
-        'margin-top:11px;font-size:12px;color:var(--muted,rgba(255,255,255,.42));',
-        'text-align:center;min-height:16px;display:none',
-      '"></div>',
 
     '</div>'
   ].join('');
 
-  modal.addEventListener('click', function(e) {
-    if (e.target === modal) window._spClose();
-  });
-
   document.body.appendChild(modal);
-
-  // Slide-up animado
-  requestAnimationFrame(function() {
-    requestAnimationFrame(function() {
-      var sheet = document.getElementById('_spSheet');
-      if (sheet) sheet.style.transform = 'translateY(0)';
-    });
-  });
 }
 
-/* ─── Cerrar modal ──────────────────────────────────────────────── */
+function _buildStepUpload() {
+  return [
+    '<div class="_sp-step">',
+      // Área preview / zona de carga
+      '<div id="_spPreview" onclick="document.getElementById(\'_spFileGallery\').click()" style="',
+        'width:100%;height:156px;border-radius:18px;',
+        'background:var(--card2,rgba(255,255,255,.04));',
+        'border:1.5px dashed rgba(255,255,255,.14);',
+        'display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;',
+        'margin-bottom:12px;overflow:hidden;position:relative;cursor:pointer',
+      '">',
+        '<div style="font-size:40px;opacity:.35">🖼</div>',
+        '<div style="font-size:12px;color:var(--muted,rgba(255,255,255,.38))">Toca para elegir imagen</div>',
+      '</div>',
+      // Botones galería / cámara
+      '<div style="display:flex;gap:8px">',
+        '<button onclick="document.getElementById(\'_spFileGallery\').click()" style="flex:1;padding:11px 6px;border-radius:14px;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.05);color:var(--text,#fff);font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:6px">',
+          '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>',
+          'Galería',
+        '</button>',
+        '<button onclick="document.getElementById(\'_spFileCamera\').click()" style="flex:1;padding:11px 6px;border-radius:14px;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.05);color:var(--text,#fff);font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:6px">',
+          '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg>',
+          'Cámara',
+        '</button>',
+      '</div>',
+    '</div>'
+  ].join('');
+}
+
+/* ─── Cerrar modal ──────────────────────────────────────────── */
 window._spClose = function() {
   var modal = document.getElementById('_spModal');
   if (!modal) return;
+  modal.style.transition = 'opacity 220ms ease';
+  modal.style.opacity = '0';
   var sheet = document.getElementById('_spSheet');
   if (sheet) {
+    sheet.style.transition = 'transform 280ms cubic-bezier(0.4,0,1,1)';
     sheet.style.transform = 'translateY(100%)';
-    setTimeout(function() { if (modal.parentNode) modal.remove(); }, 340);
-  } else {
-    modal.remove();
   }
+  setTimeout(function(){ if (modal.parentNode) modal.remove(); }, 290);
   _spActive = false;
 };
 
-/* ─── Selección de archivo ──────────────────────────────────────── */
+/* ─── Helpers UI ───────────────────────────────────────────── */
+function _spSetStatus(msg) {
+  var el = document.getElementById('_spStatus');
+  if (el) el.textContent = msg;
+}
+function _spSetProgress(pct) {
+  var el = document.getElementById('_spProgressFill');
+  if (el) el.style.width = pct + '%';
+}
+function _spSetBtn(label, icon, enabled, color) {
+  var btn = document.getElementById('_spActionBtn');
+  var lbl = document.getElementById('_spActionLabel');
+  var ico = document.getElementById('_spActionIcon');
+  if (!btn) return;
+  if (lbl) lbl.textContent = label;
+  if (ico) ico.textContent = icon || '✦';
+  btn.style.opacity    = enabled ? '1' : '.4';
+  btn.style.pointerEvents = enabled ? 'auto' : 'none';
+  btn.disabled = !enabled;
+  if (color) btn.style.background = color;
+}
+
+/* ─── Acción del botón principal (estado máquina) ─────────── */
+var _spPhase = 'upload'; // upload → confirm → done
+window._spAction = function() {
+  if (_spPhase === 'upload' || _spPhase === 'confirm') {
+    window._spConfirm();
+  } else if (_spPhase === 'done') {
+    window._spClose();
+  }
+};
+
+/* ─── Selección de archivo ─────────────────────────────────── */
 window._spHandleFile = function(input) {
   var file = input.files && input.files[0];
   if (!file) return;
-  // Limpiar el input para permitir re-seleccionar la misma imagen
   input.value = '';
 
-  var preview    = document.getElementById('_spPreview');
-  var confirmBtn = document.getElementById('_spConfirmBtn');
-  var status     = document.getElementById('_spStatus');
-
-  // Spinner de mejora
+  var preview = document.getElementById('_spPreview');
   if (preview) {
+    preview.style.cursor = 'default';
     preview.innerHTML = [
-      '<div style="width:30px;height:30px;border:2.5px solid rgba(255,255,255,.1);',
-        'border-top-color:var(--accent,#007AFF);border-radius:50%;animation:spin .7s linear infinite"></div>',
-      '<span style="font-size:12px;color:var(--muted,rgba(255,255,255,.42))">Mejorando calidad…</span>'
+      '<div class="_sp-spin" style="width:28px;height:28px;border:2.5px solid rgba(255,255,255,.1);border-top-color:var(--accent,#007AFF);border-radius:50%"></div>',
+      '<span style="font-size:11px;color:var(--muted,rgba(255,255,255,.38))">Mejorando calidad…</span>'
     ].join('');
   }
+  _spSetBtn('Analizar imagen', '✦', false);
+  _spSetStatus('');
 
   _enhanceImage(file, function(enhanced) {
     _spEnhancedBase64 = enhanced;
+    _spPhase = 'confirm';
 
-    // Preview de la imagen mejorada
     if (preview) {
       preview.innerHTML = '<img src="' + enhanced + '" style="width:100%;height:100%;object-fit:contain;border-radius:16px">';
     }
-
-    // Habilitar botón analizar
-    if (confirmBtn) {
-      confirmBtn.style.opacity = '1';
-      confirmBtn.style.pointerEvents = 'auto';
-      confirmBtn.disabled = false;
-    }
-
-    // Mostrar tamaño mejorado
     var kb = Math.round(enhanced.length * 0.75 / 1024);
-    if (status) {
-      status.style.display = 'block';
-      status.textContent = '✓ Imagen mejorada (' + kb + ' KB) — lista para análisis';
-    }
+    _spSetStatus('✓ Imagen lista (' + kb + ' KB)');
+    _spSetBtn('Analizar con IA', '✦', true);
+    _spSetProgress(10);
   });
 };
 
-/* ─── Pipeline principal: Groq Vision → Claude SVG → thumb ─────── */
+/* ─── Pipeline: Vision → SVG → Guardar ──────────────────────── */
 window._spConfirm = function() {
   if (!_spEnhancedBase64) return;
 
-  var groqKey = localStorage.getItem('bv_groq_api_key');
-  if (!groqKey) {
-    window._spClose();
-    if (typeof window._showGroqKeyModal === 'function') {
-      window._showGroqKeyModal(function() {
-        setTimeout(function() { _spShowForItem(_spCurrentItemIdx, _spCurrentBoxId); }, 400);
-      });
-    } else {
-      alert('Configura tu clave API de Groq en Ajustes para usar esta función.');
-    }
-    return;
-  }
+  _spSetBtn('Analizando…', '⏳', false);
+  _spSetProgress(20);
 
-  var confirmBtn = document.getElementById('_spConfirmBtn');
-  var status     = document.getElementById('_spStatus');
-  var preview    = document.getElementById('_spPreview');
+  // ── Paso 1: Identificar objeto ──
+  _spSetStatus('🔍 Identificando objeto con IA…');
 
-  if (confirmBtn) {
-    confirmBtn.disabled = true;
-    confirmBtn.style.opacity = '.45';
-    confirmBtn.innerHTML = '<span style="font-size:14px">✦</span> Analizando…';
-  }
-  if (status) status.style.display = 'block';
-
-  // ── Paso 1: Groq Vision identifica el objeto ──
-  _spSetStatus('🔍 Identificando objeto con Groq Vision…', status);
-
-  _identifyObject(_spEnhancedBase64, groqKey, function(err, objInfo) {
+  _identifyObject(_spEnhancedBase64, function(err, objInfo) {
     if (err) {
-      _spSetStatus('⚠️ ' + err, status);
-      if (confirmBtn) {
-        confirmBtn.disabled = false;
-        confirmBtn.style.opacity = '1';
-        confirmBtn.innerHTML = '<span>✦</span> Reintentar';
-      }
+      _spSetStatus('⚠️ ' + err);
+      _spSetBtn('Reintentar', '↺', true);
+      _spPhase = 'confirm';
       return;
     }
 
-    // Mostrar resultado del análisis en el preview
-    if (preview) {
-      preview.innerHTML = [
-        '<div style="text-align:center;padding:12px 16px">',
-          '<div style="font-size:11px;color:var(--muted,rgba(255,255,255,.38));margin-bottom:8px;text-transform:uppercase;letter-spacing:.5px">Objeto detectado</div>',
-          '<div style="font-size:24px;font-weight:800;color:var(--text,#fff);letter-spacing:-.5px">' + _spEsc(objInfo.name) + '</div>',
-          '<div style="display:inline-block;margin-top:6px;padding:3px 12px;background:rgba(255,255,255,.07);border-radius:99px;font-size:11px;color:var(--muted,rgba(255,255,255,.4))">' + _spEsc(objInfo.category) + '</div>',
-          '<div style="margin-top:10px;display:flex;gap:6px;justify-content:center;align-items:center">',
-            '<div style="width:22px;height:22px;border-radius:50%;background:' + _spEsc(objInfo.primaryColor||'#4A90D9') + ';border:2px solid rgba(255,255,255,.25)"></div>',
-            objInfo.secondaryColor ? '<div style="width:22px;height:22px;border-radius:50%;background:' + _spEsc(objInfo.secondaryColor) + ';border:2px solid rgba(255,255,255,.25)"></div>' : '',
+    _spDetectedInfo = objInfo;
+    _spSetProgress(45);
+
+    // ── Mostrar tarjeta de resultado rica con nombre editable ──
+    var body = document.getElementById('_spBody');
+    if (body) {
+      var colorSwatches = '<div class="' + '_sp-swatch" style="background:' + _spEsc(objInfo.primaryColor||'#4A90D9') + '"></div>';
+      if (objInfo.secondaryColor) colorSwatches += '<div class="_sp-swatch" style="background:' + _spEsc(objInfo.secondaryColor) + '"></div>';
+      if (objInfo.accentColor)    colorSwatches += '<div class="_sp-swatch" style="background:' + _spEsc(objInfo.accentColor) + '"></div>';
+
+      var detailChips = '';
+      if (objInfo.keyDetails) {
+        objInfo.keyDetails.split(',').slice(0,5).forEach(function(d){
+          var dt = d.trim();
+          if (dt) detailChips += '<div class="_sp-detail-chip">' + _spEsc(dt) + '</div>';
+        });
+      }
+
+      var confColor = objInfo.confidence === 'high' ? '#34C759' : objInfo.confidence === 'medium' ? '#FF9500' : '#FF3B30';
+      var confLabel = objInfo.confidence === 'high' ? 'Alta confianza' : objInfo.confidence === 'medium' ? 'Confianza media' : 'Baja confianza';
+
+      body.innerHTML = [
+        '<div class="_sp-step">',
+          '<div class="_sp-result-card">',
+            // Nombre editable
+            '<div style="text-align:center">',
+              '<div style="font-size:10px;color:var(--muted,rgba(255,255,255,.38));text-transform:uppercase;letter-spacing:.5px;margin-bottom:7px">Objeto detectado</div>',
+              '<input class="_sp-name-edit" id="_spNameEdit" type="text" value="' + _spEsc(objInfo.name) + '" placeholder="Nombre del objeto" autocomplete="off" spellcheck="false">',
+            '</div>',
+            // Badge de categoría + confianza
+            '<div style="display:flex;align-items:center;justify-content:center;gap:8px">',
+              '<div class="_sp-category-badge">' + _spCatEmoji(objInfo.category) + ' ' + _spEsc(objInfo.category) + '</div>',
+              '<div style="display:inline-flex;align-items:center;gap:4px;padding:4px 10px;border-radius:99px;border:1px solid ' + confColor + '22;background:' + confColor + '12">',
+                '<div style="width:6px;height:6px;border-radius:50%;background:' + confColor + '"></div>',
+                '<span style="font-size:10px;color:' + confColor + ';font-weight:600">' + confLabel + '</span>',
+              '</div>',
+            '</div>',
+            // Colores detectados
+            '<div>',
+              '<div style="font-size:10px;color:var(--muted,rgba(255,255,255,.35));text-align:center;margin-bottom:7px;text-transform:uppercase;letter-spacing:.4px">Colores detectados</div>',
+              '<div class="_sp-colors-row">' + colorSwatches + '</div>',
+            '</div>',
+            // Detalles clave
+            detailChips ? '<div><div style="font-size:10px;color:var(--muted,rgba(255,255,255,.35));text-align:center;margin-bottom:6px;text-transform:uppercase;letter-spacing:.4px">Detalles clave</div><div class="_sp-details-row">' + detailChips + '</div></div>' : '',
           '</div>',
         '</div>'
       ].join('');
+
+      // Enfocar el input de nombre para edición rápida
+      setTimeout(function(){
+        var nameInput = document.getElementById('_spNameEdit');
+        if (nameInput) nameInput.select();
+      }, 120);
     }
 
-    // ── Paso 2: Claude genera el SVG flat ──
-    _spSetStatus('✦ Generando ilustración flat de "' + objInfo.name + '"…', status);
+    // ── Paso 2: Generar SVG ──
+    _spSetStatus('✦ Generando ícono flat…');
 
     _generateSVG(objInfo, function(errSvg, svgString) {
       if (errSvg || !svgString) {
-        console.warn('[SmartPhoto] Claude SVG falló, usando fallback geométrico:', errSvg);
+        console.warn('[SmartPhoto] Claude SVG falló, usando fallback:', errSvg);
         svgString = _spFallbackSVG(objInfo);
       }
+      _spGeneratedSVG = svgString;
+      _spSetProgress(75);
 
-      // ── Paso 3: SVG → thumb PNG ──
-      _spSetStatus('🎨 Renderizando ilustración…', status);
+      // Insertar preview del SVG en la tarjeta
+      var svgWrap = document.createElement('div');
+      svgWrap.className = '_sp-svg-preview';
+      svgWrap.innerHTML = svgString;
+      var card = document.querySelector('._sp-result-card');
+      if (card) card.insertBefore(svgWrap, card.firstChild);
+
+      // ── Paso 3: SVG → thumb ──
+      _spSetStatus('🎨 Renderizando ícono…');
 
       _svgToThumb(svgString, function(errThumb, thumb) {
+        _spSetProgress(92);
+
+        // Leer el nombre final (puede haber sido editado)
+        var nameInput = document.getElementById('_spNameEdit');
+        var finalName = (nameInput && nameInput.value.trim()) ? nameInput.value.trim() : objInfo.name;
+
         if (errThumb || !thumb) {
-          // [FIX 2] Ahora _spCropSquare es asíncrono
           _spCropSquare(_spEnhancedBase64, function(croppedThumb) {
-            _spSaveThumb(croppedThumb, _spCurrentBoxId, _spCurrentItemIdx, objInfo.name, svgString);
+            _spSaveThumb(croppedThumb, _spCurrentBoxId, _spCurrentItemIdx, finalName, svgString);
           });
         } else {
-          _spSaveThumb(thumb, _spCurrentBoxId, _spCurrentItemIdx, objInfo.name, svgString);
+          _spSaveThumb(thumb, _spCurrentBoxId, _spCurrentItemIdx, finalName, svgString);
         }
       });
     });
   });
 };
 
-/* ─── Guardar thumb en BoxVision ────────────────────────────────── */
+/* ─── Guardar thumb ──────────────────────────────────────────── */
 function _spSaveThumb(thumb, boxId, itemIdx, detectedName, svgString) {
   var box = (typeof boxes !== 'undefined') && boxes.find(function(b){ return b.id === boxId; });
   if (!box || !box.items[itemIdx]) { window._spClose(); return; }
@@ -15265,7 +15984,6 @@ function _spSaveThumb(thumb, boxId, itemIdx, detectedName, svgString) {
   box.items[itemIdx].thumbSvg = svgString;
   box.items[itemIdx].thumbAI  = detectedName;
 
-  // Guardar en localStorage via sistema existente
   try {
     if (typeof _thumbKey === 'function') {
       localStorage.setItem(_thumbKey(boxId, box.items[itemIdx].text), thumb);
@@ -15274,58 +15992,42 @@ function _spSaveThumb(thumb, boxId, itemIdx, detectedName, svgString) {
 
   if (typeof saveData    === 'function') saveData();
   if (typeof renderItems === 'function') renderItems();
-  // [FIX 7] Regenerar QR tras guardar
   if (typeof generateQR  === 'function') generateQR(boxId);
 
-  // Mostrar resultado en el modal
-  var preview    = document.getElementById('_spPreview');
-  var status     = document.getElementById('_spStatus');
-  var confirmBtn = document.getElementById('_spConfirmBtn');
+  // ── Mostrar estado de éxito ──
+  _spSetProgress(100);
+  _spSetStatus('✅ Ícono de "' + detectedName + '" guardado');
+  _spPhase = 'done';
 
-  if (preview) {
-    preview.innerHTML = [
-      '<div style="position:relative;width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px">',
-        '<img src="' + thumb + '" style="max-width:130px;max-height:130px;object-fit:contain;border-radius:14px">',
-        '<div style="font-size:12px;color:rgba(255,255,255,.5)">' + _spEsc(detectedName) + '</div>',
-        '<div style="position:absolute;bottom:10px;right:10px;background:#34C759;border-radius:99px;padding:4px 11px;font-size:11px;font-weight:700;color:#fff">✓ Guardado</div>',
-      '</div>'
-    ].join('');
+  // Actualizar tarjeta con estado de guardado
+  var body = document.getElementById('_spBody');
+  if (body) {
+    var existingCard = body.querySelector('._sp-result-card');
+    if (existingCard) {
+      var badge = document.createElement('div');
+      badge.style.cssText = 'display:flex;align-items:center;justify-content:center;gap:6px;padding:10px;border-radius:12px;background:rgba(52,199,89,.12);border:1px solid rgba(52,199,89,.25);animation:_sp-step-in 300ms ease both';
+      badge.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#34C759" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg><span style="font-size:13px;font-weight:600;color:#34C759">Ícono guardado correctamente</span>';
+      existingCard.appendChild(badge);
+    }
   }
 
-  if (status) {
-    status.textContent = '✅ Ilustración flat de "' + detectedName + '" guardada';
-  }
-
-  if (confirmBtn) {
-    confirmBtn.innerHTML = '✓ Listo';
-    confirmBtn.style.opacity = '1';
-    confirmBtn.style.background = '#34C759';
-    confirmBtn.onclick = window._spClose;
-    confirmBtn.disabled = false;
-  }
-
-  // Auto-cerrar en 2.5 s
-  setTimeout(window._spClose, 2500);
+  _spSetBtn('Listo', '✓', true, '#34C759');
+  setTimeout(window._spClose, 2200);
 }
 
-/* ─── Helpers ───────────────────────────────────────────────────── */
-function _spSetStatus(msg, el) {
-  if (el) { el.style.display = 'block'; el.textContent = msg; }
-}
-
-/* ─── Punto de entrada público ──────────────────────────────────── */
+/* ─── Punto de entrada público ───────────────────────────────── */
 function _spShowForItem(itemIdx, boxId) {
   var box = (typeof boxes !== 'undefined') && boxes.find(function(b){ return b.id === boxId; });
   if (!box || !box.items[itemIdx]) return;
   _spActive = true;
+  _spPhase = 'upload';
   _showSpModal(itemIdx, box.items[itemIdx].text, boxId);
 }
 window.spShowForItem = _spShowForItem;
 
-/* ─── Patch menú contextual de ítem — añadir "Foto IA ✦" ────────── */
+/* ─── Patch menú contextual ──────────────────────────────────── */
 document.addEventListener('DOMContentLoaded', function() {
 
-  // [FIX 6] Usar window._openItemMenu para respetar cualquier patch previo
   var _origMenu = window._openItemMenu;
   if (typeof _origMenu === 'function') {
     window._openItemMenu = function(idx, btn) {
@@ -15333,86 +16035,48 @@ document.addEventListener('DOMContentLoaded', function() {
       setTimeout(function() {
         var menu = document.getElementById('_itemCtxMenu');
         if (!menu) return;
-
-        // Separador
         var sep = document.createElement('div');
         sep.className = 'item-ctx-sep';
         menu.appendChild(sep);
-
-        // Opción "Foto IA"
         var opt = document.createElement('div');
         opt.className = 'item-ctx-opt';
         opt.style.cssText = 'color:var(--accent,#007AFF)';
-        opt.innerHTML = [
-          '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">',
-            '<path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/>',
-            '<circle cx="12" cy="13" r="3"/>',
-            '<path d="M9 3h6" stroke-width="2.5"/>',
-          '</svg>',
-          '<span>Foto IA ✦</span>'
-        ].join('');
-
+        opt.innerHTML = '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg><span>Foto IA ✦</span>';
         opt.onclick = function() {
           var m = document.getElementById('_itemCtxMenu');
           if (m) m.remove();
-          // [FIX 6] currentBoxId es global (let), accesible directamente
           var bid = (typeof currentBoxId !== 'undefined') ? currentBoxId : null;
           if (!bid) return;
           setTimeout(function() { _spShowForItem(idx, bid); }, 120);
         };
-
         menu.appendChild(opt);
       }, 25);
     };
   }
 
-  // [FIX 5] Patch _compressPhoto en DOMContentLoaded — garantiza que la función
-  // original ya existe (declarada como function statement, es hoisted, pero por
-  // claridad lo hacemos aquí junto con el resto de patches)
+  // Patch _compressPhoto mejorado
   if (typeof window._compressPhoto === 'function' || typeof _compressPhoto === 'function') {
     window._compressPhoto = function(file, callback) {
-      var MAX_PX  = 1280;
-      var QUALITY = 0.88;
-      var img = new Image();
-      var url = URL.createObjectURL(file);
-      img.onload = function() {
+      var MAX_PX=1280, QUALITY=0.88;
+      var img=new Image(), url=URL.createObjectURL(file);
+      img.onload=function(){
         URL.revokeObjectURL(url);
-        var w = img.naturalWidth, h = img.naturalHeight;
-        if (w > MAX_PX || h > MAX_PX) {
-          if (w >= h) { h = Math.round(h * MAX_PX / w); w = MAX_PX; }
-          else        { w = Math.round(w * MAX_PX / h); h = MAX_PX; }
-        }
-        var canvas = document.createElement('canvas');
-        canvas.width = w; canvas.height = h;
-        var ctx = canvas.getContext('2d');
-        // 2-pass para imágenes muy grandes: reduce aliasing
-        if (img.naturalWidth > w * 2) {
-          var tmp = document.createElement('canvas');
-          tmp.width = w*2; tmp.height = h*2;
-          tmp.getContext('2d').drawImage(img, 0, 0, w*2, h*2);
-          ctx.drawImage(tmp, 0, 0, w, h);
-        } else {
-          ctx.drawImage(img, 0, 0, w, h);
-        }
-        var result = canvas.toDataURL('image/jpeg', QUALITY);
-        var kb = Math.round(result.length * 0.75 / 1024);
-        console.log('[SmartPhoto] Foto caja comprimida (v1.1): ~' + kb + 'KB (' + w + 'x' + h + ')');
-        callback(result);
+        var w=img.naturalWidth,h=img.naturalHeight;
+        if(w>MAX_PX||h>MAX_PX){if(w>=h){h=Math.round(h*MAX_PX/w);w=MAX_PX;}else{w=Math.round(w*MAX_PX/h);h=MAX_PX;}}
+        var canvas=document.createElement('canvas');canvas.width=w;canvas.height=h;
+        var ctx=canvas.getContext('2d');
+        if(img.naturalWidth>w*2){var tmp=document.createElement('canvas');tmp.width=w*2;tmp.height=h*2;tmp.getContext('2d').drawImage(img,0,0,w*2,h*2);ctx.drawImage(tmp,0,0,w,h);}
+        else ctx.drawImage(img,0,0,w,h);
+        callback(canvas.toDataURL('image/jpeg',QUALITY));
       };
-      img.onerror = function() {
-        URL.revokeObjectURL(url);
-        var reader = new FileReader();
-        reader.onload = function(ev) { callback(ev.target.result); };
-        reader.readAsDataURL(file);
-      };
-      img.src = url;
+      img.onerror=function(){URL.revokeObjectURL(url);var r=new FileReader();r.onload=function(e){callback(e.target.result);};r.readAsDataURL(file);};
+      img.src=url;
     };
-    console.log('[SmartPhoto] _compressPhoto mejorado: 1280px / JPEG 88%');
   }
 
 });
 
-console.log('✅ BoxVision SmartPhoto v' + SP_VERSION + ' listo — Groq Vision + Claude SVG + Canvas enhance (7 fixes aplicados)');
+console.log('✅ BoxVision SmartPhoto v' + SP_VERSION + ' — Gemini Vision + SVG premium + UI enriquecida');
 
 })();
 </script>
@@ -16838,6 +17502,378 @@ console.log('✅ BoxVision WebPush v2.0 cargado — SW-first, setTimeout fallbac
     transform 580ms cubic-bezier(0.175, 0.885, 0.32, 1.45),
     filter    300ms ease-out !important;
 }
+
+/* ══════════════════════════════════════════════════════════════
+   iOS NATIVE BUTTON POLISH — Mira v3.1
+   Solo mejoras visuales. Cero cambios de lógica o estructura.
+══════════════════════════════════════════════════════════════ */
+
+/* ── 1. TOPBAR BUTTONS (.tbtn) — squircle iOS refinado ── */
+.tbtn {
+  border-radius: 14px !important;
+  width: 40px !important;
+  height: 40px !important;
+  background: rgba(255,255,255,0.08) !important;
+  border: 0.5px solid rgba(255,255,255,0.11) !important;
+  box-shadow:
+    0 1px 3px rgba(0,0,0,0.18),
+    inset 0 1px 0 rgba(255,255,255,0.08) !important;
+  backdrop-filter: blur(12px) !important;
+  -webkit-backdrop-filter: blur(12px) !important;
+  color: rgba(255,255,255,0.82) !important;
+  font-size: 16px !important;
+}
+[data-dark=""] .tbtn {
+  background: rgba(0,0,0,0.055) !important;
+  border: 0.5px solid rgba(0,0,0,0.09) !important;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.08), inset 0 1px 0 rgba(255,255,255,0.6) !important;
+  color: rgba(0,0,0,0.72) !important;
+}
+
+/* Botón de acento (+ nueva caja) */
+.tbtn-accent {
+  background: linear-gradient(145deg, #1A8AFF 0%, #0A78F0 55%, #5856D6 100%) !important;
+  border: none !important;
+  box-shadow:
+    0 4px 16px rgba(10,132,255,0.45),
+    0 1px 4px rgba(0,0,0,0.2),
+    inset 0 1px 0 rgba(255,255,255,0.28) !important;
+  color: #fff !important;
+}
+[data-dark=""] .tbtn-accent {
+  box-shadow:
+    0 3px 12px rgba(10,132,255,0.38),
+    0 1px 3px rgba(0,0,0,0.15),
+    inset 0 1px 0 rgba(255,255,255,0.25) !important;
+}
+
+/* ── 2. FILTER PILLS (.pill) — iOS segmented feel ── */
+.pill {
+  border-radius: 10px !important;
+  padding: 7px 13px !important;
+  font-size: 12.5px !important;
+  font-weight: 600 !important;
+  letter-spacing: -0.1px !important;
+  border: 0.5px solid rgba(255,255,255,0.08) !important;
+  background: rgba(255,255,255,0.06) !important;
+  color: rgba(255,255,255,0.6) !important;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.14) !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 5px !important;
+  white-space: nowrap !important;
+}
+.pill.active {
+  background: var(--accent) !important;
+  border-color: transparent !important;
+  color: #fff !important;
+  box-shadow:
+    0 3px 12px rgba(10,132,255,0.4),
+    inset 0 1px 0 rgba(255,255,255,0.22) !important;
+}
+[data-dark=""] .pill {
+  background: rgba(0,0,0,0.045) !important;
+  border: 0.5px solid rgba(0,0,0,0.08) !important;
+  color: rgba(0,0,0,0.5) !important;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.06) !important;
+}
+[data-dark=""] .pill.active {
+  background: var(--accent) !important;
+  color: #fff !important;
+  border-color: transparent !important;
+}
+
+/* ── 3. MODAL BUTTONS (.m-btn) — iOS action sheet style ── */
+.m-btn {
+  border-radius: 14px !important;
+  font-size: 15px !important;
+  font-weight: 600 !important;
+  letter-spacing: -0.2px !important;
+  padding: 15px 16px !important;
+}
+.m-primary {
+  background: linear-gradient(155deg, #1A8AFF 0%, #0A78F0 60%, #5856D6 100%) !important;
+  box-shadow:
+    0 5px 18px rgba(10,132,255,0.42),
+    0 1px 4px rgba(0,0,0,0.2),
+    inset 0 1px 0 rgba(255,255,255,0.25) !important;
+  border: none !important;
+  color: #fff !important;
+}
+.m-ghost {
+  background: rgba(255,255,255,0.065) !important;
+  border: 0.5px solid rgba(255,255,255,0.12) !important;
+  color: rgba(255,255,255,0.72) !important;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.16), inset 0 1px 0 rgba(255,255,255,0.07) !important;
+}
+[data-dark=""] .m-ghost {
+  background: rgba(0,0,0,0.04) !important;
+  border: 0.5px solid rgba(0,0,0,0.1) !important;
+  color: rgba(0,0,0,0.6) !important;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.06) !important;
+}
+
+/* ── 4. DETAIL ACTION BUTTONS (.det-action-btn) — iOS grouped card style ── */
+.det-action-btn {
+  border-radius: 16px !important;
+  padding: 14px 10px !important;
+  font-size: 12.5px !important;
+  font-weight: 650 !important;
+  letter-spacing: -0.1px !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  gap: 6px !important;
+}
+.det-action-btn i,
+.det-action-btn .ti {
+  font-size: 20px !important;
+}
+.dat-copy {
+  background: rgba(255,255,255,0.07) !important;
+  border: 0.5px solid rgba(255,255,255,0.11) !important;
+  color: rgba(255,255,255,0.85) !important;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.2), inset 0 1px 0 rgba(255,255,255,0.07) !important;
+}
+[data-dark=""] .dat-copy {
+  background: rgba(0,0,0,0.04) !important;
+  border: 0.5px solid rgba(0,0,0,0.09) !important;
+  color: rgba(0,0,0,0.7) !important;
+}
+.dat-wa {
+  background: linear-gradient(145deg, #2ADB6E, #1DB954) !important;
+  box-shadow: 0 4px 14px rgba(37,211,102,0.38), inset 0 1px 0 rgba(255,255,255,0.22) !important;
+  border: none !important;
+}
+.dat-dup {
+  background: linear-gradient(145deg, #1A8AFF, #5856D6) !important;
+  box-shadow: 0 4px 14px rgba(10,132,255,0.36), inset 0 1px 0 rgba(255,255,255,0.22) !important;
+  border: none !important;
+}
+.dat-del {
+  background: rgba(255,59,48,0.09) !important;
+  border: 0.5px solid rgba(255,59,48,0.22) !important;
+  color: #FF3B30 !important;
+  box-shadow: 0 1px 4px rgba(255,59,48,0.1) !important;
+}
+
+/* ── 5. ADD METHOD BUTTONS — iOS tool pill style ── */
+.add-method-btn {
+  border-radius: 12px !important;
+  padding: 8px 10px 7px !important;
+  font-size: 10.5px !important;
+  font-weight: 600 !important;
+  min-width: 46px !important;
+  background: rgba(255,255,255,0.07) !important;
+  border: 0.5px solid rgba(255,255,255,0.11) !important;
+  color: rgba(255,255,255,0.65) !important;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.18), inset 0 1px 0 rgba(255,255,255,0.07) !important;
+  letter-spacing: -0.1px !important;
+  gap: 4px !important;
+}
+.add-method-btn i,
+.add-method-btn .ti {
+  font-size: 17px !important;
+  opacity: 0.9 !important;
+}
+[data-dark=""] .add-method-btn {
+  background: rgba(0,0,0,0.045) !important;
+  border: 0.5px solid rgba(0,0,0,0.09) !important;
+  color: rgba(0,0,0,0.55) !important;
+}
+
+/* ── 6. VIEW TOGGLE (grid / list) — iOS segmented control ── */
+.view-toggle {
+  background: rgba(255,255,255,0.07) !important;
+  border: 0.5px solid rgba(255,255,255,0.1) !important;
+  border-radius: 11px !important;
+  padding: 3px !important;
+  gap: 2px !important;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.18) !important;
+}
+.view-toggle-btn {
+  border-radius: 8px !important;
+  width: 32px !important;
+  height: 32px !important;
+  font-size: 14px !important;
+  color: rgba(255,255,255,0.38) !important;
+}
+.view-toggle-btn.active {
+  background: rgba(255,255,255,0.18) !important;
+  color: rgba(255,255,255,0.92) !important;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.24), inset 0 1px 0 rgba(255,255,255,0.1) !important;
+}
+[data-dark=""] .view-toggle {
+  background: rgba(0,0,0,0.06) !important;
+  border: 0.5px solid rgba(0,0,0,0.1) !important;
+}
+[data-dark=""] .view-toggle-btn { color: rgba(0,0,0,0.3) !important; }
+[data-dark=""] .view-toggle-btn.active {
+  background: rgba(0,0,0,0.12) !important;
+  color: rgba(0,0,0,0.8) !important;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1) !important;
+}
+
+/* ── 7. ADD ITEM BUTTON (.add-btn2 / .add-main-btn) ── */
+.add-btn2,
+.add-main-btn {
+  border-radius: 12px !important;
+  box-shadow:
+    0 3px 10px rgba(10,132,255,0.38),
+    inset 0 1px 0 rgba(255,255,255,0.28) !important;
+}
+
+/* ── 8. ADVANCED FILTER APPLY BUTTON ── */
+.adf-apply-btn {
+  border-radius: 14px !important;
+  font-weight: 650 !important;
+  box-shadow: 0 4px 16px rgba(10,132,255,0.38), inset 0 1px 0 rgba(255,255,255,0.22) !important;
+  letter-spacing: -0.2px !important;
+}
+
+/* ── 9. THEME DONE BUTTON ── */
+.thm-done-btn {
+  border-radius: 14px !important;
+  font-weight: 650 !important;
+  letter-spacing: -0.2px !important;
+  box-shadow: 0 4px 16px rgba(10,132,255,0.36), inset 0 1px 0 rgba(255,255,255,0.2) !important;
+}
+
+/* ── 10. SPLASH BUTTONS ── */
+.sp-btn {
+  border-radius: 16px !important;
+  font-weight: 650 !important;
+  letter-spacing: -0.2px !important;
+  box-shadow:
+    0 5px 20px rgba(10,132,255,0.45),
+    0 1px 4px rgba(0,0,0,0.2),
+    inset 0 1px 0 rgba(255,255,255,0.28) !important;
+}
+.sp-btn2 {
+  border-radius: 14px !important;
+  font-weight: 600 !important;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.18), inset 0 1px 0 rgba(255,255,255,0.08) !important;
+}
+
+/* ── 11. SHARE BOX OPTION BUTTONS ── */
+.shb-opt-btn {
+  border-radius: 14px !important;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.15), inset 0 1px 0 rgba(255,255,255,0.07) !important;
+}
+
+/* ── 12. DETAIL HERO BACK + ACTION BUTTONS — rounder squircle ── */
+.dh-back,
+.dh-act {
+  border-radius: 12px !important;
+  backdrop-filter: blur(20px) saturate(160%) !important;
+  -webkit-backdrop-filter: blur(20px) saturate(160%) !important;
+  background: rgba(0,0,0,0.32) !important;
+  border: 0.5px solid rgba(255,255,255,0.18) !important;
+  box-shadow:
+    0 4px 18px rgba(0,0,0,0.32),
+    inset 0 1px 0 rgba(255,255,255,0.14) !important;
+}
+
+/* ── 13. QUICK REMINDER BUTTONS ── */
+.rem-quick-btn {
+  border-radius: 10px !important;
+  font-size: 12.5px !important;
+  font-weight: 600 !important;
+  border: 0.5px solid rgba(255,255,255,0.07) !important;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.14) !important;
+}
+.rem-quick-btn.sel {
+  border-color: rgba(255,149,0,0.3) !important;
+  box-shadow: 0 2px 8px rgba(255,149,0,0.2) !important;
+}
+
+/* ── 14. AI QUICK CHIPS ── */
+.ai-quick-chip {
+  border-radius: 99px !important;
+  font-size: 12px !important;
+  font-weight: 600 !important;
+  padding: 7px 15px !important;
+  letter-spacing: -0.1px !important;
+}
+
+/* ── 15. SETTINGS TOGGLE — extra smooth ── */
+.settings-toggle {
+  box-shadow: inset 0 0 0 0.5px rgba(0,0,0,0.1), 0 1px 2px rgba(0,0,0,0.1) !important;
+}
+.settings-toggle-knob {
+  box-shadow: 0 2px 8px rgba(0,0,0,0.28), 0 0.5px 2px rgba(0,0,0,0.18) !important;
+}
+
+/* ── Ocultar círculo de marcar cuando está desactivado en ajustes ── */
+body.hide-item-check .i-chk {
+  display: none !important;
+}
+
+/* ── Hint de uso del buscador de objetos ── */
+.add-search-hint {
+  display: flex;
+  align-items: flex-start;
+  gap: 9px;
+  margin: 8px 0 2px;
+  padding: 10px 13px;
+  background: rgba(10,132,255,0.07);
+  border: 0.5px solid rgba(10,132,255,0.18);
+  border-radius: 13px;
+  animation: hintFadeIn .3s cubic-bezier(.34,1.2,.64,1) both;
+}
+@keyframes hintFadeIn {
+  from { opacity:0; transform:translateY(6px) scale(.97); }
+  to   { opacity:1; transform:translateY(0) scale(1); }
+}
+.add-search-hint-icon {
+  font-size: 17px;
+  flex-shrink: 0;
+  margin-top: 1px;
+  opacity: .85;
+}
+.add-search-hint-body {
+  flex: 1;
+  min-width: 0;
+}
+.add-search-hint-title {
+  font-size: 12.5px;
+  font-weight: 700;
+  color: rgba(10,132,255,0.95);
+  letter-spacing: -.1px;
+  margin-bottom: 3px;
+}
+.add-search-hint-steps {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+.add-search-hint-step {
+  font-size: 11.5px;
+  color: var(--muted);
+  display: flex;
+  align-items: baseline;
+  gap: 5px;
+  line-height: 1.4;
+}
+.add-search-hint-step b {
+  color: var(--text);
+  font-weight: 600;
+  white-space: nowrap;
+}
+.add-hint-close {
+  background: none;
+  border: none;
+  color: var(--muted);
+  font-size: 16px;
+  cursor: pointer;
+  padding: 0 0 0 4px;
+  line-height: 1;
+  flex-shrink: 0;
+  opacity: .5;
+  -webkit-tap-highlight-color: transparent;
+  align-self: flex-start;
+}
+.add-hint-close:active { opacity: 1; }
 
 </style>
 
