@@ -15089,7 +15089,7 @@ var SP_QUALITY    = 0.92;
 var SP_THUMB_SIZE = 200;
 
 // Gemini para visión (reemplaza Groq Vision)
-var SP_GEMINI_MODEL = 'gemini-2.0-flash';
+var SP_GEMINI_MODEL = 'gemini-2.0-flash-lite';
 var SP_GEMINI_URL   = 'https://generativelanguage.googleapis.com/v1beta/models/' + SP_GEMINI_MODEL + ':generateContent';
 
 // Claude API para SVG flat detallado
@@ -15566,7 +15566,26 @@ window._spConfirm = function() {
 
   _identifyObject(_spEnhancedBase64, geminiKey, function(err, objInfo) {
     if (err) {
-      _spSetStatus('⚠️ ' + err, status);
+      var isQuota = typeof err === 'string' && (
+        err.toLowerCase().indexOf('quota') !== -1 ||
+        err.toLowerCase().indexOf('rate') !== -1 ||
+        err.toLowerCase().indexOf('exhausted') !== -1 ||
+        err.toLowerCase().indexOf('limit') !== -1
+      );
+      if (status) {
+        if (isQuota) {
+          status.innerHTML = [
+            '<div style="background:rgba(255,149,0,.10);border:1px solid rgba(255,149,0,.22);border-radius:14px;padding:14px 16px;text-align:center">',
+              '<div style="font-size:22px;margin-bottom:6px">☕</div>',
+              '<div style="font-size:13.5px;font-weight:700;color:#FF9500;margin-bottom:4px">Gemini necesita un respiro</div>',
+              '<div style="font-size:12px;color:rgba(255,255,255,.5);line-height:1.5">Alcanzaste el límite gratuito por ahora.<br>Espera unos minutos y vuelve a intentarlo.</div>',
+            '</div>'
+          ].join('');
+          status.style.display = 'block';
+        } else {
+          _spSetStatus('⚠️ Error al analizar. Intenta de nuevo.', status);
+        }
+      }
       if (confirmBtn) {
         confirmBtn.disabled = false;
         confirmBtn.style.opacity = '1';
