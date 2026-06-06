@@ -4713,6 +4713,20 @@ if(!auth){
       </div>
       <div style="font-size:12px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px">Cajas en esta habitación</div>
       <div id="roomDetailBoxList"></div>
+
+      <!-- Todos los objetos de la habitación -->
+      <div id="roomDetailItemsSection" style="margin-top:18px">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+          <div style="font-size:12px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px">Todos los objetos</div>
+          <div style="display:flex;gap:6px">
+            <button id="rdFilterAll"  onclick="_rdFilter('all')"     style="font-size:11px;font-weight:600;padding:4px 10px;border-radius:99px;border:none;cursor:pointer;font-family:inherit;background:var(--accent);color:#fff;transition:opacity .15s">Todos</button>
+            <button id="rdFilterPend" onclick="_rdFilter('pending')" style="font-size:11px;font-weight:600;padding:4px 10px;border-radius:99px;border:none;cursor:pointer;font-family:inherit;background:rgba(255,255,255,.08);color:var(--muted);transition:opacity .15s">Pendientes</button>
+            <button id="rdFilterDone" onclick="_rdFilter('done')"    style="font-size:11px;font-weight:600;padding:4px 10px;border-radius:99px;border:none;cursor:pointer;font-family:inherit;background:rgba(255,255,255,.08);color:var(--muted);transition:opacity .15s">Sacados</button>
+          </div>
+        </div>
+        <div id="roomDetailItemsList"></div>
+      </div>
+
       <div class="room-detail-actions">
         <button class="room-da-btn room-da-edit" id="roomDetailEditBtn">
           <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></i> Renombrar
@@ -6337,6 +6351,25 @@ function renderItems(){
   if(titleEl) titleEl.innerHTML=`<span class="dsec-title-icon dsec-icon-cont"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="16.5" y1="9.4" x2="7.5" y2="4.21"/><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg></i></span>CONTENIDO (${box.items.length} obj${movingMode ? ` · ${done} sacado${done!==1?"s":""}` : ''})`;
   const addRow=document.getElementById("addRow");
   if(addRow) addRow.style.display=box.sealed?"none":"flex";
+  const hasAnyPhoto = box.items.some(it => it.thumb);
+  const photoHint = (!hasAnyPhoto && box.items.length > 0)
+    ? `<div style="
+        display:flex;align-items:center;gap:9px;
+        margin:10px 14px 4px;
+        padding:10px 13px;
+        background:rgba(10,132,255,.07);
+        border:1px solid rgba(10,132,255,.15);
+        border-radius:12px;
+        ">
+        <span style="font-size:18px;flex-shrink:0">💡</span>
+        <span style="font-size:12px;color:rgba(255,255,255,.5);line-height:1.5">
+          Toca los <strong style="color:rgba(255,255,255,.7)">···</strong> de un objeto
+          y elige <strong style="color:rgba(255,255,255,.7)">Foto IA ✦</strong>
+          para agregarle una imagen
+        </span>
+      </div>`
+    : '';
+
   document.getElementById("itemsList").innerHTML=box.items.length===0
     ?funnyEmpty()
     :box.items.map((it,i)=>{
@@ -6351,7 +6384,7 @@ function renderItems(){
         <span class="i-num">${i+1}</span>
         <button class="i-opts" onclick="event.stopPropagation();_openItemMenu(${i},this)" aria-label="Opciones">···</button>
       </div>`;
-    }).join("");
+    }).join("") + photoHint;
 }
 
 function toggleItem(idx){
@@ -7398,6 +7431,17 @@ function _openRoomDetail(id){
         <div style="font-size:12px;margin-top:4px">Arrastra cajas desde "Sin asignar"</div>
        </div>`;
 
+  // Todos los objetos de la habitación
+  _rdAllItems = [];
+  roomBoxes.forEach(function(b) {
+    var bColor = b.color || '#0A84FF';
+    b.items.forEach(function(it) {
+      _rdAllItems.push({ item: it, boxName: b.name, boxId: b.id, boxColor: bColor });
+    });
+  });
+  _rdCurrentFilter = 'all';
+  _rdFilter('all');
+
   // Botones de acción
   document.getElementById("roomDetailEditBtn").onclick = function(){ closeRoomDetail(); setTimeout(function(){renameRoom(id);},220); };
   document.getElementById("roomDetailDeleteBtn").onclick = function(){ deleteRoom(id); };
@@ -7408,6 +7452,69 @@ function _openRoomDetail(id){
   requestAnimationFrame(function(){
     panel.classList.add("open");
   });
+}
+
+// ── Filtro de objetos en detalle de habitación ──────────────────────
+var _rdCurrentFilter = 'all';
+var _rdAllItems = []; // [{item, boxName, boxId, boxColor}]
+
+window._rdFilter = function(filter) {
+  _rdCurrentFilter = filter;
+  // Estilos botones
+  ['All','Pend','Done'].forEach(function(k){
+    var btn = document.getElementById('rdFilter'+k);
+    if(!btn) return;
+    var active = (k.toLowerCase() === filter) || (k==='All' && filter==='all') || (k==='Pend' && filter==='pending') || (k==='Done' && filter==='done');
+    btn.style.background = active ? 'var(--accent)' : 'rgba(255,255,255,.08)';
+    btn.style.color = active ? '#fff' : 'var(--muted)';
+  });
+  _rdRenderItems();
+};
+
+function _rdRenderItems() {
+  var list = document.getElementById('roomDetailItemsList');
+  if (!list) return;
+
+  var filtered = _rdAllItems.filter(function(entry) {
+    if (_rdCurrentFilter === 'pending') return !entry.item.done;
+    if (_rdCurrentFilter === 'done')    return  entry.item.done;
+    return true;
+  });
+
+  if (!filtered.length) {
+    list.innerHTML = '<div style="text-align:center;padding:24px 0;color:var(--muted);font-size:13px">' +
+      (_rdCurrentFilter === 'done' ? '📭 Ningún objeto sacado aún' :
+       _rdCurrentFilter === 'pending' ? '✅ Todo sacado' :
+       '📭 Sin objetos en esta habitación') + '</div>';
+    return;
+  }
+
+  list.innerHTML = filtered.map(function(entry) {
+    var it = entry.item;
+    var em = (typeof getItemEmoji === 'function') ? getItemEmoji(it.text) : '📦';
+    return '<div style="display:flex;align-items:center;gap:10px;padding:9px 12px;' +
+      'background:var(--card2,rgba(255,255,255,.04));border-radius:12px;margin-bottom:6px;' +
+      'cursor:pointer;transition:opacity .12s" ' +
+      'onclick="closeRoomDetail();setTimeout(function(){openDetail(\'' + entry.boxId + '\')},220)">' +
+      // Foto o emoji
+      (it.thumb
+        ? '<img src="' + it.thumb + '" style="width:32px;height:32px;border-radius:8px;object-fit:cover;flex-shrink:0">'
+        : '<div style="width:32px;height:32px;border-radius:8px;background:rgba(255,255,255,.06);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0">' + em + '</div>') +
+      // Texto
+      '<div style="flex:1;min-width:0">' +
+        '<div style="font-size:13px;font-weight:600;color:' + (it.done ? 'var(--muted)' : 'var(--text)') + ';' +
+          (it.done ? 'text-decoration:line-through;' : '') + 'white-space:nowrap;overflow:hidden;text-overflow:ellipsis">' + (it.text || '') + '</div>' +
+        '<div style="font-size:11px;color:var(--muted);margin-top:2px;display:flex;align-items:center;gap:4px">' +
+          '<span style="display:inline-block;width:7px;height:7px;border-radius:50%;background:' + entry.boxColor + ';flex-shrink:0"></span>' +
+          entry.boxName +
+        '</div>' +
+      '</div>' +
+      // Badge
+      (it.done
+        ? '<span style="font-size:10px;font-weight:700;color:#34C759;background:rgba(52,199,89,.12);border-radius:99px;padding:3px 8px;flex-shrink:0">✓ Sacado</span>'
+        : '<span style="font-size:10px;font-weight:700;color:var(--muted);background:rgba(255,255,255,.06);border-radius:99px;padding:3px 8px;flex-shrink:0">Pendiente</span>') +
+    '</div>';
+  }).join('');
 }
 
 function closeRoomDetail(){
@@ -7476,7 +7583,7 @@ function goSettings(){ if(typeof _updateFabVisibility==='function') _updateFabVi
   const fbSub = document.getElementById('feedbackStatusSub');
   if(fbSub){
     if(window._emailjsReady){
-      fbSub.innerHTML = '📬 Llega directo a tu correo';
+      
       fbSub.style.color = '#34C759';
     } else {
       fbSub.textContent = 'Reporta bugs o sugiere mejoras';
@@ -8732,41 +8839,16 @@ function signInGoogle(){
   const provider = new firebase.auth.GoogleAuthProvider();
   provider.setCustomParameters({prompt: 'select_account'});
 
-  // Detectar entorno para elegir método de login
-  const isMobile  = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
-  const isFile    = location.protocol === 'file:';
-  const isPWA     = window.matchMedia('(display-mode: standalone)').matches
-                 || window.navigator.standalone === true
-                 || document.referrer.includes('android-app://');
-  const isIOS     = /iPhone|iPad|iPod/i.test(navigator.userAgent);
-  const isSafari  = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
-
-  // FIX COOP: usar redirect en móvil y PWA, popup solo en desktop no-Safari
-  const isDesktopChromium = !isMobile && !isSafari;
-  const useRedirect = isMobile || isFile || isPWA || !isDesktopChromium;
-
-  if(useRedirect){
-    try{ sessionStorage.setItem('bv_login_pending','1'); }catch(e){}
-    auth.signInWithRedirect(provider);
-    return;
-  }
-
-  // iOS Safari / Desktop: usar popup
-  auth.signInWithPopup(provider).catch(err=>{
-    if(err.code === 'auth/popup-blocked' || err.code === 'auth/popup-cancelled'){
-      console.info("[BoxVision] Popup bloqueado — usando redirect");
-      try{ sessionStorage.setItem('bv_login_pending','1'); }catch(e){}
-      auth.signInWithRedirect(provider);
-      return;
-    }
+  // Siempre usar redirect — evita ventana emergente en todos los dispositivos
+  try{ sessionStorage.setItem('bv_login_pending','1'); }catch(e){}
+  auth.signInWithRedirect(provider);
+  if(false){ auth.signInWithPopup(provider).catch(err=>{
     if(btn) btn.style.display = "flex";
     if(loading) loading.style.display = "none";
-    // Códigos que no cuentan como fallo real (el usuario lo canceló)
     const userCancelled = ['auth/popup-closed-by-user','auth/cancelled-popup-request','auth/user-cancelled'];
     if(!userCancelled.includes(err.code)){
       console.error("Login error:", err.code);
       if(errEl){ errEl.textContent = "Error al iniciar sesión. Intenta de nuevo."; errEl.style.display = "block"; }
-      // Notificar al sistema de auto-mantenimiento solo si es error técnico real
       if(typeof window._bvLoginFail === 'function') window._bvLoginFail(err.code);
     }
   });
@@ -15236,7 +15318,7 @@ function _identifyObject(base64jpeg, geminiKey, callback) {
   })
   .then(function(r) { return r.json(); })
   .then(function(data) {
-    if (data.error) { callback(data.error.message || 'Gemini error'); return; }
+    if (data.error) { callback(null, null, data.error); return; }
     var text = ((((data.candidates||[])[0]||{}).content||{}).parts||[{}])[0].text || '';
     try {
       text = text.replace(/```json|```/g,'').trim();
@@ -15399,21 +15481,37 @@ function _showSpModal(itemIdx, itemText, boxId) {
         '</div>'
       ].join('') : '',
 
-      // Guía de cómo sacar buenas fotos
-      '<div style="background:rgba(10,132,255,.08);border:1px solid rgba(10,132,255,.18);border-radius:12px;padding:10px 13px;margin-bottom:14px">',
-        '<div style="font-size:11px;font-weight:700;color:var(--accent,#0A84FF);margin-bottom:6px;display:flex;align-items:center;gap:5px">',
-          '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>',
-          'Consejos para un ícono más detallado',
+      // Tutorial: pasos para agregar imagen
+      '<div style="background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.09);border-radius:14px;padding:12px 14px;margin-bottom:14px">',
+        '<div style="font-size:11px;font-weight:700;color:rgba(255,255,255,.5);margin-bottom:10px;letter-spacing:.2px">Cómo agregar foto a un objeto</div>',
+        '<div style="display:flex;gap:9px;align-items:center;margin-bottom:8px">',
+          '<div style="width:20px;height:20px;border-radius:50%;background:rgba(10,132,255,.2);color:#0A84FF;font-size:10px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0">1</div>',
+          '<div style="font-size:11.5px;color:rgba(255,255,255,.55);">Agrega un objeto a tu caja</div>',
         '</div>',
-        '<div style="font-size:11px;color:rgba(255,255,255,.55);line-height:1.7">',
-          '📸 <strong style="color:rgba(255,255,255,.75)">Fondo simple</strong> — pon el objeto sobre una mesa clara<br>',
-          '💡 <strong style="color:rgba(255,255,255,.75)">Buena luz</strong> — evita sombras fuertes o contraluz<br>',
-          '🎯 <strong style="color:rgba(255,255,255,.75)">Un solo objeto</strong> — que ocupe el 70% de la foto<br>',
-          '🔍 <strong style="color:rgba(255,255,255,.75)">Muestra el frente</strong> — el lado más reconocible del objeto',
+        '<div style="display:flex;gap:9px;align-items:center;margin-bottom:8px">',
+          '<div style="width:20px;height:20px;border-radius:50%;background:rgba(10,132,255,.2);color:#0A84FF;font-size:10px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0">2</div>',
+          '<div style="font-size:11.5px;color:rgba(255,255,255,.55);">Presiona los <strong style="color:rgba(255,255,255,.75)">···</strong> del objeto</div>',
+        '</div>',
+        '<div style="display:flex;gap:9px;align-items:center;margin-bottom:10px">',
+          '<div style="width:20px;height:20px;border-radius:50%;background:rgba(10,132,255,.2);color:#0A84FF;font-size:10px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0">3</div>',
+          '<div style="font-size:11.5px;color:rgba(255,255,255,.55);">Toca <strong style="color:rgba(255,255,255,.75)">Foto IA ✦</strong> y elige una opción</div>',
+        '</div>',
+        '<div style="height:0.5px;background:rgba(255,255,255,.07);margin-bottom:9px"></div>',
+        '<div style="display:flex;gap:8px">',
+          '<div style="flex:1;background:rgba(10,132,255,.08);border-radius:10px;padding:8px 10px;text-align:center">',
+            '<div style="font-size:13px;margin-bottom:3px">✦</div>',
+            '<div style="font-size:10.5px;font-weight:700;color:#0A84FF;margin-bottom:2px">Con IA</div>',
+            '<div style="font-size:10px;color:rgba(255,255,255,.35);line-height:1.4">Crea un ícono bonito automáticamente</div>',
+          '</div>',
+          '<div style="flex:1;background:rgba(255,255,255,.04);border-radius:10px;padding:8px 10px;text-align:center">',
+            '<div style="font-size:13px;margin-bottom:3px">📷</div>',
+            '<div style="font-size:10.5px;font-weight:700;color:rgba(255,255,255,.5);margin-bottom:2px">Sin IA</div>',
+            '<div style="font-size:10px;color:rgba(255,255,255,.35);line-height:1.4">Guarda la foto directo sin límite</div>',
+          '</div>',
         '</div>',
       '</div>',
 
-      // Preview área
+            // Preview área
       '<div id="_spPreview" style="',
         'width:100%;height:150px;border-radius:18px;',
         'background:var(--card2,rgba(255,255,255,.05));',
@@ -15427,6 +15525,8 @@ function _showSpModal(itemIdx, itemText, boxId) {
 
       '<input id="_spFileGallery" type="file" accept="image/*" style="display:none" onchange="window._spHandleFile(this)">',
       '<input id="_spFileCamera"  type="file" accept="image/*" capture="environment" style="display:none" onchange="window._spHandleFile(this)">',
+      '<input id="_spFileGalleryNoAI" type="file" accept="image/*" style="display:none" onchange="window._spSaveDirectFromFile(this)">',
+      '<input id="_spFileCameraNoAI"  type="file" accept="image/*" capture="environment" style="display:none" onchange="window._spSaveDirectFromFile(this)">',
 
       // Cierra el div scrollable
       '</div>',
@@ -15452,6 +15552,33 @@ function _showSpModal(itemIdx, itemText, boxId) {
           'Cámara',
         '</button>',
       '</div>',
+
+      // ── Separador "Sin IA" ──
+      '<div style="display:flex;align-items:center;gap:8px;margin-bottom:7px">',
+        '<div style="flex:1;height:0.5px;background:rgba(255,255,255,.08)"></div>',
+        '<div style="font-size:10px;font-weight:600;color:rgba(255,255,255,.22);letter-spacing:.6px">SIN IA — foto directa</div>',
+        '<div style="flex:1;height:0.5px;background:rgba(255,255,255,.08)"></div>',
+      '</div>',
+
+      '<div style="display:flex;gap:8px;margin-bottom:10px">',
+        '<button onclick="document.getElementById(\'_spFileGalleryNoAI\').click()" style="',
+          'flex:1;padding:10px 6px;border-radius:13px;border:1px solid rgba(255,255,255,.07);',
+          'background:rgba(255,255,255,.03);color:rgba(255,255,255,.45);font-size:12px;font-weight:600;',
+          'cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:5px',
+        '">',
+          '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>',
+          'Galería',
+        '</button>',
+        '<button onclick="document.getElementById(\'_spFileCameraNoAI\').click()" style="',
+          'flex:1;padding:10px 6px;border-radius:13px;border:1px solid rgba(255,255,255,.07);',
+          'background:rgba(255,255,255,.03);color:rgba(255,255,255,.45);font-size:12px;font-weight:600;',
+          'cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:5px',
+        '">',
+          '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg>',
+          'Cámara',
+        '</button>',
+      '</div>',
+
 
       '<div style="display:flex;gap:10px">',
         '<button onclick="window._spClose()" style="',
@@ -15564,14 +15691,21 @@ window._spConfirm = function() {
   // ── Paso 1: Gemini Vision identifica el objeto ──
   _spSetStatus('🔍 Analizando imagen con Gemini Vision…', status);
 
-  _identifyObject(_spEnhancedBase64, geminiKey, function(err, objInfo) {
-    if (err) {
-      var isQuota = typeof err === 'string' && (
-        err.toLowerCase().indexOf('quota') !== -1 ||
-        err.toLowerCase().indexOf('rate') !== -1 ||
-        err.toLowerCase().indexOf('exhausted') !== -1 ||
-        err.toLowerCase().indexOf('limit') !== -1
-      );
+  _identifyObject(_spEnhancedBase64, geminiKey, function(err, objInfo, apiErr) {
+    if (err || apiErr) {
+      var isQuota = false;
+      if (apiErr) {
+        // Gemini devuelve status RESOURCE_EXHAUSTED para quota
+        var st = (apiErr.status || '').toUpperCase();
+        var msg = (apiErr.message || '').toLowerCase();
+        isQuota = st === 'RESOURCE_EXHAUSTED' ||
+                  msg.indexOf('quota') !== -1 ||
+                  msg.indexOf('exhausted') !== -1 ||
+                  msg.indexOf('rate') !== -1;
+      } else if (typeof err === 'string') {
+        isQuota = err.toLowerCase().indexOf('quota') !== -1 ||
+                  err.toLowerCase().indexOf('exhausted') !== -1;
+      }
       if (status) {
         if (isQuota) {
           status.innerHTML = [
@@ -15692,6 +15826,41 @@ function _spSaveThumb(thumb, boxId, itemIdx, detectedName, svgString) {
   }
   setTimeout(window._spClose, 2500);
 }
+
+/* ─── Guardar foto directa sin IA ──────────────────────────────── */
+window._spSaveDirectFromFile = function(input) {
+  var file = input.files && input.files[0];
+  input.value = '';
+  if (!file) return;
+
+  var reader = new FileReader();
+  reader.onload = function(ev) {
+    var base64 = ev.target.result;
+    // Recortar a cuadrado y guardar directo
+    _spCropSquare(base64, function(thumb) {
+      var box = (typeof boxes !== 'undefined') && boxes.find(function(b){ return b.id === _spCurrentBoxId; });
+      if (!box || !box.items[_spCurrentItemIdx]) { window._spClose(); return; }
+
+      box.items[_spCurrentItemIdx].thumb   = thumb;
+      box.items[_spCurrentItemIdx].thumbSvg = null;
+      box.items[_spCurrentItemIdx].thumbAI  = null;
+
+      try {
+        if (typeof _thumbKey === 'function') {
+          localStorage.setItem(_thumbKey(_spCurrentBoxId, box.items[_spCurrentItemIdx].text), thumb);
+        }
+      } catch(e) {}
+
+      if (typeof saveData    === 'function') saveData();
+      if (typeof renderItems === 'function') renderItems();
+      if (typeof generateQR  === 'function') generateQR(_spCurrentBoxId);
+
+      if (typeof showToast === 'function') showToast('📷 Foto guardada', '#34C759');
+      window._spClose();
+    });
+  };
+  reader.readAsDataURL(file);
+};
 
 /* ─── Helpers ───────────────────────────────────────────────────── */
 function _spSetStatus(msg, el) {
