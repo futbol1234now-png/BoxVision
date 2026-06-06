@@ -1545,6 +1545,7 @@ input,button,textarea,select{font-family:inherit}
 /* El splash no hace fadeIn para evitar flash negro del body */
 #splash.active{animation:none;}
 @keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+@keyframes fadeOut{from{opacity:1}to{opacity:0}}
 @keyframes pwShake{0%,100%{transform:translateX(0)}20%{transform:translateX(-8px)}40%{transform:translateX(8px)}60%{transform:translateX(-5px)}80%{transform:translateX(5px)}}
 @keyframes aiCursorBlink{0%,100%{opacity:1}50%{opacity:0}}
 @keyframes popIn{from{transform:scale(0) rotate(-10deg);opacity:0}to{transform:scale(1);opacity:1}}
@@ -1593,7 +1594,7 @@ input,button,textarea,select{font-family:inherit}
   position:absolute;inset:-6px;
   border-radius:50%;
   border:1.5px solid rgba(10,132,255,0.3);
-  animation:spRingSpin 10s linear infinite;
+  animation:spRingSpin 1.5s linear infinite;
 }
 .sp-icon-ring::before{
   content:'';position:absolute;
@@ -1629,10 +1630,19 @@ input,button,textarea,select{font-family:inherit}
 }
 .sp-clock-time{
   font-size:30px;font-weight:700;
-  color:rgba(255,255,255,.92);
+  color:#fff;
   letter-spacing:-1px;
   font-variant-numeric:tabular-nums;
-  text-shadow:0 0 28px rgba(10,132,255,.45);
+  text-shadow:
+    0 0 8px rgba(10,132,255,.95),
+    0 0 22px rgba(10,132,255,.8),
+    0 0 50px rgba(10,132,255,.6),
+    0 0 90px rgba(10,132,255,.35);
+  animation:spStatIn .5s .08s cubic-bezier(.34,1.3,.64,1) both,clockGlow 2.8s ease-in-out infinite;
+}
+@keyframes clockGlow{
+  0%,100%{text-shadow:0 0 8px rgba(10,132,255,.95),0 0 22px rgba(10,132,255,.8),0 0 50px rgba(10,132,255,.6),0 0 90px rgba(10,132,255,.35);}
+  50%{text-shadow:0 0 14px rgba(80,170,255,1),0 0 35px rgba(10,132,255,.95),0 0 75px rgba(10,132,255,.75),0 0 120px rgba(10,132,255,.45);}
 }
 .sp-clock-sep{font-size:13px;color:rgba(255,255,255,.2);font-weight:300}
 .sp-clock-zone{
@@ -2115,10 +2125,10 @@ input,button,textarea,select{font-family:inherit}
 }
 .dh-meta{display:flex;flex-wrap:wrap;gap:5px;position:relative;z-index:1;margin-top:9px}
 .dh-tag{
-  font-size:11px;background:rgba(255,255,255,.18);color:rgba(255,255,255,.92);
-  padding:3px 10px;border-radius:99px;
+  font-size:10px;background:rgba(255,255,255,.12);color:rgba(255,255,255,.7);
+  padding:2px 7px;border-radius:99px;
   backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
-  border:0.5px solid rgba(255,255,255,.15);
+  border:0.5px solid rgba(255,255,255,.1);
 }
 /* Body del detalle */
 .detail-body{padding:0 14px 100px;max-width:680px;margin:0 auto}
@@ -3796,6 +3806,23 @@ button:not(:active), [role="button"]:not(:active) {
   to   { transform: translateX(-50%) translateY(0)    scale(1);    opacity: 1; }
 }
 
+/* ══════════════════════════════════════
+   MODO MUDANZA — ocultar elementos cuando está desactivado
+══════════════════════════════════════ */
+
+/* Cuando modo mudanza está DESACTIVADO → ocultar elementos de "sacar" */
+body:not(.moving-mode) #progSec {
+  display: none !important;
+}
+body:not(.moving-mode) .i-chk {
+  display: none !important;
+}
+
+/* Cuando está ACTIVADO → mostrar todo normal */
+body.moving-mode .i-chk {
+  display: flex !important;
+}
+
 /* ── 15. SEARCH RESULTS DROP ── */
 .sr-wrap.open {
   animation: bv-sr-drop 260ms cubic-bezier(0.34, 1.2, 0.64, 1) !important;
@@ -4376,9 +4403,10 @@ if(!auth){
     <button class="pill active" id="sort-default" onclick="setSort('default')"><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1" aria-hidden="true"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg></i> Por defecto</button>
     <button class="pill" id="sort-priority" onclick="setSort('priority')"><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10" style="color:#FF3B30" aria-hidden="true"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg></i> Prioridad</button>
     <button class="pill" id="sort-location" onclick="setSort('location')"><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" aria-hidden="true"/><circle cx="12" cy="10" r="3"/></svg></i> Habitación</button>
-    <button class="pill" id="sort-date" onclick="setSort('date')"><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" aria-hidden="true"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></i> Fecha</button>
+    <button class="pill" id="sort-date" onclick="setSort('date')"><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> Más recientes</button>
     <button class="pill" id="sort-name" onclick="setSort('name')"><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle" aria-hidden="true"><line x1="4" y1="6" x2="11" y2="6"/><line x1="4" y1="12" x2="11" y2="12"/><line x1="4" y1="18" x2="13" y2="18"/><polyline points="15 9 18 6 21 9"/><line x1="18" y1="6" x2="18" y2="18"/></svg> Nombre</button>
     <button class="pill" id="sort-count" onclick="setSort('count')"><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="4" y1="9" x2="20" y2="9" aria-hidden="true"/><line x1="4" y1="15" x2="20" y2="15"/><line x1="10" y1="3" x2="8" y2="21"/><line x1="16" y1="3" x2="14" y2="21"/></svg></i> Objetos</button>
+    <button class="pill" id="sort-progress" onclick="setSort('progress')"><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg> % Completado</button>
   </div>
   <div class="search-wrap">
     <div class="search-inner">
@@ -4496,7 +4524,7 @@ if(!auth){
             <svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="6" height="6" rx="1"/><rect x="15" y="3" width="6" height="6" rx="1"/><rect x="3" y="15" width="6" height="6" rx="1"/><rect x="5" y="5" width="2" height="2" fill="currentColor" stroke="none"/><rect x="17" y="5" width="2" height="2" fill="currentColor" stroke="none"/><rect x="5" y="17" width="2" height="2" fill="currentColor" stroke="none"/><line x1="15" y1="15" x2="15" y2="15.01"/><line x1="18" y1="15" x2="21" y2="15"/><line x1="21" y1="18" x2="21" y2="21"/><line x1="15" y1="18" x2="18" y2="21"/></svg>
           </span>CÓDIGO QR
         </div>
-        <div class="qr-ios-wrap">
+        <div class="qr-ios-wrap" style="display:flex;flex-direction:column;align-items:center;gap:10px">
           <div class="qr-ios-card">
             <div class="qr-ios-box" id="detailQRMobile"></div>
           </div>
@@ -4504,6 +4532,10 @@ if(!auth){
             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
             Escanea con la cámara
           </div>
+          <button onclick="printQROnly()" style="display:flex;align-items:center;justify-content:center;gap:7px;padding:11px 26px;background:rgba(10,132,255,.12);border:1px solid rgba(10,132,255,.25);border-radius:12px;color:var(--accent);font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;transition:transform .12s,background .15s;-webkit-tap-highlight-color:transparent;margin-top:4px" onmousedown="this.style.transform='scale(.95)'" onmouseup="this.style.transform=''" ontouchstart="this.style.transform='scale(.95)'" ontouchend="this.style.transform=''">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+            Imprimir QR
+          </button>
         </div>
       </div>
 
@@ -4554,7 +4586,12 @@ if(!auth){
       <!-- QR -->
       <div class="detail-sidebar-card">
         <div class="detail-sidebar-title">QR</div>
-        <div class="qr-sec"><div class="qr-box" id="detailQR"></div><div class="qr-hint">Escanea para ver contenido</div><div style="font-size:10px;color:var(--muted);margin-top:3px;opacity:.6" id="detailDate"></div></div>
+        <div class="qr-sec"><div class="qr-box" id="detailQR"></div><div class="qr-hint">Escanea para ver contenido</div><div style="font-size:10px;color:var(--muted);margin-top:3px;opacity:.6" id="detailDate"></div>
+        <button onclick="printQROnly()" style="margin-top:12px;width:100%;display:flex;align-items:center;justify-content:center;gap:6px;padding:9px 14px;background:rgba(10,132,255,.1);border:1px solid rgba(10,132,255,.22);border-radius:10px;color:var(--accent);font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;transition:transform .12s,background .15s;-webkit-tap-highlight-color:transparent" onmousedown="this.style.transform='scale(.95)'" onmouseup="this.style.transform=''" ontouchstart="this.style.transform='scale(.95)'" ontouchend="this.style.transform=''">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+          Imprimir QR
+        </button>
+        </div>
       </div>
       <!-- Acciones -->
       <div class="detail-sidebar-card">
@@ -4795,6 +4832,19 @@ if(!auth){
             <div class="settings-toggle-knob" id="darkToggleKnob"></div>
           </div>
         </div>
+        <!-- Modo Mudanza -->
+        <div class="settings-row settings-tappable" onclick="toggleMovingMode()">
+          <div class="settings-row-icon" style="background:rgba(52,199,89,.15)">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#34C759" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 8h14M5 8a2 2 0 1 0 0-4 2 2 0 0 0 0 4M5 8v11a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V8M9 11v6M15 11v6"/></svg>
+          </div>
+          <div class="settings-row-text">
+            <div class="settings-label">Modo mudanza</div>
+            <div class="settings-sub" id="movingModeSettingsSub">Muestra progreso y opción de marcar objetos como sacados</div>
+          </div>
+          <div class="settings-toggle" id="movingModeToggleWrap" style="pointer-events:none">
+            <div class="settings-toggle-knob"></div>
+          </div>
+        </div>
         <!-- Tema y colores -->
         <div class="settings-row settings-tappable" onclick="openThemePicker()">
           <div class="settings-row-icon" style="background:rgba(175,82,222,.18)"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="13.5" cy="6.5" r=".5" fill="currentColor"/><circle cx="17.5" cy="10.5" r=".5" fill="currentColor"/><circle cx="8.5" cy="7.5" r=".5" fill="currentColor"/><circle cx="6.5" cy="12.5" r=".5" fill="currentColor"/><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.47-1.125-.29-.289-.47-.682-.47-1.125C12.708 17.203 13.387 16 14.5 16H17c2.761 0 5-2.239 5-5 0-4.975-4.525-9-10-9z"/></svg></div>
@@ -5025,6 +5075,47 @@ if(!auth){
           </div>
           <div class="settings-row-text">
             <div class="settings-label" style="color:var(--red)">Eliminar clave</div>
+            <div class="settings-sub">Borra la clave de este dispositivo</div>
+          </div>
+          <span class="settings-chevron" style="color:var(--red)">›</span>
+        </div>
+
+        <!-- Separador -->
+        <div style="height:0.5px;background:var(--border);margin:0 14px"></div>
+
+        <!-- Gemini API Key — para Foto IA de objetos -->
+        <div style="margin:12px 14px 4px;padding:10px 13px;background:rgba(52,199,89,.07);border:0.5px solid rgba(52,199,89,.2);border-radius:12px;display:flex;gap:9px;align-items:flex-start">
+          <span style="font-size:16px;flex-shrink:0">🔮</span>
+          <div style="font-size:12px;color:rgba(255,255,255,.65);line-height:1.5">
+            <strong style="color:rgba(255,255,255,.9)">Gemini</strong> se usa para identificar objetos en fotos y generar íconos detallados. Obtén tu clave gratis en <strong style="color:rgba(255,255,255,.85)">aistudio.google.com</strong>.
+          </div>
+        </div>
+        <div class="settings-row" id="geminiKeyStatusRow">
+          <div class="settings-row-icon" style="background:rgba(52,199,89,.15);color:#34C759">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
+          </div>
+          <div class="settings-row-text">
+            <div class="settings-label">API Key de Gemini</div>
+            <div class="settings-sub" id="geminiKeyStatusSub">Sin clave configurada</div>
+          </div>
+          <span class="settings-val" id="geminiKeyStatusVal" style="font-size:18px">⚠️</span>
+        </div>
+        <div class="settings-row settings-tappable" onclick="_openGeminiKeySettings()">
+          <div class="settings-row-icon" style="background:rgba(52,199,89,.12);color:#34C759">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+          </div>
+          <div class="settings-row-text">
+            <div class="settings-label" id="geminiKeyActionLabel">Configurar clave Gemini</div>
+            <div class="settings-sub">Para íconos IA de objetos en fotos</div>
+          </div>
+          <span class="settings-chevron">›</span>
+        </div>
+        <div class="settings-row settings-tappable" id="geminiKeyDeleteRow" onclick="_deleteGeminiKey()" style="display:none">
+          <div class="settings-row-icon sri-red">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>
+          </div>
+          <div class="settings-row-text">
+            <div class="settings-label" style="color:var(--red)">Eliminar clave Gemini</div>
             <div class="settings-sub">Borra la clave de este dispositivo</div>
           </div>
           <span class="settings-chevron" style="color:var(--red)">›</span>
@@ -5363,6 +5454,10 @@ function sortBoxes(arr){
     case "date": return [...arr].sort((a,b)=>(b.lastUsed||0)-(a.lastUsed||0));
     case "name": return [...arr].sort((a,b)=>a.name.localeCompare(b.name));
     case "count": return [...arr].sort((a,b)=>b.items.length-a.items.length);
+    case "progress": return [...arr].sort((a,b)=>{
+      const pct=box=>box.items.length===0?0:Math.round(box.items.filter(i=>i.done).length/box.items.length*100);
+      return pct(b)-pct(a);
+    });
     default: return arr;
   }
 }
@@ -5680,14 +5775,50 @@ function _confirmBulkAdd(){
 }
 
 function _zoomItemThumb(src){
+  // Eliminar cualquier visor previo que haya quedado trabado
+  const prev=document.getElementById("_zoomOverlay");
+  if(prev) prev.remove();
+
   const ov=document.createElement("div");
-  ov.style.cssText="position:fixed;inset:0;background:rgba(0,0,0,.88);z-index:10020;display:flex;align-items:center;justify-content:center;animation:fadeIn .2s ease;backdrop-filter:blur(14px)";
-  ov.innerHTML=`<div style="position:relative;max-width:92vw;max-height:80vh">
-    <img src="${src}" style="max-width:92vw;max-height:80vh;border-radius:18px;object-fit:contain;box-shadow:0 24px 80px rgba(0,0,0,.6)"/>
-    <button onclick="this.closest('[style]').remove()" style="position:absolute;top:-14px;right:-14px;width:34px;height:34px;border-radius:50%;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.3);color:#fff;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(8px)">✕</button>
-  </div>`;
-  ov.onclick=ev=>{if(ev.target===ov)ov.remove();};
+  ov.id="_zoomOverlay";
+  ov.style.cssText="position:fixed;inset:0;background:rgba(0,0,0,.92);z-index:10020;display:flex;align-items:center;justify-content:center;animation:fadeIn .2s ease;backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px)";
+
+  ov.innerHTML=`
+    <div style="position:relative;max-width:92vw;max-height:82vh;display:flex;align-items:center;justify-content:center">
+      <img src="${src}" style="max-width:92vw;max-height:78vh;border-radius:18px;object-fit:contain;box-shadow:0 24px 80px rgba(0,0,0,.7);display:block"/>
+    </div>
+    <!-- Botón cerrar grande y siempre visible -->
+    <button id="_zoomCloseBtn"
+      style="position:fixed;top:18px;right:18px;width:48px;height:48px;border-radius:50%;
+             background:rgba(30,30,30,.85);border:2px solid rgba(255,255,255,.35);
+             color:#fff;font-size:22px;font-weight:bold;cursor:pointer;
+             display:flex;align-items:center;justify-content:center;
+             box-shadow:0 4px 20px rgba(0,0,0,.5);
+             backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
+             z-index:10021;line-height:1;padding:0;
+             -webkit-tap-highlight-color:transparent">✕</button>`;
+
+  function closeViewer(){
+    ov.style.animation="fadeOut .15s ease forwards";
+    setTimeout(()=>{ if(ov.parentNode) ov.remove(); }, 160);
+  }
+
+  // Cerrar con el botón ✕
+  ov.addEventListener("click", function(ev){
+    if(ev.target===ov || ev.target.id==="_zoomCloseBtn") closeViewer();
+  });
+
+  // Cerrar con tecla Escape
+  function onKey(e){ if(e.key==="Escape"){ closeViewer(); document.removeEventListener("keydown",onKey); } }
+  document.addEventListener("keydown", onKey);
+
   document.body.appendChild(ov);
+
+  // Asegurar que el botón cierra aunque el HTML tarde en parsear
+  requestAnimationFrame(()=>{
+    const btn=document.getElementById("_zoomCloseBtn");
+    if(btn) btn.onclick=function(e){ e.stopPropagation(); closeViewer(); };
+  });
 }
 
 function addHistory(box,text){if(!box.history)box.history=[];box.history.unshift({text,date:new Date().toLocaleDateString("es-PE",{day:"2-digit",month:"short"})});if(box.history.length>20)box.history.pop();}
@@ -6201,8 +6332,9 @@ function renderProgress(){
 function renderItems(){
   const box=boxes.find(b=>b.id===currentBoxId);if(!box) return;
   const col=box.color||"#007AFF",done=box.items.filter(i=>i.done).length;
+  const movingMode = document.body.classList.contains('moving-mode');
   const titleEl=document.getElementById("itemsTitle");
-  if(titleEl) titleEl.innerHTML=`<span class="dsec-title-icon dsec-icon-cont"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="16.5" y1="9.4" x2="7.5" y2="4.21"/><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg></i></span>CONTENIDO (${box.items.length} obj · ${done} sacado${done!==1?"s":""})`;
+  if(titleEl) titleEl.innerHTML=`<span class="dsec-title-icon dsec-icon-cont"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="16.5" y1="9.4" x2="7.5" y2="4.21"/><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg></i></span>CONTENIDO (${box.items.length} obj${movingMode ? ` · ${done} sacado${done!==1?"s":""}` : ''})`;
   const addRow=document.getElementById("addRow");
   if(addRow) addRow.style.display=box.sealed?"none":"flex";
   document.getElementById("itemsList").innerHTML=box.items.length===0
@@ -6686,7 +6818,7 @@ function _levenshtein(a, b){
 
 function _normalizeName(s){
   return s.trim().toLowerCase()
-    .normalize('NFD').replace(/[̀-ͯ]/g,'') // quitar acentos
+    .normalize('NFD').replace(/[\u0300-\u036f]/g,'') // quitar acentos
     .replace(/[^a-z0-9\s]/g,'').replace(/\s+/g,' ');
 }
 
@@ -11252,7 +11384,7 @@ async function _runAI(userMsg){
       if(btn){ btn.classList.remove('loading'); }
       _setHeaderStatus('Clave inválida');
       _showGroqKeyModal(function(){
-        _aiHistory.pop();
+        // NO hacemos pop: el mensaje del usuario ya está en historial y es válido
         _runAI(userMsg);
       }, true);
       return;
@@ -11308,6 +11440,8 @@ document.addEventListener('DOMContentLoaded', function(){
     window.showScreen = function(id){
       origShow(id);
       _updateFabVisibility(id);
+      // Notificar a otros módulos del cambio de pantalla
+      document.dispatchEvent(new CustomEvent('bv:screenchange', { detail: { screen: id } }));
     };
   }
   // Estado inicial: FAB oculto (login/splash al arrancar)
@@ -11408,6 +11542,79 @@ function printBoxLabel(){
     + '</div></body></html>';
 
   var win = window.open('', '_blank', 'width=480,height=700');
+  if(win){ win.document.write(html); win.document.close(); }
+  else { showToast('Permite ventanas emergentes para imprimir', '#FF9500'); }
+}
+
+/* ══════════════════════════════════════════════════════
+   IMPRIMIR SOLO QR — hoja limpia para pegar en la caja
+   ══════════════════════════════════════════════════════ */
+function printQROnly(){
+  var box = boxes.find(function(b){ return b.id === currentBoxId; });
+  if(!box) return;
+  var col  = box.color || '#007AFF';
+  var icon = getIcon(box.name, box) || '📦';
+  var num  = box.number ? ' #' + box.number : '';
+  var loc  = box.location ? box.location : '';
+
+  // Generar QR grande (240px) como data URL
+  var qrDataURL = '';
+  try {
+    var cv = document.createElement('canvas');
+    cv.width = cv.height = 240;
+    TinyQR.toCanvas(cv, _buildQRURL(box), {width:240, margin:2, dark:'#000000', light:'#ffffff'});
+    qrDataURL = cv.toDataURL('image/png');
+  } catch(e){}
+
+  if(!qrDataURL){
+    showToast('No se pudo generar el QR', '#FF3B30');
+    return;
+  }
+
+  var itemCount = box.items.length;
+  var doneCount = box.items.filter(function(i){ return i.done; }).length;
+
+  var html = '<!DOCTYPE html><html><head><meta charset="UTF-8">'
+    + '<title>QR — ' + box.name + num + '</title>'
+    + '<style>'
+    + '*{margin:0;padding:0;box-sizing:border-box}'
+    + 'body{font-family:-apple-system,BlinkMacSystemFont,sans-serif;background:#fff;display:flex;align-items:center;justify-content:center;min-height:100vh;padding:16px}'
+    + '.card{background:#fff;border:2px solid #e5e5e5;border-radius:20px;overflow:hidden;width:260px;text-align:center;page-break-inside:avoid;box-shadow:0 4px 24px rgba(0,0,0,.10)}'
+    + '.card-header{background:' + col + ';padding:18px 16px 14px;color:#fff}'
+    + '.card-icon{font-size:42px;line-height:1;margin-bottom:6px}'
+    + '.card-name{font-size:18px;font-weight:800;letter-spacing:-.3px;line-height:1.2}'
+    + '.card-num{font-size:12px;opacity:.8;margin-top:3px}'
+    + '.card-loc{font-size:11px;opacity:.7;margin-top:2px}'
+    + '.qr-wrap{padding:18px 20px 12px;display:flex;justify-content:center}'
+    + '.qr-img{width:200px;height:200px;border-radius:10px;border:1px solid #eee}'
+    + '.qr-label{font-size:11px;color:#888;padding:0 16px 10px;line-height:1.5}'
+    + '.card-stats{display:flex;justify-content:center;gap:12px;padding:8px 16px 14px;border-top:1px solid #f0f0f0;font-size:11px;color:#999}'
+    + '.card-stats span{display:flex;align-items:center;gap:3px}'
+    + '.footer{font-size:9px;color:#ccc;padding:0 0 14px;text-align:center}'
+    + '@media print{'
+    + '  body{padding:0;min-height:auto;background:#fff}'
+    + '  .card{box-shadow:none;border-color:#ddd;border-radius:0;width:100%}'
+    + '}'
+    + '</style>'
+    + '<script>window.onload=function(){ window.print(); }<\/script>'
+    + '</head><body>'
+    + '<div class="card">'
+    + '<div class="card-header">'
+    + '<div class="card-icon">' + icon + '</div>'
+    + '<div class="card-name">' + box.name + num + '</div>'
+    + (loc ? '<div class="card-loc">📍 ' + loc + '</div>' : '')
+    + '</div>'
+    + '<div class="qr-wrap"><img class="qr-img" src="' + qrDataURL + '" alt="QR Code"/></div>'
+    + '<div class="qr-label">Escanea con la cámara de tu celular<br>para ver el contenido completo</div>'
+    + '<div class="card-stats">'
+    + '<span>📦 ' + itemCount + ' objeto' + (itemCount !== 1 ? 's' : '') + '</span>'
+    + (doneCount > 0 ? '<span>✓ ' + doneCount + ' sacado' + (doneCount !== 1 ? 's' : '') + '</span>' : '')
+    + '</div>'
+    + '<div class="footer">BoxVision · ' + new Date().toLocaleDateString('es-PE') + '</div>'
+    + '</div>'
+    + '</body></html>';
+
+  var win = window.open('', '_blank', 'width=320,height=520');
   if(win){ win.document.write(html); win.document.close(); }
   else { showToast('Permite ventanas emergentes para imprimir', '#FF9500'); }
 }
@@ -11618,7 +11825,6 @@ window._addSuggestedItem = function(btn, item){
   // Reemplazar _runAI con versión agente
   window._runAI = async function(userMsg){
     var $id = function(id){ return document.getElementById(id); };
-    var _aiTypingRef = window._aiTyping;
     window._aiTyping = true;
 
     var statusEl = $id('aiHeaderStatus');
@@ -11706,7 +11912,8 @@ window._addSuggestedItem = function(btn, item){
         window._aiTyping = false;
         if(sendBtn) sendBtn.classList.remove('loading');
         if(statusEl) statusEl.textContent = 'Clave inválida';
-        window._showGroqKeyModal(function(){ window._aiHistory.pop(); window._runAI(userMsg); }, true);
+        // NO hacemos pop: el mensaje del usuario es válido y debe permanecer en historial
+        window._showGroqKeyModal(function(){ window._runAI(userMsg); }, true);
         return;
       }
 
@@ -13317,9 +13524,72 @@ function _pwDel(){
     if(deleteRow) deleteRow.style.display = hasKey ? 'flex' : 'none';
   };
 
+  /* ── Gemini Key: abrir modal ── */
+  window._openGeminiKeySettings = function(){
+    var prev = document.getElementById('_geminiKeyModal');
+    if(prev) prev.remove();
+    var modal = document.createElement('div');
+    modal.id = '_geminiKeyModal';
+    modal.style.cssText = 'position:fixed;inset:0;z-index:10500;display:flex;align-items:flex-end;justify-content:center;background:rgba(0,0,0,.55);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)';
+    var hasKey = !!localStorage.getItem('bv_gemini_api_key');
+    modal.innerHTML = [
+      '<div id="_geminiKeySheet" style="background:var(--card,#1C1C1E);border-radius:24px 24px 0 0;width:100%;max-width:480px;padding:20px 18px calc(32px + env(safe-area-inset-bottom));box-shadow:0 -8px 50px rgba(0,0,0,.45);transform:translateY(100%);transition:transform .32s cubic-bezier(.34,1.1,.64,1)">',
+        '<div style="width:40px;height:4px;background:rgba(255,255,255,.15);border-radius:99px;margin:0 auto 20px"></div>',
+        '<div style="font-size:18px;font-weight:800;color:var(--text,#fff);margin-bottom:6px">🔮 API Key de Gemini</div>',
+        '<div style="font-size:13px;color:rgba(255,255,255,.5);margin-bottom:16px;line-height:1.5">Usada para identificar objetos en fotos y generar íconos detallados. <a href="https://aistudio.google.com/app/apikey" target="_blank" style="color:var(--accent,#0A84FF)">Obtener clave gratis →</a></div>',
+        '<input id="_geminiKeyInput" type="password" placeholder="AIza••••••••••••••••••••••••••••••••••••" autocomplete="off" style="width:100%;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.14);border-radius:14px;padding:14px 15px;font-size:15px;color:#fff;font-family:inherit;outline:none;margin-bottom:12px;box-sizing:border-box;letter-spacing:.5px">',
+        hasKey ? '<div style="font-size:11px;color:rgba(255,255,255,.35);margin-bottom:10px">Clave actual: ' + (localStorage.getItem('bv_gemini_api_key')||'').substring(0,8) + '••••••••</div>' : '',
+        '<div style="display:flex;gap:10px">',
+          '<button onclick="document.getElementById(\'_geminiKeyModal\').remove()" style="flex:1;padding:14px;background:rgba(255,255,255,.07);color:var(--text,#fff);border:none;border-radius:14px;font-size:15px;font-weight:600;cursor:pointer;font-family:inherit">Cancelar</button>',
+          '<button onclick="window._saveGeminiKey()" style="flex:2;padding:14px;background:#34C759;color:#fff;border:none;border-radius:14px;font-size:15px;font-weight:700;cursor:pointer;font-family:inherit">Guardar clave</button>',
+        '</div>',
+      '</div>'
+    ].join('');
+    modal.addEventListener('click', function(e){ if(e.target===modal) modal.remove(); });
+    document.body.appendChild(modal);
+    requestAnimationFrame(function(){ requestAnimationFrame(function(){
+      var s = document.getElementById('_geminiKeySheet');
+      if(s) s.style.transform = 'translateY(0)';
+      setTimeout(function(){ var inp = document.getElementById('_geminiKeyInput'); if(inp) inp.focus(); }, 350);
+    }); });
+  };
+
+  window._saveGeminiKey = function(){
+    var inp = document.getElementById('_geminiKeyInput');
+    if(!inp) return;
+    var key = inp.value.trim();
+    if(!key || key.length < 10){ inp.style.borderColor='#FF3B30'; return; }
+    localStorage.setItem('bv_gemini_api_key', key);
+    var modal = document.getElementById('_geminiKeyModal');
+    if(modal) modal.remove();
+    _updateGeminiKeySettingsUI();
+    if(typeof showToast === 'function') showToast('✅ Clave Gemini guardada', '#34C759');
+  };
+
+  window._deleteGeminiKey = function(){
+    if(!confirm('¿Eliminar tu API Key de Gemini de este dispositivo?')) return;
+    localStorage.removeItem('bv_gemini_api_key');
+    _updateGeminiKeySettingsUI();
+    if(typeof showToast === 'function') showToast('🗑️ Clave Gemini eliminada', '#FF9500');
+  };
+
+  window._updateGeminiKeySettingsUI = function(){
+    var key       = localStorage.getItem('bv_gemini_api_key');
+    var hasKey    = !!key;
+    var statusSub = document.getElementById('geminiKeyStatusSub');
+    var statusVal = document.getElementById('geminiKeyStatusVal');
+    var actionLbl = document.getElementById('geminiKeyActionLabel');
+    var deleteRow = document.getElementById('geminiKeyDeleteRow');
+    if(statusSub) statusSub.textContent = hasKey ? 'Clave configurada: ' + key.substring(0,8) + '••••••••' : 'Sin clave — Foto IA no disponible';
+    if(statusVal) statusVal.textContent = hasKey ? '✅' : '⚠️';
+    if(actionLbl) actionLbl.textContent = hasKey ? 'Reemplazar clave Gemini' : 'Configurar clave Gemini';
+    if(deleteRow) deleteRow.style.display = hasKey ? 'flex' : 'none';
+  };
+
   /* ── Inicializar al cargar DOM ── */
   document.addEventListener('DOMContentLoaded', function(){
     _updateGroqKeySettingsUI();
+    _updateGeminiKeySettingsUI();
   });
 
 })();
@@ -14802,37 +15072,27 @@ console.log('✅ BoxVision — Nuevas funciones TOP cargadas: Filtros Avanzados,
 </script>
 
 <!-- ═══════════════════════════════════════════════════════════════════════
-     MÓDULO: SmartPhoto v1.1 — Análisis IA + Renderizado Flat Minimalista
-     ── Flujo: foto → mejora de calidad (Canvas) → Groq Vision identifica
-        el objeto → Claude API genera SVG flat → se guarda como it.thumb
+     MÓDULO: SmartPhoto v2.0 — Gemini Vision + Claude SVG detallado
+     ── Flujo: foto → Gemini 2.0 Flash identifica objeto con máximo detalle
+        → Claude API genera SVG flat específico → se guarda como it.thumb
+        → Auto-renombra el ítem con el nombre detectado
      ── Compatible con el sistema de thumbs existente en BoxVision
-
-     FIXES v1.1:
-       [1] Modelo Groq Vision correcto (llama-4-scout con fallback maverick)
-       [2] _spCropSquare: ahora asíncrono con onload (era síncrono — img.width=0)
-       [3] Input file SIN capture=environment → permite galería + cámara en iOS
-           Dos botones separados: "📁 Galería" y "📷 Cámara"
-       [4] _esc renombrada a _spEsc → evita conflicto con _esc global (línea 10293)
-       [5] Patch _compressPhoto movido a DOMContentLoaded para asegurar orden
-       [6] _openItemMenu patch: usa window.currentBoxId en vez de currentBoxId
-           (accesible desde dentro del IIFE sin problemas de scope)
-       [7] _spSaveThumb: auto-regenera QR tras guardar el thumb
      ═══════════════════════════════════════════════════════════════════════ -->
 <script>
 (function(){
 'use strict';
 
 /* ─── Configuración ─────────────────────────────────────────────── */
-var SP_VERSION    = '1.1';
-var SP_MAX_PX     = 1280;  // resolución máxima para envío a IA
-var SP_QUALITY    = 0.92;  // calidad JPEG para Groq Vision
-var SP_THUMB_SIZE = 200;   // tamaño del thumb guardado en px
+var SP_VERSION    = '2.0';
+var SP_MAX_PX     = 1280;
+var SP_QUALITY    = 0.92;
+var SP_THUMB_SIZE = 200;
 
-// [FIX 1] Modelos Groq con visión — nombres exactos del API de Groq
-var SP_GROQ_MODEL_VISION   = 'meta-llama/llama-4-scout-17b-16e-instruct';
-var SP_GROQ_MODEL_FALLBACK = 'meta-llama/llama-4-maverick-17b-128e-instruct';
+// Gemini para visión (reemplaza Groq Vision)
+var SP_GEMINI_MODEL = 'gemini-2.0-flash';
+var SP_GEMINI_URL   = 'https://generativelanguage.googleapis.com/v1beta/models/' + SP_GEMINI_MODEL + ':generateContent';
 
-// Claude API para generación de SVG flat
+// Claude API para SVG flat detallado
 var SP_CLAUDE_MODEL = 'claude-sonnet-4-20250514';
 
 /* ─── Estado interno ─────────────────────────────────────────────── */
@@ -14841,44 +15101,28 @@ var _spCurrentItemIdx = null;
 var _spCurrentBoxId   = null;
 var _spEnhancedBase64 = null;
 
-/* ─── [FIX 4] Escape HTML — nombre propio para no colisionar con _esc global */
 function _spEsc(str) {
   return String(str || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
 
 /* ─── Mejora de imagen con Canvas ───────────────────────────────── */
-/**
- * Pipeline de mejora:
- *  1. Re-escala a máx SP_MAX_PX sin degradar imágenes más pequeñas
- *  2. Fondo blanco para eliminar artefactos de transparencia en JPEG
- *  3. Filtro de nitidez unsharp-mask 3×3 suave
- *  4. Devuelve base64 JPEG de alta calidad
- */
 function _enhanceImage(file, callback) {
   var url = URL.createObjectURL(file);
   var img = new Image();
-
   img.onload = function() {
     URL.revokeObjectURL(url);
     var sw = img.naturalWidth, sh = img.naturalHeight;
-
-    // Escalar solo si supera el máximo
     var dw = sw, dh = sh;
     if (sw > SP_MAX_PX || sh > SP_MAX_PX) {
       if (sw >= sh) { dh = Math.round(sh * SP_MAX_PX / sw); dw = SP_MAX_PX; }
       else          { dw = Math.round(sw * SP_MAX_PX / sh); dh = SP_MAX_PX; }
     }
-
     var canvas = document.createElement('canvas');
     canvas.width = dw; canvas.height = dh;
     var ctx = canvas.getContext('2d');
-
-    // Fondo blanco para JPEG sin artefactos
     ctx.fillStyle = '#ffffff';
     ctx.fillRect(0, 0, dw, dh);
     ctx.drawImage(img, 0, 0, dw, dh);
-
-    // Nitidez: convolución unsharp 3×3
     try {
       var imageData = ctx.getImageData(0, 0, dw, dh);
       var d = imageData.data;
@@ -14900,7 +15144,6 @@ function _enhanceImage(file, callback) {
           output[idx+3] = d[idx+3];
         }
       }
-      // Bordes sin filtrar
       for (var i = 0; i < d.length; i += 4) {
         var px = (i/4)%w, py = Math.floor(i/4/w);
         if (px===0||px===w-1||py===0||py===h-1) {
@@ -14908,18 +15151,15 @@ function _enhanceImage(file, callback) {
         }
       }
       ctx.putImageData(new ImageData(output, w, h), 0, 0);
-    } catch(e) { /* si falla el filtro, continúa sin él */ }
-
+    } catch(e) {}
     callback(canvas.toDataURL('image/jpeg', SP_QUALITY));
   };
-
   img.onerror = function() {
     URL.revokeObjectURL(url);
     var reader = new FileReader();
     reader.onload = function(ev) { callback(ev.target.result); };
     reader.readAsDataURL(file);
   };
-
   img.src = url;
 }
 
@@ -14944,7 +15184,6 @@ function _svgToThumb(svgString, callback) {
   img.src = url;
 }
 
-/* ─── [FIX 2] _spCropSquare — ahora asíncrono con onload ────────── */
 function _spCropSquare(base64, callback) {
   var img = new Image();
   img.onload = function() {
@@ -14962,106 +15201,102 @@ function _spCropSquare(base64, callback) {
   img.src = base64;
 }
 
-/* ─── Paso 1: Groq Vision — identificar objeto ──────────────────── */
-function _identifyObject(base64jpeg, groqKey, callback, useFallback) {
-  var model = useFallback ? SP_GROQ_MODEL_FALLBACK : SP_GROQ_MODEL_VISION;
-  var b64   = base64jpeg.replace(/^data:image\/[a-z]+;base64,/, '');
+/* ─── Paso 1: Gemini Vision — identificar objeto con detalle ─────── */
+function _identifyObject(base64jpeg, geminiKey, callback) {
+  var b64 = base64jpeg.replace(/^data:image\/[a-z]+;base64,/, '');
+  var mimeType = 'image/jpeg';
 
-  fetch('https://api.groq.com/openai/v1/chat/completions', {
+  var prompt = [
+    'Analiza esta imagen con mucho detalle. Identifica el objeto principal.',
+    'Responde SOLO con un objeto JSON (sin markdown, sin explicación):',
+    '{',
+    '  "name": "<nombre exacto en español, 1-4 palabras, muy específico, ej: zapatilla deportiva Nike, lámpara de escritorio LED, botella de agua térmica>",',
+    '  "primaryColor": "<color hex dominante del cuerpo del objeto>",',
+    '  "secondaryColor": "<segundo color más visible en hex, o null>",',
+    '  "accentColor": "<tercer color de detalles en hex, o null>",',
+    '  "category": "<electronics|clothing|tool|food|book|furniture|toy|sport|document|kitchen|other>",',
+    '  "shape": "<descripción precisa de la forma geométrica del objeto: rectangular, cilíndrico, con asa, con cordones, etc.>",',
+    '  "keyDetails": "<lista de 3-6 rasgos visuales distintivos separados por coma, ej para zapatilla: suela gruesa blanca, cordones, logo lateral, lengüeta, puntera redondeada>",',
+    '  "texture": "<material o textura visible: plástico, tela, metal, madera, cuero, etc.>"',
+    '}'
+  ].join('\n');
+
+  fetch(SP_GEMINI_URL + '?key=' + geminiKey, {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': 'Bearer ' + groqKey
-    },
+    headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
-      model: model,
-      max_tokens: 150,
-      messages: [{
-        role: 'user',
-        content: [
-          {
-            type: 'image_url',
-            image_url: { url: 'data:image/jpeg;base64,' + b64, detail: 'low' }
-          },
-          {
-            type: 'text',
-            text: 'Identify the main object in this photo. Respond ONLY with a JSON object (no markdown, no explanation, no extra text): {"name":"<object name in Spanish, 1-3 words, be specific e.g. zapatilla, lampara de escritorio, botella de agua>","primaryColor":"<dominant hex color of the object body>","secondaryColor":"<second most visible hex color or null>","accentColor":"<third detail color or null>","category":"<electronics|clothing|tool|food|book|furniture|toy|sport|document|kitchen|other>","keyDetails":"<2-4 visible features that make the object recognizable, e.g. for shoe: laces,rubber sole,heel>"}'
-          }
+      contents: [{
+        parts: [
+          { inline_data: { mime_type: mimeType, data: b64 } },
+          { text: prompt }
         ]
-      }]
+      }],
+      generationConfig: { maxOutputTokens: 400, temperature: 0.1 }
     })
   })
   .then(function(r) { return r.json(); })
   .then(function(data) {
-    // Si el modelo no existe, intentar con el fallback
-    if (data.error && !useFallback) {
-      var code = (data.error.code || '') + (data.error.message || '');
-      if (code.indexOf('model') !== -1 || code.indexOf('not found') !== -1) {
-        console.warn('[SmartPhoto] Modelo principal no disponible, intentando fallback...');
-        _identifyObject(base64jpeg, groqKey, callback, true);
-        return;
-      }
-      callback(data.error.message || 'Groq error'); return;
-    }
-    if (data.error) { callback(data.error.message || 'Groq error'); return; }
-
-    var text = (((data.choices||[])[0]||{}).message||{}).content || '';
+    if (data.error) { callback(data.error.message || 'Gemini error'); return; }
+    var text = ((((data.candidates||[])[0]||{}).content||{}).parts||[{}])[0].text || '';
     try {
       text = text.replace(/```json|```/g,'').trim();
-      // Extraer solo el objeto JSON (ignorar texto extra antes/después)
       var jsonMatch = text.match(/\{[\s\S]*\}/);
       var obj = JSON.parse(jsonMatch ? jsonMatch[0] : text);
-      // Validar campos mínimos
       if (!obj.name) obj.name = 'objeto';
       if (!obj.primaryColor) obj.primaryColor = '#4A90D9';
-      if (!obj.shape) obj.shape = 'custom';
       if (!obj.category) obj.category = 'other';
       callback(null, obj);
     } catch(e) {
-      // Si no parsea, extraer nombre con regex
       var nm = text.match(/"name"\s*:\s*"([^"]+)"/);
       var pc = text.match(/"primaryColor"\s*:\s*"(#[0-9a-fA-F]{3,6})"/);
-      callback(null, {
-        name: nm ? nm[1] : 'objeto',
-        shape: 'custom',
-        primaryColor: pc ? pc[1] : '#4A90D9',
-        secondaryColor: null,
-        category: 'other'
-      });
+      callback(null, { name: nm ? nm[1] : 'objeto', primaryColor: pc ? pc[1] : '#4A90D9', category: 'other' });
     }
   })
   .catch(function(err) { callback(err.message || 'Network error'); });
 }
 
-/* ─── Paso 2: Claude API — generar SVG flat ─────────────────────── */
+/* ─── Paso 2: Claude API — generar SVG flat muy detallado ────────── */
 function _generateSVG(objectInfo, callback) {
-  var colorLine = '- Colors: main body ' + objectInfo.primaryColor;
-  if (objectInfo.secondaryColor) colorLine += ', secondary ' + objectInfo.secondaryColor;
-  if (objectInfo.accentColor)    colorLine += ', accent ' + objectInfo.accentColor;
+  var colorLine = '- Colores reales del objeto: cuerpo principal ' + objectInfo.primaryColor;
+  if (objectInfo.secondaryColor) colorLine += ', secundario ' + objectInfo.secondaryColor;
+  if (objectInfo.accentColor)    colorLine += ', acento ' + objectInfo.accentColor;
+
   var detailLine = objectInfo.keyDetails
-    ? '- Key visual details to draw: ' + objectInfo.keyDetails
-    : '- Draw the key details that make the object instantly recognizable (buttons, handles, seams, labels, etc.)';
+    ? '- Detalles visuales clave a dibujar (MUY IMPORTANTE — dibújalos todos): ' + objectInfo.keyDetails
+    : '- Dibuja todos los detalles que hacen al objeto reconocible al instante';
+
+  var shapeLine = objectInfo.shape
+    ? '- Forma geométrica real del objeto: ' + objectInfo.shape
+    : '';
+
+  var textureLine = objectInfo.texture
+    ? '- Material/textura a sugerir con color: ' + objectInfo.texture
+    : '';
 
   var prompt = [
-    'Create a flat minimalist SVG icon (viewBox="0 0 200 200") of a "' + objectInfo.name + '" (' + objectInfo.category + ').',
+    'Crea un ícono SVG flat minimalista (viewBox="0 0 200 200") del objeto: "' + objectInfo.name + '" (categoría: ' + objectInfo.category + ').',
     '',
-    'DESIGN REQUIREMENTS:',
+    'REQUISITOS DE DISEÑO (CRÍTICO):',
     colorLine,
-    '- The silhouette/shape must be INSTANTLY recognizable as a ' + objectInfo.name + ' — draw the actual object with its real shape, not a generic square or circle',
-    '- Flat design: NO drop shadows, NO blur, NO text, NO labels, NO gradients (solid fills only)',
+    shapeLine,
+    textureLine,
+    '- La silueta/forma DEBE ser 100% reconocible como "' + objectInfo.name + '" — dibuja la forma real y precisa del objeto, NO una caja genérica ni un círculo',
+    '- Diseño flat: SIN sombras, SIN blur, SIN texto, SIN degradados (solo rellenos sólidos)',
     detailLine,
-    '- Use 3–5 solid colors: primary color for the main body, lighter/darker tints for depth and shadows, near-white (#f0f0f0) for highlights',
-    '- All shapes centered, ~14px padding from the edges',
-    '- Transparent background — do NOT include any background <rect>',
-    '- Output ONLY the SVG code. Start exactly with <svg and end with </svg>. No markdown, no explanation, no preamble.'
-  ].join('\n');
+    '- Usa 4-6 colores sólidos: color primario para el cuerpo, tonos más claros/oscuros del mismo color para profundidad, near-white (#f0f0f0) para brillos',
+    '- Todas las formas centradas, ~12px de margen desde los bordes',
+    '- Fondo transparente — NO incluyas ningún <rect> de fondo',
+    '- El resultado debe verse como un ícono de app de alta calidad, no un garabato genérico',
+    '- Usa paths, polígonos y curvas bezier para formas orgánicas cuando sea necesario',
+    '- SOLO el código SVG. Empieza exactamente con <svg y termina con </svg>. Sin markdown, sin explicación.'
+  ].filter(Boolean).join('\n');
 
   fetch('https://api.anthropic.com/v1/messages', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
       model: SP_CLAUDE_MODEL,
-      max_tokens: 1500,
+      max_tokens: 2000,
       messages: [{ role: 'user', content: prompt }]
     })
   })
@@ -15069,11 +15304,8 @@ function _generateSVG(objectInfo, callback) {
   .then(function(data) {
     var text = (((data.content||[])[0])||{}).text || '';
     var svgMatch = text.match(/<svg[\s\S]*?<\/svg>/i);
-    if (svgMatch) {
-      callback(null, svgMatch[0]);
-    } else {
-      callback(new Error('No SVG in response'));
-    }
+    if (svgMatch) { callback(null, svgMatch[0]); }
+    else { callback(new Error('No SVG in response')); }
   })
   .catch(function(err) { callback(err.message || 'Claude API error'); });
 }
@@ -15083,8 +15315,6 @@ function _spFallbackSVG(objInfo) {
   var c  = objInfo.primaryColor || '#4A90D9';
   var c2 = objInfo.secondaryColor || '#ffffff';
   var cat = objInfo.category || 'other';
-
-  // Helper: lighten a hex color slightly for detail
   function lighten(hex, amt) {
     var n = parseInt(hex.replace('#',''), 16);
     var r = Math.min(255, (n >> 16) + amt);
@@ -15093,87 +15323,27 @@ function _spFallbackSVG(objInfo) {
     return '#' + ((1 << 24) | (r << 16) | (g << 8) | b).toString(16).slice(1);
   }
   function darken(hex, amt) { return lighten(hex, -amt); }
-
-  var light = lighten(c, 50);
-  var dark  = darken(c, 40);
-
+  var light = lighten(c, 50), dark = darken(c, 40);
   var icons = {
-    electronics: // TV / monitor shape
-      '<rect x="30" y="40" width="140" height="90" rx="10" fill="' + c + '"/>' +
-      '<rect x="38" y="48" width="124" height="74" rx="6" fill="' + dark + '"/>' +
-      '<rect x="44" y="54" width="112" height="62" rx="4" fill="#1a1a2e"/>' +
-      '<rect x="80" y="133" width="40" height="10" rx="3" fill="' + c + '"/>' +
-      '<rect x="65" y="143" width="70" height="6" rx="3" fill="' + dark + '"/>',
-
-    clothing: // shirt / folded garment
-      '<path d="M60 50 L30 80 L55 88 L55 155 L145 155 L145 88 L170 80 L140 50 C130 65 115 72 100 72 C85 72 70 65 60 50Z" fill="' + c + '"/>' +
-      '<path d="M60 50 C70 65 85 72 100 72 C115 72 130 65 140 50 L125 44 C118 58 110 64 100 64 C90 64 82 58 75 44Z" fill="' + dark + '"/>' +
-      '<path d="M55 90 L55 155" stroke="' + light + '" stroke-width="2" opacity=".4"/>',
-
-    tool: // wrench
-      '<path d="M148 36 C130 30 110 38 103 55 C97 70 102 86 113 95 L58 158 C53 163 53 171 58 176 C63 181 71 181 76 176 L131 113 C142 120 157 120 168 110 C181 98 181 76 168 64 L152 80 L142 70 L157 54 Z" fill="' + c + '"/>' +
-      '<circle cx="68" cy="168" r="6" fill="' + light + '"/>',
-
-    food: // bowl / plate
-      '<ellipse cx="100" cy="115" rx="72" ry="18" fill="' + dark + '"/>' +
-      '<ellipse cx="100" cy="112" rx="72" ry="18" fill="' + c + '"/>' +
-      '<ellipse cx="100" cy="95" rx="65" ry="30" fill="' + light + '"/>' +
-      '<ellipse cx="100" cy="92" rx="50" ry="22" fill="' + c + '"/>' +
-      '<ellipse cx="100" cy="90" rx="38" ry="16" fill="' + dark + '" opacity=".6"/>',
-
-    book: // open book
-      '<rect x="28" y="45" width="68" height="110" rx="4" fill="' + dark + '"/>' +
-      '<rect x="30" y="47" width="64" height="106" rx="3" fill="' + c + '"/>' +
-      '<rect x="104" y="45" width="68" height="110" rx="4" fill="' + dark + '"/>' +
-      '<rect x="106" y="47" width="64" height="106" rx="3" fill="' + light + '"/>' +
-      '<rect x="95" y="45" width="10" height="110" fill="' + dark + '"/>' +
-      '<line x1="38" y1="68" x2="88" y2="68" stroke="' + light + '" stroke-width="3" opacity=".5"/>' +
-      '<line x1="38" y1="80" x2="88" y2="80" stroke="' + light + '" stroke-width="3" opacity=".5"/>' +
-      '<line x1="38" y1="92" x2="88" y2="92" stroke="' + light + '" stroke-width="3" opacity=".5"/>',
-
-    furniture: // chair
-      '<rect x="55" y="55" width="90" height="55" rx="8" fill="' + c + '"/>' +
-      '<rect x="55" y="55" width="90" height="12" rx="6" fill="' + dark + '"/>' +
-      '<rect x="55" y="110" width="14" height="50" rx="5" fill="' + c + '"/>' +
-      '<rect x="131" y="110" width="14" height="50" rx="5" fill="' + c + '"/>' +
-      '<rect x="42" y="55" width="12" height="80" rx="5" fill="' + dark + '"/>',
-
-    toy: // star / playful shape
-      '<polygon points="100,25 112,72 158,72 122,98 135,145 100,118 65,145 78,98 42,72 88,72" fill="' + c + '"/>' +
-      '<polygon points="100,42 109,72 138,72 115,89 124,119 100,102 76,119 85,89 62,72 91,72" fill="' + light + '" opacity=".5"/>',
-
-    sport: // ball
-      '<circle cx="100" cy="100" r="72" fill="' + c + '"/>' +
-      '<path d="M100 28 C80 50 80 80 100 100 C120 120 140 138 160 148" stroke="' + dark + '" stroke-width="6" fill="none"/>' +
-      '<path d="M28 100 C50 80 80 80 100 100 C120 120 120 148 100 172" stroke="' + dark + '" stroke-width="6" fill="none"/>' +
-      '<circle cx="100" cy="100" r="72" fill="none" stroke="' + dark + '" stroke-width="4"/>',
-
-    document: // paper / document
-      '<rect x="45" y="30" width="110" height="140" rx="8" fill="' + c + '"/>' +
-      '<rect x="50" y="35" width="100" height="130" rx="6" fill="' + light + '"/>' +
-      '<rect x="60" y="55" width="80" height="6" rx="3" fill="' + c + '" opacity=".6"/>' +
-      '<rect x="60" y="70" width="80" height="5" rx="2.5" fill="' + c + '" opacity=".4"/>' +
-      '<rect x="60" y="83" width="60" height="5" rx="2.5" fill="' + c + '" opacity=".4"/>' +
-      '<rect x="60" y="100" width="80" height="5" rx="2.5" fill="' + c + '" opacity=".3"/>' +
-      '<rect x="60" y="113" width="50" height="5" rx="2.5" fill="' + c + '" opacity=".3"/>',
-
-    kitchen: // mug / cup
-      '<rect x="55" y="65" width="90" height="80" rx="12" fill="' + c + '"/>' +
-      '<rect x="60" y="70" width="80" height="10" rx="4" fill="' + light + '" opacity=".5"/>' +
-      '<path d="M145 85 Q170 85 170 105 Q170 125 145 125" stroke="' + dark + '" stroke-width="10" fill="none" stroke-linecap="round"/>' +
-      '<ellipse cx="100" cy="65" rx="45" ry="10" fill="' + dark + '"/>' +
-      '<ellipse cx="100" cy="145" rx="48" ry="9" fill="' + dark + '" opacity=".7"/>',
-
-    other: // generic box / package
-      '<rect x="30" y="75" width="140" height="95" rx="8" fill="' + c + '"/>' +
-      '<path d="M30 75 L100 45 L170 75" fill="' + light + '"/>' +
-      '<path d="M30 75 L100 45 L170 75 L170 80 L100 50 L30 80Z" fill="' + dark + '"/>' +
-      '<rect x="85" y="85" width="30" height="50" rx="4" fill="' + light + '" opacity=".5"/>' +
-      '<line x1="85" y1="110" x2="115" y2="110" stroke="' + dark + '" stroke-width="2" opacity=".5"/>'
+    electronics: '<rect x="30" y="40" width="140" height="90" rx="10" fill="' + c + '"/><rect x="38" y="48" width="124" height="74" rx="6" fill="' + dark + '"/><rect x="44" y="54" width="112" height="62" rx="4" fill="#1a1a2e"/><rect x="80" y="133" width="40" height="10" rx="3" fill="' + c + '"/><rect x="65" y="143" width="70" height="6" rx="3" fill="' + dark + '"/>',
+    clothing: '<path d="M60 50 L30 80 L55 88 L55 155 L145 155 L145 88 L170 80 L140 50 C130 65 115 72 100 72 C85 72 70 65 60 50Z" fill="' + c + '"/><path d="M60 50 C70 65 85 72 100 72 C115 72 130 65 140 50 L125 44 C118 58 110 64 100 64 C90 64 82 58 75 44Z" fill="' + dark + '"/>',
+    tool: '<path d="M148 36 C130 30 110 38 103 55 C97 70 102 86 113 95 L58 158 C53 163 53 171 58 176 C63 181 71 181 76 176 L131 113 C142 120 157 120 168 110 C181 98 181 76 168 64 L152 80 L142 70 L157 54 Z" fill="' + c + '"/><circle cx="68" cy="168" r="6" fill="' + light + '"/>',
+    food: '<ellipse cx="100" cy="115" rx="72" ry="18" fill="' + dark + '"/><ellipse cx="100" cy="112" rx="72" ry="18" fill="' + c + '"/><ellipse cx="100" cy="95" rx="65" ry="30" fill="' + light + '"/><ellipse cx="100" cy="92" rx="50" ry="22" fill="' + c + '"/><ellipse cx="100" cy="90" rx="38" ry="16" fill="' + dark + '" opacity=".6"/>',
+    book: '<rect x="28" y="45" width="68" height="110" rx="4" fill="' + dark + '"/><rect x="30" y="47" width="64" height="106" rx="3" fill="' + c + '"/><rect x="104" y="45" width="68" height="110" rx="4" fill="' + dark + '"/><rect x="106" y="47" width="64" height="106" rx="3" fill="' + light + '"/><rect x="95" y="45" width="10" height="110" fill="' + dark + '"/>',
+    furniture: '<rect x="55" y="55" width="90" height="55" rx="8" fill="' + c + '"/><rect x="55" y="55" width="90" height="12" rx="6" fill="' + dark + '"/><rect x="55" y="110" width="14" height="50" rx="5" fill="' + c + '"/><rect x="131" y="110" width="14" height="50" rx="5" fill="' + c + '"/><rect x="42" y="55" width="12" height="80" rx="5" fill="' + dark + '"/>',
+    toy: '<polygon points="100,25 112,72 158,72 122,98 135,145 100,118 65,145 78,98 42,72 88,72" fill="' + c + '"/><polygon points="100,42 109,72 138,72 115,89 124,119 100,102 76,119 85,89 62,72 91,72" fill="' + light + '" opacity=".5"/>',
+    sport: '<circle cx="100" cy="100" r="72" fill="' + c + '"/><path d="M100 28 C80 50 80 80 100 100 C120 120 140 138 160 148" stroke="' + dark + '" stroke-width="6" fill="none"/><path d="M28 100 C50 80 80 80 100 100 C120 120 120 148 100 172" stroke="' + dark + '" stroke-width="6" fill="none"/>',
+    document: '<rect x="45" y="30" width="110" height="140" rx="8" fill="' + c + '"/><rect x="50" y="35" width="100" height="130" rx="6" fill="' + light + '"/><rect x="60" y="55" width="80" height="6" rx="3" fill="' + c + '" opacity=".6"/><rect x="60" y="70" width="80" height="5" rx="2.5" fill="' + c + '" opacity=".4"/>',
+    kitchen: '<rect x="55" y="65" width="90" height="80" rx="12" fill="' + c + '"/><rect x="60" y="70" width="80" height="10" rx="4" fill="' + light + '" opacity=".5"/><path d="M145 85 Q170 85 170 105 Q170 125 145 125" stroke="' + dark + '" stroke-width="10" fill="none" stroke-linecap="round"/>',
+    other: '<rect x="30" y="75" width="140" height="95" rx="8" fill="' + c + '"/><path d="M30 75 L100 45 L170 75" fill="' + light + '"/><rect x="85" y="85" width="30" height="50" rx="4" fill="' + light + '" opacity=".5"/>'
   };
-
   var body = icons[cat] || icons.other;
   return '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">' + body + '</svg>';
+}
+
+/* ─── Leer Gemini API Key ────────────────────────────────────────── */
+function _getGeminiKey() {
+  return localStorage.getItem('bv_gemini_api_key') || '';
 }
 
 /* ─── UI: Modal de carga de foto ────────────────────────────────── */
@@ -15184,6 +15354,8 @@ function _showSpModal(itemIdx, itemText, boxId) {
 
   var prev = document.getElementById('_spModal');
   if (prev) prev.remove();
+
+  var hasGeminiKey = !!_getGeminiKey();
 
   var modal = document.createElement('div');
   modal.id = '_spModal';
@@ -15196,40 +15368,73 @@ function _showSpModal(itemIdx, itemText, boxId) {
   modal.innerHTML = [
     '<div id="_spSheet" style="',
       'background:var(--card,#1C1C1E);border-radius:24px 24px 0 0;',
-      'width:100%;max-width:480px;padding:20px 18px 36px;',
+      'width:100%;max-width:480px;',
+      'max-height:92vh;display:flex;flex-direction:column;',
       'box-shadow:0 -8px 50px rgba(0,0,0,.45);',
       'transform:translateY(100%);transition:transform .32s cubic-bezier(.34,1.1,.64,1)',
     '">',
 
-      // Handle
-      '<div style="width:40px;height:4px;background:rgba(255,255,255,.18);border-radius:99px;margin:0 auto 20px"></div>',
-
-      // Título
-      '<div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">',
-        '<span style="font-size:20px">✦</span>',
-        '<div style="font-size:17px;font-weight:700;color:var(--text,#fff)">Foto IA del objeto</div>',
+      // Handle + título fijos arriba (no hacen scroll)
+      '<div style="padding:20px 18px 0;flex-shrink:0">',
+        '<div style="width:40px;height:4px;background:rgba(255,255,255,.18);border-radius:99px;margin:0 auto 20px"></div>',
+        '<div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">',
+          '<span style="font-size:20px">✦</span>',
+          '<div style="font-size:17px;font-weight:700;color:var(--text,#fff)">Foto IA del objeto</div>',
+        '</div>',
+        '<div style="font-size:13px;color:var(--muted,rgba(255,255,255,.42));margin-bottom:14px;padding-left:28px">' + _spEsc(itemText) + '</div>',
       '</div>',
-      '<div style="font-size:13px;color:var(--muted,rgba(255,255,255,.42));margin-bottom:18px;padding-left:28px">' + _spEsc(itemText) + '</div>',
+
+      // Área scrollable con el contenido central
+      '<div style="overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;flex:1;padding:0 18px;scrollbar-width:none">',
+
+      // Banner aviso si no hay clave Gemini
+      !hasGeminiKey ? [
+        '<div style="background:rgba(255,149,0,.12);border:1px solid rgba(255,149,0,.25);border-radius:12px;padding:10px 13px;margin-bottom:14px;display:flex;align-items:flex-start;gap:8px">',
+          '<span style="font-size:16px;flex-shrink:0">⚠️</span>',
+          '<div>',
+            '<div style="font-size:12px;font-weight:700;color:#FF9500;margin-bottom:3px">Clave Gemini no configurada</div>',
+            '<div style="font-size:11px;color:rgba(255,255,255,.5);line-height:1.5">Obtén una clave gratuita en <strong style="color:rgba(255,255,255,.7)">aistudio.google.com</strong> y guárdala en Ajustes → IA.</div>',
+            '<button onclick="window._spClose();setTimeout(function(){showScreen(\'settingsScreen\')},300)" style="margin-top:7px;background:rgba(255,149,0,.2);border:1px solid rgba(255,149,0,.3);border-radius:8px;padding:5px 12px;font-size:11px;font-weight:700;color:#FF9500;cursor:pointer;font-family:inherit">Ir a Ajustes →</button>',
+          '</div>',
+        '</div>'
+      ].join('') : '',
+
+      // Guía de cómo sacar buenas fotos
+      '<div style="background:rgba(10,132,255,.08);border:1px solid rgba(10,132,255,.18);border-radius:12px;padding:10px 13px;margin-bottom:14px">',
+        '<div style="font-size:11px;font-weight:700;color:var(--accent,#0A84FF);margin-bottom:6px;display:flex;align-items:center;gap:5px">',
+          '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>',
+          'Consejos para un ícono más detallado',
+        '</div>',
+        '<div style="font-size:11px;color:rgba(255,255,255,.55);line-height:1.7">',
+          '📸 <strong style="color:rgba(255,255,255,.75)">Fondo simple</strong> — pon el objeto sobre una mesa clara<br>',
+          '💡 <strong style="color:rgba(255,255,255,.75)">Buena luz</strong> — evita sombras fuertes o contraluz<br>',
+          '🎯 <strong style="color:rgba(255,255,255,.75)">Un solo objeto</strong> — que ocupe el 70% de la foto<br>',
+          '🔍 <strong style="color:rgba(255,255,255,.75)">Muestra el frente</strong> — el lado más reconocible del objeto',
+        '</div>',
+      '</div>',
 
       // Preview área
       '<div id="_spPreview" style="',
-        'width:100%;height:170px;border-radius:18px;',
+        'width:100%;height:150px;border-radius:18px;',
         'background:var(--card2,rgba(255,255,255,.05));',
         'border:1.5px dashed rgba(255,255,255,.14);',
         'display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;',
-        'margin-bottom:14px;overflow:hidden;position:relative',
+        'margin-bottom:12px;overflow:hidden;position:relative',
       '">',
         '<span style="font-size:36px;opacity:.5">🖼</span>',
-        '<span style="font-size:12px;color:var(--muted,rgba(255,255,255,.38))">Elige una foto para analizar</span>',
+        '<span style="font-size:12px;color:var(--muted,rgba(255,255,255,.38))">Elige una foto del objeto</span>',
       '</div>',
 
-      // [FIX 3] DOS inputs separados: galería (sin capture) + cámara (con capture)
-      // Así en iOS el usuario puede elegir desde la galería O tomar foto nueva
       '<input id="_spFileGallery" type="file" accept="image/*" style="display:none" onchange="window._spHandleFile(this)">',
       '<input id="_spFileCamera"  type="file" accept="image/*" capture="environment" style="display:none" onchange="window._spHandleFile(this)">',
 
-      // Botones de fuente de imagen
-      '<div style="display:flex;gap:8px;margin-bottom:12px">',
+      // Cierra el div scrollable
+      '</div>',
+
+      // Botones de acción — siempre visibles al fondo, no hacen scroll
+      '<div style="padding:12px 18px calc(env(safe-area-inset-bottom,16px) + 16px);flex-shrink:0;border-top:0.5px solid rgba(255,255,255,.07)">',
+
+      '<div style="display:flex;gap:8px;margin-bottom:10px">',
         '<button onclick="document.getElementById(\'_spFileGallery\').click()" style="',
           'flex:1;padding:11px 6px;border-radius:13px;border:1px solid rgba(255,255,255,.12);',
           'background:rgba(255,255,255,.06);color:var(--text,#fff);font-size:13px;font-weight:600;',
@@ -15248,7 +15453,6 @@ function _showSpModal(itemIdx, itemText, boxId) {
         '</button>',
       '</div>',
 
-      // Botones acción
       '<div style="display:flex;gap:10px">',
         '<button onclick="window._spClose()" style="',
           'flex:1;padding:14px;background:rgba(255,255,255,.07);color:var(--text,#fff);',
@@ -15265,11 +15469,13 @@ function _showSpModal(itemIdx, itemText, boxId) {
         '</button>',
       '</div>',
 
-      // Estado / progress
       '<div id="_spStatus" style="',
-        'margin-top:11px;font-size:12px;color:var(--muted,rgba(255,255,255,.42));',
+        'margin-top:9px;font-size:12px;color:var(--muted,rgba(255,255,255,.42));',
         'text-align:center;min-height:16px;display:none',
       '"></div>',
+
+      // Cierra el div footer de botones
+      '</div>',
 
     '</div>'
   ].join('');
@@ -15279,8 +15485,6 @@ function _showSpModal(itemIdx, itemText, boxId) {
   });
 
   document.body.appendChild(modal);
-
-  // Slide-up animado
   requestAnimationFrame(function() {
     requestAnimationFrame(function() {
       var sheet = document.getElementById('_spSheet');
@@ -15297,9 +15501,7 @@ window._spClose = function() {
   if (sheet) {
     sheet.style.transform = 'translateY(100%)';
     setTimeout(function() { if (modal.parentNode) modal.remove(); }, 340);
-  } else {
-    modal.remove();
-  }
+  } else { modal.remove(); }
   _spActive = false;
 };
 
@@ -15307,14 +15509,10 @@ window._spClose = function() {
 window._spHandleFile = function(input) {
   var file = input.files && input.files[0];
   if (!file) return;
-  // Limpiar el input para permitir re-seleccionar la misma imagen
   input.value = '';
-
   var preview    = document.getElementById('_spPreview');
   var confirmBtn = document.getElementById('_spConfirmBtn');
   var status     = document.getElementById('_spStatus');
-
-  // Spinner de mejora
   if (preview) {
     preview.innerHTML = [
       '<div style="width:30px;height:30px;border:2.5px solid rgba(255,255,255,.1);',
@@ -15322,45 +15520,33 @@ window._spHandleFile = function(input) {
       '<span style="font-size:12px;color:var(--muted,rgba(255,255,255,.42))">Mejorando calidad…</span>'
     ].join('');
   }
-
   _enhanceImage(file, function(enhanced) {
     _spEnhancedBase64 = enhanced;
-
-    // Preview de la imagen mejorada
     if (preview) {
       preview.innerHTML = '<img src="' + enhanced + '" style="width:100%;height:100%;object-fit:contain;border-radius:16px">';
     }
-
-    // Habilitar botón analizar
     if (confirmBtn) {
       confirmBtn.style.opacity = '1';
       confirmBtn.style.pointerEvents = 'auto';
       confirmBtn.disabled = false;
     }
-
-    // Mostrar tamaño mejorado
     var kb = Math.round(enhanced.length * 0.75 / 1024);
     if (status) {
       status.style.display = 'block';
-      status.textContent = '✓ Imagen mejorada (' + kb + ' KB) — lista para análisis';
+      status.textContent = '✓ Imagen lista (' + kb + ' KB) — toca Analizar con IA';
     }
   });
 };
 
-/* ─── Pipeline principal: Groq Vision → Claude SVG → thumb ─────── */
+/* ─── Pipeline principal: Gemini Vision → Claude SVG → thumb ─────── */
 window._spConfirm = function() {
   if (!_spEnhancedBase64) return;
 
-  var groqKey = localStorage.getItem('bv_groq_api_key');
-  if (!groqKey) {
+  var geminiKey = _getGeminiKey();
+  if (!geminiKey) {
     window._spClose();
-    if (typeof window._showGroqKeyModal === 'function') {
-      window._showGroqKeyModal(function() {
-        setTimeout(function() { _spShowForItem(_spCurrentItemIdx, _spCurrentBoxId); }, 400);
-      });
-    } else {
-      alert('Configura tu clave API de Groq en Ajustes para usar esta función.');
-    }
+    setTimeout(function() { showScreen('settingsScreen'); }, 300);
+    if (typeof showToast === 'function') showToast('Configura tu clave Gemini en Ajustes → IA', '#FF9500');
     return;
   }
 
@@ -15375,10 +15561,10 @@ window._spConfirm = function() {
   }
   if (status) status.style.display = 'block';
 
-  // ── Paso 1: Groq Vision identifica el objeto ──
-  _spSetStatus('🔍 Identificando objeto con Groq Vision…', status);
+  // ── Paso 1: Gemini Vision identifica el objeto ──
+  _spSetStatus('🔍 Analizando imagen con Gemini Vision…', status);
 
-  _identifyObject(_spEnhancedBase64, groqKey, function(err, objInfo) {
+  _identifyObject(_spEnhancedBase64, geminiKey, function(err, objInfo) {
     if (err) {
       _spSetStatus('⚠️ ' + err, status);
       if (confirmBtn) {
@@ -15389,36 +15575,37 @@ window._spConfirm = function() {
       return;
     }
 
-    // Mostrar resultado del análisis en el preview
+    // Mostrar resultado del análisis
     if (preview) {
       preview.innerHTML = [
         '<div style="text-align:center;padding:12px 16px">',
           '<div style="font-size:11px;color:var(--muted,rgba(255,255,255,.38));margin-bottom:8px;text-transform:uppercase;letter-spacing:.5px">Objeto detectado</div>',
-          '<div style="font-size:24px;font-weight:800;color:var(--text,#fff);letter-spacing:-.5px">' + _spEsc(objInfo.name) + '</div>',
-          '<div style="display:inline-block;margin-top:6px;padding:3px 12px;background:rgba(255,255,255,.07);border-radius:99px;font-size:11px;color:var(--muted,rgba(255,255,255,.4))">' + _spEsc(objInfo.category) + '</div>',
+          '<div style="font-size:22px;font-weight:800;color:var(--text,#fff);letter-spacing:-.5px">' + _spEsc(objInfo.name) + '</div>',
+          '<div style="display:inline-block;margin-top:5px;padding:3px 12px;background:rgba(255,255,255,.07);border-radius:99px;font-size:11px;color:var(--muted,rgba(255,255,255,.4))">' + _spEsc(objInfo.category) + '</div>',
+          objInfo.keyDetails ? '<div style="margin-top:8px;font-size:10px;color:rgba(255,255,255,.35);max-width:260px">' + _spEsc(objInfo.keyDetails) + '</div>' : '',
           '<div style="margin-top:10px;display:flex;gap:6px;justify-content:center;align-items:center">',
-            '<div style="width:22px;height:22px;border-radius:50%;background:' + _spEsc(objInfo.primaryColor||'#4A90D9') + ';border:2px solid rgba(255,255,255,.25)"></div>',
-            objInfo.secondaryColor ? '<div style="width:22px;height:22px;border-radius:50%;background:' + _spEsc(objInfo.secondaryColor) + ';border:2px solid rgba(255,255,255,.25)"></div>' : '',
+            '<div style="width:20px;height:20px;border-radius:50%;background:' + _spEsc(objInfo.primaryColor||'#4A90D9') + ';border:2px solid rgba(255,255,255,.25)"></div>',
+            objInfo.secondaryColor ? '<div style="width:20px;height:20px;border-radius:50%;background:' + _spEsc(objInfo.secondaryColor) + ';border:2px solid rgba(255,255,255,.25)"></div>' : '',
+            objInfo.accentColor ? '<div style="width:20px;height:20px;border-radius:50%;background:' + _spEsc(objInfo.accentColor) + ';border:2px solid rgba(255,255,255,.25)"></div>' : '',
           '</div>',
         '</div>'
       ].join('');
     }
 
-    // ── Paso 2: Claude genera el SVG flat ──
-    _spSetStatus('✦ Generando ilustración flat de "' + objInfo.name + '"…', status);
+    // ── Paso 2: Claude genera el SVG flat detallado ──
+    _spSetStatus('✦ Generando ícono detallado de "' + objInfo.name + '"…', status);
 
     _generateSVG(objInfo, function(errSvg, svgString) {
       if (errSvg || !svgString) {
-        console.warn('[SmartPhoto] Claude SVG falló, usando fallback geométrico:', errSvg);
+        console.warn('[SmartPhoto] Claude SVG falló, usando fallback:', errSvg);
         svgString = _spFallbackSVG(objInfo);
       }
 
       // ── Paso 3: SVG → thumb PNG ──
-      _spSetStatus('🎨 Renderizando ilustración…', status);
+      _spSetStatus('🎨 Renderizando ícono…', status);
 
       _svgToThumb(svgString, function(errThumb, thumb) {
         if (errThumb || !thumb) {
-          // [FIX 2] Ahora _spCropSquare es asíncrono
           _spCropSquare(_spEnhancedBase64, function(croppedThumb) {
             _spSaveThumb(croppedThumb, _spCurrentBoxId, _spCurrentItemIdx, objInfo.name, svgString);
           });
@@ -15430,28 +15617,38 @@ window._spConfirm = function() {
   });
 };
 
-/* ─── Guardar thumb en BoxVision ────────────────────────────────── */
+/* ─── Guardar thumb + auto-renombrar ítem ────────────────────────── */
 function _spSaveThumb(thumb, boxId, itemIdx, detectedName, svgString) {
   var box = (typeof boxes !== 'undefined') && boxes.find(function(b){ return b.id === boxId; });
   if (!box || !box.items[itemIdx]) { window._spClose(); return; }
 
+  var oldName = box.items[itemIdx].text;
   box.items[itemIdx].thumb    = thumb;
   box.items[itemIdx].thumbSvg = svgString;
   box.items[itemIdx].thumbAI  = detectedName;
 
-  // Guardar en localStorage via sistema existente
+  // ── Auto-renombrar si el nombre detectado es más específico ──
+  var autoRenamed = false;
+  if (detectedName && detectedName.toLowerCase() !== 'objeto' && detectedName.toLowerCase() !== oldName.toLowerCase()) {
+    box.items[itemIdx].text = detectedName;
+    autoRenamed = true;
+    if (typeof addHistory === 'function') addHistory(box, 'Renombrado por IA: ' + oldName + ' → ' + detectedName);
+  }
+
   try {
     if (typeof _thumbKey === 'function') {
+      // Limpiar clave anterior si el ítem fue renombrado
+      if (autoRenamed && oldName !== box.items[itemIdx].text) {
+        localStorage.removeItem(_thumbKey(boxId, oldName));
+      }
       localStorage.setItem(_thumbKey(boxId, box.items[itemIdx].text), thumb);
     }
-  } catch(e) { console.warn('[SmartPhoto] localStorage thumb error:', e); }
+  } catch(e) {}
 
   if (typeof saveData    === 'function') saveData();
   if (typeof renderItems === 'function') renderItems();
-  // [FIX 7] Regenerar QR tras guardar
   if (typeof generateQR  === 'function') generateQR(boxId);
 
-  // Mostrar resultado en el modal
   var preview    = document.getElementById('_spPreview');
   var status     = document.getElementById('_spStatus');
   var confirmBtn = document.getElementById('_spConfirmBtn');
@@ -15459,17 +15656,14 @@ function _spSaveThumb(thumb, boxId, itemIdx, detectedName, svgString) {
   if (preview) {
     preview.innerHTML = [
       '<div style="position:relative;width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px">',
-        '<img src="' + thumb + '" style="max-width:130px;max-height:130px;object-fit:contain;border-radius:14px">',
-        '<div style="font-size:12px;color:rgba(255,255,255,.5)">' + _spEsc(detectedName) + '</div>',
+        '<img src="' + thumb + '" style="max-width:120px;max-height:120px;object-fit:contain;border-radius:14px">',
+        '<div style="font-size:12px;color:rgba(255,255,255,.6);font-weight:600">' + _spEsc(detectedName) + '</div>',
+        autoRenamed ? '<div style="font-size:10px;color:rgba(255,255,255,.35)">✎ Objeto renombrado automáticamente</div>' : '',
         '<div style="position:absolute;bottom:10px;right:10px;background:#34C759;border-radius:99px;padding:4px 11px;font-size:11px;font-weight:700;color:#fff">✓ Guardado</div>',
       '</div>'
     ].join('');
   }
-
-  if (status) {
-    status.textContent = '✅ Ilustración flat de "' + detectedName + '" guardada';
-  }
-
+  if (status) status.textContent = '✅ Ícono de "' + detectedName + '" guardado' + (autoRenamed ? ' · ítem renombrado' : '');
   if (confirmBtn) {
     confirmBtn.innerHTML = '✓ Listo';
     confirmBtn.style.opacity = '1';
@@ -15477,8 +15671,6 @@ function _spSaveThumb(thumb, boxId, itemIdx, detectedName, svgString) {
     confirmBtn.onclick = window._spClose;
     confirmBtn.disabled = false;
   }
-
-  // Auto-cerrar en 2.5 s
   setTimeout(window._spClose, 2500);
 }
 
@@ -15499,7 +15691,6 @@ window.spShowForItem = _spShowForItem;
 /* ─── Patch menú contextual de ítem — añadir "Foto IA ✦" ────────── */
 document.addEventListener('DOMContentLoaded', function() {
 
-  // [FIX 6] Usar window._openItemMenu para respetar cualquier patch previo
   var _origMenu = window._openItemMenu;
   if (typeof _origMenu === 'function') {
     window._openItemMenu = function(idx, btn) {
@@ -15507,13 +15698,9 @@ document.addEventListener('DOMContentLoaded', function() {
       setTimeout(function() {
         var menu = document.getElementById('_itemCtxMenu');
         if (!menu) return;
-
-        // Separador
         var sep = document.createElement('div');
         sep.className = 'item-ctx-sep';
         menu.appendChild(sep);
-
-        // Opción "Foto IA"
         var opt = document.createElement('div');
         opt.className = 'item-ctx-opt';
         opt.style.cssText = 'color:var(--accent,#007AFF)';
@@ -15521,34 +15708,26 @@ document.addEventListener('DOMContentLoaded', function() {
           '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">',
             '<path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/>',
             '<circle cx="12" cy="13" r="3"/>',
-            '<path d="M9 3h6" stroke-width="2.5"/>',
           '</svg>',
           '<span>Foto IA ✦</span>'
         ].join('');
-
         opt.onclick = function() {
           var m = document.getElementById('_itemCtxMenu');
           if (m) m.remove();
-          // [FIX 6] currentBoxId es global (let), accesible directamente
           var bid = (typeof currentBoxId !== 'undefined') ? currentBoxId : null;
           if (!bid) return;
           setTimeout(function() { _spShowForItem(idx, bid); }, 120);
         };
-
         menu.appendChild(opt);
       }, 25);
     };
   }
 
-  // [FIX 5] Patch _compressPhoto en DOMContentLoaded — garantiza que la función
-  // original ya existe (declarada como function statement, es hoisted, pero por
-  // claridad lo hacemos aquí junto con el resto de patches)
+  // Patch _compressPhoto
   if (typeof window._compressPhoto === 'function' || typeof _compressPhoto === 'function') {
     window._compressPhoto = function(file, callback) {
-      var MAX_PX  = 1280;
-      var QUALITY = 0.88;
-      var img = new Image();
-      var url = URL.createObjectURL(file);
+      var MAX_PX = 1280, QUALITY = 0.88;
+      var img = new Image(), url = URL.createObjectURL(file);
       img.onload = function() {
         URL.revokeObjectURL(url);
         var w = img.naturalWidth, h = img.naturalHeight;
@@ -15559,19 +15738,13 @@ document.addEventListener('DOMContentLoaded', function() {
         var canvas = document.createElement('canvas');
         canvas.width = w; canvas.height = h;
         var ctx = canvas.getContext('2d');
-        // 2-pass para imágenes muy grandes: reduce aliasing
         if (img.naturalWidth > w * 2) {
           var tmp = document.createElement('canvas');
           tmp.width = w*2; tmp.height = h*2;
           tmp.getContext('2d').drawImage(img, 0, 0, w*2, h*2);
           ctx.drawImage(tmp, 0, 0, w, h);
-        } else {
-          ctx.drawImage(img, 0, 0, w, h);
-        }
-        var result = canvas.toDataURL('image/jpeg', QUALITY);
-        var kb = Math.round(result.length * 0.75 / 1024);
-        console.log('[SmartPhoto] Foto caja comprimida (v1.1): ~' + kb + 'KB (' + w + 'x' + h + ')');
-        callback(result);
+        } else { ctx.drawImage(img, 0, 0, w, h); }
+        callback(canvas.toDataURL('image/jpeg', QUALITY));
       };
       img.onerror = function() {
         URL.revokeObjectURL(url);
@@ -15581,15 +15754,15 @@ document.addEventListener('DOMContentLoaded', function() {
       };
       img.src = url;
     };
-    console.log('[SmartPhoto] _compressPhoto mejorado: 1280px / JPEG 88%');
   }
 
 });
 
-console.log('✅ BoxVision SmartPhoto v' + SP_VERSION + ' listo — Groq Vision + Claude SVG + Canvas enhance (7 fixes aplicados)');
+console.log('✅ BoxVision SmartPhoto v' + SP_VERSION + ' listo — Gemini Vision + Claude SVG detallado + auto-renombrar');
 
 })();
 </script>
+
 
 
 <!-- ═══════════════════════════════════════════════════════════════════════
@@ -15830,14 +16003,12 @@ document.addEventListener('DOMContentLoaded', function() {
     };
   }
 
-  // Parchear showScreen para mostrar/ocultar FAB según pantalla
-  var _origSS = window.showScreen;
-  if (typeof _origSS === 'function') {
-    window.showScreen = function(id) {
-      _origSS.apply(this, arguments);
-      setTimeout(_gtUpdateFab, 80);
-    };
-  }
+  // Actualizar FAB de tags tras cada cambio de pantalla
+  // (no volvemos a parchear showScreen para evitar cadenas de wrappers;
+  //  usamos el evento 'bv:screenchange' que dispara el primer parche)
+  document.addEventListener('bv:screenchange', function(e){
+    setTimeout(_gtUpdateFab, 80);
+  });
 
   // Parchear setFilter para actualizar barra activa cuando se limpia desde pills
   var _origSF = window.setFilter;
@@ -15938,6 +16109,8 @@ function _swAvailable() {
 /* ─── Delegar recordatorio al SW ────────────────────────────────── */
 function _delegateToSW(rem) {
   if (!_swAvailable()) return false;
+  var delayMs = rem.ts - Date.now();
+  if (delayMs <= 0) return false; // ya expiró, no programar
   try {
     navigator.serviceWorker.controller.postMessage({
       type: 'SCHEDULE_NOTIFICATION',
@@ -15947,7 +16120,7 @@ function _delegateToSW(rem) {
         body:    rem.note || 'Es hora de revisar esta caja',
         icon:    'icons/logo.png',
         tag:     rem.id,
-        delayMs: rem.ts - Date.now(),
+        delayMs: delayMs,
         data:    { boxId: rem.boxId }
       }
     });
@@ -17186,6 +17359,75 @@ document.addEventListener('mouseup',     onMouseUp);
 document.addEventListener('mouseleave',  onMouseLeaveDoc);
 
 console.log('✅ FluidPress v2 loaded — spring physics');
+})();
+</script>
+
+<!-- ══════════════════════════════════════════════════════
+     MODO MUDANZA — activa/desactiva el modo de "sacar objetos"
+     ══════════════════════════════════════════════════════ -->
+<script>
+(function(){
+'use strict';
+
+var MM_KEY = 'bv_moving_mode';
+
+function _isMovingMode(){
+  return localStorage.getItem(MM_KEY) === '1';
+}
+
+function _applyMovingMode(active){
+  // Clase en body para el CSS
+  document.body.classList.toggle('moving-mode', active);
+
+  // Toggle en Ajustes
+  var wrap = document.getElementById('movingModeToggleWrap');
+  if(wrap) wrap.classList.toggle('on', active);
+
+  // Subtítulo descriptivo
+  var sub = document.getElementById('movingModeSettingsSub');
+  if(sub) sub.textContent = active
+    ? '✅ Activo — puedes marcar objetos como sacados'
+    : 'Muestra progreso y opción de marcar objetos como sacados';
+
+  // Refrescar detalle si está abierto
+  var detail = document.getElementById('detailScreen');
+  if(detail && !detail.classList.contains('hidden')){
+    if(typeof renderItems    === 'function') renderItems();
+    if(typeof renderProgress === 'function') renderProgress();
+  }
+}
+
+window.toggleMovingMode = function(){
+  var next = !_isMovingMode();
+  try{ localStorage.setItem(MM_KEY, next ? '1' : '0'); }catch(e){}
+  _applyMovingMode(next);
+  if(typeof showToast === 'function'){
+    showToast(next
+      ? '📦 Modo mudanza activado'
+      : '✋ Modo mudanza desactivado',
+      next ? '#34C759' : '#636366');
+  }
+  if(navigator.vibrate) navigator.vibrate(next ? [8,4,8] : 6);
+};
+
+// Inicializar al cargar
+document.addEventListener('DOMContentLoaded', function(){
+  _applyMovingMode(_isMovingMode());
+});
+
+// Re-aplicar al abrir ajustes (para sincronizar el toggle visual)
+var _origGoSettings = window.goSettings;
+document.addEventListener('DOMContentLoaded', function(){
+  var orig = window.goSettings;
+  if(typeof orig === 'function'){
+    window.goSettings = function(){
+      orig.apply(this, arguments);
+      _applyMovingMode(_isMovingMode());
+    };
+  }
+});
+
+console.log('✅ Modo Mudanza v1.1 — toggle en Ajustes');
 })();
 </script>
 
