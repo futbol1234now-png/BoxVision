@@ -8829,9 +8829,9 @@ function signInGoogle(){
     alert("⚠️ Firebase no está disponible. Usa la app en modo local.");
     return;
   }
-  const btn = document.getElementById("loginBtn");
+  const btn     = document.getElementById("loginBtn");
   const loading = document.getElementById("loginLoading");
-  const errEl = document.getElementById("loginError");
+  const errEl   = document.getElementById("loginError");
   if(btn) btn.style.display = "none";
   if(loading) loading.style.display = "flex";
   if(errEl){ errEl.textContent=""; errEl.style.display="none"; }
@@ -8839,22 +8839,32 @@ function signInGoogle(){
   const provider = new firebase.auth.GoogleAuthProvider();
   provider.setCustomParameters({prompt: 'select_account'});
 
-  // Siempre usar redirect — evita ventana emergente en todos los dispositivos
-  try{ sessionStorage.setItem('bv_login_pending','1'); }catch(e){}
-  auth.signInWithRedirect(provider);
-  if(false){ auth.signInWithPopup(provider).catch(err=>{
-    if(btn) btn.style.display = "flex";
-    if(loading) loading.style.display = "none";
-    const userCancelled = ['auth/popup-closed-by-user','auth/cancelled-popup-request','auth/user-cancelled'];
-    if(!userCancelled.includes(err.code)){
-      console.error("Login error:", err.code);
-      if(errEl){ errEl.textContent = "Error al iniciar sesión. Intenta de nuevo."; errEl.style.display = "block"; }
-      if(typeof window._bvLoginFail === 'function') window._bvLoginFail(err.code);
-    }
-  });
-  // NOTA: getRedirectResult se maneja una sola vez al cargar la página (ver abajo)
-}
-} // ← FIX: cierre de signInGoogle()
+  // Estrategia híbrida: redirect en móvil, popup en desktop.
+  // signInWithRedirect falla en browsers con cookies de terceros bloqueadas
+  // porque el flujo pasa por firebaseapp.com como intermediario.
+  const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+
+  if(isMobile){
+    try{ sessionStorage.setItem('bv_login_pending','1'); }catch(e){}
+    auth.signInWithRedirect(provider);
+  } else {
+    auth.signInWithPopup(provider).then(result=>{
+      console.info("[BoxVision] Login Google (popup) OK:", result.user.displayName);
+    }).catch(err=>{
+      if(btn){ btn.style.display="flex"; btn.style.opacity="1"; btn.style.pointerEvents=""; }
+      if(loading) loading.style.display="none";
+      const userCancelled = ['auth/popup-closed-by-user','auth/cancelled-popup-request','auth/user-cancelled'];
+      if(!userCancelled.includes(err.code)){
+        console.error("[BoxVision] Login Google (popup) error:", err.code);
+        if(errEl){ errEl.textContent="Error al iniciar sesión con Google. Intenta de nuevo."; errEl.style.display="block"; }
+        if(typeof window._bvLoginFail === 'function') window._bvLoginFail(err.code);
+      } else {
+        if(btn) btn.style.display="flex";
+        if(loading) loading.style.display="none";
+      }
+    });
+  }
+} // cierre de signInGoogle()
 
 // ── Email/Password Auth ───────────────────────────────────────────────────
 var _emailTab = 'signin'; // 'signin' | 'signup'
@@ -9876,24 +9886,42 @@ if(auth){
       // onAuthStateChanged lo manejará automáticamente
     }
   }).catch(err=>{
+    // FIX: leer wasPending ANTES de borrar la clave
+    const wasPending = !!sessionStorage.getItem('bv_login_pending');
     try{ sessionStorage.removeItem('bv_login_pending'); }catch(e){}
-    // Códigos que son ruido normal — no mostrar error al usuario
-    const silentCodes = ['auth/null-user','auth/no-auth-event','auth/user-cancelled','auth/popup-closed-by-user'];
-    if(err && !silentCodes.includes(err.code)){
-      console.warn("[BoxVision] getRedirectResult error:", err.code);
-      // Solo mostrar error si el usuario estaba intentando hacer login (había bandera pendiente)
-      const wasPending = !!sessionStorage.getItem('bv_login_pending');
-      const errEl = document.getElementById("loginError");
-      const lb    = document.getElementById("loginBtn");
-      const ll    = document.getElementById("loginLoading");
-      const ef    = document.getElementById("emailForm");
-      if(errEl && wasPending){ errEl.textContent="Error al iniciar sesión. Intenta de nuevo."; errEl.style.display="block"; }
-      if(lb){ lb.style.display="flex"; lb.style.opacity="1"; lb.style.pointerEvents=""; }
-      if(ll) ll.style.display="none";
-      if(ef){ ef.style.opacity="1"; ef.style.pointerEvents=""; }
-      if(typeof window._bvLoginFail === 'function') window._bvLoginFail(err.code);
+
+    // Códigos que son ruido normal cuando no hay redirect en curso
+    const silentCodes = ['auth/null-user','auth/user-cancelled','auth/popup-closed-by-user'];
+    // NOTA: auth/no-auth-event y auth/unauthorized-domain ya NO se silencian
+
+    const errEl = document.getElementById("loginError");
+    const lb    = document.getElementById("loginBtn");
+    const ll    = document.getElementById("loginLoading");
+    const ef    = document.getElementById("emailForm");
+
+    if(err){
+      console.warn("[BoxVision] getRedirectResult error:", err.code, err.message);
+
+      if(err.code === 'auth/unauthorized-domain'){
+        // Dominio no autorizado en Firebase Console
+        const msg = "Este dominio no está autorizado en Firebase. Agrégalo en Firebase Console → Authentication → Authorized Domains.";
+        console.error("[BoxVision]", msg);
+        if(errEl){ errEl.textContent = "Error de configuración: dominio no autorizado. Contacta al administrador."; errEl.style.display = "block"; }
+      } else if(err.code === 'auth/no-auth-event'){
+        // El redirect falló antes de llegar a Google, o el dominio tiene problemas
+        if(wasPending){
+          console.error("[BoxVision] El redirect de Google falló (auth/no-auth-event). Posible causa: dominio no autorizado en Firebase.");
+          if(errEl){ errEl.textContent = "No se pudo conectar con Google. Verifica tu conexión e intenta de nuevo."; errEl.style.display = "block"; }
+        }
+      } else if(!silentCodes.includes(err.code)){
+        if(errEl){ errEl.textContent = "Error al iniciar sesión con Google. Intenta de nuevo."; errEl.style.display = "block"; }
+        if(typeof window._bvLoginFail === 'function') window._bvLoginFail(err.code);
+      }
     }
-    try{ sessionStorage.removeItem('bv_login_pending'); }catch(e){}
+
+    if(lb){ lb.style.display="flex"; lb.style.opacity="1"; lb.style.pointerEvents=""; }
+    if(ll) ll.style.display="none";
+    if(ef){ ef.style.opacity="1"; ef.style.pointerEvents=""; }
   });
   function _showLoginScreen(){
     // Cancelar cualquier guardado pendiente antes de limpiar los datos
