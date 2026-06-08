@@ -25,7 +25,7 @@ const CACHE_NAME      = 'boxvision-v3';
 const STATIC_CACHE    = 'boxvision-static-v3';
 const HTML_CACHE      = 'boxvision-html-v3';
 
-const APP_HTML        = './app_top_features_v3.html';
+const APP_HTML        = './app.html';
 const ICON_PATH       = './icons/logo.png';
 
 // Assets de CDN que vale la pena cachear
@@ -124,6 +124,10 @@ async function fireNotification(reminder) {
       badge:   ICON_PATH,
       vibrate: [200, 100, 200],
       data:    data || {},
+      actions: [
+        { action: 'open',    title: '📦 Abrir caja' },
+        { action: 'dismiss', title: 'Cerrar'        }
+      ]
     });
   } catch (err) {
     console.warn('[SW] showNotification error:', err);
@@ -348,13 +352,15 @@ self.addEventListener('message', (event) => {
 self.addEventListener('notificationclick', (event) => {
   event.notification.close();
 
+  // Si el usuario tocó "Cerrar", no abrir nada
+  if (event.action === 'dismiss') return;
+
   const notifData = event.notification.data || {};
   const boxId     = notifData.boxId  || null;
   const remId     = notifData.remId  || event.notification.tag || null;
 
   event.waitUntil(
     (async () => {
-      // Buscar ventana ya abierta de la app
       const clientList = await self.clients.matchAll({
         type:                'window',
         includeUncontrolled: false,
@@ -363,36 +369,33 @@ self.addEventListener('notificationclick', (event) => {
       let targetClient = null;
 
       for (const client of clientList) {
-        if (client.url.includes('app_top_features_v3') || client.url.includes(self.registration.scope)) {
+        // Buscar cualquier ventana del mismo scope
+        if (client.url.startsWith(self.registration.scope)) {
           targetClient = client;
           break;
         }
       }
 
       if (targetClient) {
-        // Enfocar la ventana existente
         await targetClient.focus();
       } else {
-        // Abrir una nueva ventana
-        targetClient = await self.clients.openWindow(APP_HTML);
-        // Esperar un momento para que la app cargue antes de enviar el mensaje
-        await new Promise((r) => setTimeout(r, 800));
+        // Abrir la raíz del scope
+        targetClient = await self.clients.openWindow(self.registration.scope);
+        // Esperar a que la app cargue
+        await new Promise((r) => setTimeout(r, 900));
       }
 
-      // Notificar al cliente qué caja abrir (WebPush v2 + legacy)
-      const sendMsg = async (client) => {
-        if (!client) return;
-        if (boxId) {
-          try { client.postMessage({ type: 'WP_NOTIF_CLICKED', boxId }); } catch (_) {}
-          try { client.postMessage({ type: 'NOTIF_CLICKED',    boxId }); } catch (_) {}
-        }
-        if (remId) {
-          try { client.postMessage({ type: 'WP_NOTIF_FIRED', remId }); } catch (_) {}
-          try { client.postMessage({ type: 'NOTIF_FIRED',    remId }); } catch (_) {}
-        }
-      };
+      if (!targetClient) return;
 
-      await sendMsg(targetClient);
+      // Notificar al cliente qué caja abrir
+      if (boxId) {
+        try { targetClient.postMessage({ type: 'WP_NOTIF_CLICKED', boxId }); } catch (_) {}
+        try { targetClient.postMessage({ type: 'NOTIF_CLICKED',    boxId }); } catch (_) {}
+      }
+      if (remId) {
+        try { targetClient.postMessage({ type: 'WP_NOTIF_FIRED', remId }); } catch (_) {}
+        try { targetClient.postMessage({ type: 'NOTIF_FIRED',    remId }); } catch (_) {}
+      }
     })()
   );
 });
@@ -441,9 +444,9 @@ self.addEventListener('fetch', (event) => {
 
 function isAppHtml(url) {
   return (
-    url.pathname.endsWith('app_top_features_v3.html') ||
-    url.pathname === '/' ||
-    url.pathname === '/index.html'
+    url.pathname === '/'           ||
+    url.pathname === '/index.html' ||
+    url.pathname.endsWith('/app.html')
   );
 }
 
