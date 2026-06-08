@@ -1652,6 +1652,40 @@ input,button,textarea,select{font-family:inherit}
   margin-bottom:24px;line-height:1.5;
   letter-spacing:.2px;
 }
+/* ── Saludo protagonista ── */
+.sp-greeting-wrap{
+  margin-bottom:22px;
+  animation:spStatIn .5s .15s cubic-bezier(.34,1.3,.64,1) both;
+}
+.sp-greeting-text{
+  font-size:27px;font-weight:700;
+  letter-spacing:-.4px;line-height:1.2;
+  margin-bottom:6px;
+  /* Gradiente base + franja brillante intercalada, animada por background-size/position */
+  background: linear-gradient(
+    180deg,
+    #ffd580 0%,
+    #ffffff 20%,
+    #ffd580 40%,
+    #ffb8c6 70%,
+    #ffd580 100%
+  ) 0 0 / 100% 300%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  filter: drop-shadow(0 0 10px rgba(255,200,100,.35));
+  animation: greetingShine 3s cubic-bezier(.4,0,.6,1) infinite;
+}
+@keyframes greetingShine{
+  0%   { background-position: 0 0%;   filter: drop-shadow(0 0 8px  rgba(255,200,100,.3)); }
+  45%  { background-position: 0 100%; filter: drop-shadow(0 0 16px rgba(255,220,120,.6)); }
+  100% { background-position: 0 0%;   filter: drop-shadow(0 0 8px  rgba(255,200,100,.3)); }
+}
+.sp-greeting-sub{
+  font-size:13px;font-weight:400;
+  color:rgba(255,255,255,.5);
+  letter-spacing:.15px;
+}
 /* Stats */
 .sp-stats{
   display:grid;grid-template-columns:repeat(3,1fr);
@@ -4390,10 +4424,10 @@ if(!auth){
 
 <div id="splash">
   <!-- Orbes de fondo -->
-  <div style="position:absolute;width:340px;height:340px;top:-100px;left:-80px;border-radius:50%;background:radial-gradient(circle,rgba(10,132,255,0.09),transparent 70%);pointer-events:none"></div>
-  <div style="position:absolute;width:280px;height:280px;bottom:-60px;right:-60px;border-radius:50%;background:radial-gradient(circle,rgba(88,86,214,0.08),transparent 70%);pointer-events:none"></div>
+  <div style="position:absolute;width:400px;height:400px;top:-120px;left:-100px;border-radius:50%;background:radial-gradient(circle,rgba(10,132,255,0.11),transparent 68%);pointer-events:none"></div>
+  <div style="position:absolute;width:300px;height:300px;bottom:-80px;right:-70px;border-radius:50%;background:radial-gradient(circle,rgba(88,86,214,0.1),transparent 68%);pointer-events:none"></div>
 
-  <!-- Logo -->
+  <!-- Logo compacto arriba -->
   <div class="sp-icon-wrap">
     <div class="sp-icon-glow"></div>
     <div class="sp-icon-ring"></div>
@@ -4412,8 +4446,13 @@ if(!auth){
     <span class="sp-clock-zone" id="spClockZone">--</span>
   </div>
 
-  <!-- Saludo dinámico -->
-  <div class="sp-sub" id="spGreeting">Cargando…</div>
+  <!-- Saludo dinámico — PROTAGONISTA -->
+  <div class="sp-greeting-wrap">
+    <div class="sp-greeting-text" id="spGreeting">Cargando…</div>
+    <div class="sp-greeting-sub" id="spGreetingSub"></div>
+  </div>
+
+  <!-- Stats renovadas -->
   <div class="sp-stats" id="spStatsWrap">
     <div class="sp-stat" id="spStatC" onclick="showScreen('mainScreen')">
       <div class="sp-stat-icon">📦</div>
@@ -6124,14 +6163,29 @@ function _tickClock(){
     }
   }
   // Saludo dinámico según hora del día
-  var greetEl = document.getElementById('spGreeting');
+  var greetEl  = document.getElementById('spGreeting');
+  var greetSub = document.getElementById('spGreetingSub');
   if(greetEl){
     var h = now.getHours();
-    var greeting = h < 6  ? 'Buenas noches 🌙' :
-                   h < 12 ? 'Buenos días ☀️'  :
-                   h < 19 ? 'Buenas tardes 🌤' :
-                             'Buenas noches 🌙';
-    greetEl.textContent = greeting;
+    var emoji    = h < 6  ? '🌙' : h < 12 ? '☀️' : h < 19 ? '🌤️' : '🌙';
+    var greeting = h < 6  ? 'Buenas noches'  :
+                   h < 12 ? 'Buenos días'    :
+                   h < 19 ? 'Buenas tardes'  :
+                             'Buenas noches';
+    // Agregar nombre si está disponible
+    var name = '';
+    try{
+      var cu = window.currentUser;
+      if(cu && cu.displayName) name = ', ' + cu.displayName.split(' ')[0];
+    }catch(e){}
+    greetEl.textContent = greeting + name + ' ' + emoji;
+    if(greetSub){
+      var subs = h < 6  ? ['Noche tranquila para organizar 📦','Todo listo para mañana'] :
+                 h < 12 ? ['Que tengas un gran día','Empieza el día organizado 📦'] :
+                 h < 19 ? ['Todo bajo control','Tu mudanza avanza bien 💪'] :
+                          ['Un buen momento para revisar tus cajas','Noche tranquila para organizar 📦'];
+      greetSub.textContent = subs[Math.floor(Date.now()/86400000) % subs.length];
+    }
   }
 }
 function _startClock(){
