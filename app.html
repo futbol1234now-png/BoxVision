@@ -1557,139 +1557,131 @@ input,button,textarea,select{font-family:inherit}
 .tbtn{background:rgba(255,255,255,.09);border:0.5px solid rgba(255,255,255,.12);border-radius:12px;width:44px;height:44px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:17px;color:rgba(255,255,255,.8);transition:transform .15s cubic-bezier(.34,1.56,.64,1),background .15s}
 .tbtn-accent{background:linear-gradient(135deg,#0A84FF,#5E5CE6);border:none;color:#fff}
 
-/* ── SPLASH REDISEÑADO v4 ── */
+/* ── SPLASH REDISEÑADO v5 — iOS premium ── */
 #splash{
-  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  display:flex;flex-direction:column;align-items:center;justify-content:flex-start;
   height:100vh;max-height:100vh;overflow:hidden;
-  padding:40px 24px 36px;text-align:center;
-  background:radial-gradient(ellipse 100% 80% at 50% -10%,#0d2246 0%,#17171f 55%,#17171f 100%);
+  padding:env(safe-area-inset-top,44px) 24px env(safe-area-inset-bottom,34px);
+  text-align:center;
+  background:linear-gradient(170deg,#0e1a38 0%,#10101a 50%,#0e1a38 100%);
   position:relative;
 }
-/* Orbes animados de fondo */
+/* Orbes de fondo */
 #splash::before{
   content:'';position:absolute;inset:0;pointer-events:none;
   background:
-    radial-gradient(ellipse 70% 50% at 50% 0%,rgba(10,132,255,0.18) 0%,transparent 70%),
-    radial-gradient(ellipse 40% 30% at 15% 80%,rgba(88,86,214,0.12) 0%,transparent 60%),
-    radial-gradient(ellipse 35% 25% at 85% 75%,rgba(255,149,0,0.07) 0%,transparent 60%);
+    radial-gradient(ellipse 90% 55% at 50% -5%,rgba(10,132,255,0.22) 0%,transparent 65%),
+    radial-gradient(ellipse 50% 35% at 10% 85%,rgba(88,86,214,0.15) 0%,transparent 60%),
+    radial-gradient(ellipse 40% 30% at 90% 70%,rgba(10,132,255,0.1) 0%,transparent 60%);
 }
 /* Wrapper del ícono */
 .sp-icon-wrap{
-  position:relative;width:110px;height:110px;
+  position:relative;width:100px;height:100px;
   display:flex;align-items:center;justify-content:center;
-  margin-bottom:20px;
+  margin-top:36px;margin-bottom:16px;
 }
 .sp-icon-glow{
-  position:absolute;inset:-18px;
-  background:radial-gradient(circle,rgba(10,132,255,0.35) 0%,transparent 70%);
+  position:absolute;inset:-22px;
+  background:radial-gradient(circle,rgba(10,132,255,0.28) 0%,transparent 68%);
   border-radius:50%;
-  animation:spGlowPulse 3s ease-in-out infinite;
+  animation:spGlowPulse 3.5s ease-in-out infinite;
 }
 @keyframes spGlowPulse{
-  0%,100%{transform:scale(1);opacity:.7}
-  50%{transform:scale(1.15);opacity:1}
+  0%,100%{transform:scale(1);opacity:.6}
+  50%{transform:scale(1.18);opacity:1}
 }
-/* Anillo decorativo alrededor del ícono */
 .sp-icon-ring{
-  position:absolute;inset:-6px;
-  border-radius:50%;
-  border:1.5px solid rgba(10,132,255,0.3);
-  animation:spRingSpin 1.5s linear infinite;
+  position:absolute;inset:-4px;
+  border-radius:32px;
+  border:1px solid rgba(10,132,255,0.25);
+  animation:none;
 }
-.sp-icon-ring::before{
-  content:'';position:absolute;
-  width:8px;height:8px;background:#0A84FF;border-radius:50%;
-  top:-4px;left:50%;transform:translateX(-50%);
-  box-shadow:0 0 8px 2px rgba(10,132,255,0.6);
-}
-@keyframes spRingSpin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+.sp-icon-ring::before{display:none}
 /* Fondo del ícono */
 .sp-icon-bg{
-  width:90px;height:90px;border-radius:26px;
-  background:linear-gradient(145deg,#1e2d47,#152039);
-  border:1px solid rgba(10,132,255,0.25);
-  box-shadow:0 8px 32px rgba(0,0,0,0.45),0 0 0 1px rgba(255,255,255,0.05);
+  width:88px;height:88px;border-radius:26px;
+  background:linear-gradient(145deg,#1c2e52,#111a30);
+  border:0.5px solid rgba(255,255,255,.12);
+  box-shadow:
+    0 2px 0 rgba(255,255,255,.06) inset,
+    0 12px 40px rgba(0,0,0,.55),
+    0 0 0 1px rgba(10,132,255,.15);
   display:flex;align-items:center;justify-content:center;
   position:relative;z-index:1;
 }
-.sp-icon{font-size:46px;line-height:1;filter:drop-shadow(0 4px 12px rgba(0,0,0,0.4));margin:0}
+.sp-icon{font-size:44px;line-height:1;filter:drop-shadow(0 3px 10px rgba(0,0,0,0.4));margin:0}
 /* Título */
 .sp-title{
-  font-size:34px;font-weight:800;letter-spacing:-.8px;
-  margin-bottom:6px;color:#fff;
-  text-shadow:0 0 40px rgba(10,132,255,0.4),0 2px 8px rgba(0,0,0,0.5);
-  background:linear-gradient(135deg,#fff 30%,rgba(180,210,255,0.9));
+  font-size:32px;font-weight:800;letter-spacing:-.7px;
+  margin-bottom:2px;
+  background:linear-gradient(160deg,#fff 40%,rgba(160,200,255,0.85));
   -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
 }
-.sp-brand{font-size:13px;color:rgba(255,255,255,.5);font-weight:500;margin-bottom:6px;letter-spacing:.2px}
-/* ── Reloj local splash ── */
+.sp-brand{font-size:13px;color:rgba(255,255,255,.4);font-weight:500;margin-bottom:14px;letter-spacing:.2px}
+
+/* ── Reloj — widget estilo iOS ── */
 .sp-clock{
-  display:flex;align-items:center;gap:7px;
-  margin-bottom:12px;
+  display:flex;flex-direction:column;align-items:center;gap:4px;
+  margin-bottom:6px;
   animation:spStatIn .5s .08s cubic-bezier(.34,1.3,.64,1) both;
 }
 .sp-clock-time{
-  font-size:30px;font-weight:700;
+  font-size:72px;font-weight:200;
   color:#fff;
-  letter-spacing:-1px;
+  letter-spacing:-3px;
   font-variant-numeric:tabular-nums;
-  text-shadow:
-    0 0 8px rgba(10,132,255,.95),
-    0 0 22px rgba(10,132,255,.8),
-    0 0 50px rgba(10,132,255,.6),
-    0 0 90px rgba(10,132,255,.35);
-  animation:spStatIn .5s .08s cubic-bezier(.34,1.3,.64,1) both,clockGlow 2.8s ease-in-out infinite;
+  line-height:1;
+  text-shadow:0 0 60px rgba(10,132,255,.4);
+}
+.sp-clock-sep{display:none}
+.sp-clock-zone{
+  font-size:12px;color:rgba(255,255,255,.4);
+  font-weight:500;letter-spacing:.8px;text-transform:uppercase;
+  background:rgba(255,255,255,.06);
+  border:0.5px solid rgba(255,255,255,.1);
+  border-radius:99px;padding:4px 12px;
+  margin-top:2px;
 }
 @keyframes clockGlow{
-  0%,100%{text-shadow:0 0 8px rgba(10,132,255,.95),0 0 22px rgba(10,132,255,.8),0 0 50px rgba(10,132,255,.6),0 0 90px rgba(10,132,255,.35);}
-  50%{text-shadow:0 0 14px rgba(80,170,255,1),0 0 35px rgba(10,132,255,.95),0 0 75px rgba(10,132,255,.75),0 0 120px rgba(10,132,255,.45);}
+  0%,100%{text-shadow:0 0 60px rgba(10,132,255,.4);}
+  50%{text-shadow:0 0 80px rgba(10,132,255,.6);}
 }
-.sp-clock-sep{font-size:13px;color:rgba(255,255,255,.2);font-weight:300}
-.sp-clock-zone{
-  font-size:11px;color:rgba(255,255,255,.45);
-  font-weight:600;letter-spacing:.4px;text-transform:uppercase;
-  background:rgba(255,255,255,.07);
-  border:0.5px solid rgba(255,255,255,.1);
-  border-radius:99px;padding:3px 9px;
-}
+/* Subtítulo */
 .sp-sub{
-  font-size:14px;color:rgba(255,255,255,.55);
-  margin-bottom:28px;line-height:1.5;
-  letter-spacing:.1px;
+  font-size:13px;color:rgba(255,255,255,.38);
+  margin-bottom:24px;line-height:1.5;
+  letter-spacing:.2px;
 }
 /* Stats */
 .sp-stats{
   display:grid;grid-template-columns:repeat(3,1fr);
-  gap:10px;width:100%;max-width:360px;margin-bottom:20px;
+  gap:8px;width:100%;max-width:360px;margin-bottom:16px;
 }
 .sp-stat{
-  background:rgba(255,255,255,.08);
+  background:rgba(255,255,255,.06);
   backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);
-  border-radius:22px;padding:16px 8px 14px;text-align:center;
-  border:0.5px solid rgba(255,255,255,.14);
-  box-shadow:0 8px 24px rgba(0,0,0,.2),inset 0 1px 0 rgba(255,255,255,.12);
+  border-radius:20px;padding:14px 8px 12px;text-align:center;
+  border:0.5px solid rgba(255,255,255,.1);
+  box-shadow:0 1px 0 rgba(255,255,255,.07) inset;
   transition:transform .2s cubic-bezier(.34,1.3,.64,1);
   cursor:pointer;
 }
 .sp-stat:active{transform:scale(.93)}
-.sp-stat-n{font-size:30px;font-weight:900;color:#fff;letter-spacing:-.8px;line-height:1;margin:6px 0 4px}
-.sp-stat-l{font-size:10px;color:rgba(255,255,255,.55);text-transform:uppercase;letter-spacing:.8px;font-weight:700}
-/* Ícono dentro de cada stat — con fondo pill */
+.sp-stat-n{font-size:28px;font-weight:800;color:#fff;letter-spacing:-.6px;line-height:1;margin:6px 0 4px}
+.sp-stat-l{font-size:10px;color:rgba(255,255,255,.45);text-transform:uppercase;letter-spacing:.8px;font-weight:600}
 .sp-stat-icon{
-  font-size:22px;line-height:1;
+  font-size:20px;line-height:1;
   display:inline-flex;align-items:center;justify-content:center;
-  width:44px;height:44px;border-radius:14px;
-  background:rgba(255,255,255,.12);
-  border:0.5px solid rgba(255,255,255,.15);
+  width:40px;height:40px;border-radius:13px;
+  background:rgba(255,255,255,.08);
+  border:0.5px solid rgba(255,255,255,.1);
   margin-bottom:2px;
-  filter:drop-shadow(0 2px 6px rgba(0,0,0,0.25));
 }
-#spStatC .sp-stat-icon{background:rgba(10,132,255,.25);border-color:rgba(10,132,255,.35)}
-#spStatO .sp-stat-icon{background:rgba(52,199,89,.22);border-color:rgba(52,199,89,.32)}
-#spStatF .sp-stat-icon{background:rgba(255,204,0,.22);border-color:rgba(255,204,0,.32)}
-/* Mini barra de progreso dentro de cada stat */
+#spStatC .sp-stat-icon{background:rgba(10,132,255,.2);border-color:rgba(10,132,255,.3)}
+#spStatO .sp-stat-icon{background:rgba(52,199,89,.18);border-color:rgba(52,199,89,.28)}
+#spStatF .sp-stat-icon{background:rgba(255,204,0,.18);border-color:rgba(255,204,0,.28)}
 .sp-stat-bar{
-  width:60%;height:3px;background:rgba(255,255,255,.1);
+  width:60%;height:3px;background:rgba(255,255,255,.08);
   border-radius:99px;margin:8px auto 0;overflow:hidden;
 }
 .sp-stat-bar-fill{
@@ -1697,13 +1689,11 @@ input,button,textarea,select{font-family:inherit}
   background:var(--accent);
   transition:width 1s cubic-bezier(.4,0,.2,1);
 }
-/* Animación de entrada escalonada */
 .sp-stat{animation:spStatIn .5s cubic-bezier(.34,1.3,.64,1) both}
 #spStatC{animation-delay:.05s}
 #spStatO{animation-delay:.12s}
 #spStatF{animation-delay:.19s}
 @keyframes spStatIn{from{opacity:0;transform:translateY(14px) scale(.9)}to{opacity:1;transform:translateY(0) scale(1)}}
-/* Animación conteo numérico */
 @keyframes spNumPop{0%{transform:scale(.7);opacity:0}60%{transform:scale(1.12)}100%{transform:scale(1);opacity:1}}
 .sp-stat-n.popped{animation:spNumPop .45s cubic-bezier(.34,1.4,.64,1)}
 /* Última caja abierta */
@@ -2324,33 +2314,121 @@ input,button,textarea,select{font-family:inherit}
 .rgs-val{font-size:24px;font-weight:900;color:var(--text);letter-spacing:-1px;line-height:1}
 .rgs-lbl{font-size:10px;color:var(--muted);font-weight:700;margin-top:4px;text-transform:uppercase;letter-spacing:.5px}
 .room-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin-bottom:100px}
-.room-cell{background:var(--card);border:1px solid rgba(255,255,255,.1);border-radius:24px;min-height:170px;padding:0;transition:border-color .25s,box-shadow .25s,transform .2s cubic-bezier(.34,1.56,.64,1);box-shadow:0 6px 28px rgba(0,0,0,.22),0 1px 0 rgba(255,255,255,.07) inset;position:relative;overflow:hidden;display:flex;flex-direction:column;cursor:pointer}
-[data-dark=""] .room-cell{border-color:rgba(0,0,0,.12);box-shadow:0 3px 14px rgba(0,0,0,.07)}
-.room-cell:hover{transform:translateY(-3px) scale(1.01);box-shadow:0 14px 40px rgba(0,0,0,.3),0 1px 0 rgba(255,255,255,.1) inset;border-color:rgba(255,255,255,.18)}
-.room-cell:active{transform:scale(.96);transition-duration:80ms}
-.room-cell.drag-over{border-color:var(--accent);border-style:solid;background:rgba(10,132,255,.07);box-shadow:0 0 0 2px rgba(10,132,255,.3),0 10px 36px rgba(10,132,255,.15);transform:scale(1.02)}
-.room-cell-header{padding:14px 14px 10px;position:relative;flex-shrink:0}
-.room-cell-header-bg{position:absolute;inset:0;opacity:.22;border-radius:24px 24px 0 0}
-.room-cell-emoji{font-size:34px;line-height:1;margin-bottom:6px;position:relative;z-index:1;filter:drop-shadow(0 2px 8px rgba(0,0,0,.3))}
-.room-cell-name-row{display:flex;align-items:flex-start;justify-content:space-between;gap:6px;position:relative;z-index:1}
-.room-cell-name{font-size:14px;font-weight:800;color:var(--text);letter-spacing:-.3px;line-height:1.25;flex:1;word-break:break-word}
-.room-cell-actions{display:flex;gap:4px;flex-shrink:0;margin-top:1px}
-.room-cell-btn{height:26px;padding:0 9px;border-radius:99px;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:3px;font-size:10px;font-weight:700;font-family:inherit;letter-spacing:.1px;transition:transform .12s cubic-bezier(.175,.885,.32,1.275),background .12s;-webkit-tap-highlight-color:transparent;backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
-.room-cell-btn:active{transform:scale(.84);transition-duration:60ms}
-.room-cell-btn-edit{background:rgba(10,132,255,.18);color:#0A84FF;border:0.5px solid rgba(10,132,255,.3)}
-.room-cell-btn-edit:hover{background:rgba(10,132,255,.28)}
-.room-cell-btn-del{background:rgba(255,59,48,.14);color:#FF3B30;border:0.5px solid rgba(255,59,48,.25)}
-.room-cell-btn-del:hover{background:rgba(255,59,48,.25)}
-.room-cell-body{flex:1;padding:0 14px 14px;display:flex;flex-direction:column;gap:6px}
-.room-cell-count{font-size:11px;font-weight:600;color:var(--muted);display:flex;align-items:center;gap:5px}
+/* ── Room cell — rediseño premium ── */
+.room-cell{
+  background:var(--card);
+  border:0.5px solid rgba(255,255,255,.09);
+  border-radius:22px;
+  min-height:160px;
+  padding:0;
+  transition:transform .22s cubic-bezier(.34,1.56,.64,1), box-shadow .22s, border-color .2s;
+  box-shadow:0 4px 24px rgba(0,0,0,.18), 0 1px 0 rgba(255,255,255,.05) inset;
+  position:relative;overflow:hidden;display:flex;flex-direction:column;cursor:pointer;
+}
+[data-dark=""] .room-cell{border-color:rgba(0,0,0,.1);box-shadow:0 2px 12px rgba(0,0,0,.06)}
+.room-cell:active{transform:scale(.96);transition-duration:70ms}
+.room-cell.drag-over{border-color:var(--accent);background:rgba(10,132,255,.06);box-shadow:0 0 0 2px rgba(10,132,255,.35),0 8px 28px rgba(10,132,255,.15);transform:scale(1.02)}
+
+/* Header con fondo coloreado translúcido */
+.room-cell-header{
+  padding:14px 14px 12px;
+  position:relative;flex-shrink:0;
+}
+.room-cell-header-bg{
+  position:absolute;inset:0;
+  opacity:.18;
+  border-radius:22px 22px 0 0;
+}
+/* Fila top: emoji + menú kebab */
+.room-cell-top-row{
+  display:flex;align-items:flex-start;justify-content:space-between;
+  position:relative;z-index:1;margin-bottom:8px;
+}
+.room-cell-emoji{
+  font-size:36px;line-height:1;
+  filter:drop-shadow(0 3px 10px rgba(0,0,0,.35));
+}
+/* Botón menú ··· */
+.room-cell-menu-btn{
+  width:28px;height:28px;border-radius:50%;border:none;cursor:pointer;
+  background:rgba(0,0,0,.22);backdrop-filter:blur(8px);
+  -webkit-backdrop-filter:blur(8px);
+  display:flex;align-items:center;justify-content:center;
+  color:rgba(255,255,255,.75);flex-shrink:0;margin-top:2px;
+  transition:background .15s,transform .12s;
+  -webkit-tap-highlight-color:transparent;
+}
+.room-cell-menu-btn:active{transform:scale(.85);background:rgba(0,0,0,.38);}
+/* Popover de acciones (oculto por defecto) */
+.room-cell-popover{
+  position:absolute;top:38px;right:12px;z-index:20;
+  background:var(--card2,#232330);
+  border:0.5px solid rgba(255,255,255,.12);
+  border-radius:14px;
+  padding:6px;
+  min-width:130px;
+  box-shadow:0 8px 32px rgba(0,0,0,.45);
+  display:none;
+  flex-direction:column;gap:2px;
+  animation:rcPopIn .15s cubic-bezier(.34,1.56,.64,1);
+}
+@keyframes rcPopIn{from{opacity:0;transform:scale(.85) translateY(-6px)}to{opacity:1;transform:scale(1) translateY(0)}}
+.room-cell-popover.open{display:flex}
+.room-cell-pop-btn{
+  display:flex;align-items:center;gap:9px;
+  padding:9px 11px;border-radius:10px;border:none;
+  background:transparent;cursor:pointer;font-family:inherit;
+  font-size:13px;font-weight:600;
+  transition:background .12s;text-align:left;width:100%;
+  -webkit-tap-highlight-color:transparent;
+}
+.room-cell-pop-btn:active{background:rgba(255,255,255,.07);}
+.room-cell-pop-edit{color:#0A84FF}
+.room-cell-pop-edit:hover{background:rgba(10,132,255,.1)}
+.room-cell-pop-del{color:#FF3B30}
+.room-cell-pop-del:hover{background:rgba(255,59,48,.1)}
+
+/* Nombre */
+.room-cell-name{
+  font-size:15px;font-weight:800;color:var(--text);
+  letter-spacing:-.35px;line-height:1.2;
+  position:relative;z-index:1;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+
+/* Cuerpo */
+.room-cell-body{flex:1;padding:0 14px 14px;display:flex;flex-direction:column;gap:7px}
+
+/* Conteo */
+.room-cell-count{
+  font-size:11px;font-weight:600;color:var(--muted);
+  display:flex;align-items:center;gap:5px;
+}
 .room-cell-count-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
-.room-cell-prog{background:rgba(255,255,255,.08);border-radius:99px;height:4px;overflow:hidden}
+
+/* Barra de progreso */
+.room-cell-prog{background:rgba(255,255,255,.07);border-radius:99px;height:4px;overflow:hidden}
 .room-cell-prog-fill{height:100%;border-radius:99px;transition:width .6s cubic-bezier(.4,0,.2,1)}
-.room-cell-pct{font-size:10px;font-weight:800;color:rgba(255,255,255,.55)}
+
+/* Chips de cajas en preview */
 .room-box-chips-preview{display:flex;flex-wrap:wrap;gap:4px;margin-top:2px}
-.room-box-chip-mini{background:rgba(255,255,255,.07);border:0.5px solid rgba(255,255,255,.1);border-radius:8px;padding:3px 7px;font-size:10px;font-weight:500;color:var(--text);display:flex;align-items:center;gap:4px;max-width:86px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.room-cell-more{font-size:10px;color:var(--muted);padding:3px 7px;background:rgba(255,255,255,.04);border-radius:8px;border:0.5px dashed rgba(255,255,255,.1)}
-.room-cell-empty{text-align:center;padding:8px 0 2px;color:var(--muted);font-size:11px;opacity:.35;font-style:italic}
+.room-box-chip-mini{
+  background:rgba(255,255,255,.06);
+  border:0.5px solid rgba(255,255,255,.09);
+  border-radius:8px;padding:3px 7px;
+  font-size:10px;font-weight:500;color:var(--text);
+  display:flex;align-items:center;gap:4px;
+  max-width:84px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+.room-cell-more{
+  font-size:10px;color:var(--muted);padding:3px 7px;
+  background:rgba(255,255,255,.04);border-radius:8px;
+  border:0.5px dashed rgba(255,255,255,.1);
+}
+.room-cell-empty{
+  color:var(--muted);font-size:11px;opacity:.4;
+  font-style:italic;text-align:center;padding:6px 0;
+}
 .room-box-chip{background:var(--card2);border:0.5px solid var(--border);border-radius:14px;padding:9px 12px;margin-bottom:7px;display:flex;align-items:center;gap:9px;cursor:grab;font-size:13px;font-weight:500;user-select:none;transition:background .12s,transform .12s,box-shadow .12s;box-shadow:0 2px 8px rgba(0,0,0,.1);-webkit-tap-highlight-color:transparent}
 .room-box-chip:active{transform:scale(.95)}
 .room-box-chip:last-child{margin-bottom:0}
@@ -4312,10 +4390,10 @@ if(!auth){
 
 <div id="splash">
   <!-- Orbes de fondo -->
-  <div style="position:absolute;width:320px;height:320px;top:-80px;left:-60px;border-radius:50%;background:radial-gradient(circle,rgba(10,132,255,0.12),transparent 70%);pointer-events:none"></div>
-  <div style="position:absolute;width:260px;height:260px;bottom:-50px;right:-40px;border-radius:50%;background:radial-gradient(circle,rgba(88,86,214,0.1),transparent 70%);pointer-events:none"></div>
-  <div style="position:absolute;width:180px;height:180px;top:40%;left:60%;border-radius:50%;background:radial-gradient(circle,rgba(255,149,0,0.07),transparent 70%);pointer-events:none"></div>
-  <!-- Logo animado -->
+  <div style="position:absolute;width:340px;height:340px;top:-100px;left:-80px;border-radius:50%;background:radial-gradient(circle,rgba(10,132,255,0.09),transparent 70%);pointer-events:none"></div>
+  <div style="position:absolute;width:280px;height:280px;bottom:-60px;right:-60px;border-radius:50%;background:radial-gradient(circle,rgba(88,86,214,0.08),transparent 70%);pointer-events:none"></div>
+
+  <!-- Logo -->
   <div class="sp-icon-wrap">
     <div class="sp-icon-glow"></div>
     <div class="sp-icon-ring"></div>
@@ -4323,14 +4401,19 @@ if(!auth){
       <div class="sp-icon">📦</div>
     </div>
   </div>
+
   <div class="sp-title">BoxVision</div>
   <div class="sp-brand" id="splashBrand"></div>
+
+  <!-- Reloj estilo iOS -->
   <div class="sp-clock" id="spClock">
     <span class="sp-clock-time" id="spClockTime">--:--</span>
     <span class="sp-clock-sep">·</span>
     <span class="sp-clock-zone" id="spClockZone">--</span>
   </div>
-  <div class="sp-sub">Todo en orden, todo a un escaneo.</div>
+
+  <!-- Saludo dinámico -->
+  <div class="sp-sub" id="spGreeting">Cargando…</div>
   <div class="sp-stats" id="spStatsWrap">
     <div class="sp-stat" id="spStatC" onclick="showScreen('mainScreen')">
       <div class="sp-stat-icon">📦</div>
@@ -4608,36 +4691,75 @@ if(!auth){
   </div><!-- /.detail-scroll -->
 
 </div><div id="roomScreen" class="hidden">
-  <!-- Topbar mejorado con botón + prominente -->
+
+  <!-- ── Topbar de habitaciones ── -->
   <div class="topbar">
-    <div>
-      <div class="topbar-title" data-i18n="nav.rooms">🗺 Habitaciones</div>
-      <div class="topbar-sub" id="roomTopbarSub">Arrastra cajas a cada cuarto</div>
+    <div style="display:flex;align-items:center;gap:10px;flex:1;min-width:0">
+      <button class="tbtn" onclick="goMain()" title="Volver" aria-label="Volver" style="flex-shrink:0">
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><polyline points="15 18 9 12 15 6"/></svg>
+      </button>
+      <div style="min-width:0">
+        <div class="topbar-title" style="display:flex;align-items:center;gap:7px">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink:0;opacity:.9"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+          Habitaciones
+        </div>
+        <div class="topbar-sub" id="roomTopbarSub" style="margin-top:1px">Cargando…</div>
+      </div>
     </div>
     <div class="topbar-actions">
-      <button class="tbtn" onclick="goSplash()" title="Inicio"><svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></button>
       <button onclick="addRoom()" style="
-        height:38px;padding:0 16px;border-radius:12px;border:none;
+        height:36px;padding:0 15px;border-radius:12px;border:none;
         background:linear-gradient(135deg,#0A84FF,#5856D6);
         color:#fff;font-size:13px;font-weight:700;
         display:flex;align-items:center;gap:6px;cursor:pointer;
         font-family:inherit;
-        box-shadow:0 4px 14px rgba(10,132,255,.4);
-        transition:transform .15s,box-shadow .15s;
-        -webkit-tap-highlight-color:transparent;
-      " onmousedown="this.style.transform='scale(.94)'" onmouseup="this.style.transform=''" ontouchstart="this.style.transform='scale(.94)'" ontouchend="this.style.transform=''">
-        <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></i> Nueva
+        box-shadow:0 3px 12px rgba(10,132,255,.4);
+        transition:transform .15s,opacity .15s;
+        -webkit-tap-highlight-color:transparent;flex-shrink:0;
+      " onmousedown="this.style.transform='scale(.93)'" onmouseup="this.style.transform=''"
+         ontouchstart="this.style.transform='scale(.93)'" ontouchend="this.style.transform=''">
+        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        Nueva
       </button>
     </div>
   </div>
 
-  <div class="room-container" style="padding-top:8px">
+  <!-- ── Hero banner de habitaciones ── -->
+  <div id="roomHeroBanner" style="
+    margin:12px 14px 0;
+    background:linear-gradient(135deg,rgba(10,132,255,.13) 0%,rgba(88,86,214,.1) 100%);
+    border:0.5px solid rgba(10,132,255,.22);
+    border-radius:20px;
+    padding:14px 16px;
+    display:flex;align-items:center;gap:14px;
+  ">
+    <div style="
+      width:46px;height:46px;border-radius:14px;flex-shrink:0;
+      background:linear-gradient(135deg,#0A84FF,#5856D6);
+      display:flex;align-items:center;justify-content:center;
+      box-shadow:0 4px 14px rgba(10,132,255,.35);
+      font-size:22px;
+    ">🏠</div>
+    <div style="flex:1;min-width:0">
+      <div style="font-size:14px;font-weight:800;color:var(--text);letter-spacing:-.2px" id="roomHeroTitle">Mapa de habitaciones</div>
+      <div style="font-size:12px;color:rgba(255,255,255,.45);margin-top:2px;line-height:1.4" id="roomHeroSub">Asigna cada caja a su cuarto</div>
+    </div>
+    <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px;flex-shrink:0">
+      <div id="roomHeroPct" style="font-size:22px;font-weight:900;color:#34C759;line-height:1">0%</div>
+      <div style="font-size:10px;font-weight:700;color:rgba(255,255,255,.35);text-transform:uppercase;letter-spacing:.5px">listo</div>
+    </div>
+  </div>
+
+  <div class="room-container" style="padding-top:12px">
     <!-- Stats globales -->
     <div class="room-global-stats" id="roomGlobalStats"></div>
 
     <!-- Sin asignar -->
     <div class="unassigned">
-      <div class="unassigned-title">📦 Sin asignar</div>
+      <div class="unassigned-title">
+        <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="opacity:.6" aria-hidden="true"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
+        Sin asignar
+      </div>
       <div id="unassignedChips"></div>
     </div>
 
@@ -4645,7 +4767,7 @@ if(!auth){
     <div class="room-grid" id="roomGrid"></div>
   </div>
 
-  <!-- FAB adicional flotante -->
+  <!-- FAB flotante -->
   <button class="room-add-fab" onclick="addRoom()">
     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" style="flex-shrink:0" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg> Nueva habitación
   </button>
@@ -5990,9 +6112,7 @@ function _tickClock(){
   if(zoneEl){
     try{
       var tz = Intl.DateTimeFormat().resolvedOptions().timeZone || '';
-      // Extraer la parte corta de la zona (ej: "America/Lima" → "Lima")
       var short = tz.split('/').pop().replace(/_/g,' ');
-      // También mostrar el offset
       var off = -now.getTimezoneOffset();
       var sign = off >= 0 ? '+' : '-';
       var offH = Math.abs(Math.floor(off/60));
@@ -6002,6 +6122,16 @@ function _tickClock(){
     } catch(e){
       zoneEl.textContent = '';
     }
+  }
+  // Saludo dinámico según hora del día
+  var greetEl = document.getElementById('spGreeting');
+  if(greetEl){
+    var h = now.getHours();
+    var greeting = h < 6  ? 'Buenas noches 🌙' :
+                   h < 12 ? 'Buenos días ☀️'  :
+                   h < 19 ? 'Buenas tardes 🌤' :
+                             'Buenas noches 🌙';
+    greetEl.textContent = greeting;
   }
 }
 function _startClock(){
@@ -6582,26 +6712,78 @@ function handlePhoto(e){
     var box = boxes.find(function(b){ return b.id === currentBoxId; });
     if(!box) return;
     box.photo = compressed;
+    // Guardar foto en localStorage inmediatamente con su key dedicada
+    try{ localStorage.setItem("cb-photo-"+box.id, compressed); }catch(e){}
     saveData();
     renderPhotoArea();
-    // Actualizar también el área mobile si existe
-    if(photoMobEl){
-      photoMobEl.innerHTML = box.photo
-        ? '<div class="photo-preview"><img src="'+box.photo+'"/><button class="photo-rm" onclick="event.stopPropagation();removePhoto()">✕</button></div>'
-        : '<div class="photo-add"><span style="font-size:28px">📸</span><span>Agregar foto de la caja</span></div>';
-    }
     generateQR(currentBoxId);
-    // Mostrar tamaño comprimido en consola para debug
     var kb = Math.round(compressed.length * 0.75 / 1024);
     console.log("[BoxVision] Foto comprimida: ~"+kb+"KB");
   });
 }
-function removePhoto(){const box=boxes.find(b=>b.id===currentBoxId);if(box){box.photo=null;saveData();renderPhotoArea();generateQR(currentBoxId);}}
+function removePhoto(){
+  const box=boxes.find(b=>b.id===currentBoxId);
+  if(box){ box.photo=null; localStorage.removeItem("cb-photo-"+box.id); saveData(); renderPhotoArea(); generateQR(currentBoxId); }
+}
+function _photoMenuHtml(isMobile){
+  return `<div class="photo-preview" style="position:relative">
+    <img src="${boxes.find(b=>b.id===currentBoxId)?.photo||''}" style="width:100%;max-height:180px;object-fit:cover;border-radius:12px;display:block"/>
+    <!-- Menú ··· -->
+    <button onclick="event.stopPropagation();_togglePhotoMenu('${isMobile?'mob':'desk'}')"
+      style="position:absolute;top:8px;right:8px;
+        width:30px;height:30px;border-radius:50%;border:none;cursor:pointer;
+        background:rgba(0,0,0,.55);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
+        color:#fff;font-size:13px;font-weight:900;display:flex;align-items:center;justify-content:center;
+        letter-spacing:0;line-height:1;transition:background .15s;
+        -webkit-tap-highlight-color:transparent;"
+      aria-label="Opciones foto">···</button>
+    <!-- Popover -->
+    <div id="photoMenu-${isMobile?'mob':'desk'}"
+      style="display:none;position:absolute;top:44px;right:8px;z-index:50;
+        background:#232330;border:0.5px solid rgba(255,255,255,.12);
+        border-radius:14px;padding:6px;min-width:148px;
+        box-shadow:0 8px 32px rgba(0,0,0,.55);flex-direction:column;gap:2px;"
+      onclick="event.stopPropagation()">
+      <button onclick="_closePhotoMenus();triggerPhoto()"
+        style="display:flex;align-items:center;gap:9px;padding:9px 11px;border-radius:10px;
+          border:none;background:transparent;cursor:pointer;font-family:inherit;
+          font-size:13px;font-weight:600;color:#0A84FF;width:100%;text-align:left;
+          -webkit-tap-highlight-color:transparent;"
+        onmouseover="this.style.background='rgba(10,132,255,.1)'" onmouseout="this.style.background='transparent'">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+        Cambiar foto
+      </button>
+      <button onclick="_closePhotoMenus();removePhoto()"
+        style="display:flex;align-items:center;gap:9px;padding:9px 11px;border-radius:10px;
+          border:none;background:transparent;cursor:pointer;font-family:inherit;
+          font-size:13px;font-weight:600;color:#FF3B30;width:100%;text-align:left;
+          -webkit-tap-highlight-color:transparent;"
+        onmouseover="this.style.background='rgba(255,59,48,.1)'" onmouseout="this.style.background='transparent'">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/></svg>
+        Eliminar foto
+      </button>
+    </div>
+  </div>`;
+}
+function _togglePhotoMenu(which){
+  _closePhotoMenus();
+  var m = document.getElementById('photoMenu-'+which);
+  if(!m) return;
+  m.style.display='flex';
+  setTimeout(function(){ document.addEventListener('click',_closePhotoMenus,{once:true}); },50);
+}
+function _closePhotoMenus(){
+  ['photoMenu-desk','photoMenu-mob'].forEach(function(id){
+    var m=document.getElementById(id);if(m) m.style.display='none';
+  });
+}
 function renderPhotoArea(){
-  const box=boxes.find(b=>b.id===currentBoxId);const el=document.getElementById("photoArea");if(!el||!box) return;
-  el.innerHTML=box.photo
-    ?`<div class="photo-preview"><img src="${box.photo}"/><button class="photo-rm" onclick="event.stopPropagation();removePhoto()">✕</button></div>`
-    :`<div class="photo-add"><span style="font-size:28px">📸</span><span>Agregar foto de la caja</span></div>`;
+  const box=boxes.find(b=>b.id===currentBoxId);
+  const el=document.getElementById("photoArea");
+  const mob=document.getElementById("photoAreaMobile");
+  const addHtml='<div class="photo-add"><span style="font-size:28px">📸</span><span>Agregar foto de la caja</span></div>';
+  if(el)  el.innerHTML  = box?.photo ? _photoMenuHtml(false) : addHtml;
+  if(mob) mob.innerHTML = box?.photo ? _photoMenuHtml(true)  : addHtml;
 }
 
 function showQuickQR(){
@@ -7239,6 +7421,20 @@ function renderRoom(){
   var topSub = document.getElementById("roomTopbarSub");
   if(topSub) topSub.textContent = rooms.length + " cuarto"+(rooms.length!==1?"s":"")+" · "+unassigned.length+" sin asignar";
 
+  // Hero banner
+  var heroPct = document.getElementById("roomHeroPct");
+  var heroSub = document.getElementById("roomHeroSub");
+  if(heroPct) heroPct.textContent = pct + "%";
+  if(heroSub){
+    if(totalBoxes === 0){
+      heroSub.textContent = "Crea cuartos y arrastra tus cajas";
+    } else if(unassigned.length === 0){
+      heroSub.textContent = "✅ Todas las cajas están asignadas";
+    } else {
+      heroSub.textContent = unassigned.length + " caja"+(unassigned.length!==1?"s":"")+" sin asignar · "+assignedCount+" listas";
+    }
+  }
+
   // Chips sin asignar
   document.getElementById("unassignedChips").innerHTML=
     unassigned.length
@@ -7278,12 +7474,14 @@ function _roomCellHtml(room, boxes){
   const totalItems = roomBoxes.reduce((s,b)=>s+b.items.length,0);
   const doneItems  = roomBoxes.reduce((s,b)=>s+b.items.filter(i=>i.done).length,0);
   const pct = totalItems>0?Math.round(doneItems/totalItems*100):0;
-  // Preview de cajas (máx 3 + contador)
   const previewBoxes = roomBoxes.slice(0,3);
   const extra = roomBoxes.length - previewBoxes.length;
   const chipsHtml = previewBoxes.map(function(b){
     return `<div class="room-box-chip-mini"><span>${getIcon(b.name,b)}</span><span style="overflow:hidden;text-overflow:ellipsis">${esc(b.name)}</span></div>`;
   }).join("") + (extra>0?`<div class="room-cell-more">+${extra} más</div>`:"");
+
+  // Barra de progreso con color dinámico
+  const progColor = pct>=100?'#34C759':pct>=50?color:'#FF9500';
 
   return `<div class="room-cell" id="room-${room.id}"
     ondragover="event.preventDefault();event.currentTarget.classList.add('drag-over')"
@@ -7291,30 +7489,38 @@ function _roomCellHtml(room, boxes){
     ondrop="dropBox(event,'${room.id}')"
     onclick="_openRoomDetail('${room.id}')">
 
-    <!-- Borde superior coloreado -->
-    <div style="height:3px;background:linear-gradient(90deg,${color},${color}88);border-radius:24px 24px 0 0;flex-shrink:0"></div>
+    <!-- Franja superior de color -->
+    <div style="height:3px;background:linear-gradient(90deg,${color},${color}55);flex-shrink:0"></div>
 
-    <!-- Header coloreado -->
+    <!-- Header -->
     <div class="room-cell-header">
       <div class="room-cell-header-bg" style="background:${color}"></div>
-      <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:6px;position:relative;z-index:1">
+
+      <!-- Fila: emoji + menú -->
+      <div class="room-cell-top-row">
         <div class="room-cell-emoji">${emoji}</div>
-        <!-- Badge de progreso si hay objetos -->
-        ${totalItems>0?`<div style="background:rgba(0,0,0,.25);backdrop-filter:blur(8px);border:0.5px solid rgba(255,255,255,.15);border-radius:99px;padding:3px 8px;font-size:10px;font-weight:800;color:#fff;flex-shrink:0;margin-top:2px">${pct}%</div>`:""}
-      </div>
-      <div class="room-cell-name-row">
-        <div class="room-cell-name">${esc(room.name)}</div>
-        <div class="room-cell-actions" onclick="event.stopPropagation()">
-          <button class="room-cell-btn room-cell-btn-edit" onclick="event.stopPropagation();renameRoom('${room.id}')" title="Renombrar">
-            <svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+        <button class="room-cell-menu-btn"
+          onclick="event.stopPropagation();_toggleRoomMenu('${room.id}')"
+          title="Opciones" aria-label="Opciones">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <circle cx="12" cy="5" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="12" cy="19" r="2"/>
+          </svg>
+        </button>
+        <!-- Popover de acciones -->
+        <div class="room-cell-popover" id="rcMenu-${room.id}" onclick="event.stopPropagation()">
+          <button class="room-cell-pop-btn room-cell-pop-edit" onclick="_closeAllRoomMenus();renameRoom('${room.id}')">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
             Editar
           </button>
-          <button class="room-cell-btn room-cell-btn-del" onclick="event.stopPropagation();deleteRoom('${room.id}')" title="Eliminar">
-            <svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>
-            Borrar
+          <button class="room-cell-pop-btn room-cell-pop-del" onclick="_closeAllRoomMenus();deleteRoom('${room.id}')">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/></svg>
+            Eliminar
           </button>
         </div>
       </div>
+
+      <!-- Nombre -->
+      <div class="room-cell-name">${esc(room.name)}</div>
     </div>
 
     <!-- Cuerpo -->
@@ -7322,10 +7528,11 @@ function _roomCellHtml(room, boxes){
       <div class="room-cell-count">
         <span class="room-cell-count-dot" style="background:${color}"></span>
         ${roomBoxes.length} caja${roomBoxes.length!==1?"s":""} · ${totalItems} obj.
+        ${totalItems>0?`<span style="margin-left:auto;font-size:10px;font-weight:800;color:${progColor}">${pct}%</span>`:""}
       </div>
       ${totalItems>0?`
         <div class="room-cell-prog">
-          <div class="room-cell-prog-fill" style="width:${pct}%;background:linear-gradient(90deg,${color},${color}cc)"></div>
+          <div class="room-cell-prog-fill" style="width:${pct}%;background:${progColor}"></div>
         </div>
       `:""}
       <div class="room-box-chips-preview">
@@ -7341,6 +7548,24 @@ function chipHtml(b, room){
     <span class="room-chip-name">${esc(b.name)}</span>
     ${b.number?`<span style="font-size:10px;background:var(--accent);color:#fff;border-radius:4px;padding:1px 5px">#${esc(b.number)}</span>`:""}
   </div>`;
+}
+
+/* ── Menú ··· de tarjeta de habitación ── */
+function _toggleRoomMenu(roomId){
+  var menu = document.getElementById('rcMenu-'+roomId);
+  if(!menu) return;
+  var isOpen = menu.classList.contains('open');
+  _closeAllRoomMenus();
+  if(!isOpen){
+    menu.classList.add('open');
+    // Cerrar al tocar fuera
+    setTimeout(function(){
+      document.addEventListener('click', _closeAllRoomMenus, {once:true});
+    }, 50);
+  }
+}
+function _closeAllRoomMenus(){
+  document.querySelectorAll('.room-cell-popover.open').forEach(function(m){ m.classList.remove('open'); });
 }
 
 function dropBox(e, toId){
@@ -8804,14 +9029,14 @@ document.addEventListener("DOMContentLoaded",applySplashGradient);
             <div><div class="tut-demo-text">Cada cuenta es independiente</div><div class="tut-demo-sub">Tu familia puede tener sus propias cajas</div></div>
           </div>
           <div class="tut-demo-row">
-            <div class="tut-demo-icon-wrap"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1" aria-hidden="true"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg></i></div>
+            <div class="tut-demo-icon-wrap"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1" aria-hidden="true"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg></div>
             <div><div class="tut-demo-text">Mapa de habitaciones</div><div class="tut-demo-sub">Organiza tus cajas por espacios</div></div>
           </div>
         </div>
       </div>
       <div class="tut-bottom">
         <div class="tut-dots"><div class="tut-dot"></div><div class="tut-dot"></div><div class="tut-dot"></div><div class="tut-dot"></div><div class="tut-dot"></div><div class="tut-dot"></div><div class="tut-dot active"></div></div>
-        <button class="tut-btn" onclick="finishTut()"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z" aria-hidden="true"/><path d="m12 15-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z"/><path d="M9 12H4s.55-3.03 2-4c1.62-1.08 5 0 5 0"/><path d="M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5"/></svg></i> ¡Listo, empezar!</button>
+        <button class="tut-btn" onclick="finishTut()"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z" aria-hidden="true"/><path d="m12 15-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z"/><path d="M9 12H4s.55-3.03 2-4c1.62-1.08 5 0 5 0"/><path d="M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5"/></svg> ¡Listo, empezar!</button>
       </div>
     </div>
 
@@ -9854,15 +10079,14 @@ async function loadFromFirestore(){
 
 function restoreThumbs(){
   boxes.forEach(b=>{
-    // Restaurar foto de caja guardada por separado
-    if(!b.photo){
-      const p=localStorage.getItem("cb-photo-"+b.id);
-      if(p) b.photo=p;
-    }
+    // Restaurar foto de caja desde localStorage SIEMPRE
+    // (Firestore no guarda fotos base64 — siempre vienen vacías desde la nube)
+    var p = localStorage.getItem("cb-photo-"+b.id);
+    if(p) b.photo = p;
     // Restaurar thumbs de items
     b.items.forEach(it=>{
       if(!it.thumb){
-        const k=_thumbKey(b.id,it.text); // FIX #3
+        const k=_thumbKey(b.id,it.text);
         const t=localStorage.getItem(k);
         if(t) it.thumb=t;
       }
@@ -10067,13 +10291,11 @@ if(auth){
   const _ll0 = document.getElementById("loginLoading");
   if(_hasCachedSession && _ls0){
     _ls0.style.display = "none"; // ocultar todo el login — Firebase confirmara en onAuthStateChanged
-  } else {
-    // Primera vez o sin sesion: spinner normal dentro del login
-    if(_lb0) _lb0.style.display = "none";
-    if(_ll0) _ll0.style.display = "flex";
   }
+  // Si NO hay sesión cacheada: mostrar el login directamente, sin spinner
+  // No esconder el botón Google mientras Firebase carga — el usuario puede hacer login de inmediato
 
-  // ── Timeout offline: 5s sin respuesta de Firebase → mostrar login ──
+  // ── Timeout offline: 2.5s sin respuesta de Firebase → mostrar login ──
   let _authReady = false;
   const _offlineTimer = setTimeout(()=>{
     if(_authReady) return;
@@ -10090,7 +10312,7 @@ if(auth){
       }catch(e){}
     }
     _showLoginScreen();
-  }, 5000);
+  }, 2500);
 
   // ── Listener principal — único punto de verdad ───
   auth.onAuthStateChanged(user=>{
@@ -10862,7 +11084,7 @@ if(auth){
   <div class="update-notification-content">
     <div class="update-notification-left">
       <div class="update-notification-icon">
-        <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="8 17 12 21 16 17"/><line x1="12" y1="12" x2="12" y2="21"/><path d="M20.88 18.09A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.29"/></svg></i>
+        <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="8 17 12 21 16 17"/><line x1="12" y1="12" x2="12" y2="21"/><path d="M20.88 18.09A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.29"/></svg>
       </div>
       <div class="update-notification-text">
         <div class="update-notification-title">Actualización disponible</div>
@@ -10942,11 +11164,24 @@ if(auth){
 
     navigator.serviceWorker.addEventListener('message', function (e) {
       if (e.data && e.data.type === 'SW_ACTIVATED') {
-        // El SW nuevo ya está activo = actualización completada
-        // Mostrar modal de novedades en vez del banner de actualizar
         setTimeout(function(){
           if(typeof window.openChangelog === 'function') window.openChangelog();
         }, 600);
+      }
+      // SW disparó una notificación → limpiar recordatorio de localStorage
+      if (e.data && e.data.type === 'NOTIF_FIRED') {
+        try {
+          var rems = JSON.parse(localStorage.getItem('bv_reminders') || '[]');
+          rems = rems.filter(function(r){ return r.id !== e.data.id; });
+          localStorage.setItem('bv_reminders', JSON.stringify(rems));
+        } catch(_) {}
+        if (typeof renderGrid === 'function') setTimeout(renderGrid, 200);
+      }
+      // Usuario tocó la notificación → abrir caja directamente
+      if (e.data && e.data.type === 'OPEN_BOX' && e.data.boxId) {
+        if (typeof openDetail === 'function') {
+          setTimeout(function(){ openDetail(e.data.boxId); }, 300);
+        }
       }
     });
   }
@@ -11470,7 +11705,7 @@ async function _runAI(userMsg){
     _showGroqKeyModal(function(){
       // Reintentar el mensaje después de guardar la clave
       _aiHistory.pop(); // Quitar el mensaje del usuario que ya está en historial
-      window.aiSend && _runAI(userMsg);
+      _runAI(userMsg);
     });
     return;
   }
@@ -12211,7 +12446,7 @@ window._addSuggestedItem = function(btn, item){
           <!-- Respuesta -->
           <div class="form-ios-row" style="border-top:0.5px solid rgba(255,255,255,.06)">
             <span class="form-ios-label" style="font-size:12px">Respuesta</span>
-            <input id="fSecretA" class="form-ios-input" type="text" placeholder="Tu respuesta secreta…" maxlength="80" autocomplete="off" style="font-size:14px"/>
+            <input id="fSecretA" class="form-ios-input" type="password" placeholder="Tu respuesta secreta…" maxlength="80" autocomplete="new-password" autocorrect="off" autocapitalize="off" spellcheck="false" style="font-size:14px"/>
             <button type="button" onclick="_toggleSecretA()" style="background:none;border:none;color:var(--muted);cursor:pointer;padding:0 14px 0 0;flex-shrink:0;-webkit-tap-highlight-color:transparent">
               <svg id="fSecretAEye" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
             </button>
@@ -12627,7 +12862,8 @@ window._addSuggestedItem = function(btn, item){
           <div style="font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;font-weight:700;margin-bottom:6px">Tu pregunta secreta</div>
           <div id="fpSecretQuestion" style="font-size:15px;font-weight:600;color:var(--text);line-height:1.4"></div>
         </div>
-        <input id="fpVerifyInput" class="fp-verify-input" type="text" placeholder="Tu respuesta…" autocomplete="off"
+        <input id="fpVerifyInput" class="fp-verify-input" type="password" placeholder="Tu respuesta…"
+          autocomplete="new-password" autocorrect="off" autocapitalize="off" spellcheck="false"
           oninput="document.getElementById('fpVerifyError').textContent=''"
           onkeydown="if(event.key==='Enter')_fpVerify()"/>
         <div class="fp-error" id="fpVerifyError"></div>
@@ -12894,7 +13130,7 @@ function _toggleSecretA(){
   var inp = document.getElementById('fSecretA');
   var ico = document.getElementById('fSecretAEye');
   if(!inp) return;
-  var show = inp.type !== 'password' ? false : true;
+  var show = inp.type === 'password';
   inp.type = show ? 'text' : 'password';
   ico.innerHTML = show
     ? '<path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94"/><path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19"/><line x1="1" y1="1" x2="23" y2="23"/>'
@@ -12915,7 +13151,7 @@ function _resetSecretFields(){
   var sel = document.getElementById('fSecretQ');
   if(sel) sel.value='';
   var qc = document.getElementById('fSecretQCustom'); if(qc) qc.value='';
-  var qa = document.getElementById('fSecretA');       if(qa){ qa.value=''; qa.type='text'; }
+  var qa = document.getElementById('fSecretA');       if(qa){ qa.value=''; qa.type='password'; }
   var row= document.getElementById('fSecretQCustomRow'); if(row) row.style.display='none';
   var sec= document.getElementById('fSecretSection');    if(sec) sec.style.display='none';
 }
@@ -13024,7 +13260,8 @@ function _pwDel(){
       <div id="sdSecretSection" style="display:none;margin-bottom:14px;background:rgba(255,255,255,.04);border:0.5px solid rgba(255,255,255,.1);border-radius:14px;padding:14px">
         <div style="font-size:11px;color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:.6px;font-weight:700;margin-bottom:8px">Pregunta de seguridad</div>
         <div id="sdSecretQ" style="font-size:13px;color:rgba(255,255,255,.8);font-weight:600;margin-bottom:10px;line-height:1.4"></div>
-        <input id="sdSecretA" type="text" placeholder="Tu respuesta..."
+        <input id="sdSecretA" type="password" placeholder="Tu respuesta..."
+          autocomplete="new-password" autocorrect="off" autocapitalize="off" spellcheck="false"
           style="width:100%;padding:11px 14px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:10px;color:#fff;font-size:14px;font-family:inherit;outline:none">
         <div id="sdSecretError" style="color:#FF3B30;font-size:12px;margin-top:6px;min-height:16px"></div>
       </div>
@@ -15069,7 +15306,7 @@ setInterval(function() {
     _showRemNotifToast(r);
   });
   if (triggered.length > 0) {
-    _saveAllReminders(rems.filter(function(r){ return r.ts > now - 60000; }));
+    _saveAllReminders(rems.filter(function(r){ return r.ts > now; }));
     if (typeof renderGrid === 'function') setTimeout(renderGrid, 100);
   }
 }, 60000);
@@ -17645,6 +17882,488 @@ document.addEventListener('DOMContentLoaded', function(){
 });
 
 console.log('✅ Modo Mudanza v1.1 — toggle en Ajustes');
+})();
+</script>
+
+<!-- ══════════════════════════════════════════════════
+     PANTALLA DE NOVEDADES — aparece una vez por versión
+     ══════════════════════════════════════════════════ -->
+<style>
+#changelogOverlay {
+  display:none; position:fixed; inset:0; z-index:19000;
+  background:rgba(0,0,0,.72); backdrop-filter:blur(18px);
+  -webkit-backdrop-filter:blur(18px);
+  align-items:flex-end; justify-content:center;
+}
+#changelogOverlay.open { display:flex; }
+#changelogSheet {
+  width:100%; max-width:480px;
+  background:var(--card, #1c1c1e);
+  border-radius:26px 26px 0 0;
+  padding:0 0 calc(28px + env(safe-area-inset-bottom));
+  max-height:88vh; overflow-y:auto;
+  transform:translateY(100%);
+  transition:transform .42s cubic-bezier(.32,1,.4,1);
+  box-shadow:0 -8px 48px rgba(0,0,0,.55);
+  scrollbar-width:none;
+}
+#changelogSheet::-webkit-scrollbar { display:none; }
+#changelogOverlay.open #changelogSheet { transform:translateY(0); }
+
+.clg-handle { width:36px;height:5px;border-radius:99px;background:rgba(255,255,255,.18);margin:12px auto 0; }
+.clg-header {
+  padding:22px 20px 18px;
+  display:flex; align-items:center; gap:14px;
+  border-bottom:0.5px solid rgba(255,255,255,.08);
+}
+.clg-icon-wrap {
+  width:52px; height:52px; border-radius:16px; flex-shrink:0;
+  background:linear-gradient(135deg,#0A84FF,#5856D6);
+  display:flex; align-items:center; justify-content:center;
+  font-size:26px; box-shadow:0 4px 16px rgba(10,132,255,.4);
+}
+.clg-header-text { flex:1; }
+.clg-badge {
+  display:inline-block; background:rgba(10,132,255,.18);
+  border:0.5px solid rgba(10,132,255,.35);
+  border-radius:99px; padding:3px 10px;
+  font-size:11px; font-weight:700; color:#5AC8FA;
+  letter-spacing:.3px; margin-bottom:5px;
+}
+.clg-title { font-size:20px; font-weight:900; color:var(--text,#fff); letter-spacing:-.4px; }
+.clg-sub { font-size:12px; color:rgba(255,255,255,.4); margin-top:2px; }
+
+.clg-body { padding:18px 20px 0; }
+.clg-section-label {
+  font-size:10px; font-weight:800; color:rgba(255,255,255,.35);
+  text-transform:uppercase; letter-spacing:1.2px; margin-bottom:14px;
+}
+.clg-item {
+  display:flex; align-items:flex-start; gap:14px;
+  margin-bottom:16px;
+}
+.clg-item-icon {
+  width:40px; height:40px; border-radius:12px; flex-shrink:0;
+  display:flex; align-items:center; justify-content:center;
+  font-size:20px; background:rgba(255,255,255,.06);
+  border:0.5px solid rgba(255,255,255,.09);
+}
+.clg-item-info { flex:1; padding-top:2px; }
+.clg-item-title { font-size:14px; font-weight:700; color:var(--text,#fff); letter-spacing:-.2px; }
+.clg-item-desc { font-size:12.5px; color:rgba(255,255,255,.45); margin-top:3px; line-height:1.4; }
+.clg-item-new {
+  display:inline-block; background:rgba(52,199,89,.18);
+  border-radius:6px; padding:2px 7px;
+  font-size:10px; font-weight:800; color:#34C759;
+  letter-spacing:.3px; margin-left:7px; vertical-align:middle;
+}
+.clg-item-fix {
+  display:inline-block; background:rgba(255,149,0,.15);
+  border-radius:6px; padding:2px 7px;
+  font-size:10px; font-weight:800; color:#FF9500;
+  letter-spacing:.3px; margin-left:7px; vertical-align:middle;
+}
+
+.clg-divider { height:0.5px; background:rgba(255,255,255,.07); margin:18px 0; }
+
+.clg-footer { padding:0 20px 6px; }
+.clg-cta {
+  width:100%; padding:16px; border-radius:16px; border:none;
+  background:linear-gradient(135deg,#0A84FF,#5856D6);
+  color:#fff; font-size:16px; font-weight:800; font-family:inherit;
+  cursor:pointer; letter-spacing:-.2px;
+  transition:transform .15s, opacity .15s;
+  -webkit-tap-highlight-color:transparent;
+}
+.clg-cta:active { transform:scale(.97); opacity:.9; }
+.clg-dismiss {
+  width:100%; padding:13px; border-radius:14px; border:none;
+  background:transparent; color:rgba(255,255,255,.35);
+  font-size:13px; font-family:inherit; cursor:pointer; margin-top:4px;
+  -webkit-tap-highlight-color:transparent;
+}
+</style>
+
+<div id="changelogOverlay">
+  <div id="changelogSheet">
+    <div class="clg-handle"></div>
+    <div class="clg-header">
+      <div class="clg-icon-wrap">📦</div>
+      <div class="clg-header-text">
+        <div class="clg-badge">NOVEDADES</div>
+        <div class="clg-title">BoxVision</div>
+        <div class="clg-sub" id="clgVersionSub">Última versión instalada</div>
+      </div>
+    </div>
+    <div class="clg-body">
+      <div class="clg-section-label">✨ Novedades</div>
+
+      <div class="clg-item">
+        <div class="clg-item-icon">🤖</div>
+        <div class="clg-item-info">
+          <div class="clg-item-title">Asistente IA <span class="clg-item-new">NUEVO</span></div>
+          <div class="clg-item-desc">Pregunta por tus objetos en lenguaje natural. "¿Dónde están los cargadores?" y el asistente te responde al instante.</div>
+        </div>
+      </div>
+
+      <div class="clg-item">
+        <div class="clg-item-icon">🏠</div>
+        <div class="clg-item-info">
+          <div class="clg-item-title">Mapa de habitaciones <span class="clg-item-new">NUEVO</span></div>
+          <div class="clg-item-desc">Organiza tus cajas por cuartos, depósitos o zonas. Ve de un vistazo qué va en cada espacio.</div>
+        </div>
+      </div>
+
+      <div class="clg-item">
+        <div class="clg-item-icon">⏰</div>
+        <div class="clg-item-info">
+          <div class="clg-item-title">Recordatorios <span class="clg-item-new">NUEVO</span></div>
+          <div class="clg-item-desc">Programa alertas para revisar una caja en una fecha y hora exacta. Funciona aunque la app esté cerrada.</div>
+        </div>
+      </div>
+
+      <div class="clg-item">
+        <div class="clg-item-icon">🎨</div>
+        <div class="clg-item-info">
+          <div class="clg-item-title">Temas y colores <span class="clg-item-new">NUEVO</span></div>
+          <div class="clg-item-desc">Personaliza la apariencia: modo claro, oscuro o automático, y elige tu color de acento favorito.</div>
+        </div>
+      </div>
+
+      <div class="clg-divider"></div>
+      <div class="clg-section-label">🔧 Mejoras y correcciones</div>
+
+      <div class="clg-item">
+        <div class="clg-item-icon">⚡</div>
+        <div class="clg-item-info">
+          <div class="clg-item-title">Rendimiento mejorado <span class="clg-item-fix">MEJORA</span></div>
+          <div class="clg-item-desc">Carga más rápida, animaciones más fluidas y sincronización optimizada con la nube.</div>
+        </div>
+      </div>
+
+      <div class="clg-item">
+        <div class="clg-item-icon">🐛</div>
+        <div class="clg-item-info">
+          <div class="clg-item-title">Corrección de errores <span class="clg-item-fix">FIX</span></div>
+          <div class="clg-item-desc">Se corrigieron problemas con los recordatorios y el comportamiento del asistente IA al configurar la clave.</div>
+        </div>
+      </div>
+
+    </div>
+    <div class="clg-divider" style="margin:18px 20px 14px;"></div>
+    <div class="clg-footer">
+      <button class="clg-cta" onclick="closeChangelog()">¡Entendido, a organizar! 🚀</button>
+      <button class="clg-dismiss" onclick="closeChangelog()">Cerrar</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════
+     ONBOARDING — Selector de tipo de uso
+     Se muestra justo después del tutorial, una sola vez
+     ══════════════════════════════════════════════════ -->
+<style>
+#onboardingOverlay {
+  display:none; position:fixed; inset:0; z-index:18500;
+  background:rgba(0,0,0,.75); backdrop-filter:blur(20px);
+  -webkit-backdrop-filter:blur(20px);
+  align-items:center; justify-content:center;
+  padding:20px;
+}
+#onboardingOverlay.open { display:flex; }
+#onboardingSheet {
+  width:100%; max-width:420px;
+  background:var(--card,#1c1c1e);
+  border-radius:26px;
+  padding:28px 22px 24px;
+  transform:scale(.92); opacity:0;
+  transition:transform .38s cubic-bezier(.34,1.56,.64,1), opacity .28s ease;
+  box-shadow:0 24px 80px rgba(0,0,0,.6);
+  max-height:90vh; overflow-y:auto; scrollbar-width:none;
+}
+#onboardingSheet::-webkit-scrollbar { display:none; }
+#onboardingOverlay.open #onboardingSheet { transform:scale(1); opacity:1; }
+
+.ob-emoji { font-size:44px; text-align:center; margin-bottom:14px; }
+.ob-title {
+  font-size:22px; font-weight:900; color:var(--text,#fff);
+  text-align:center; letter-spacing:-.5px; margin-bottom:8px;
+}
+.ob-sub {
+  font-size:14px; color:rgba(255,255,255,.45);
+  text-align:center; line-height:1.5; margin-bottom:24px;
+}
+.ob-options { display:flex; flex-direction:column; gap:10px; margin-bottom:20px; }
+.ob-option {
+  display:flex; align-items:center; gap:16px;
+  background:rgba(255,255,255,.05); border:1.5px solid rgba(255,255,255,.09);
+  border-radius:18px; padding:16px 18px;
+  cursor:pointer; font-family:inherit;
+  transition:background .18s, border-color .18s, transform .14s;
+  -webkit-tap-highlight-color:transparent; text-align:left; width:100%;
+}
+.ob-option:active { transform:scale(.97); }
+.ob-option.selected {
+  background:rgba(10,132,255,.14);
+  border-color:rgba(10,132,255,.5);
+}
+.ob-option-icon {
+  font-size:30px; flex-shrink:0; width:52px; height:52px;
+  background:rgba(255,255,255,.07); border-radius:14px;
+  display:flex; align-items:center; justify-content:center;
+}
+.ob-option.selected .ob-option-icon { background:rgba(10,132,255,.2); }
+.ob-option-text { flex:1; }
+.ob-option-title { font-size:15px; font-weight:800; color:var(--text,#fff); letter-spacing:-.2px; }
+.ob-option-desc { font-size:12.5px; color:rgba(255,255,255,.4); margin-top:3px; line-height:1.4; }
+.ob-check {
+  width:24px; height:24px; border-radius:50%; flex-shrink:0;
+  border:2px solid rgba(255,255,255,.2);
+  display:flex; align-items:center; justify-content:center;
+  transition:background .18s, border-color .18s;
+  font-size:12px;
+}
+.ob-option.selected .ob-check {
+  background:#0A84FF; border-color:#0A84FF; color:#fff;
+}
+
+.ob-tips {
+  background:rgba(255,255,255,.04); border:0.5px solid rgba(255,255,255,.08);
+  border-radius:14px; padding:14px 16px; margin-bottom:20px;
+  display:none;
+}
+.ob-tips.visible { display:block; }
+.ob-tips-label { font-size:10px; font-weight:800; color:rgba(255,255,255,.3); text-transform:uppercase; letter-spacing:1px; margin-bottom:10px; }
+.ob-tip-row { display:flex; align-items:center; gap:10px; margin-bottom:8px; font-size:13px; color:rgba(255,255,255,.6); }
+.ob-tip-row:last-child { margin-bottom:0; }
+.ob-tip-icon { font-size:16px; flex-shrink:0; }
+
+.ob-cta {
+  width:100%; padding:16px; border-radius:16px; border:none;
+  background:linear-gradient(135deg,#0A84FF,#5856D6);
+  color:#fff; font-size:16px; font-weight:800; font-family:inherit;
+  cursor:pointer; letter-spacing:-.2px;
+  transition:transform .15s, opacity .15s;
+  -webkit-tap-highlight-color:transparent;
+  opacity:.5; pointer-events:none;
+}
+.ob-cta.ready { opacity:1; pointer-events:all; }
+.ob-cta:active { transform:scale(.97); }
+.ob-skip {
+  width:100%; padding:12px; border:none; background:transparent;
+  color:rgba(255,255,255,.3); font-size:13px; font-family:inherit;
+  cursor:pointer; margin-top:4px; -webkit-tap-highlight-color:transparent;
+}
+</style>
+
+<div id="onboardingOverlay">
+  <div id="onboardingSheet">
+    <div class="ob-emoji">👋</div>
+    <div class="ob-title">¿Cómo vas a usar BoxVision?</div>
+    <div class="ob-sub">Cuéntanos un poco para mostrarte los consejos más útiles para ti.</div>
+
+    <div class="ob-options">
+      <button class="ob-option" onclick="_obSelect(this,'moving')" data-type="moving">
+        <div class="ob-option-icon">🏠</div>
+        <div class="ob-option-text">
+          <div class="ob-option-title">Me estoy mudando</div>
+          <div class="ob-option-desc">Quiero organizar mis cajas de mudanza y saber qué va en cada una</div>
+        </div>
+        <div class="ob-check"></div>
+      </button>
+
+      <button class="ob-option" onclick="_obSelect(this,'business')" data-type="business">
+        <div class="ob-option-icon">🏢</div>
+        <div class="ob-option-text">
+          <div class="ob-option-title">Tengo un negocio o almacén</div>
+          <div class="ob-option-desc">Quiero controlar inventario, cajas de stock o materiales de trabajo</div>
+        </div>
+        <div class="ob-check"></div>
+      </button>
+
+      <button class="ob-option" onclick="_obSelect(this,'storage')" data-type="storage">
+        <div class="ob-option-icon">🗄️</div>
+        <div class="ob-option-text">
+          <div class="ob-option-title">Organizo un depósito o bodega</div>
+          <div class="ob-option-desc">Tengo cosas guardadas y nunca sé dónde está cada cosa</div>
+        </div>
+        <div class="ob-check"></div>
+      </button>
+
+      <button class="ob-option" onclick="_obSelect(this,'other')" data-type="other">
+        <div class="ob-option-icon">✨</div>
+        <div class="ob-option-text">
+          <div class="ob-option-title">Otro uso</div>
+          <div class="ob-option-desc">Lo uso a mi manera, exploraré las funciones yo solo</div>
+        </div>
+        <div class="ob-check"></div>
+      </button>
+    </div>
+
+    <!-- Tips contextuales según selección -->
+    <div class="ob-tips" id="obTips">
+      <div class="ob-tips-label">💡 Consejos para ti</div>
+      <div id="obTipsList"></div>
+    </div>
+
+    <button class="ob-cta" id="obCta" onclick="_obFinish()">Empezar →</button>
+    <button class="ob-skip" onclick="_obFinish()">Saltar por ahora</button>
+  </div>
+</div>
+
+<script>
+/* ═══════════════════════════════════════════════
+   NOVEDADES (CHANGELOG) — lógica
+   ═══════════════════════════════════════════════ */
+(function(){
+'use strict';
+
+var CHANGELOG_VERSION = '2.5'; // Incrementar con cada release para mostrar de nuevo
+var CHANGELOG_KEY     = 'bv_changelog_seen_v';
+
+/* Tips por tipo de uso */
+var OB_TIPS = {
+  moving: [
+    { icon:'📦', text:'Nombra tus cajas por habitación: "Cocina #1", "Baño", "Dormitorio #2"' },
+    { icon:'🚨', text:'Marca como urgente las cajas que necesitas abrir primero' },
+    { icon:'🏠', text:'Usa el mapa de habitaciones para visualizar qué va dónde' },
+    { icon:'📷', text:'Fotografia el interior de cada caja antes de sellarla' },
+  ],
+  business: [
+    { icon:'🏷️', text:'Usa etiquetas para categorizar: "Stock", "Fragil", "Devoluciones"' },
+    { icon:'📊', text:'El asistente IA puede resumirte qué tienes y dónde al instante' },
+    { icon:'🔒', text:'Protege cajas sensibles con contraseña PIN' },
+    { icon:'📤', text:'Comparte el contenido de una caja por WhatsApp fácilmente' },
+  ],
+  storage: [
+    { icon:'🔍', text:'La búsqueda encuentra cualquier objeto entre todas tus cajas' },
+    { icon:'⏰', text:'Pon recordatorios para revisar cosas guardadas hace tiempo' },
+    { icon:'🗺️', text:'Asigna una ubicación a cada caja: "Garaje", "Sótano", "Piso 2"' },
+    { icon:'🤖', text:'Pregúntale al asistente IA "¿Dónde puse los documentos?"' },
+  ],
+  other: [
+    { icon:'➕', text:'Empieza creando tu primera caja con el botón + Nueva caja' },
+    { icon:'🤖', text:'El asistente IA (botón azul) te ayuda a encontrar objetos' },
+    { icon:'🎨', text:'Personaliza colores y temas en Ajustes → Tema y colores' },
+    { icon:'💾', text:'Todo se guarda automáticamente en tu cuenta' },
+  ]
+};
+
+var _obSelectedType = null;
+
+window._obSelect = function(btn, type){
+  _obSelectedType = type;
+  document.querySelectorAll('.ob-option').forEach(function(b){ b.classList.remove('selected'); });
+  btn.classList.add('selected');
+
+  /* Mostrar tips */
+  var tips = OB_TIPS[type] || [];
+  var list = document.getElementById('obTipsList');
+  var tipsWrap = document.getElementById('obTips');
+  if(list){
+    list.innerHTML = tips.map(function(t){
+      return '<div class="ob-tip-row"><span class="ob-tip-icon">'+t.icon+'</span><span>'+t.text+'</span></div>';
+    }).join('');
+  }
+  if(tipsWrap) tipsWrap.classList.add('visible');
+
+  /* Habilitar botón */
+  var cta = document.getElementById('obCta');
+  if(cta) cta.classList.add('ready');
+};
+
+window._obFinish = function(){
+  /* Guardar preferencia */
+  try{ localStorage.setItem('bv_use_type', _obSelectedType || 'other'); }catch(e){}
+  try{ localStorage.setItem('bv_onboarding_done', '1'); }catch(e){}
+
+  var ov = document.getElementById('onboardingOverlay');
+  var sh = document.getElementById('onboardingSheet');
+  if(sh){ sh.style.transform='scale(.92)'; sh.style.opacity='0'; }
+  setTimeout(function(){
+    if(ov) ov.classList.remove('open');
+  }, 300);
+};
+
+/* ── Abrir changelog ── */
+window.openChangelog = window.showChangelog = function(){
+  var ov = document.getElementById('changelogOverlay');
+  if(!ov) return;
+  var sub = document.getElementById('clgVersionSub');
+  if(sub) sub.textContent = 'Versión ' + CHANGELOG_VERSION + ' — ' + new Date().toLocaleDateString('es',{month:'long',year:'numeric'});
+  ov.classList.add('open');
+};
+
+window.closeChangelog = function(){
+  var ov = document.getElementById('changelogOverlay');
+  if(ov) ov.classList.remove('open');
+  /* Marcar como visto */
+  try{ localStorage.setItem(CHANGELOG_KEY + CHANGELOG_VERSION, '1'); }catch(e){}
+};
+
+/* ── Mostrar onboarding si el usuario es nuevo ── */
+function _maybeShowOnboarding(){
+  var done = localStorage.getItem('bv_onboarding_done');
+  if(done) return;
+  setTimeout(function(){
+    var ov = document.getElementById('onboardingOverlay');
+    if(ov) ov.classList.add('open');
+  }, 600);
+}
+
+/* ── Mostrar changelog si hay versión nueva ── */
+function _maybeShowChangelog(){
+  var seen = localStorage.getItem(CHANGELOG_KEY + CHANGELOG_VERSION);
+  if(seen) return;
+  /* Solo mostrar si NO es usuario completamente nuevo (eso ya tiene onboarding) */
+  var onbDone = localStorage.getItem('bv_onboarding_done');
+  if(!onbDone) return; /* nuevo usuario: el onboarding es suficiente */
+  setTimeout(openChangelog, 1200);
+}
+
+/* ── Enganchar con el evento de inicio de sesión ── */
+document.addEventListener('DOMContentLoaded', function(){
+  /* Escuchar el evento personalizado que BoxVision emite al entrar a mainScreen */
+  document.addEventListener('bv:screenchange', function(e){
+    if(e.detail && e.detail.screen === 'mainScreen'){
+      /* Solo una vez por sesión */
+      if(window._bvWelcomeDone) return;
+      window._bvWelcomeDone = true;
+      _maybeShowOnboarding();
+      _maybeShowChangelog();
+    }
+  });
+
+  /* Cerrar changelog al tocar el backdrop */
+  var clgOv = document.getElementById('changelogOverlay');
+  if(clgOv){
+    clgOv.addEventListener('click', function(e){
+      if(e.target === clgOv) closeChangelog();
+    });
+  }
+});
+
+console.log('✅ Changelog v' + CHANGELOG_VERSION + ' + Onboarding — listos');
+
+/* ── Abrir caja desde URL (?openBox=id) al llegar desde notificación ── */
+document.addEventListener('DOMContentLoaded', function(){
+  var params = new URLSearchParams(window.location.search);
+  var openBoxId = params.get('openBox');
+  if (openBoxId) {
+    // Limpiar la URL sin recargar
+    history.replaceState(null, '', window.location.pathname);
+    // Esperar a que la app cargue los datos antes de abrir
+    var attempts = 0;
+    var interval = setInterval(function(){
+      attempts++;
+      if (typeof openDetail === 'function' && typeof boxes !== 'undefined' && boxes.length > 0) {
+        clearInterval(interval);
+        setTimeout(function(){ openDetail(openBoxId); }, 300);
+      }
+      if (attempts > 40) clearInterval(interval); // timeout 4s
+    }, 100);
+  }
+});
 })();
 </script>
 
