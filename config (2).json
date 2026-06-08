@@ -1,0 +1,65 @@
+{
+  "version": "3.2.0",
+  "changelog": [
+    {
+      "type": "new",
+      "icon": "🤖",
+      "title": "Asistente IA",
+      "desc": "Pregunta en lenguaje natural dónde están tus objetos y el asistente te responde al instante."
+    },
+    {
+      "type": "new",
+      "icon": "🏠",
+      "title": "Mapa de habitaciones",
+      "desc": "Organiza tus cajas por cuartos. Arrastra y suelta para asignar cada caja a su espacio."
+    },
+    {
+      "type": "new",
+      "icon": "⏰",
+      "title": "Recordatorios con notificaciones",
+      "desc": "Programa alertas para revisar una caja en una fecha y hora exacta, incluso con la app cerrada."
+    },
+    {
+      "type": "new",
+      "icon": "📷",
+      "title": "Foto de caja mejorada",
+      "desc": "Ahora puedes cambiar o eliminar la foto de una caja desde el menú ··· sin perder la imagen al reabrir la app."
+    },
+    {
+      "type": "imp",
+      "icon": "🎨",
+      "title": "Pantalla de inicio rediseñada",
+      "desc": "Reloj grande estilo iOS, saludo dinámico según la hora del día y fondo más elegante."
+    },
+    {
+      "type": "imp",
+      "icon": "🏷️",
+      "title": "Tarjetas de habitación renovadas",
+      "desc": "Diseño premium con menú ··· para editar o eliminar, progreso visual y chips de cajas asignadas."
+    },
+    {
+      "type": "imp",
+      "icon": "👋",
+      "title": "Onboarding para nuevos usuarios",
+      "desc": "Flujo de bienvenida con selector de tipo de uso y consejos personalizados según tu caso."
+    },
+    {
+      "type": "fix",
+      "icon": "🔒",
+      "title": "Seguridad en preguntas de recuperación",
+      "desc": "El campo de respuesta secreta ya no muestra sugerencias del gestor de contraseñas del navegador."
+    },
+    {
+      "type": "fix",
+      "icon": "🐛",
+      "title": "Íconos corregidos en Habitaciones",
+      "desc": "Se eliminaron etiquetas HTML rotas que causaban que el título de la sección mostrara caracteres extraños."
+    },
+    {
+      "type": "fix",
+      "icon": "⚡",
+      "title": "Rendimiento y correcciones menores",
+      "desc": "Recordatorios que no se disparaban dos veces, retry del asistente IA y toggle de contraseña corregidos."
+    }
+  ]
+}
