@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+
+# Sitemap
+Sitemap: https://futbol1234now-png.github.io/BoxVision/sitemap.xml
