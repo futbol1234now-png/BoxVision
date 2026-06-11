@@ -1583,9 +1583,9 @@ input,button,textarea,select{font-family:inherit}
 #splash::before{
   content:'';position:absolute;inset:0;pointer-events:none;
   background:
-    radial-gradient(ellipse 90% 55% at 50% -5%,rgba(10,132,255,0.22) 0%,transparent 65%),
-    radial-gradient(ellipse 50% 35% at 10% 85%,rgba(88,86,214,0.15) 0%,transparent 60%),
-    radial-gradient(ellipse 40% 30% at 90% 70%,rgba(10,132,255,0.1) 0%,transparent 60%);
+    radial-gradient(ellipse 80% 45% at 50% -8%,rgba(10,132,255,0.16) 0%,transparent 65%),
+    radial-gradient(ellipse 45% 30% at 8% 88%,rgba(88,86,214,0.1) 0%,transparent 60%),
+    radial-gradient(ellipse 35% 25% at 92% 65%,rgba(10,132,255,0.07) 0%,transparent 60%);
 }
 /* Wrapper del ícono */
 .sp-icon-wrap{
@@ -1625,39 +1625,38 @@ input,button,textarea,select{font-family:inherit}
 .sp-icon{font-size:44px;line-height:1;filter:drop-shadow(0 3px 10px rgba(0,0,0,0.4));margin:0}
 /* Título */
 .sp-title{
-  font-size:32px;font-weight:800;letter-spacing:-.7px;
+  font-size:28px;font-weight:700;letter-spacing:-.5px;
   margin-bottom:2px;
-  background:linear-gradient(160deg,#fff 40%,rgba(160,200,255,0.85));
-  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+  color:rgba(255,255,255,.92);
 }
-.sp-brand{font-size:13px;color:rgba(255,255,255,.4);font-weight:500;margin-bottom:14px;letter-spacing:.2px}
+.sp-brand{font-size:12px;color:rgba(255,255,255,.3);font-weight:400;margin-bottom:12px;letter-spacing:.3px}
 
 /* ── Reloj — widget estilo iOS ── */
 .sp-clock{
-  display:flex;flex-direction:column;align-items:center;gap:4px;
-  margin-bottom:6px;
+  display:flex;flex-direction:column;align-items:center;gap:6px;
+  margin-bottom:4px;
   animation:spStatIn .5s .08s cubic-bezier(.34,1.3,.64,1) both;
 }
 .sp-clock-time{
-  font-size:72px;font-weight:200;
-  color:#fff;
-  letter-spacing:-3px;
+  font-size:76px;font-weight:100;
+  color:rgba(255,255,255,.96);
+  letter-spacing:-4px;
   font-variant-numeric:tabular-nums;
   line-height:1;
-  text-shadow:0 0 60px rgba(10,132,255,.4);
+  text-shadow:0 2px 40px rgba(10,132,255,.25);
 }
 .sp-clock-sep{display:none}
 .sp-clock-zone{
-  font-size:12px;color:rgba(255,255,255,.4);
-  font-weight:500;letter-spacing:.8px;text-transform:uppercase;
-  background:rgba(255,255,255,.06);
-  border:0.5px solid rgba(255,255,255,.1);
-  border-radius:99px;padding:4px 12px;
-  margin-top:2px;
+  font-size:11px;color:rgba(255,255,255,.35);
+  font-weight:500;letter-spacing:1.2px;text-transform:uppercase;
+  background:rgba(255,255,255,.05);
+  border:0.5px solid rgba(255,255,255,.08);
+  border-radius:99px;padding:3px 12px;
+  margin-top:0;
 }
 @keyframes clockGlow{
-  0%,100%{text-shadow:0 0 60px rgba(10,132,255,.4);}
-  50%{text-shadow:0 0 80px rgba(10,132,255,.6);}
+  0%,100%{text-shadow:0 2px 40px rgba(10,132,255,.25);}
+  50%{text-shadow:0 2px 60px rgba(10,132,255,.4);}
 }
 /* Subtítulo */
 .sp-sub{
@@ -1667,27 +1666,22 @@ input,button,textarea,select{font-family:inherit}
 }
 /* ── Saludo protagonista ── */
 .sp-greeting-wrap{
-  margin-bottom:22px;
+  margin-bottom:20px;
   animation:spStatIn .5s .15s cubic-bezier(.34,1.3,.64,1) both;
 }
 .sp-greeting-text{
-  font-size:27px;font-weight:700;
-  letter-spacing:-.4px;line-height:1.2;
-  margin-bottom:6px;
-  /* Gradiente base + franja brillante intercalada, animada por background-size/position */
+  font-size:26px;font-weight:600;
+  letter-spacing:-.3px;line-height:1.25;
+  margin-bottom:5px;
   background: linear-gradient(
-    180deg,
-    #ffd580 0%,
-    #ffffff 20%,
-    #ffd580 40%,
-    #ffb8c6 70%,
-    #ffd580 100%
-  ) 0 0 / 100% 300%;
+    160deg,
+    #fff 30%,
+    rgba(220,200,255,0.9) 60%,
+    rgba(180,210,255,0.85) 100%
+  );
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
-  filter: drop-shadow(0 0 10px rgba(255,200,100,.35));
-  animation: greetingShine 3s cubic-bezier(.4,0,.6,1) infinite;
 }
 @keyframes greetingShine{
   0%   { background-position: 0 0%;   filter: drop-shadow(0 0 8px  rgba(255,200,100,.3)); }
@@ -1696,53 +1690,108 @@ input,button,textarea,select{font-family:inherit}
 }
 .sp-greeting-sub{
   font-size:13px;font-weight:400;
-  color:rgba(255,255,255,.5);
-  letter-spacing:.15px;
+  color:rgba(255,255,255,.4);
+  letter-spacing:.1px;
 }
-/* Stats */
+/* Stats — rediseño moderno minimalista */
 .sp-stats{
   display:grid;grid-template-columns:repeat(3,1fr);
-  gap:8px;width:100%;max-width:360px;margin-bottom:16px;
+  gap:10px;width:100%;max-width:360px;margin-bottom:20px;
 }
 .sp-stat{
-  background:rgba(255,255,255,.06);
-  backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);
-  border-radius:20px;padding:14px 8px 12px;text-align:center;
-  border:0.5px solid rgba(255,255,255,.1);
-  box-shadow:0 1px 0 rgba(255,255,255,.07) inset;
-  transition:transform .2s cubic-bezier(.34,1.3,.64,1);
+  background:rgba(0,0,0,.22);
+  backdrop-filter:blur(28px) saturate(1.4);
+  -webkit-backdrop-filter:blur(28px) saturate(1.4);
+  border-radius:22px;padding:16px 10px 14px;text-align:center;
+  border:0.5px solid rgba(255,255,255,.14);
+  box-shadow:
+    0 2px 0 rgba(255,255,255,.08) inset,
+    0 -1px 0 rgba(0,0,0,.2) inset,
+    0 8px 24px rgba(0,0,0,.25);
+  transition:transform .22s cubic-bezier(.34,1.3,.64,1),
+             box-shadow .22s;
   cursor:pointer;
+  position:relative;
+  overflow:hidden;
 }
-.sp-stat:active{transform:scale(.93)}
-.sp-stat-n{font-size:28px;font-weight:800;color:#fff;letter-spacing:-.6px;line-height:1;margin:6px 0 4px}
-.sp-stat-l{font-size:10px;color:rgba(255,255,255,.45);text-transform:uppercase;letter-spacing:.8px;font-weight:600}
+/* Shimmer top edge */
+.sp-stat::before{
+  content:'';
+  position:absolute;top:0;left:12%;right:12%;height:1px;
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,.28),transparent);
+  border-radius:99px;
+}
+.sp-stat:active{
+  transform:scale(.92);
+  box-shadow:0 4px 12px rgba(0,0,0,.3);
+}
+/* Número principal */
+.sp-stat-n{
+  font-size:30px;font-weight:700;color:#fff;
+  letter-spacing:-.8px;line-height:1;
+  margin:8px 0 5px;
+  font-variant-numeric:tabular-nums;
+  text-shadow:0 1px 8px rgba(0,0,0,.3);
+}
+/* Etiqueta */
+.sp-stat-l{
+  font-size:10px;color:rgba(255,255,255,.5);
+  text-transform:uppercase;letter-spacing:1px;font-weight:600;
+}
+/* Ícono — con color temático */
 .sp-stat-icon{
-  font-size:20px;line-height:1;
+  font-size:18px;line-height:1;
   display:inline-flex;align-items:center;justify-content:center;
-  width:40px;height:40px;border-radius:13px;
-  background:rgba(255,255,255,.08);
-  border:0.5px solid rgba(255,255,255,.1);
-  margin-bottom:2px;
+  width:38px;height:38px;border-radius:12px;
+  background:rgba(255,255,255,.1);
+  border:0.5px solid rgba(255,255,255,.15);
+  margin-bottom:0;
 }
-#spStatC .sp-stat-icon{background:rgba(10,132,255,.2);border-color:rgba(10,132,255,.3)}
-#spStatO .sp-stat-icon{background:rgba(52,199,89,.18);border-color:rgba(52,199,89,.28)}
-#spStatF .sp-stat-icon{background:rgba(255,204,0,.18);border-color:rgba(255,204,0,.28)}
+#spStatC .sp-stat-icon{
+  background:rgba(10,132,255,.3);
+  border-color:rgba(10,132,255,.4);
+  box-shadow:0 2px 10px rgba(10,132,255,.25);
+}
+#spStatO .sp-stat-icon{
+  background:rgba(52,199,89,.28);
+  border-color:rgba(52,199,89,.38);
+  box-shadow:0 2px 10px rgba(52,199,89,.2);
+}
+#spStatF .sp-stat-icon{
+  background:rgba(255,204,0,.28);
+  border-color:rgba(255,204,0,.38);
+  box-shadow:0 2px 10px rgba(255,204,0,.2);
+}
+/* Barra de progreso */
 .sp-stat-bar{
-  width:60%;height:3px;background:rgba(255,255,255,.08);
-  border-radius:99px;margin:8px auto 0;overflow:hidden;
+  width:50%;height:2px;
+  background:rgba(255,255,255,.1);
+  border-radius:99px;margin:10px auto 0;overflow:hidden;
 }
 .sp-stat-bar-fill{
   height:100%;border-radius:99px;
   background:var(--accent);
-  transition:width 1s cubic-bezier(.4,0,.2,1);
+  transition:width 1.1s cubic-bezier(.4,0,.2,1);
 }
-.sp-stat{animation:spStatIn .5s cubic-bezier(.34,1.3,.64,1) both}
+#spStatC .sp-stat-bar-fill{background:rgba(10,132,255,.9)}
+#spStatO .sp-stat-bar-fill{background:rgba(52,199,89,.9)}
+#spStatF .sp-stat-bar-fill{background:rgba(255,204,0,.9)}
+
+/* Animaciones de entrada */
+.sp-stat{animation:spStatIn .55s cubic-bezier(.34,1.3,.64,1) both}
 #spStatC{animation-delay:.05s}
-#spStatO{animation-delay:.12s}
-#spStatF{animation-delay:.19s}
-@keyframes spStatIn{from{opacity:0;transform:translateY(14px) scale(.9)}to{opacity:1;transform:translateY(0) scale(1)}}
-@keyframes spNumPop{0%{transform:scale(.7);opacity:0}60%{transform:scale(1.12)}100%{transform:scale(1);opacity:1}}
-.sp-stat-n.popped{animation:spNumPop .45s cubic-bezier(.34,1.4,.64,1)}
+#spStatO{animation-delay:.13s}
+#spStatF{animation-delay:.21s}
+@keyframes spStatIn{
+  from{opacity:0;transform:translateY(18px) scale(.88)}
+  to  {opacity:1;transform:translateY(0) scale(1)}
+}
+@keyframes spNumPop{
+  0%  {transform:scale(.65);opacity:0}
+  60% {transform:scale(1.14)}
+  100%{transform:scale(1);opacity:1}
+}
+.sp-stat-n.popped{animation:spNumPop .42s cubic-bezier(.34,1.4,.64,1)}
 /* Última caja abierta */
 .sp-last{
   background:rgba(255,255,255,.06);
@@ -1761,29 +1810,45 @@ input,button,textarea,select{font-family:inherit}
 .sp-last-sub{font-size:12px;color:rgba(255,255,255,.5);margin-top:2px}
 /* Botones */
 .sp-btn{
-  background:linear-gradient(135deg,#0A84FF,#1a6fe8);
+  background:rgba(10,132,255,1);
   color:#fff;border:none;
-  border-radius:18px;padding:17px 20px;
-  font-size:16px;font-weight:700;cursor:pointer;
+  border-radius:20px;padding:17px 20px;
+  font-size:16px;font-weight:600;cursor:pointer;
   width:100%;max-width:360px;margin-bottom:10px;
-  display:flex;align-items:center;justify-content:center;gap:7px;
-  box-shadow:0 4px 20px rgba(10,132,255,0.4),0 1px 0 rgba(255,255,255,0.15) inset;
-  transition:transform .15s,box-shadow .15s;
-  letter-spacing:.1px;
+  display:flex;align-items:center;justify-content:center;gap:8px;
+  box-shadow:
+    0 6px 28px rgba(0,0,0,.3),
+    0 1px 0 rgba(255,255,255,.2) inset,
+    0 -1px 0 rgba(0,0,0,.2) inset;
+  transition:transform .18s cubic-bezier(.34,1.3,.64,1),
+             box-shadow .18s,
+             background .15s;
+  letter-spacing:.05px;
 }
-.sp-btn:active{transform:scale(.97);box-shadow:0 2px 10px rgba(10,132,255,0.3)}
+.sp-btn:active{
+  transform:scale(.96);
+  box-shadow:0 3px 14px rgba(0,0,0,.25);
+  background:rgba(10,110,230,1);
+}
 .sp-btn2{
-  background:rgba(255,255,255,.08);color:rgba(255,255,255,.85);
-  border:0.5px solid rgba(255,255,255,.14);
-  backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);
-  border-radius:16px;padding:14px 16px;
-  font-size:14px;font-weight:600;cursor:pointer;
+  background:rgba(0,0,0,.22);
+  color:rgba(255,255,255,.82);
+  border:0.5px solid rgba(255,255,255,.15);
+  backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
+  border-radius:18px;padding:14px 16px;
+  font-size:14px;font-weight:500;cursor:pointer;
   width:100%;max-width:360px;margin-bottom:10px;
   display:flex;align-items:center;justify-content:center;gap:6px;
-  box-shadow:0 2px 10px rgba(0,0,0,.15),inset 0 1px 0 rgba(255,255,255,.06);
-  transition:transform .15s,background .15s;
+  box-shadow:
+    0 2px 12px rgba(0,0,0,.2),
+    inset 0 1px 0 rgba(255,255,255,.08);
+  transition:transform .18s cubic-bezier(.34,1.3,.64,1),
+             background .15s;
 }
-.sp-btn2:active{transform:scale(.97);background:rgba(255,255,255,.13)}
+.sp-btn2:active{
+  transform:scale(.96);
+  background:rgba(0,0,0,.32);
+}
 .sp-row{display:flex;gap:9px;width:100%;max-width:360px;margin-bottom:0}
 .sp-row .sp-btn2{margin-bottom:0;flex:1}
 .install-banner{background:var(--accent);color:#fff;padding:10px 16px;display:flex;align-items:center;gap:10px;font-size:13px}
@@ -2209,10 +2274,10 @@ input,button,textarea,select{font-family:inherit}
 .item-row:last-child{border:none}
 .item-row:active{background:var(--input)}
 .i-num{font-size:10px;font-weight:700;color:var(--muted);min-width:14px;text-align:right;opacity:.4;flex-shrink:0;font-variant-numeric:tabular-nums;}
-.i-emoji{font-size:19px;line-height:1;flex-shrink:0;width:34px;height:34px;display:flex;align-items:center;justify-content:center;background:var(--card2);border-radius:10px;border:0.5px solid var(--border);transition:transform .15s cubic-bezier(.34,1.56,.64,1);}
+.i-emoji{font-size:19px;line-height:1;flex-shrink:0;width:36px;height:36px;display:flex;align-items:center;justify-content:center;background:var(--card2);border-radius:12px;border:0.5px solid var(--border);transition:transform .15s cubic-bezier(.34,1.56,.64,1);box-shadow:0 1px 4px rgba(0,0,0,.18);}
 .item-row:active .i-emoji{transform:scale(.88);}
 .i-emoji.done{opacity:.3;filter:grayscale(.7);}
-.i-chk{width:22px;height:22px;border-radius:50%;border:1.5px solid var(--border);display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;transition:all .18s cubic-bezier(.34,1.56,.64,1);font-size:11px;font-weight:700;}
+.i-chk{width:22px;height:22px;border-radius:50%;border:1.5px solid rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;transition:all .18s cubic-bezier(.34,1.56,.64,1);font-size:11px;font-weight:700;background:rgba(255,255,255,.04);}
 .i-chk.done{border-color:transparent;color:#fff;transform:scale(1.08);}
 .i-chk:active{transform:scale(.85);}
 .i-txt{flex:1;font-size:14.5px;font-weight:500;line-height:1.3;}
@@ -4500,10 +4565,10 @@ if(!auth){
     </div>
   </div>
   <button class="sp-btn" onclick="goMain()"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-3px;margin-right:7px;flex-shrink:0" aria-hidden="true"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>Ver mis cajas</button>
-  <div class="sp-row" style="margin-bottom:10px">
-    <button class="sp-btn2" onclick="goRoom()"><svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px;margin-right:5px;flex-shrink:0" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>Habitaciones</button>
+  <div class="sp-row" style="margin-bottom:10px;width:100%;max-width:360px">
+    <button class="sp-btn2" onclick="goRoom()" style="flex:1;margin-bottom:0"><svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px;margin-right:5px;flex-shrink:0" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>Habitaciones</button>
+    <button class="sp-btn2" onclick="goSettings()" style="flex:1;margin-bottom:0"><svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px;margin-right:5px;flex-shrink:0" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>Ajustes</button>
   </div>
-  <button class="sp-btn2" onclick="goSettings()"><svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px;margin-right:5px;flex-shrink:0" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>Ajustes</button>
 </div>
 
 <div id="mainScreen" class="hidden">
@@ -8177,6 +8242,377 @@ const I18N = {
   }
 };
 
+// ── PACK DE INGLÉS COMPLETO — textos hardcodeados en el DOM ──────────────────
+// Mapa: [selector, propiedad, texto-es, texto-en]
+const _DOM_I18N = [
+  // ── Settings hero / profile ──
+  ['#setSyncLabel',                       'textContent', 'Sincronizado',            'Synced'],
+  ['button.set-signout-btn',              'textContent', 'Salir',                   'Sign out'],
+  // Stats labels
+  ['.set-stat-l:nth-of-type(1)',          'textContent', 'Cajas',                   'Boxes'],   // handled by loop below
+  // ── Settings sections ──
+  ['.settings-sec-label:nth-child(1)',    'textContent', 'Personalización',         'Customization'],
+  // ── Settings rows — Personalización ──
+  // Brand name row
+  ['#brandInput',                         'placeholder', 'Ej: Familia García',      'E.g.: Smith Family'],
+  // Dark mode
+  // Moving mode
+  ['#movingModeSettingsSub',              'textContent', 'Muestra progreso y opción de marcar objetos como sacados', 'Shows progress and lets you mark items as removed'],
+  // Storage section
+  ['#storageSubLabel',                    'textContent', 'Calculando...',           'Calculating...'],
+  ['#cacheSubLabel',                      'textContent', 'Calculando...',           'Calculating...'],
+  // Feedback
+  ['#feedbackStatusSub',                  'textContent', 'Reporta bugs o sugiere mejoras', 'Report bugs or suggest improvements'],
+  // Changelog
+  ['#settingsChangelogSub',               'textContent', 'Cargando versión…',       'Loading version…'],
+  // Groq status
+  ['#searchHistorySub',                   'textContent', 'Limpia las búsquedas recientes', 'Clear recent searches'],
+  // Footer tagline
+  ['div.settings-footer > div:nth-child(3)', 'textContent', 'Organizador inteligente de mudanzas', 'Smart moving & storage organizer'],
+  // Footer links
+  ['.set-footer-link[href="privacy.html"]',  'textContent', 'Privacidad',           'Privacy'],
+  ['.set-footer-link[href="terms.html"]',    'textContent', 'Términos',             'Terms'],
+  ['.set-footer-link[href*="mailto"]',       'textContent', 'Contacto',             'Contact'],
+  // Lang modal cancel btn
+  ['#langModal .modal-sheet > div:last-child button', 'textContent', 'Cancelar',   'Cancel'],
+  // "Próx. actualización" badges in lang modal
+];
+
+// Mapa de todos los textos hardcodeados para reemplazo masivo por selector CSS
+// Formato: { selector, prop, es, en }
+const _SETTINGS_ROWS = [
+  // Section labels
+  { s:'.settings-sec:nth-child(2) .settings-sec-label',  p:'textContent', es:'Personalización',           en:'Customization' },
+  { s:'.settings-sec:nth-child(3) .settings-sec-label',  p:'textContent', es:'Herramientas',              en:'Tools' },
+  { s:'.settings-sec:nth-child(4) .settings-sec-label',  p:'textContent', es:'Almacenamiento',            en:'Storage' },
+  { s:'.settings-sec:nth-child(5) .settings-sec-label',  p:'textContent', es:'Privacidad y seguridad',    en:'Privacy & Security' },
+  { s:'.settings-sec:nth-child(6) .settings-sec-label',  p:'textContent', es:'Zona de peligro',           en:'Danger Zone' },
+  // Payment notice
+  { s:'[style*="rgba(255,149,0,0.10)"] [style*="font-size:13px"]', p:'textContent', es:'Próximamente: plan de pago', en:'Coming soon: paid plan' },
+  { s:'[style*="rgba(255,149,0,0.10)"] [style*="font-size:12px"]', p:'textContent',
+    es:'Algunas funciones pasarán a ser de pago. Por ahora todo sigue gratis — te avisamos antes de cualquier cambio.',
+    en:'Some features will become paid. Everything is still free for now — we\'ll let you know before any changes.' },
+  // Stat labels
+  { s:'#setTotalCajas + .set-stat-l', p:'textContent', es:'Cajas',      en:'Boxes'    },
+  { s:'#setTotalObj + .set-stat-l',   p:'textContent', es:'Objetos',    en:'Items'    },
+  { s:'#setTotalDone + .set-stat-l',  p:'textContent', es:'Sacados',    en:'Removed'  },
+  { s:'#setTotalFav + .set-stat-l',   p:'textContent', es:'Favoritas',  en:'Favorites'},
+  // Personalización row labels
+  { s:'#brandInput',                  p:'placeholder', es:'Ej: Familia García',    en:'E.g.: Smith Family' },
+  { s:'#brandInput',                  p:'previousLabel', es:'Nombre o marca',     en:'Name or brand' },
+];
+
+// Función auxiliar: busca el label encima de un input
+function _relabelInput(inputEl, en_text){
+  if(!inputEl) return;
+  const row = inputEl.closest('.settings-row');
+  if(!row) return;
+  const lbl = row.querySelector('.settings-label');
+  if(lbl) lbl.textContent = en_text;
+}
+
+// Aplica el pack completo de traducciones hardcodeadas al DOM
+function _applyHardcodedI18N(lang){
+  const isEN = lang === 'en';
+
+  // ── Stats ──
+  const statLabels = document.querySelectorAll('.set-stat-l');
+  const statTexts = isEN
+    ? ['Boxes','Items','Removed','Favorites']
+    : ['Cajas','Objetos','Sacados','Favoritas'];
+  statLabels.forEach((el,i)=>{ if(statTexts[i]) el.textContent = statTexts[i]; });
+
+  // ── Sync badge ──
+  const syncLbl = document.getElementById('setSyncLabel');
+  if(syncLbl && (syncLbl.textContent==='Sincronizado'||syncLbl.textContent==='Synced'))
+    syncLbl.textContent = isEN ? 'Synced' : 'Sincronizado';
+
+  // ── Sign-out button ──
+  const soBtn = document.querySelector('button.set-signout-btn');
+  if(soBtn) soBtn.textContent = isEN ? 'Sign out' : 'Salir';
+
+  // ── Section labels ──
+  const secLabels = document.querySelectorAll('.settings-sec-label');
+  const secMap = {
+    'Personalización':'Customization', 'Herramientas':'Tools',
+    'Almacenamiento':'Storage',        'Privacidad y seguridad':'Privacy & Security',
+    'Zona de peligro':'Danger Zone',
+    // reverse
+    'Customization':'Personalización', 'Tools':'Herramientas',
+    'Storage':'Almacenamiento',        'Privacy & Security':'Privacidad y seguridad',
+    'Danger Zone':'Zona de peligro',
+  };
+  secLabels.forEach(el=>{
+    const mapped = secMap[el.textContent.trim()];
+    if(mapped) el.textContent = mapped;
+  });
+
+  // ── Payment notice ──
+  document.querySelectorAll('[style*="rgba(255,149,0,0.10)"] div').forEach(el=>{
+    if(el.textContent.trim()==='Próximamente: plan de pago') el.textContent = isEN ? 'Coming soon: paid plan' : 'Próximamente: plan de pago';
+    if(el.textContent.includes('Algunas funciones pasarán')) el.textContent = isEN
+      ? 'Some features will become paid. Everything is still free for now — we\'ll let you know before any changes.'
+      : 'Algunas funciones pasarán a ser de pago. Por ahora todo sigue gratis — te avisamos antes de cualquier cambio.';
+    if(el.textContent.includes('Some features will become')) el.textContent = isEN
+      ? 'Some features will become paid. Everything is still free for now — we\'ll let you know before any changes.'
+      : 'Algunas funciones pasarán a ser de pago. Por ahora todo sigue gratis — te avisamos antes de cualquier cambio.';
+  });
+
+  // ── Settings row labels & subs ──
+  const rowMap = [
+    // [label_es, label_en, sub_es (optional), sub_en (optional)]
+    ['Nombre o marca',            'Name or brand',              'Aparece al escanear el QR',                          'Shown when scanning the QR code'],
+    ['Modo oscuro',               'Dark mode',                  'Tema visual de la app',                              'App visual theme'],
+    ['Modo mudanza',              'Moving mode',                null, null],
+    ['Tema y colores',            'Theme & colors',             'Apariencia, modo oscuro y color de acento',           'Appearance, dark mode and accent color'],
+    ['Idioma',                    'Language',                   'Idioma de la interfaz',                              'Interface language'],
+    ['Notificaciones',            'Notifications',              'Alertas de cajas urgentes',                          'Alerts for urgent boxes'],
+    ['Push con app cerrada',      'Background push',            'Recordatorios aunque cierres la app',                'Reminders even when the app is closed'],
+    ['Buscar por etiqueta',       'Search by tag',              'Filtra cajas por tag globalmente',                   'Filter boxes by tag globally'],
+    ['Sonido al escanear',        'Scan sound',                 'Confirmación de audio al leer QR',                   'Audio confirmation when reading QR'],
+    ['Vista de cajas',            'Box view',                   'Cuadrícula o lista',                                 'Grid or list'],
+    ['Mis backups',               'My backups',                 'Historial de los últimos 7 días',                    'History of the last 7 days'],
+    ['Borrar historial de búsqueda','Clear search history',     'Limpia las búsquedas recientes',                    'Clears recent searches'],
+    ['Exportar datos',            'Export data',                'Descarga todas tus cajas en JSON',                   'Download all your boxes as JSON'],
+    ['Ver tutorial',              'View tutorial',              'Repasa las 7 pantallas de inicio',                   'Replay the 7 onboarding screens'],
+    ['Compartir BoxVision',       'Share BoxVision',            'Envía el link a un amigo o familiar',                'Send the link to a friend or family member'],
+    ['Enviar feedback',           'Send feedback',              'Reporta bugs o sugiere mejoras',                     'Report bugs or suggest improvements'],
+    ['Ver novedades',             "What's new",                 null, null],
+    ['Actualizar BoxVision',      'Update BoxVision',           null, null],
+    ['Uso en la nube',            'Cloud usage',                null, null],
+    ['Caché local',               'Local cache',                null, null],
+    ['Política de privacidad',    'Privacy policy',             null, null],
+    ['API Key de Groq',           'Groq API Key',               null, null],
+    ['API Key de Gemini',         'Gemini API Key',             null, null],
+    ['Para íconos IA de objetos en fotos', 'For AI item icons from photos', null, null],
+    ['Configurar clave Gemini',   'Set up Gemini key',          null, null],
+    ['Reemplazar clave Gemini',   'Replace Gemini key',         null, null],
+    ['Eliminar clave Gemini',     'Delete Gemini key',          'Borra la clave de este dispositivo', 'Removes the key from this device'],
+    ['Eliminar clave',            'Delete key',                 'Borra la clave de este dispositivo', 'Removes the key from this device'],
+    ['Borrar todos los datos',    'Delete all data',            'Elimina todas tus cajas permanentemente', 'Permanently deletes all your boxes'],
+    ['Cerrar sesión',             'Sign out',                   'Salir de tu cuenta actual',          'Sign out of your current account'],
+  ];
+
+  document.querySelectorAll('.settings-label, .settings-sub').forEach(el=>{
+    const txt = el.textContent.trim();
+    for(const [es_l, en_l, es_s, en_s] of rowMap){
+      if(el.classList.contains('settings-label')){
+        if(isEN && txt===es_l){ el.textContent=en_l; break; }
+        if(!isEN && txt===en_l){ el.textContent=es_l; break; }
+      } else {
+        if(isEN && es_s && txt===es_s){ el.textContent=en_s; break; }
+        if(!isEN && en_s && txt===en_s){ el.textContent=es_s; break; }
+      }
+    }
+  });
+
+  // ── Moving mode sub (dynamic, updated separately) ──
+  const mmSub = document.getElementById('movingModeSettingsSub');
+  if(mmSub){
+    if(isEN) mmSub.textContent = 'Shows progress and lets you mark items as removed';
+    else     mmSub.textContent = 'Muestra progreso y opción de marcar objetos como sa sacados';
+  }
+
+  // ── Storage / cache subs ──
+  const storSub = document.getElementById('storageSubLabel');
+  if(storSub && (storSub.textContent==='Calculando...'||storSub.textContent==='Calculating...'))
+    storSub.textContent = isEN ? 'Calculating...' : 'Calculando...';
+  const cachSub = document.getElementById('cacheSubLabel');
+  if(cachSub && (cachSub.textContent==='Calculando...'||cachSub.textContent==='Calculating...'))
+    cachSub.textContent = isEN ? 'Calculating...' : 'Calculando...';
+
+  // ── Brand input placeholder ──
+  const brandInp = document.getElementById('brandInput');
+  if(brandInp) brandInp.placeholder = isEN ? 'E.g.: Smith Family' : 'Ej: Familia García';
+
+  // ── WP status badge ──
+  const wpBadge = document.getElementById('wpStatusBadge');
+  if(wpBadge){
+    if(wpBadge.textContent.includes('Sin activar')) wpBadge.textContent = isEN ? '○ Not active' : '○ Sin activar';
+    if(wpBadge.textContent.includes('Not active'))  wpBadge.textContent = isEN ? '○ Not active' : '○ Sin activar';
+    if(wpBadge.textContent.includes('Activo'))      wpBadge.textContent = isEN ? '● Active' : '● Activo';
+    if(wpBadge.textContent.includes('Active'))      wpBadge.textContent = isEN ? '● Active' : '● Activo';
+  }
+
+  // ── View mode label ──
+  const viewLbl = document.getElementById('viewModeLabel');
+  if(viewLbl){
+    if(viewLbl.textContent==='Cuadrícula') viewLbl.textContent = isEN ? 'Grid' : 'Cuadrícula';
+    if(viewLbl.textContent==='Lista')      viewLbl.textContent = isEN ? 'List' : 'Lista';
+    if(viewLbl.textContent==='Grid')       viewLbl.textContent = isEN ? 'Grid' : 'Cuadrícula';
+    if(viewLbl.textContent==='List')       viewLbl.textContent = isEN ? 'List' : 'Lista';
+  }
+
+  // ── Feedback status sub ──
+  const fbSub = document.getElementById('feedbackStatusSub');
+  if(fbSub){
+    if(fbSub.textContent.includes('Reporta')) fbSub.textContent = isEN ? 'Report bugs or suggest improvements' : 'Reporta bugs o sugiere mejoras';
+    if(fbSub.textContent.includes('Report'))  fbSub.textContent = isEN ? 'Report bugs or suggest improvements' : 'Reporta bugs o sugiere mejoras';
+  }
+
+  // ── Changelog sub ──
+  const clgSub = document.getElementById('settingsChangelogSub');
+  if(clgSub){
+    if(clgSub.textContent.includes('Cargando')||clgSub.textContent.includes('Loading'))
+      clgSub.textContent = isEN ? 'Loading version…' : 'Cargando versión…';
+  }
+
+  // ── Groq key status ──
+  const groqSub = document.getElementById('groqKeyStatusSub');
+  if(groqSub){
+    if(groqSub.textContent.includes('Sin clave')) groqSub.textContent = isEN ? 'No key set — AI unavailable' : 'Sin clave configurada — IA no disponible';
+    if(groqSub.textContent.includes('No key'))    groqSub.textContent = isEN ? 'No key set — AI unavailable' : 'Sin clave configurada — IA no disponible';
+    if(groqSub.textContent.includes('Clave configurada:')) groqSub.textContent = isEN
+      ? groqSub.textContent.replace('Clave configurada:', 'Key set:')
+      : groqSub.textContent.replace('Key set:', 'Clave configurada:');
+  }
+
+  // ── Gemini key status ──
+  const gemSub = document.getElementById('geminiKeyStatusSub');
+  if(gemSub){
+    if(gemSub.textContent.includes('Sin clave')) gemSub.textContent = isEN ? 'No key set' : 'Sin clave configurada';
+    if(gemSub.textContent.includes('No key set'))gemSub.textContent = isEN ? 'No key set' : 'Sin clave configurada';
+  }
+  const gemActionLbl = document.getElementById('geminiKeyActionLabel');
+  if(gemActionLbl){
+    if(gemActionLbl.textContent==='Configurar clave Gemini') gemActionLbl.textContent = isEN ? 'Set up Gemini key' : 'Configurar clave Gemini';
+    if(gemActionLbl.textContent==='Reemplazar clave Gemini') gemActionLbl.textContent = isEN ? 'Replace Gemini key' : 'Reemplazar clave Gemini';
+    if(gemActionLbl.textContent==='Set up Gemini key')       gemActionLbl.textContent = isEN ? 'Set up Gemini key' : 'Configurar clave Gemini';
+    if(gemActionLbl.textContent==='Replace Gemini key')      gemActionLbl.textContent = isEN ? 'Replace Gemini key' : 'Reemplazar clave Gemini';
+  }
+
+  // ── Gemini info block ──
+  document.querySelectorAll('[style*="rgba(52,199,89,.07)"] div').forEach(el=>{
+    if(el.textContent.includes('se usa para identificar')) el.innerHTML = isEN
+      ? '<strong style="color:rgba(255,255,255,.9)">Gemini</strong> is used to identify items in photos and generate detailed icons. Get your free key at <strong style="color:rgba(255,255,255,.85)">aistudio.google.com</strong>.'
+      : '<strong style="color:rgba(255,255,255,.9)">Gemini</strong> se usa para identificar objetos en fotos y generar íconos detallados. Obtén tu clave gratis en <strong style="color:rgba(255,255,255,.85)">aistudio.google.com</strong>.';
+    if(el.textContent.includes('is used to identify')) el.innerHTML = isEN
+      ? '<strong style="color:rgba(255,255,255,.9)">Gemini</strong> is used to identify items in photos and generate detailed icons. Get your free key at <strong style="color:rgba(255,255,255,.85)">aistudio.google.com</strong>.'
+      : '<strong style="color:rgba(255,255,255,.9)">Gemini</strong> se usa para identificar objetos en fotos y generar íconos detallados. Obtén tu clave gratis en <strong style="color:rgba(255,255,255,.85)">aistudio.google.com</strong>.';
+  });
+
+  // ── Groq info block ──
+  document.querySelectorAll('[style*="rgba(10,132,255,.07)"] div, [style*="rgba(10,132,255,0.07)"] div').forEach(el=>{
+    if(el.textContent.includes('motor de IA conversacional')) el.innerHTML = isEN
+      ? '<strong style="color:rgba(255,255,255,.9)">Groq</strong> powers the conversational AI assistant. Get your free key at <strong style="color:rgba(255,255,255,.85)">console.groq.com</strong>.'
+      : '<strong style="color:rgba(255,255,255,.9)">Groq</strong> es el motor de IA conversacional del asistente. Obtén tu clave gratis en <strong style="color:rgba(255,255,255,.85)">console.groq.com</strong>.';
+    if(el.textContent.includes('powers the conversational')) el.innerHTML = isEN
+      ? '<strong style="color:rgba(255,255,255,.9)">Groq</strong> powers the conversational AI assistant. Get your free key at <strong style="color:rgba(255,255,255,.85)">console.groq.com</strong>.'
+      : '<strong style="color:rgba(255,255,255,.9)">Groq</strong> es el motor de IA conversacional del asistente. Obtén tu clave gratis en <strong style="color:rgba(255,255,255,.85)">console.groq.com</strong>.';
+  });
+
+  // ── Groq action label ──
+  const groqActLbl = document.getElementById('groqKeyActionLabel');
+  if(groqActLbl){
+    if(groqActLbl.textContent==='Configurar clave') groqActLbl.textContent = isEN ? 'Set up key' : 'Configurar clave';
+    if(groqActLbl.textContent==='Reemplazar clave') groqActLbl.textContent = isEN ? 'Replace key' : 'Reemplazar clave';
+    if(groqActLbl.textContent==='Set up key')       groqActLbl.textContent = isEN ? 'Set up key' : 'Configurar clave';
+    if(groqActLbl.textContent==='Replace key')      groqActLbl.textContent = isEN ? 'Replace key' : 'Reemplazar clave';
+  }
+
+  // ── Footer ──
+  const footerTagline = document.querySelector('.settings-footer > div:nth-child(3)');
+  if(footerTagline){
+    if(footerTagline.textContent.includes('Organizador')) footerTagline.textContent = isEN ? 'Smart moving & storage organizer' : 'Organizador inteligente de mudanzas';
+    if(footerTagline.textContent.includes('Smart moving')) footerTagline.textContent = isEN ? 'Smart moving & storage organizer' : 'Organizador inteligente de mudanzas';
+  }
+
+  // Footer links
+  document.querySelectorAll('.set-footer-link').forEach(a=>{
+    if(a.href&&a.href.includes('privacy')){ a.textContent = isEN ? 'Privacy' : 'Privacidad'; }
+    if(a.href&&a.href.includes('terms')){   a.textContent = isEN ? 'Terms' : 'Términos'; }
+    if(a.href&&a.href.includes('mailto')){  a.textContent = isEN ? 'Contact' : 'Contacto'; }
+  });
+
+  // ── Lang modal cancel ──
+  const langCancelBtn = document.querySelector('#langModal .modal-sheet > div:last-child button');
+  if(langCancelBtn) langCancelBtn.textContent = isEN ? 'Cancel' : 'Cancelar';
+
+  // ── "Próx. actualización" badges ──
+  document.querySelectorAll('.lang-soon-badge').forEach(b=>{
+    if(b.textContent.includes('Próx.')) b.textContent = isEN ? 'Coming soon' : 'Próx. actualización';
+    if(b.textContent.includes('Coming')) b.textContent = isEN ? 'Coming soon' : 'Próx. actualización';
+  });
+
+  // ── AI assistant header ──
+  const aiName = document.querySelector('.ai-header-name');
+  if(aiName && (aiName.textContent==='Asistente IA'||aiName.textContent==='AI Assistant'))
+    aiName.textContent = isEN ? 'AI Assistant' : 'Asistente IA';
+  const aiStatus = document.querySelector('.ai-header-status');
+  if(aiStatus){
+    if(aiStatus.textContent.includes('Pregúntame')) aiStatus.textContent = isEN ? 'Ask me about your boxes' : 'Pregúntame sobre tus cajas';
+    if(aiStatus.textContent.includes('Ask me'))     aiStatus.textContent = isEN ? 'Ask me about your boxes' : 'Pregúntame sobre tus cajas';
+  }
+
+  // ── Quick chips (AI) ──
+  const chipMap = {
+    '¿Qué hay en mis cajas?': 'What\'s in my boxes?',
+    '¿Dónde está...?':        'Where is...?',
+    'Resumir todo':            'Summarize all',
+    'Cajas urgentes':          'Urgent boxes',
+    'What\'s in my boxes?':   '¿Qué hay en mis cajas?',
+    'Where is...?':            '¿Dónde está...?',
+    'Summarize all':           'Resumir todo',
+    'Urgent boxes':            'Cajas urgentes',
+  };
+  document.querySelectorAll('.ai-quick-chip').forEach(chip=>{
+    const mapped = chipMap[chip.textContent.trim()];
+    if(mapped) chip.textContent = mapped;
+  });
+
+  // ── Onboarding ──
+  const obOptions = [
+    { type:'moving',   es_title:'Me estoy mudando', en_title:'I\'m moving',
+      es_desc:'Quiero organizar mis cajas de mudanza y saber qué va en cada una',
+      en_desc:'I want to organize my moving boxes and know what goes in each one' },
+    { type:'business', es_title:'Tengo un negocio o almacén', en_title:'I have a business or warehouse',
+      es_desc:'Quiero controlar inventario, cajas de stock o materiales de trabajo',
+      en_desc:'I want to manage inventory, stock boxes or work materials' },
+    { type:'storage',  es_title:'Organizo un depósito o bodega', en_title:'I\'m organizing a storage room',
+      es_desc:'Tengo cosas guardadas y nunca sé dónde está cada cosa',
+      en_desc:'I have stored items and can never find anything' },
+    { type:'other',    es_title:'Otro uso', en_title:'Other use',
+      es_desc:'Lo uso a mi manera, exploraré las funciones yo solo',
+      en_desc:'I\'ll use it my own way and explore the features myself' },
+  ];
+  obOptions.forEach(opt=>{
+    const btn = document.querySelector(`.ob-option[data-type="${opt.type}"]`);
+    if(!btn) return;
+    const titleEl = btn.querySelector('.ob-option-title');
+    const descEl  = btn.querySelector('.ob-option-desc');
+    if(titleEl) titleEl.textContent = isEN ? opt.en_title : opt.es_title;
+    if(descEl)  descEl.textContent  = isEN ? opt.en_desc  : opt.es_desc;
+  });
+  const obTitle = document.querySelector('.ob-title');
+  if(obTitle){
+    if(obTitle.textContent.includes('¿Para qué')) obTitle.textContent = isEN ? 'What will you use it for?' : '¿Para qué lo vas a usar?';
+    if(obTitle.textContent.includes('What will')) obTitle.textContent = isEN ? 'What will you use it for?' : '¿Para qué lo vas a usar?';
+  }
+  const obSub = document.querySelector('.ob-sub');
+  if(obSub){
+    if(obSub.textContent.includes('Personalizamos')) obSub.textContent = isEN ? 'We\'ll personalize the experience for you' : 'Personalizamos la experiencia según tu caso';
+    if(obSub.textContent.includes('We\'ll personalize')) obSub.textContent = isEN ? 'We\'ll personalize the experience for you' : 'Personalizamos la experiencia según tu caso';
+  }
+  const obCta = document.getElementById('obCta');
+  if(obCta){
+    if(obCta.textContent.includes('Empezar')) obCta.textContent = isEN ? 'Get started →' : 'Empezar →';
+    if(obCta.textContent.includes('Get started')) obCta.textContent = isEN ? 'Get started →' : 'Empezar →';
+  }
+  const obSkip = document.querySelector('.ob-skip');
+  if(obSkip){
+    if(obSkip.textContent.includes('Saltar')) obSkip.textContent = isEN ? 'Skip for now' : 'Saltar por ahora';
+    if(obSkip.textContent.includes('Skip'))   obSkip.textContent = isEN ? 'Skip for now' : 'Saltar por ahora';
+  }
+  const obTipsLabel = document.querySelector('.ob-tips-label');
+  if(obTipsLabel){
+    if(obTipsLabel.textContent.includes('Consejos')) obTipsLabel.textContent = isEN ? '💡 Tips for you' : '💡 Consejos para ti';
+    if(obTipsLabel.textContent.includes('Tips'))     obTipsLabel.textContent = isEN ? '💡 Tips for you' : '💡 Consejos para ti';
+  }
+
+  // ── html lang attribute ──
+  document.documentElement.lang = isEN ? 'en' : 'es';
+}
+
 // Obtener traducción
 function t(key, ...args){
   const dict = I18N[_currentLang] || I18N['es'];
@@ -8201,6 +8637,8 @@ function _applyI18N(){
   const settingsUpdateSub = document.getElementById('settingsUpdateSub');
   if(settingsUpdateSub && settingsUpdateSub.textContent === I18N['es']['settings.update.sub'] || settingsUpdateSub?.textContent === I18N['en']['settings.update.sub'])
     settingsUpdateSub.textContent = t('settings.update.sub');
+  // Aplicar pack hardcodeado
+  _applyHardcodedI18N(_currentLang);
 }
 
 function openLangModal(){
@@ -8214,7 +8652,7 @@ function closeLangModal(){
   document.getElementById('langModal').style.display='none';
 }
 function setLang(lang){
-  if(!I18N[lang]){ showToast('🚧 Idioma no disponible aún','#FF9500'); return; }
+  if(!I18N[lang]){ showToast('🚧 Language not available yet','#FF9500'); return; }
   _currentLang = lang;
   localStorage.setItem('cb-lang', lang);
   const lbl = document.getElementById('currentLangLabel');
@@ -16404,7 +16842,7 @@ console.log('✅ BoxVision SmartPhoto v' + SP_VERSION + ' listo — Gemini Visio
 </style>
 
 <!-- FAB de tags (se muestra en mainScreen cuando hay tags) -->
-<div id="gtFab" class="gt-fab" onclick="window.openGlobalTags()" title="Explorar etiquetas">
+<div id="gtFab" class="gt-fab" onclick="window.openGlobalTags()" title="Explorar etiquetas" style="display:none">
   🏷️
   <div class="gt-fab-badge" id="gtFabBadge">0</div>
 </div>
@@ -16530,7 +16968,8 @@ function _gtUpdateFab() {
   var main   = document.getElementById('mainScreen');
   if (!fab) return;
   var tags   = _gtGetAllTags();
-  var isMain = main && !main.classList.contains('hidden');
+  // Verificación estricta: mainScreen debe existir, estar visible y tener offsetParent
+  var isMain = main && !main.classList.contains('hidden') && main.offsetParent !== null;
   if (isMain && tags.length > 0) {
     fab.style.display = 'flex';
     if (badge) badge.textContent = tags.length;
@@ -18315,7 +18754,7 @@ var CHANGELOG_VERSION = '2.5'; // Incrementar con cada release para mostrar de n
 var CHANGELOG_KEY     = 'bv_changelog_seen_v';
 
 /* Tips por tipo de uso */
-var OB_TIPS = {
+var OB_TIPS_ES = {
   moving: [
     { icon:'📦', text:'Nombra tus cajas por habitación: "Cocina #1", "Baño", "Dormitorio #2"' },
     { icon:'🚨', text:'Marca como urgente las cajas que necesitas abrir primero' },
@@ -18341,6 +18780,33 @@ var OB_TIPS = {
     { icon:'💾', text:'Todo se guarda automáticamente en tu cuenta' },
   ]
 };
+var OB_TIPS_EN = {
+  moving: [
+    { icon:'📦', text:'Name your boxes by room: "Kitchen #1", "Bathroom", "Bedroom #2"' },
+    { icon:'🚨', text:'Mark as urgent the boxes you need to open first' },
+    { icon:'🏠', text:'Use the room map to visualize what goes where' },
+    { icon:'📷', text:'Photograph the inside of each box before sealing it' },
+  ],
+  business: [
+    { icon:'🏷️', text:'Use tags to categorize: "Stock", "Fragile", "Returns"' },
+    { icon:'📊', text:'The AI assistant can instantly summarize what you have and where' },
+    { icon:'🔒', text:'Protect sensitive boxes with a PIN password' },
+    { icon:'📤', text:'Easily share a box\'s contents via WhatsApp' },
+  ],
+  storage: [
+    { icon:'🔍', text:'Search finds any item across all your boxes' },
+    { icon:'⏰', text:'Set reminders to review things stored long ago' },
+    { icon:'🗺️', text:'Assign a location to each box: "Garage", "Basement", "Floor 2"' },
+    { icon:'🤖', text:'Ask the AI assistant "Where did I put the documents?"' },
+  ],
+  other: [
+    { icon:'➕', text:'Start by creating your first box with the + New box button' },
+    { icon:'🤖', text:'The AI assistant (blue button) helps you find items' },
+    { icon:'🎨', text:'Customize colors and themes in Settings → Theme & colors' },
+    { icon:'💾', text:'Everything is saved automatically to your account' },
+  ]
+};
+var OB_TIPS = OB_TIPS_ES;
 
 var _obSelectedType = null;
 
@@ -18349,8 +18815,9 @@ window._obSelect = function(btn, type){
   document.querySelectorAll('.ob-option').forEach(function(b){ b.classList.remove('selected'); });
   btn.classList.add('selected');
 
-  /* Mostrar tips */
-  var tips = OB_TIPS[type] || [];
+  /* Mostrar tips según idioma activo */
+  var activeTips = (typeof _currentLang !== 'undefined' && _currentLang === 'en') ? OB_TIPS_EN : OB_TIPS_ES;
+  var tips = activeTips[type] || [];
   var list = document.getElementById('obTipsList');
   var tipsWrap = document.getElementById('obTips');
   if(list){
@@ -18406,12 +18873,8 @@ function _maybeShowOnboarding(){
 
 /* ── Mostrar changelog si hay versión nueva ── */
 function _maybeShowChangelog(){
-  var seen = localStorage.getItem(CHANGELOG_KEY + CHANGELOG_VERSION);
-  if(seen) return;
-  /* Solo mostrar si NO es usuario completamente nuevo (eso ya tiene onboarding) */
-  var onbDone = localStorage.getItem('bv_onboarding_done');
-  if(!onbDone) return; /* nuevo usuario: el onboarding es suficiente */
-  setTimeout(openChangelog, 1200);
+  /* Auto-show desactivado: el changelog solo abre desde Ajustes → Novedades */
+  return;
 }
 
 /* ── Enganchar con el evento de inicio de sesión ── */
