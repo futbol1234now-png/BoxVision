@@ -11432,6 +11432,8 @@ if(auth){
     if(body&&!body.children.length){
       _fetchConfig(function(cfg){if(cfg)_buildChangelog(cfg);});
     }
+    /* Marcar como visto al abrir (evita que reaparezca si el usuario recarga sin cerrar) */
+    try{ var v=window._changelogVersion||''; if(v)localStorage.setItem('bv_changelog_seen',v); }catch(e){}
     ov.style.display='flex';
     requestAnimationFrame(function(){requestAnimationFrame(function(){ov.classList.add('open');});});
   };
@@ -18851,13 +18853,15 @@ window.openChangelog = window.showChangelog = function(){
   if(!ov) return;
   var sub = document.getElementById('clgVersionSub');
   if(sub) sub.textContent = 'Versión ' + CHANGELOG_VERSION + ' — ' + new Date().toLocaleDateString('es',{month:'long',year:'numeric'});
+  /* Marcar como visto al abrir (evita que reaparezca si el usuario recarga sin cerrar) */
+  try{ localStorage.setItem(CHANGELOG_KEY + CHANGELOG_VERSION, '1'); }catch(e){}
   ov.classList.add('open');
 };
 
 window.closeChangelog = function(){
   var ov = document.getElementById('changelogOverlay');
   if(ov) ov.classList.remove('open');
-  /* Marcar como visto */
+  /* Marcar como visto también al cerrar (por si acaso) */
   try{ localStorage.setItem(CHANGELOG_KEY + CHANGELOG_VERSION, '1'); }catch(e){}
 };
 
