@@ -89,6 +89,14 @@
   });
 </script>
 
+<!-- ══════════════════════════════════════════════════
+     VERSIÓN ÚNICA DE LA APP — fuente de verdad central
+     Cambia SOLO este valor para actualizar toda la UI.
+     ══════════════════════════════════════════════════ -->
+<script>
+  window.APP_VERSION = '3.2.0';
+</script>
+
 <!-- TABLER ICONS - CON FALLBACKS MÚLTIPLES -->
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.24.0/tabler-icons.min.css" id="tabler-primary" onerror="loadTablerFallback(this)">
 <script>
@@ -1636,23 +1644,42 @@ input,button,textarea,select{font-family:inherit}
   display:flex;flex-direction:column;align-items:center;gap:6px;
   margin-bottom:4px;
   animation:spStatIn .5s .08s cubic-bezier(.34,1.3,.64,1) both;
+  /* Fix 3: evitar desbordamiento horizontal en cualquier ancho */
+  width:100%;
+  max-width:360px;
+  overflow:hidden;
 }
 .sp-clock-time{
-  font-size:76px;font-weight:100;
+  /* Fix 3: font-size fluido entre 320px y 428px de viewport.
+     - mínimo 52px en pantallas muy estrechas (iPhone SE 320px)
+     - máximo 76px en pantallas grandes (iPhone Pro Max 428px)
+     - la fórmula lineal: 52px + (76-52) * ((100vw - 320px) / (428-320))
+       simplificada a: calc(52px + 22.2 * ((100vw - 320px) / 108))
+       → equivalente clamp limpio: */
+  font-size: clamp(52px, 12vw + 14px, 76px);
+  font-weight:100;
   color:rgba(255,255,255,.96);
   letter-spacing:-4px;
   font-variant-numeric:tabular-nums;
   line-height:1;
   text-shadow:0 2px 40px rgba(10,132,255,.25);
+  /* Garantiza que nunca desborde el contenedor */
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:clip;
 }
 .sp-clock-sep{display:none}
 .sp-clock-zone{
-  font-size:11px;color:rgba(255,255,255,.35);
+  /* Fix 3: también escalar la zona horaria */
+  font-size: clamp(9px, 2.5vw, 11px);
+  color:rgba(255,255,255,.35);
   font-weight:500;letter-spacing:1.2px;text-transform:uppercase;
   background:rgba(255,255,255,.05);
   border:0.5px solid rgba(255,255,255,.08);
-  border-radius:99px;padding:3px 12px;
+  border-radius:99px;
+  padding:3px 12px;
   margin-top:0;
+  white-space:nowrap;
 }
 @keyframes clockGlow{
   0%,100%{text-shadow:0 2px 40px rgba(10,132,255,.25);}
@@ -1738,14 +1765,27 @@ input,button,textarea,select{font-family:inherit}
   font-size:10px;color:rgba(255,255,255,.5);
   text-transform:uppercase;letter-spacing:1px;font-weight:600;
 }
-/* Ícono — con color temático */
+/* Ícono — con color temático
+   Fix 1: Simetría perfecta entre tarjetas.
+   - Tamaño del contenedor y font-size uniformes para los 3.
+   - line-height:1 + display:inline-flex centra cada emoji
+     independientemente de sus métricas ópticas individuales.
+   - font-size:20px en lugar de 18px da mejor presencia visual
+     y cubre la caja de texto de emojis compuestos como 🗂️. */
 .sp-stat-icon{
-  font-size:18px;line-height:1;
-  display:inline-flex;align-items:center;justify-content:center;
-  width:38px;height:38px;border-radius:12px;
+  font-size:20px;
+  line-height:1;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  width:40px;height:40px;
+  border-radius:12px;
   background:rgba(255,255,255,.1);
   border:0.5px solid rgba(255,255,255,.15);
   margin-bottom:0;
+  /* Garantiza que el emoji ocupe exactamente el contenedor */
+  flex-shrink:0;
+  user-select:none;
 }
 #spStatC .sp-stat-icon{
   background:rgba(10,132,255,.3);
@@ -1808,26 +1848,41 @@ input,button,textarea,select{font-family:inherit}
 .sp-last-icon{font-size:24px;line-height:1}
 .sp-last-name{font-size:15px;font-weight:700;color:#fff}
 .sp-last-sub{font-size:12px;color:rgba(255,255,255,.5);margin-top:2px}
-/* Botones */
+/* Botón principal — "Ver mis cajas"
+   Fix 2: padding vertical aumentado para mejor ergonomía móvil,
+   gap más generoso entre icono y texto, hover con elevación Y. */
 .sp-btn{
   background:rgba(10,132,255,1);
   color:#fff;border:none;
-  border-radius:20px;padding:17px 20px;
+  border-radius:20px;
+  padding:19px 24px;          /* ↑ de 17px → 19px vertical, más simétrico */
   font-size:16px;font-weight:600;cursor:pointer;
   width:100%;max-width:360px;margin-bottom:10px;
-  display:flex;align-items:center;justify-content:center;gap:8px;
+  display:flex;align-items:center;justify-content:center;
+  gap:10px;                   /* ↑ de 8px → 10px entre icono y texto */
   box-shadow:
     0 6px 28px rgba(0,0,0,.3),
     0 1px 0 rgba(255,255,255,.2) inset,
     0 -1px 0 rgba(0,0,0,.2) inset;
-  transition:transform .18s cubic-bezier(.34,1.3,.64,1),
-             box-shadow .18s,
-             background .15s;
+  transition:
+    transform .18s cubic-bezier(.34,1.3,.64,1),
+    box-shadow .18s,
+    background .15s;
   letter-spacing:.05px;
 }
+.sp-btn:hover{
+  /* Elevación sutil: el botón sube 2px y la sombra se expande */
+  transform:translateY(-2px);
+  box-shadow:
+    0 10px 36px rgba(10,132,255,.45),
+    0 4px 14px rgba(0,0,0,.25),
+    0 1px 0 rgba(255,255,255,.2) inset,
+    0 -1px 0 rgba(0,0,0,.2) inset;
+  background:rgba(14,140,255,1);     /* +brillo muy sutil */
+}
 .sp-btn:active{
-  transform:scale(.96);
-  box-shadow:0 3px 14px rgba(0,0,0,.25);
+  transform:scale(.96) translateY(1px);
+  box-shadow:0 3px 14px rgba(0,0,0,.28);
   background:rgba(10,110,230,1);
 }
 .sp-btn2{
@@ -2297,7 +2352,14 @@ input,button,textarea,select{font-family:inherit}
 .item-ctx-opt.danger{color:var(--red,#FF3B30);}
 .item-ctx-opt.danger svg{opacity:1;}
 .item-ctx-sep{height:0.5px;background:var(--border);}
-.add-row{display:flex;align-items:center;gap:10px;padding:10px 16px;border-top:0.5px solid var(--border)}
+.add-row{
+  display:flex;
+  /* Fix 3: stretch para que todos los children compartan la misma altura de fila */
+  align-items:stretch;
+  gap:8px;                  /* gap uniforme en todo el add-row */
+  padding:10px 16px;
+  border-top:0.5px solid var(--border);
+}
 .add-row input{flex:1;border:none;outline:none;font-size:15px;color:var(--text);background:transparent;padding:4px 0}
 .add-row input::placeholder{color:var(--muted)}
 .add-btn2{
@@ -2325,15 +2387,18 @@ input,button,textarea,select{font-family:inherit}
 @keyframes micPulse{0%,100%{box-shadow:0 3px 14px rgba(255,59,48,.5)}50%{box-shadow:0 3px 22px rgba(255,59,48,.8)}}
 /* Cámara / scan */
 @keyframes scanPulse{0%,100%{opacity:1}50%{opacity:.65}}
-/* Botón + agregar */
+/* Botón + agregar — Fix 3: altura explícita para alineación con Voz/Lista */
 .add-main-btn{
   background:linear-gradient(145deg,#1A8AFF,#0A84FF);
   box-shadow:0 3px 12px rgba(10,132,255,.4);
-  border-radius:14px;width:38px;height:38px;
+  border-radius:12px;
+  width:40px;height:40px;        /* altura fija, igual que add-method-btn */
   display:flex;align-items:center;justify-content:center;
   border:none;color:#fff;cursor:pointer;font-size:18px;flex-shrink:0;
   transition:transform 120ms cubic-bezier(.175,.885,.32,1.275), opacity 120ms;
   -webkit-tap-highlight-color:transparent;
+  /* Asegura que respeta el stretch del add-input-wrap */
+  align-self:center;
 }
 .add-main-btn:active{transform:scale(.9);opacity:.85;filter:brightness(.88);transition:transform .08s,opacity .08s,filter .08s}
 /* Tooltip label debajo de los botones */
@@ -2864,7 +2929,8 @@ input,button,textarea,select{font-family:inherit}
 /* Footer mejorado */
 .settings-footer{
   text-align:center;
-  padding:20px 0 24px;
+  /* Fix 3: padding inferior generoso + respeto al home indicator de iOS/Android */
+  padding:20px 0 max(40px, calc(24px + env(safe-area-inset-bottom, 16px)));
 }
 .set-footer-logo{
   width:52px;height:52px;border-radius:16px;
@@ -2981,7 +3047,9 @@ input,button,textarea,select{font-family:inherit}
 .rel-select{width:100%;box-sizing:border-box;background:var(--input);border:1.5px solid var(--border);border-radius:13px;padding:12px 36px 12px 13px;font-size:15px;color:var(--text);font-family:inherit;outline:none;appearance:none;-webkit-appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='rgba(255,255,255,0.3)' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 14px center}
 /* ── Nuevo menú de agregar objetos ── */
 .add-input-wrap{
-  display:flex;align-items:center;gap:8px;
+  display:flex;
+  align-items:center;           /* Fix 3: input + botón + centrados entre sí */
+  gap:8px;                      /* mismo gap que add-row */
   background:var(--input);
   border:1.5px solid var(--border);
   border-radius:14px;
@@ -3000,18 +3068,26 @@ input,button,textarea,select{font-family:inherit}
 }
 .add-input-wrap input::placeholder{color:var(--muted);}
 .add-methods{
-  display:flex;gap:6px;align-items:center;flex-shrink:0;
+  display:flex;
+  gap:8px;                      /* Fix 3: gap uniforme de 8px, igual que add-row */
+  align-items:stretch;          /* Fix 3: hijos al mismo alto */
+  flex-shrink:0;
 }
 .add-method-btn{
-  display:flex;flex-direction:column;align-items:center;gap:3px;
+  /* Fix 3: altura fija de 40px = misma que add-main-btn → alineación perfecta */
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:3px;
+  height:40px;                  /* altura fija explícita */
+  min-width:52px;               /* ancho mínimo uniforme entre Voz y Lista */
   background:var(--card);
   border:1px solid var(--border);
-  border-radius:12px;padding:7px 10px 6px;
+  border-radius:12px;           /* mismo radio que add-main-btn */
+  padding:0 10px;               /* padding horizontal, sin vertical (altura lo controla) */
   cursor:pointer;font-family:inherit;
   color:var(--muted);font-size:10px;font-weight:600;
   transition:background .15s,border-color .15s,color .15s,transform .12s;
   -webkit-tap-highlight-color:transparent;
-  min-width:44px;
+  flex-shrink:0;
 }
 .add-method-btn:hover,.add-method-btn:active{
   background:rgba(10,132,255,.1);
@@ -3154,6 +3230,23 @@ input,button,textarea,select{font-family:inherit}
 }
 .item-thumb-wrap:hover .item-thumb-overlay,
 .item-thumb-wrap:active .item-thumb-overlay{opacity:1;}
+
+/* Fix 1 — Thumbnail placeholder (ítem sin foto).
+   Reemplaza el fondo que hereda de --card2 (puede ser rojizo en temas oscuros)
+   por un contenedor glass-oscuro neutral, consistente en cualquier tema.
+   El emoji del objeto sigue renderizándose desde JS, pero ahora sobre un
+   fondo slate controlado en lugar del color del tema. */
+.i-emoji{
+  background: rgba(30,32,44,.75) !important;
+  border: 0.5px solid rgba(255,255,255,.1) !important;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.06), 0 1px 4px rgba(0,0,0,.28) !important;
+}
+/* En modo claro (light), usar un gris más suave */
+[data-dark=""] .i-emoji{
+  background: rgba(240,242,248,.85) !important;
+  border: 0.5px solid rgba(0,0,0,.08) !important;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.7), 0 1px 3px rgba(0,0,0,.06) !important;
+}
 
 .empty-state{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:60px 32px;text-align:center;gap:0}
 .empty-state-svg{margin-bottom:24px;filter:drop-shadow(0 8px 24px rgba(10,132,255,.25))}
@@ -3343,9 +3436,8 @@ input[type=file]{display:none}
 .tbtn:active{transform:scale(.88)}
 .add-btn2{transition:transform .12s,box-shadow .12s}
 .add-btn2:active{transform:scale(.85)}
-.sp-btn{transition:transform .15s,box-shadow .15s}
-.sp-btn:hover{box-shadow:0 6px 20px rgba(0,122,255,.35)}
-.sp-btn:active{transform:scale(.97)}
+/* sp-btn transición — overrides de timing aquí, hover/active en estilos principales */
+.sp-btn{transition:transform .15s,box-shadow .15s,background .15s}
 .sp-btn2:active{transform:scale(.97)}
 .m-primary:active{transform:scale(.97)}
 .det-btn:active{transform:scale(.95)}
@@ -3424,8 +3516,8 @@ input[type=file]{display:none}
 
 /* All buttons - Apple haptic feel */
 button{-webkit-tap-highlight-color:transparent;outline:none}
-.sp-btn{transition:transform var(--dur-fast) var(--ease-spring),box-shadow var(--dur-fast) var(--ease-ios)}
-.sp-btn:active{transform:scale(.95)}
+.sp-btn{transition:transform var(--dur-fast) var(--ease-spring),box-shadow var(--dur-fast) var(--ease-ios),background var(--dur-fast)}
+/* sp-btn hover/active definitivos están en los estilos principales del splash */
 .sp-btn2{transition:transform var(--dur-fast) var(--ease-spring),opacity var(--dur-fast)}
 .sp-btn2:active{transform:scale(.95);opacity:.8}
 .tbtn{transition:transform var(--dur-fast) var(--ease-spring),background var(--dur-fast)}
@@ -4564,7 +4656,7 @@ if(!auth){
       <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6" style="color:rgba(255,255,255,.25)"/></svg></i>
     </div>
   </div>
-  <button class="sp-btn" onclick="goMain()"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-3px;margin-right:7px;flex-shrink:0" aria-hidden="true"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>Ver mis cajas</button>
+  <button class="sp-btn" onclick="goMain()"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>Ver mis cajas</button>
   <div class="sp-row" style="margin-bottom:10px;width:100%;max-width:360px">
     <button class="sp-btn2" onclick="goRoom()" style="flex:1;margin-bottom:0"><svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px;margin-right:5px;flex-shrink:0" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>Habitaciones</button>
     <button class="sp-btn2" onclick="goSettings()" style="flex:1;margin-bottom:0"><svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px;margin-right:5px;flex-shrink:0" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>Ajustes</button>
@@ -5409,18 +5501,18 @@ if(!auth){
         <div class="settings-row settings-tappable" onclick="openSecureDeleteSheet()">
           <div class="settings-row-icon sri-red"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg></div>
           <div class="settings-row-text">
-            <div class="settings-label" style="color:var(--red)">Borrar todos los datos</div>
+            <div class="settings-label" style="color:#FF6B6B">Borrar todos los datos</div>
             <div class="settings-sub">Elimina todas tus cajas permanentemente</div>
           </div>
-          <span class="settings-chevron" style="color:var(--red)">›</span>
+          <span class="settings-chevron" style="color:#FF6B6B">›</span>
         </div>
         <div class="settings-row settings-tappable" onclick="signOutUser()">
           <div class="settings-row-icon sri-red"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg></div>
           <div class="settings-row-text">
-            <div class="settings-label" style="color:var(--red)">Cerrar sesión</div>
+            <div class="settings-label" style="color:#FF6B6B">Cerrar sesión</div>
             <div class="settings-sub">Salir de tu cuenta actual</div>
           </div>
-          <span class="settings-chevron" style="color:var(--red)">›</span>
+          <span class="settings-chevron" style="color:#FF6B6B">›</span>
         </div>
       </div>
     </div>
@@ -5437,7 +5529,13 @@ if(!auth){
         <span class="set-footer-dot">•</span>
         <a href="terms.html" target="_blank" class="set-footer-link">Términos</a>
       </div>
-      <div class="set-version-badge">📦 BoxVision · v2.5.0 · © 2025</div>
+      <div class="set-version-badge" id="footerVersionBadge">📦 BoxVision · v<span id="footerVersionNumber"></span> · © 2025</div>
+      <script>
+        (function(){
+          var el = document.getElementById('footerVersionNumber');
+          if(el) el.textContent = window.APP_VERSION || '3.2.0';
+        })();
+      </script>
     </div>
 
   </div><!-- /.settings-body -->
@@ -7979,7 +8077,13 @@ function goSettings(){ if(typeof _updateFabVisibility==='function') _updateFabVi
   if(clSub){
     fetch('./config.json?_='+Date.now(),{cache:'no-store'})
       .then(r=>r.json())
-      .then(cfg=>{ if(clSub) clSub.textContent = 'Versión '+cfg.version+' · '+cfg.released; })
+      .then(cfg=>{
+        if(!clSub) return;
+        // Usar APP_VERSION como fallback si cfg.version no existe o llega undefined
+        var ver      = (cfg.version  && cfg.version  !== 'undefined') ? cfg.version  : (window.APP_VERSION || 'Última versión');
+        var released = (cfg.released && cfg.released !== 'undefined') ? cfg.released : 'Estable';
+        clSub.textContent = 'Versión ' + ver + ' · ' + released;
+      })
       .catch(()=>{ if(clSub) clSub.textContent = 'Ver cambios de esta versión'; });
   }
 }
@@ -11413,11 +11517,15 @@ if(auth){
       .catch(function(){cb(null);});
   }
 
+  /* ── Clave única de localStorage para todo el sistema de changelog ── */
+  var BV_SEEN_KEY = 'boxvision_version_vista';
+
   function _checkVersion(){
     _fetchConfig(function(cfg){
       if(!cfg||!cfg.version) return;
       var seen='';
-      try{seen=localStorage.getItem('bv_changelog_seen')||'';}catch(e){}
+      try{seen=localStorage.getItem(BV_SEEN_KEY)||'';}catch(e){}
+      /* Solo mostrar si la versión vista es distinta a la actual */
       if(seen!==cfg.version){
         _buildChangelog(cfg);
         window._changelogVersion=cfg.version;
@@ -11432,8 +11540,8 @@ if(auth){
     if(body&&!body.children.length){
       _fetchConfig(function(cfg){if(cfg)_buildChangelog(cfg);});
     }
-    /* Marcar como visto al abrir (evita que reaparezca si el usuario recarga sin cerrar) */
-    try{ var v=window._changelogVersion||''; if(v)localStorage.setItem('bv_changelog_seen',v); }catch(e){}
+    /* Marcar como visto AL ABRIR — evita que reaparezca si el usuario recarga sin cerrar */
+    try{ var v=window._changelogVersion||''; if(v)localStorage.setItem(BV_SEEN_KEY,v); }catch(e){}
     ov.style.display='flex';
     requestAnimationFrame(function(){requestAnimationFrame(function(){ov.classList.add('open');});});
   };
@@ -11442,7 +11550,8 @@ if(auth){
     var ov=document.getElementById('changelogOverlay'); if(!ov) return;
     ov.classList.remove('open');
     setTimeout(function(){ov.style.display='none';},400);
-    try{ var v=window._changelogVersion||''; if(v)localStorage.setItem('bv_changelog_seen',v); }catch(e){}
+    /* Marcar como visto AL CERRAR también (botón "¡Entendido!") */
+    try{ var v=window._changelogVersion||''; if(v)localStorage.setItem(BV_SEEN_KEY,v); }catch(e){}
   };
 
   window.showChangelog=window.openChangelog;
@@ -14487,7 +14596,8 @@ function _pwDel(){
 #bvUpdateOverlay {
   position: fixed;
   inset: 0;
-  z-index: 9900;
+  /* FIX z-index: por encima de FABs, menús flotantes y notificaciones (usualmente ≤9800) */
+  z-index: 99990;
   background: rgba(0,0,0,0);
   backdrop-filter: blur(0px);
   -webkit-backdrop-filter: blur(0px);
@@ -14495,9 +14605,9 @@ function _pwDel(){
   transition: background .35s ease, backdrop-filter .35s ease, -webkit-backdrop-filter .35s ease;
 }
 #bvUpdateOverlay.open {
-  background: rgba(0,0,0,.45);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
+  background: rgba(0,0,0,.55);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
   pointer-events: all;
 }
 
@@ -14507,7 +14617,8 @@ function _pwDel(){
   bottom: 0;
   left: 0;
   right: 0;
-  z-index: 9999;
+  /* FIX z-index: siempre por encima del overlay */
+  z-index: 99999;
   background: rgba(28,28,30,0.97);
   border-radius: 22px 22px 0 0;
   padding: 0 0 max(28px, env(safe-area-inset-bottom, 28px));
@@ -14626,19 +14737,27 @@ function _pwDel(){
   padding: 6px 16px;
 }
 .bvu-version-old {
+  /* MEJORA: monospace para hashes de versión, más legible */
+  font-family: 'SF Mono', 'Fira Code', 'Menlo', monospace;
   font-size: 12px;
-  color: rgba(255,255,255,.35);
-  font-weight: 600;
+  color: rgba(255,255,255,.38);
+  font-weight: 500;
   text-decoration: line-through;
+  letter-spacing: .3px;
 }
 .bvu-arrow {
-  font-size: 11px;
-  color: rgba(255,255,255,.2);
+  /* MEJORA: flecha con color sutil que indica flujo viejo → nuevo */
+  font-size: 14px;
+  color: rgba(255,255,255,.3);
+  font-weight: 300;
 }
 .bvu-version-new {
+  /* MEJORA: monospace consistente con la versión anterior */
+  font-family: 'SF Mono', 'Fira Code', 'Menlo', monospace;
   font-size: 12px;
   color: #34C759;
-  font-weight: 700;
+  font-weight: 600;
+  letter-spacing: .3px;
 }
 
 /* ── Changelog lista ── */
@@ -14687,26 +14806,42 @@ function _pwDel(){
   box-shadow:
     0 4px 20px rgba(10,132,255,.4),
     inset 0 1px 0 rgba(255,255,255,.18);
-  transition: transform .16s cubic-bezier(.34,1.56,.64,1), opacity .15s;
+  /* MEJORA: transición suave incluyendo box-shadow para hover */
+  transition: transform .16s cubic-bezier(.34,1.56,.64,1), opacity .15s, box-shadow .2s;
   -webkit-tap-highlight-color: transparent;
   margin-bottom: 10px;
 }
+/* MEJORA: hover sutil en desktop */
+.bvu-btn-update:hover {
+  box-shadow:
+    0 6px 28px rgba(10,132,255,.55),
+    inset 0 1px 0 rgba(255,255,255,.22);
+  opacity: .95;
+}
 .bvu-btn-update:active { transform: scale(.97); opacity: .9; }
+
 .bvu-btn-later {
   width: 100%;
   padding: 14px;
   border-radius: 16px;
   border: none;
-  background: rgba(255,255,255,.06);
-  color: rgba(255,255,255,.5);
+  background: rgba(255,255,255,.07);
+  /* MEJORA: contraste aumentado de .5 → .72 para cumplir WCAG AA sin competir con el primario */
+  color: rgba(255,255,255,.72);
   font-size: 15px;
   font-weight: 600;
   font-family: inherit;
   cursor: pointer;
-  transition: background .15s;
+  /* MEJORA: transición también en color para hover más limpio */
+  transition: background .15s, color .15s;
   -webkit-tap-highlight-color: transparent;
 }
-.bvu-btn-later:active { background: rgba(255,255,255,.1); }
+/* MEJORA: hover sutil que no roba protagonismo al botón principal */
+.bvu-btn-later:hover {
+  background: rgba(255,255,255,.11);
+  color: rgba(255,255,255,.88);
+}
+.bvu-btn-later:active { background: rgba(255,255,255,.14); }
 
 /* ── Toast de "comprobando" ── */
 #bvuCheckToast {
@@ -16809,22 +16944,51 @@ console.log('✅ BoxVision SmartPhoto v' + SP_VERSION + ' listo — Gemini Visio
   flex-shrink:0;
 }
 .gt-fab{
-  position:fixed;bottom:88px;right:20px;z-index:9900;
-  width:44px;height:44px;border-radius:50%;
-  background:var(--card,#1C1C1E);border:1px solid rgba(255,255,255,.14);
-  box-shadow:0 4px 16px rgba(0,0,0,.4);
+  /* ── FAB etiquetas — flotante limpio ── */
+  position:fixed;
+  /* En mainScreen hay tab-bar (~83px) → necesita subir más.
+     En detailScreen no hay tab-bar → 24px sobre el borde es suficiente.
+     El JS toggle de visibilidad añade la clase gt-fab--detail
+     cuando estamos en detailScreen (ver script abajo). */
+  bottom:calc(96px + env(safe-area-inset-bottom, 0px));
+  right:20px;
+  z-index:10200;
+  width:50px;height:50px;border-radius:50%;
+  background:var(--card,#1C1C1E);
+  border:1px solid rgba(255,255,255,.18);
+  /* Fix 2: shadow-lg equivalente para que "flote" visualmente */
+  box-shadow:
+    0 8px 24px rgba(0,0,0,.55),
+    0 3px 8px rgba(0,0,0,.35),
+    inset 0 1px 0 rgba(255,255,255,.08);
   display:none;align-items:center;justify-content:center;
-  font-size:16px;cursor:pointer;transition:transform .15s,box-shadow .15s;
+  font-size:20px;cursor:pointer;
+  transition:transform .18s cubic-bezier(.34,1.56,.64,1),
+             box-shadow .15s,
+             bottom .2s cubic-bezier(.4,0,.2,1);
   color:var(--text,#fff);
+  will-change:transform;
+  -webkit-tap-highlight-color:transparent;
 }
-.gt-fab:hover{transform:scale(1.08);box-shadow:0 6px 24px rgba(0,0,0,.5);}
+/* Fix 2b: en detailScreen (sin tab-bar) el FAB baja al borde */
+.gt-fab.gt-fab--detail{
+  bottom:calc(24px + env(safe-area-inset-bottom, 0px));
+}
+.gt-fab:hover{
+  transform:scale(1.1);
+  box-shadow:0 10px 30px rgba(0,0,0,.6),0 4px 10px rgba(0,0,0,.4);
+}
+.gt-fab:active{transform:scale(.9);}
 .gt-fab-badge{
-  position:absolute;top:-4px;right:-4px;
-  min-width:18px;height:18px;border-radius:99px;
+  position:absolute;top:-5px;right:-5px;
+  min-width:20px;height:20px;border-radius:99px;
   background:var(--accent,#007AFF);color:#fff;
   font-size:10px;font-weight:800;
   display:flex;align-items:center;justify-content:center;
-  padding:0 4px;
+  padding:0 5px;
+  /* Borde que separa el badge del botón visualmente */
+  border:2px solid var(--bg, #17171f);
+  box-shadow:0 2px 6px rgba(0,0,0,.4);
 }
 /* Barra de búsqueda con #tag activo */
 .gt-active-bar{
@@ -16968,15 +17132,29 @@ function _gtUpdateFab() {
   var fab    = document.getElementById('gtFab');
   var badge  = document.getElementById('gtFabBadge');
   var main   = document.getElementById('mainScreen');
+  var detail = document.getElementById('detailScreen');
   if (!fab) return;
   var tags   = _gtGetAllTags();
-  // Verificación estricta: mainScreen debe existir, estar visible y tener offsetParent
-  var isMain = main && !main.classList.contains('hidden') && main.offsetParent !== null;
-  if (isMain && tags.length > 0) {
+
+  /* Fix 2: contexto por pantalla
+     - mainScreen → FAB alto (sobre tab-bar) → sin clase extra
+     - detailScreen → FAB bajo (sin tab-bar) → clase gt-fab--detail
+     - otras pantallas → oculto */
+  var isMain   = main   && !main.classList.contains('hidden')   && main.offsetParent   !== null;
+  var isDetail = detail && !detail.classList.contains('hidden') && detail.offsetParent !== null;
+
+  if ((isMain || isDetail) && tags.length > 0) {
     fab.style.display = 'flex';
     if (badge) badge.textContent = tags.length;
+    /* Clase contextual: en detailScreen baja a safe-area + 24px */
+    if (isDetail) {
+      fab.classList.add('gt-fab--detail');
+    } else {
+      fab.classList.remove('gt-fab--detail');
+    }
   } else {
     fab.style.display = 'none';
+    fab.classList.remove('gt-fab--detail');
   }
 }
 
@@ -18752,8 +18930,10 @@ console.log('✅ Modo Mudanza v1.1 — toggle en Ajustes');
 (function(){
 'use strict';
 
-var CHANGELOG_VERSION = '2.5'; // Incrementar con cada release para mostrar de nuevo
-var CHANGELOG_KEY     = 'bv_changelog_seen_v';
+/* ── Versión sincronizada: lee la constante global APP_VERSION ── */
+var CHANGELOG_VERSION = window.APP_VERSION || '3.2.0';
+/* ── Misma clave que el sistema principal para evitar conflictos ── */
+var CHANGELOG_KEY     = 'boxvision_version_vista';
 
 /* Tips por tipo de uso */
 var OB_TIPS_ES = {
@@ -18853,16 +19033,16 @@ window.openChangelog = window.showChangelog = function(){
   if(!ov) return;
   var sub = document.getElementById('clgVersionSub');
   if(sub) sub.textContent = 'Versión ' + CHANGELOG_VERSION + ' — ' + new Date().toLocaleDateString('es',{month:'long',year:'numeric'});
-  /* Marcar como visto al abrir (evita que reaparezca si el usuario recarga sin cerrar) */
-  try{ localStorage.setItem(CHANGELOG_KEY + CHANGELOG_VERSION, '1'); }catch(e){}
+  /* Marcar como visto AL ABRIR con clave unificada y valor = versión */
+  try{ localStorage.setItem(CHANGELOG_KEY, CHANGELOG_VERSION); }catch(e){}
   ov.classList.add('open');
 };
 
 window.closeChangelog = function(){
   var ov = document.getElementById('changelogOverlay');
   if(ov) ov.classList.remove('open');
-  /* Marcar como visto también al cerrar (por si acaso) */
-  try{ localStorage.setItem(CHANGELOG_KEY + CHANGELOG_VERSION, '1'); }catch(e){}
+  /* Marcar como visto AL CERRAR (botón "¡Entendido!") */
+  try{ localStorage.setItem(CHANGELOG_KEY, CHANGELOG_VERSION); }catch(e){}
 };
 
 /* ── Mostrar onboarding si el usuario es nuevo ── */
