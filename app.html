@@ -6813,7 +6813,10 @@ function addItem(){
 function delItem(idx){
   const box=boxes.find(b=>b.id===currentBoxId);if(!box) return;
   if(box.sealed){showToast(t("toast.sealed"),"#FF9500");return;}
-  addHistory(box,"Eliminado: "+box.items[idx].text);
+  const item=box.items[idx];
+  addHistory(box,"Eliminado: "+item.text);
+  // Registrar el item eliminado para que el merge no lo restaure en otros dispositivos
+  _registerDeletedItem(box, item.text);
   box.items.splice(idx,1);saveData();renderItems();renderProgress();renderHistory();generateQR(currentBoxId);
 }
 
@@ -7223,6 +7226,49 @@ function _registerDeletedBox(id){
 function _getDeletedIds(){
   if(!currentUser) return [];
   try{ return JSON.parse(localStorage.getItem("cb-deleted-"+currentUser.uid)||"[]"); }catch(e){ return []; }
+}
+
+// ── Registro de items eliminados (para sync bidireccional) ────────────────────
+// Guarda { boxId, text } en localStorage Y en Firestore (merge) para que
+// _mergeItems sepa que ese texto fue eliminado intencionalmente y no lo restaure.
+function _registerDeletedItem(box, text){
+  if(!currentUser || !box) return;
+  const key = "cb-deletedItems-"+currentUser.uid;
+  let list = [];
+  try{ list = JSON.parse(localStorage.getItem(key)||"[]"); }catch(e){}
+  const entry = { boxId: box.id, text: text, deletedAt: Date.now() };
+  // Evitar duplicados
+  if(!list.some(function(e){ return e.boxId===box.id && e.text===text; })){
+    list.push(entry);
+    localStorage.setItem(key, JSON.stringify(list));
+  }
+  // Persistir en el documento Firestore del usuario (campo deletedItems)
+  if(db){
+    db.collection("users").doc(currentUser.uid).set(
+      { deletedItems: firebase.firestore.FieldValue.arrayUnion(entry) },
+      { merge: true }
+    ).catch(function(){});
+  }
+}
+
+function _getDeletedItems(){
+  if(!currentUser) return [];
+  try{ return JSON.parse(localStorage.getItem("cb-deletedItems-"+currentUser.uid)||"[]"); }catch(e){ return []; }
+}
+
+// Sincronizar deletedItems remotos al localStorage local
+function _syncDeletedItems(remoteList){
+  if(!currentUser || !Array.isArray(remoteList) || remoteList.length===0) return;
+  const key = "cb-deletedItems-"+currentUser.uid;
+  let local = [];
+  try{ local = JSON.parse(localStorage.getItem(key)||"[]"); }catch(e){}
+  const merged = [...local];
+  for(const ri of remoteList){
+    if(!merged.some(function(e){ return e.boxId===ri.boxId && e.text===ri.text; })){
+      merged.push(ri);
+    }
+  }
+  localStorage.setItem(key, JSON.stringify(merged));
 }
 
 /* openForm / openEditForm / closeForm / closeFormOutside — definidas en el bloque del modal al final del body */
@@ -10516,22 +10562,33 @@ function _mergeBoxes(local, remote, deletedIds=[]){
   // En lugar de "gana la caja completa más nueva", fusiona item por item.
   // Estrategia: unión por texto. Si el mismo texto existe en ambos lados,
   // gana el estado (done/addedAt) más reciente. Items únicos de cada lado
-  // se incluyen siempre.
-  function _mergeItems(localItems, remoteItems){
+  // se incluyen siempre. Los items registrados en deletedItems NUNCA
+  // se restauran aunque existan en uno de los lados.
+  function _mergeItems(localItems, remoteItems, boxId){
     const localArr  = localItems  || [];
     const remoteArr = remoteItems || [];
+
+    // Construir set de textos eliminados para esta caja
+    const deletedItemsList = typeof _getDeletedItems === 'function' ? _getDeletedItems() : [];
+    const deletedTexts = new Set(
+      deletedItemsList
+        .filter(function(e){ return e.boxId === boxId; })
+        .map(function(e){ return e.text; })
+    );
 
     // Map por texto → item más reciente
     const byText = new Map();
 
-    // Cargar items remotos primero como base
+    // Cargar items remotos primero como base (omitir los eliminados)
     for(const ri of remoteArr){
-      byText.set(ri.text, Object.assign({}, ri));
+      if(!deletedTexts.has(ri.text)) byText.set(ri.text, Object.assign({}, ri));
     }
 
     // Fusionar con locales: si el texto ya existe, gana el addedAt mayor
     // (o el que tenga done=true más reciente si ambos tienen el mismo addedAt)
     for(const li of localArr){
+      // Si fue eliminado intencionalmente, nunca restaurar
+      if(deletedTexts.has(li.text)) continue;
       const existing = byText.get(li.text);
       if(!existing){
         // Item solo en local → incluir
@@ -10574,7 +10631,8 @@ function _mergeBoxes(local, remote, deletedIds=[]){
       const localTs  = lb.lastModified || lb.lastUsed || 0;
 
       // Siempre fusionar items a nivel individual (mejora clave)
-      const mergedItems = _mergeItems(lb.items, rb.items);
+      // Pasamos rb.id para que _mergeItems conozca qué deletedItems aplicar
+      const mergedItems = _mergeItems(lb.items, rb.items, rb.id);
 
       // Para metadata de la caja (nombre, color, etc.) gana la más reciente
       const baseBox = (remoteTs >= localTs) ? Object.assign({}, rb) : Object.assign({}, lb);
@@ -10769,6 +10827,12 @@ async function _applyRealtimeSnapshot(userDoc, uid){
         .flatMap(d => d.exists ? (d.data().boxes || []) : []);
     } else if(data.boxes && data.boxes.length > 0){
       remote = data.boxes; // formato legacy
+    }
+
+    // Sincronizar deletedItems (objetos eliminados) desde el snapshot remoto
+    const remoteDeletedItems = data.deletedItems || [];
+    if(remoteDeletedItems.length > 0 && typeof _syncDeletedItems === 'function'){
+      _syncDeletedItems(remoteDeletedItems);
     }
 
     // Merge con los datos locales actuales
