@@ -10320,6 +10320,9 @@ async function saveToFirestore(){
       }
     }catch(e){ return; } // si falla la verificación, no arriesgarse
   }
+  // ── FLAG ANTI-BUCLE: marcar que el cambio viene de esta app ─────────────
+  // El onSnapshot lo detectará y lo ignorará, evitando el ciclo infinito.
+  _isFirestoreUpdate = true;
   try{
     const lean = boxes.map(b=>{
       const c = JSON.parse(JSON.stringify(b));
@@ -10386,6 +10389,11 @@ async function saveToFirestore(){
       var shouldCount = !ignore.some(function(w){ return emsg.indexOf(w)>=0 || ecode.indexOf(w)>=0; });
       if(shouldCount) window._bvFirestoreFail(e.code || e.message || 'save error');
     }
+  }finally{
+    // ── Liberar flag anti-bucle con un tick de delay ─────────────────────
+    // El pequeño delay permite que el SDK procese su propio snapshot local
+    // antes de que volvamos a escuchar cambios externos.
+    setTimeout(()=>{ _isFirestoreUpdate = false; }, 800);
   }
 }
 
@@ -10733,6 +10741,96 @@ function restoreThumbs(){
 // ════════════════════════════════════════════════════
 // AUTH — sistema definitivo para producción
 // ════════════════════════════════════════════════════
+
+// ── Listener en tiempo real (onSnapshot) ─────────────────────────────────────
+// _realtimeUnsub: función para cancelar el listener activo (o null si no hay)
+// _isFirestoreUpdate: flag para no disparar saveToFirestore() cuando el cambio
+//   viene DE Firestore (evita el bucle escritura → snapshot → escritura…)
+let _realtimeUnsub = null;
+let _isFirestoreUpdate = false;
+
+// ── Reconstruye cajas desde los chunks recibidos por onSnapshot ──────────────
+async function _applyRealtimeSnapshot(userDoc, uid){
+  try{
+    if(!userDoc.exists) return;
+    const data = userDoc.data();
+    const chunkCount = data.chunkCount || 0;
+    const remoteDeleted = data.deletedIds || [];
+
+    let remote = [];
+    if(chunkCount > 0){
+      // Leer todos los chunks en paralelo
+      const chunkRefs = Array.from({length: chunkCount}, (_, i) =>
+        db.collection("users").doc(uid).collection("chunks").doc(String(i)).get()
+      );
+      const chunkDocs = await Promise.all(chunkRefs);
+      remote = chunkDocs
+        .sort((a, b) => parseInt(a.id) - parseInt(b.id))
+        .flatMap(d => d.exists ? (d.data().boxes || []) : []);
+    } else if(data.boxes && data.boxes.length > 0){
+      remote = data.boxes; // formato legacy
+    }
+
+    // Merge con los datos locales actuales
+    const localDeleted = typeof _getDeletedIds === 'function' ? _getDeletedIds() : [];
+    const allDeleted   = [...new Set([...localDeleted, ...remoteDeleted])];
+    if(currentUser) localStorage.setItem("cb-deleted-"+uid, JSON.stringify(allDeleted));
+
+    const merged = _mergeBoxes(boxes, remote, allDeleted);
+    boxes = merged;
+    restoreThumbs();
+    saveToLocalStorage();
+
+    // ── Actualizar el DOM según la pantalla activa ───────────────────────────
+    const detailVisible = document.getElementById("detailScreen") &&
+      !document.getElementById("detailScreen").classList.contains("hidden");
+
+    if(detailVisible && currentBoxId){
+      // Estamos dentro del detalle de una caja → actualizar sólo esa vista
+      if(typeof renderItems    === 'function') renderItems();
+      if(typeof renderProgress === 'function') renderProgress();
+      if(typeof renderHistory  === 'function') renderHistory();
+    } else {
+      // Estamos en la pantalla principal (o rooms/settings) → refrescar el grid
+      if(typeof renderMain === 'function') renderMain();
+    }
+    console.log("[BoxVision RT] Snapshot aplicado:", remote.length, "cajas remotas →", merged.length, "totales");
+  }catch(e){
+    console.warn("[BoxVision RT] Error procesando snapshot:", e);
+  }
+}
+
+// ── Suscribir el listener en tiempo real para el usuario activo ───────────────
+function _startRealtimeListener(uid){
+  // Cancelar el anterior si lo hubiera (p.ej. cambio de usuario)
+  if(_realtimeUnsub){ _realtimeUnsub(); _realtimeUnsub = null; }
+
+  _realtimeUnsub = db.collection("users").doc(uid).onSnapshot(
+    { includeMetadataChanges: false }, // solo cambios reales (no local pending)
+    async function(docSnap){
+      // Ignorar si el cambio lo generamos nosotros mismos (flag anti-bucle)
+      if(_isFirestoreUpdate) return;
+      // También ignorar durante la carga inicial
+      if(typeof _firestoreLoading !== "undefined" && _firestoreLoading) return;
+      // Ignorar snapshots que vienen solo de caché local
+      if(docSnap.metadata.fromCache) return;
+
+      console.log("[BoxVision RT] Cambio remoto detectado — sincronizando…");
+      await _applyRealtimeSnapshot(docSnap, uid);
+    },
+    function(err){
+      console.warn("[BoxVision RT] onSnapshot error:", err.code || err.message);
+    }
+  );
+  console.log("[BoxVision RT] Listener en tiempo real activo para uid:", uid);
+}
+
+// ── Detener el listener (al cerrar sesión) ────────────────────────────────────
+function _stopRealtimeListener(){
+  if(_realtimeUnsub){ _realtimeUnsub(); _realtimeUnsub = null; }
+  console.log("[BoxVision RT] Listener detenido");
+}
+
 if(auth){
   window._authEnabled = true;
 
@@ -10785,6 +10883,8 @@ if(auth){
   function _showLoginScreen(){
     // Cancelar cualquier guardado pendiente antes de limpiar los datos
     if(typeof _saveTimer !== "undefined") clearTimeout(_saveTimer);
+    // Detener el listener en tiempo real al cerrar sesión
+    _stopRealtimeListener();
     currentUser = null; boxes = []; rooms = [];
     const ls = document.getElementById("loginScreen");
     const lb = document.getElementById("loginBtn");
@@ -10868,6 +10968,10 @@ if(auth){
       initTutorial();
     }finally{
       _firestoreLoading = false;
+      // ── Activar el listener en tiempo real DESPUÉS de la carga inicial ──────
+      // Lo hacemos en el finally para garantizar que _firestoreLoading ya es false
+      // cuando llegue el primer snapshot, evitando el guard que lo bloquearía.
+      _startRealtimeListener(user.uid);
     }
   }
 
