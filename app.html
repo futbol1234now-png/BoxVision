@@ -16627,8 +16627,6 @@ function _showSpModal(itemIdx, itemText, boxId) {
 
       '<input id="_spFileGallery" type="file" accept="image/*" style="display:none" onchange="window._spHandleFile(this)">',
       '<input id="_spFileCamera"  type="file" accept="image/*" capture="environment" style="display:none" onchange="window._spHandleFile(this)">',
-      '<input id="_spFileGalleryNoAI" type="file" accept="image/*" style="display:none" onchange="window._spSaveDirectFromFile(this)">',
-      '<input id="_spFileCameraNoAI"  type="file" accept="image/*" capture="environment" style="display:none" onchange="window._spSaveDirectFromFile(this)">',
 
       // Cierra el div scrollable
       '</div>',
@@ -16714,6 +16712,20 @@ function _showSpModal(itemIdx, itemText, boxId) {
   });
 
   document.body.appendChild(modal);
+
+  // ── Inputs Sin IA: vivir en body (no dentro del modal) para garantizar que
+  //    document.getElementById los encuentra siempre, incluso tras reabrir el modal ──
+  ['_spFileGalleryNoAI','_spFileCameraNoAI'].forEach(function(id){ var old=document.getElementById(id); if(old) old.remove(); });
+  var inpGal = document.createElement('input');
+  inpGal.id='_spFileGalleryNoAI'; inpGal.type='file'; inpGal.accept='image/*'; inpGal.style.display='none';
+  inpGal.addEventListener('change', function(){ window._spSaveDirectFromFile(this); });
+  document.body.appendChild(inpGal);
+
+  var inpCam = document.createElement('input');
+  inpCam.id='_spFileCameraNoAI'; inpCam.type='file'; inpCam.accept='image/*'; inpCam.capture='environment'; inpCam.style.display='none';
+  inpCam.addEventListener('change', function(){ window._spSaveDirectFromFile(this); });
+  document.body.appendChild(inpCam);
+
   requestAnimationFrame(function() {
     requestAnimationFrame(function() {
       var sheet = document.getElementById('_spSheet');
@@ -16726,6 +16738,8 @@ function _showSpModal(itemIdx, itemText, boxId) {
 window._spClose = function() {
   var modal = document.getElementById('_spModal');
   if (!modal) return;
+  // Limpiar inputs Sin IA del body
+  ['_spFileGalleryNoAI','_spFileCameraNoAI'].forEach(function(id){ var el=document.getElementById(id); if(el) el.remove(); });
   var sheet = document.getElementById('_spSheet');
   if (sheet) {
     sheet.style.transform = 'translateY(100%)';
